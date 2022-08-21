@@ -9,13 +9,11 @@ HEADERS += \
     cameraviewer.h \
     category.h \
     fam_reg.h \
-    ffmpegthread.h \
     filter.h \
     list_family.h \
     narusheniya_pravil.h \
     narusheniya_vyhod.h \
-    plus.h \
-    replayviewer.h
+    plus.h
 
 SOURCES += \
     Ball.cpp \
@@ -26,14 +24,12 @@ SOURCES += \
     cameraviewer.cpp \
     category.cpp \
     fam_reg.cpp \
-    ffmpegthread.cpp \
     filter.cpp \
     list_family.cpp \
     main.cpp \
     narusheniya_pravil.cpp \
     narusheniya_vyhod.cpp \
-    plus.cpp \
-    replayviewer.cpp
+    plus.cpp
 
 FORMS += \
     FormView.ui \

@@ -1,26 +1,29 @@
 #pragma once
 #include <QWidget>
 #include <QPushButton>
-#include "Secundomer.h"
+#include "lcdtimer.h"
 #include <QGridLayout>
 #include <QLabel>
 #include "narusheniya_pravil.h"
-#include "Ball.h"
+#include "rate.h"
 #include "narusheniya_vyhod.h"
 #include "ui_frmTime.h"
 #include "ui_FormView.h"
 #include "fam_reg.h"
 #include "plus.h"
-#include "Second_display.h"
+#include "tvscreen.h"
 #include "cameraviewer.h"
-#include "ffmpegthread.h"
+#include "camera.h"
+#include "playerviewer.h"
+#include <QPointer>
+#include <QCheckBox>
 
-class FirstDisplay : public QWidget {
+class PCScreen : public QWidget {
 	Q_OBJECT
 public:
-	explicit FirstDisplay(QWidget *parent = 0);
+    explicit PCScreen(QWidget *parent = 0);
 
-	~FirstDisplay();
+    ~PCScreen();
 
 
 
@@ -38,27 +41,23 @@ public slots:
 	void setFrameWidth(int);
 	void setSpace(int);
 	void setSec(int);
-	//void changeSize(int i);
-    void errorCamera(void);
-
-    void showReplay(void);
-    void start_replay(void);
-
     void setTime(void);
 
-
-
 private slots:
-    void turnCamera(int);
     void setCam(void);
     void showView(void);
 
-    void test(void);
-    void removeReplay(void);
-    void enableReplayOnTV(int);
-    void setTimeReplay(bool);
+    void finishedCamera(void);
+    void turnCamera(bool);
+    //void showSettings(void);
+    //void reset(void);
+
     void StopRecord(void);
+    void StartRecord(bool);
     void PlayFile(void);
+    void PlaySlowMotion(void);
+    void closePlayer(void);
+    void PlaySelectedFile(void);
 
 private:
 	QWidget * formView;
@@ -67,15 +66,12 @@ private:
 												//			 1-чёрный фон с рамками,
 												//			 2-чёрный фон без рамок
 	virtual void paintEvent(QPaintEvent *);
+    virtual void closeEvent(QCloseEvent*);
 	virtual void keyPressEvent(QKeyEvent *);
 	virtual void showEvent(QShowEvent *);
     virtual void resizeEvent(QResizeEvent *);
 	void changeSize(int);
     void process_line(int, QString);
-
-
-    QPushButton* btnStopRecord;
-    QPushButton* btnStartPlay;
 
 	QLabel * flag_blue;
 	QLabel * flag_red;
@@ -90,17 +86,17 @@ private:
 	NP * np_blue;
 	NV * nv_red;
 	NV * nv_blue;
-	Ball * ball_red;
-	Ball * ball_blue;
-	Ball * akt_red;
-	Ball * akt_blue;
+    Rate * rateRed;
+    Rate * rateBlue;
+    Rate * actRed;
+    Rate * actBlue;
 	Fam * fam_red;
 	Fam * fam_blue;
 	Fam * reg_red;
 	Fam * reg_blue;
 	Plus * plus_red;
 	Plus * plus_blue;
-	Secundomer * sec;
+    LCDTimer * mainTimer;
 	Ui::frmView ui;
     Ui::Form uiTime;
 	QDesktopWidget* desk;
@@ -108,17 +104,39 @@ private:
 	int HEIGHT_FAMILY;
 	int minimum_height;
 	int percent_height;
-	SecondDisplay * SD;
-    CameraViewer* cv_left;
-    CameraViewer* cv_right;
+    TVScreen * tvScreen;
+    QLabel * cat;
 
-    FFmpegThread* camLeftThread;
-    FFmpegThread* camRightThread;
+    CameraViewer* viewCam1;
+    CameraViewer* viewCam2;
+    Camera* camera1;
+    Camera* camera2;
+    QThread* threadCam1;
+    QThread* threadCam2;
+    QDialog * dialogSetUrl;
+    QCheckBox* cbCam1;
+    QCheckBox* cbCam2;
+    QPointer<PlayerViewer> slowMotionPlayer;
+
+    QPushButton* btnStopRecord;
+    QPushButton* btnPlayLastWithSound1;
+    QPushButton* btnPlayLastSlowMotion1;
+    QPushButton* btnPlayLastWithSound2;
+    QPushButton* btnPlayLastSlowMotion2;
+    QPushButton* btnPlaySlowMotion;
+
+    QString cam1Url = "";
+    QString cam2Url = "";
+
+    QString currentFileCam1 = "";
+    QString currentFileCam2 = "";
+
+
+    //Ui::dlgSetUrl ui_url;
+
 
     QThread* cam1Thread;
     QThread* cam2Thread;
 
-    Category * cat;
 
-    ReplayViewer* rV;
 };

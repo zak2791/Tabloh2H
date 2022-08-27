@@ -1,35 +1,43 @@
 
 QT += core gui widgets qml
 HEADERS += \
-    Ball.h \
-    First_display.h \
     JSTools.h \
-    Second_display.h \
-    Secundomer.h \
+    camera.h \
     cameraviewer.h \
     category.h \
     fam_reg.h \
     filter.h \
+    lcdstopwatch.h \
+    lcdtimer.h \
     list_family.h \
     narusheniya_pravil.h \
     narusheniya_vyhod.h \
-    plus.h
+    pcscreen.h \
+    player.h \
+    playerviewer.h \
+    plus.h \
+    rate.h \
+    tvscreen.h
 
 SOURCES += \
-    Ball.cpp \
-    First_display.cpp \
     JSTools.cpp \
-    Second_display.cpp \
-    Secundomer.cpp \
+    camera.cpp \
     cameraviewer.cpp \
     category.cpp \
     fam_reg.cpp \
     filter.cpp \
+    lcdstopwatch.cpp \
+    lcdtimer.cpp \
     list_family.cpp \
     main.cpp \
     narusheniya_pravil.cpp \
     narusheniya_vyhod.cpp \
-    plus.cpp
+    pcscreen.cpp \
+    player.cpp \
+    playerviewer.cpp \
+    plus.cpp \
+    rate.cpp \
+    tvscreen.cpp
 
 FORMS += \
     FormView.ui \

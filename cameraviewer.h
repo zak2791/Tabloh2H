@@ -11,16 +11,12 @@ class CameraViewer : public QGraphicsView
 public:
     CameraViewer(QWidget* parent=nullptr);
 
-    virtual void resizeEvent(QResizeEvent*);
-
 private:
     QGraphicsScene* scene;
     QGraphicsPixmapItem* pi;
-    QWidget* p;
 
 public slots:
     void draw_image(QImage);
-    void setSize(int, int);
 
 };
 

@@ -10,11 +10,12 @@
 #include <QMessageBox>
 #include <QPalette>
 
-#include "Second_display.h"
+#include "tvscreen.h"
 #include "list_family.h"
 #include "category.h"
+#include "lcdstopwatch.h"
 
-SecondDisplay::SecondDisplay(QWidget * parent) : QWidget(parent) {
+TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
 
 
 	col_red = "white";
@@ -22,22 +23,22 @@ SecondDisplay::SecondDisplay(QWidget * parent) : QWidget(parent) {
 
 	View = 0;			//красно-синий фон
 
-	ball_red = new Ball(this, 99, false);
+    ball_red = new Rate(this);
 	ball_red->setFrameShape(QFrame::Box);
 	//ball_red->id = 1;
 	//ball_red->setObjectName("ball_red");
 
-	ball_blue = new Ball(this, 99, false);
+    ball_blue = new Rate(this);
 	ball_blue->setFrameShape(QFrame::Box);
 	//ball_blue->id = 0;
 	//ball_blue->setObjectName("ball_blue");
 
-	akt_red = new Ball(this, 99, true);
+    akt_red = new Rate(this);
 	akt_red->setFrameShape(QFrame::Box);
 	//akt_red->id = 3;
 	//akt_red->setObjectName("akt_red");
 
-	akt_blue = new Ball(this, 99, true);
+    akt_blue = new Rate(this);
 	akt_blue->setFrameShape(QFrame::Box);
 	//akt_blue->id = 2;
 	//akt_blue->setObjectName("akt_blue");
@@ -57,22 +58,22 @@ SecondDisplay::SecondDisplay(QWidget * parent) : QWidget(parent) {
 	plus_blue = new Plus(col_blue, this);
     //plus_blue->setObjectName("sd_plus_blue");
 
-	sec = new Secundomer(this, ev_L, ev_R, "chartreuse", "green", 1.30, -1, false, false);
+    sec = new LCDTimer(this);
 	//sec->setObjectName("sec");
 
-	sec_red = new Secundomer(this, ev_L, ev_R, "salmon", "red", 0.20, 1, true, false);
+    sec_red = new LCDTimer(this, "0:20", QColor(255, 0, 0), QColor(255, 102, 102), false, true);
     //sec_red->setObjectName("sd_sec_red");
 	sec_red->hide();
 
-	sec_blue = new Secundomer(this, ev_L, ev_R, "lightblue", "blue", 0.20, 1, true, false);
+    sec_blue = new LCDTimer(this, "0:20", QColor(0, 0, 255), QColor(102, 102, 255), false, true);
 	//sec_blue->setObjectName("sec_blue");
 	sec_blue->hide();
 
-    //sec_red_t = new Secundomer(this, ev_L, ev_R, "salmon", "red", 2.00, 1, true, false);
-    //sec_red_t->hide();
+    sec_red_t = new LCDStopwatch(this, "2:00", QColor(255, 0, 0), QColor(255, 102, 102), false, true);
+    sec_red_t->hide();
 
-    //sec_blue_t = new Secundomer(this, ev_L, ev_R, "lightblue", "blue", 2.00, 1, true, false);
-    //sec_blue_t->hide();
+    sec_blue_t = new LCDStopwatch(this, "2:00", QColor(0, 0, 255), QColor(102, 102, 255), false, true);
+    sec_blue_t->hide();
 
 	np_red = new NP();
 	//np_red->setObjectName("np_red");
@@ -91,7 +92,7 @@ SecondDisplay::SecondDisplay(QWidget * parent) : QWidget(parent) {
 	ListFamily * lf = new ListFamily(this);
 	lf->setObjectName("lf");
 
-    cat = new Category("yellow", this);
+    cat = new QLabel(this);//("yellow", this);
 	cat->setObjectName("cat");
 	//cat->setText("55");
 	cat->setAutoFillBackground(true);
@@ -107,47 +108,47 @@ SecondDisplay::SecondDisplay(QWidget * parent) : QWidget(parent) {
 	flag_red->setScaledContents(true);
 	//flag_red->setAutoFillBackground(true);
 
-    rV = new ReplayViewer(this);
+    //rV = new ReplayViewer(this);
 
 	grid = new QGridLayout(this);
 	grid->setObjectName("grid");
 	//grid->setSpacing(6);
 	//grid->setMargin(6);
-	grid->addWidget(fam_blue, 0, 0, 6, 34); 
-	grid->addWidget(fam_red, 0, 34, 6, 34);
+    grid->addWidget(fam_blue,    0, 0, 6, 34);
+    grid->addWidget(fam_red,    0, 34, 6, 34);
 
-	grid->addWidget(ball_blue, 6, 0, 18, 24);
-	grid->addWidget(ball_red, 6, 44, 18, 24);
-	grid->addWidget(akt_blue, 24, 0, 13, 14);
-	grid->addWidget(akt_red, 24, 54, 13, 14);
+    grid->addWidget(ball_blue,  6, 0, 18, 24);
+    grid->addWidget(ball_red,  6, 44, 18, 24);
+    grid->addWidget(akt_blue,  24, 0, 13, 14);
+    grid->addWidget(akt_red,  24, 54, 13, 14);
 
-	grid->addWidget(np_blue, 24, 19, 5, 5);
-	grid->addWidget(np_red, 24, 44, 5, 5);
+    grid->addWidget(np_blue,    24, 19, 5, 5);
+    grid->addWidget(np_red,     24, 44, 5, 5);
 
-	grid->addWidget(nv_blue, 24, 14, 5, 5);
-	grid->addWidget(nv_red, 24, 49, 5, 5);
+    grid->addWidget(nv_blue,    24, 14, 5, 5);
+    grid->addWidget(nv_red,     24, 49, 5, 5);
 
-    grid->addWidget(plus_blue, 8, 24, 6, 6);
-    grid->addWidget(plus_red, 8, 37, 6, 6);
+    grid->addWidget(plus_blue,   6, 18, 6, 6);
+    grid->addWidget(plus_red,    6, 44, 6, 6);
 
-    grid->addWidget(cat, 18, 31, 4, 6);
+    grid->addWidget(cat,        18, 31, 4, 6);
 
-	grid->addWidget(sec, 24, 24, 13, 20);
-	grid->addWidget(sec_blue, 8, 0, 14, 24);
-	grid->addWidget(sec_red, 8, 44, 14, 24);
-    //grid->addWidget(sec_blue_t, 8, 0, 14, 24);
-    //grid->addWidget(sec_red_t, 8, 44, 14, 24);
+    grid->addWidget(sec,      24, 24, 13, 20);
+    grid->addWidget(sec_blue,   8, 0, 14, 24);
+    grid->addWidget(sec_red,   8, 44, 14, 24);
+    grid->addWidget(sec_blue_t, 8, 0, 14, 24);
+    grid->addWidget(sec_red_t, 8, 44, 14, 24);
 
 	grid->addWidget(flag_blue, 29, 14, 8, 10);
-	grid->addWidget(flag_red, 29, 44, 8, 10);
+    grid->addWidget(flag_red,  29, 44, 8, 10);
 
-	grid->addWidget(reg_blue, 37, 0, 5, 34);
-	grid->addWidget(reg_red, 37, 34, 5, 34);
+    grid->addWidget(reg_blue,   37, 0, 5, 34);
+    grid->addWidget(reg_red,   37, 34, 5, 34);
 
     //grid->addWidget(rV, 0, 0, 42, 68);
     //grid->addWidget(rV, 37, 0, 5, 68);
-    rV->setGeometry(0, 0, width(), height());
-    rV->raise();
+    //rV->setGeometry(0, 0, width(), height());
+    //rV->raise();
     showFullScreen();
 
 	minimum_height_family = (height() - 12) / 42;
@@ -157,11 +158,11 @@ SecondDisplay::SecondDisplay(QWidget * parent) : QWidget(parent) {
     //rV->setFrameStyle(QFrame::Box);
 }
 
-SecondDisplay::~SecondDisplay()
+TVScreen::~TVScreen()
 {
 }
 
-void SecondDisplay::paintEvent(QPaintEvent * ) {
+void TVScreen::paintEvent(QPaintEvent * ) {
 	QPainter pn;
 	pn.begin(this);
 	if (View == 0) {
@@ -177,7 +178,7 @@ void SecondDisplay::paintEvent(QPaintEvent * ) {
 	pn.end();
 }
 
-void SecondDisplay::showEvent(QShowEvent *){
+void TVScreen::showEvent(QShowEvent *){
 	minimum_height = static_cast<int>((height() - 12) / 42);
 	qDebug() << "minimum_height = " << minimum_height;
 	percent_height = static_cast<int>((height() - 12) / 100);
@@ -195,8 +196,8 @@ void SecondDisplay::showEvent(QShowEvent *){
 	grid->setRowMinimumHeight(41, minimum_height);
 }
 
-void SecondDisplay::resizeEvent(QResizeEvent *){
-    rV->setGeometry(0, 0, width(), height());
+void TVScreen::resizeEvent(QResizeEvent *){
+    //rV->setGeometry(0, 0, width(), height());
 
     minimum_height = (height() - 12) / 42;
     percent_height = (height() - 12) / 100;

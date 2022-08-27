@@ -1,6 +1,6 @@
 #pragma once
 #include <QtWidgets> 
-#include "First_display.h"
+#include "pcscreen.h"
 
 class JSTools : public QObject {
 	Q_OBJECT

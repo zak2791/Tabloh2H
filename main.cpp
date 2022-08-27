@@ -1,8 +1,8 @@
 #include <QJSEngine> 
 #include <QObject>
 #include "JSTools.h"
-#include "First_display.h"
-#include "Ball.h"
+#include "pcscreen.h"
+#include "rate.h"
 #include "filter.h"
 
 
@@ -13,7 +13,7 @@ int main(int argc, char** argv){
 	//Ball * b = new Ball(nullptr, 99, false);
     //b->show();
 	
-	FirstDisplay * pwgt = new FirstDisplay();
+    PCScreen * pwgt = new PCScreen();
 	
     //KeyFilter kf(pwgt);
     //app.installEventFilter(&kf);

@@ -1,29 +1,28 @@
 #pragma once
 #include <QWidget>
 #include <QPushButton>
-#include "Secundomer.h"
+#include "lcdtimer.h"
 #include <QGridLayout>
 #include <QLabel>
 #include "narusheniya_pravil.h"
-#include "Ball.h"
+#include "rate.h"
 #include "narusheniya_vyhod.h"
 #include "ui_FormView.h"
 #include "fam_reg.h"
 #include "plus.h"
-#include "replayviewer.h"
 #include "category.h"
 
-class SecondDisplay : public QWidget {
+class TVScreen : public QWidget {
 	Q_OBJECT
 public:
-	explicit SecondDisplay(QWidget *parent = 0);
+    explicit TVScreen(QWidget *parent = 0);
 
-	~SecondDisplay();
+    ~TVScreen();
 
-	Ball * ball_red;
-	Ball * ball_blue;
-	Ball * akt_red;
-	Ball * akt_blue;
+    Rate * ball_red;
+    Rate * ball_blue;
+    Rate * akt_red;
+    Rate * akt_blue;
 
 	NP * np_red;
 	NP * np_blue;
@@ -36,13 +35,14 @@ public:
 	Fam * reg_blue;
 	Plus * plus_red;
 	Plus * plus_blue;
-	Secundomer * sec;
-	Secundomer * sec_red;
-	Secundomer * sec_blue;
-    Secundomer * sec_red_t;
-    Secundomer * sec_blue_t;
+    LCDTimer * sec;
+    LCDTimer * sec_red;
+    LCDTimer * sec_blue;
+    LCDTimer * sec_red_t;
+    LCDTimer * sec_blue_t;
 
-    Category * cat;
+    //Category * cat;
+    QLabel* cat;
 
 	QGridLayout * grid;
 
@@ -55,7 +55,6 @@ public:
 	int View;									//вид табло: 0-красно-синий фон, 
 												//			 1-чёрный фон с рамками,
 												//			 2-чёрный фон без рамок
-    ReplayViewer* rV;
 
 private:
 	

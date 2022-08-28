@@ -3,21 +3,17 @@
 #include "JSTools.h"
 #include "pcscreen.h"
 #include "rate.h"
-#include "filter.h"
+
 
 
 
 int main(int argc, char** argv){
     QApplication app(argc, argv);
 
-	//Ball * b = new Ball(nullptr, 99, false);
-    //b->show();
+
 	
     PCScreen * pwgt = new PCScreen();
-	
-    //KeyFilter kf(pwgt);
-    //app.installEventFilter(&kf);
-    //pwgt->installEventFilter(&kf);
+
 
 	QJSEngine se;
 	

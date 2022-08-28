@@ -68,6 +68,4 @@ private:
 	int minimum_height_family;
 	int minimum_height_region;
 
-	
-
 };

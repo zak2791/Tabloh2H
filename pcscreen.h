@@ -58,6 +58,8 @@ private slots:
     void PlaySlowMotion(void);
     void closePlayer(void);
     void PlaySelectedFile(void);
+    void changeSize(void);
+    void drawTvScreenshot(void);
 
 private:
 	QWidget * formView;
@@ -67,10 +69,10 @@ private:
 												//			 2-чёрный фон без рамок
 	virtual void paintEvent(QPaintEvent *);
     virtual void closeEvent(QCloseEvent*);
-	virtual void keyPressEvent(QKeyEvent *);
+    virtual void keyPressEvent(QKeyEvent *);
 	virtual void showEvent(QShowEvent *);
     virtual void resizeEvent(QResizeEvent *);
-	void changeSize(int);
+
     void process_line(int, QString);
 
 	QLabel * flag_blue;
@@ -137,6 +139,5 @@ private:
 
     QThread* cam1Thread;
     QThread* cam2Thread;
-
 
 };

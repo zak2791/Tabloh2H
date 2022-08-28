@@ -6,7 +6,6 @@ HEADERS += \
     cameraviewer.h \
     category.h \
     fam_reg.h \
-    filter.h \
     lcdstopwatch.h \
     lcdtimer.h \
     list_family.h \
@@ -25,7 +24,6 @@ SOURCES += \
     cameraviewer.cpp \
     category.cpp \
     fam_reg.cpp \
-    filter.cpp \
     lcdstopwatch.cpp \
     lcdtimer.cpp \
     list_family.cpp \

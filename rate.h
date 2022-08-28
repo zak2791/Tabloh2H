@@ -20,6 +20,7 @@ signals:
 public slots:
     void sbros();
     void setRate(int);
+    void setViewStyle(int, int);
 
 private:
     virtual void mousePressEvent(QMouseEvent *);

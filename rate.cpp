@@ -105,3 +105,16 @@ void Rate::resizeEvent(QResizeEvent * ){
 
     setText(QString::number(rate));
 }
+
+void Rate::setViewStyle(int s, int width){
+    if(s == 0)
+        setStyleSheet("QLabel{border-radius: 30px; border-width: " + QString::number(width) + "px; border-style: solid; border-color:white; background-color: black; color: white;}");
+    else if(s == 1)
+        setStyleSheet("QLabel{border-radius: 30px; border-width: " + QString::number(width) + "px; border-style: solid; border-color:white; background-color: black; color: red;}");
+    else if (s == 2)
+        setStyleSheet("QLabel{border-radius: 30px; border-width: " + QString::number(width) + "px; border-style: solid; border-color:white; background-color: black; color: blue;}");
+    else if (s == 3)
+        setStyleSheet("QLabel{background-color: black; color: red; border-width: 0px; border-style: solid;}");
+    else if (s == 4)
+        setStyleSheet("QLabel{background-color: black; color: blue; border-width: 0px; border-style: solid;}");
+}

@@ -6,7 +6,7 @@
 #include <QApplication>
 #include <QDebug>
 #include <QDesktopWidget>
-#include "filter.h"
+
 #include <QMessageBox>
 #include <QPalette>
 #include <QProcess>
@@ -21,7 +21,8 @@
 #include "category.h"
 #include "lcdstopwatch.h"
 
-//#include <QDir>
+#include <QHostAddress>
+#include <QNetworkInterface>
 
 
 class MyEvent : public QEvent {
@@ -74,59 +75,59 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
 	btnParter_red->setObjectName("btnParter_red");
 	btnParter_red->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 	btnParter_red->setStyleSheet("color: red; font: bold " + QString::number(round(btnParter_red->height() / 2)) + "px;");
-	btnParter_red->setFocusPolicy(Qt::NoFocus);
+    //btnParter_red->setFocusPolicy(Qt::NoFocus);
 	
 	QPushButton * btnTime = new QPushButton(u8"ВРЕМЯ", this);
     btnTime->setObjectName("btnTime");
 	btnTime->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 	//btnTime->setStyleSheet("color: green; font: bold " + QString::number(round(btnTime->height() / 2)) + "px;");
-	btnTime->setFocusPolicy(Qt::NoFocus);
+    //btnTime->setFocusPolicy(Qt::NoFocus);
 
 	QPushButton * btnParter_blue = new QPushButton(u8"ПАРТЕР", this);
 	btnParter_blue->setObjectName("btnParter_blue");
 	btnParter_blue->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 	btnParter_blue->setStyleSheet("color: blue; font: bold " + QString::number(round(btnParter_blue->height() / 2)) + "px;");
-	btnParter_blue->setFocusPolicy(Qt::NoFocus);
+    //btnParter_blue->setFocusPolicy(Qt::NoFocus);
 	
 	QPushButton * btnTehTime_red = new QPushButton(u8"Т.ВРЕМЯ", this);
 	btnTehTime_red->setObjectName("btnTehTime_red");
 	btnTehTime_red->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 	btnTehTime_red->setStyleSheet("color: red; font: bold " + QString::number(round(btnTehTime_red->height() / 2)) + "px;");
-	btnTehTime_red->setFocusPolicy(Qt::NoFocus);
+    //btnTehTime_red->setFocusPolicy(Qt::NoFocus);
 
     QPushButton * btnSettings = new QPushButton("СПОРТСМЕНЫ", this);
 	btnSettings->setObjectName("btnSettings");
 	btnSettings->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 	btnSettings->setStyleSheet("color: green; font: bold " + QString::number(round(btnSettings->height() / 2)) + "px;");
-	btnSettings->setFocusPolicy(Qt::NoFocus);
+    //btnSettings->setFocusPolicy(Qt::NoFocus);
 	
 	QPushButton * btnTehTime_blue = new QPushButton(u8"Т.ВРЕМЯ", this);
 	btnTehTime_blue->setObjectName("btnTehTime_blue");
 	btnTehTime_blue->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 	btnTehTime_blue->setStyleSheet("color: blue; font: bold " + QString::number(round(btnTehTime_blue->height() / 2)) + "px;");
-	btnTehTime_blue->setFocusPolicy(Qt::NoFocus);
+    //btnTehTime_blue->setFocusPolicy(Qt::NoFocus);
 
 	QPushButton * btnPlus_red = new QPushButton("+", this);
 	btnPlus_red->setObjectName("btnPlus_red");
 	btnPlus_red->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 	btnPlus_red->setStyleSheet("color: red; font: bold " + QString::number(btnPlus_red->height()) + "px;");
-	btnPlus_red->setFocusPolicy(Qt::NoFocus);
+    //btnPlus_red->setFocusPolicy(Qt::NoFocus);
 
 	QPushButton * btnPlus_blue = new QPushButton("+", this);
 	btnPlus_blue->setObjectName("btnPlus_blue");
 	btnPlus_blue->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 	btnPlus_blue->setStyleSheet("color: blue; font: bold " + QString::number(btnPlus_blue->height()) + "px;");
-	btnPlus_blue->setFocusPolicy(Qt::NoFocus);
+    //btnPlus_blue->setFocusPolicy(Qt::NoFocus);
 
     QPushButton * btnView = new QPushButton("НАСТРОЙКИ", this);
 	//btnView->setObjectName("btnPlus_blue");
 	btnView->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 	btnView->setStyleSheet("font: bold " + QString::number(round(btnView->height() / 2)) + "px;");
-	btnView->setFocusPolicy(Qt::NoFocus);
+    //btnView->setFocusPolicy(Qt::NoFocus);
 
-	plus_red = new Plus(col_red, this);
+    plus_red = new Plus(col_red, this);
 	plus_red->setObjectName("plus_red");
-	plus_blue = new Plus(col_blue, this);
+    plus_blue = new Plus(col_blue, this);
 	plus_blue->setObjectName("plus_blue");
 
     mainTimer = new LCDTimer(this);
@@ -174,17 +175,15 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
 	cat->setStyleSheet("background-color: black");
 
 	formView = new QWidget;
-	//Ui::frmView ui;
 	ui.setupUi(formView);
+
+    connect(ui.btnNameDown, SIGNAL(clicked()), this, SLOT(changeSize()));
+    connect(ui.btnNameUp,   SIGNAL(clicked()), this, SLOT(changeSize()));
+    connect(ui.btnRegDown,  SIGNAL(clicked()), this, SLOT(changeSize()));
+    connect(ui.btnRegUp,    SIGNAL(clicked()), this, SLOT(changeSize()));
 
     frmTime = new QWidget;
     uiTime.setupUi(frmTime);
-    //frmTime->setObjectName("setTime");
-
-    //QWidget * rV_w = new QWidget();
-
-    //rV_w->setStyleSheet("background-color: rgb(0,0,0)");
-    //rV->setObjectName("rV");
 
     connect(btnView, SIGNAL(clicked(bool)), this, SLOT(showView()));
 
@@ -211,30 +210,36 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     btnPlayLastWithSound1 = new QPushButton("Просмотр\nсо звуком");
     btnPlayLastWithSound1->setObjectName("btnPlayLastWithSound1");
     btnPlayLastWithSound1->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    btnPlayLastWithSound1->setStyleSheet("font-size: 10pt");
     connect(btnPlayLastWithSound1, SIGNAL(clicked()), SLOT(PlayFile()));
 
     btnPlayLastWithSound2 = new QPushButton("Просмотр\nсо звуком");
     btnPlayLastWithSound2->setObjectName("btnPlayLastWithSound2");
     btnPlayLastWithSound2->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    btnPlayLastWithSound1->setStyleSheet("font-size: 10pt");
     connect(btnPlayLastWithSound2, SIGNAL(clicked()), SLOT(PlayFile()));
 
     btnPlayLastSlowMotion1 = new QPushButton("Просмотр\nзамедленный");
     btnPlayLastSlowMotion1->setObjectName("btnPlayLastSlowMotion1");
     btnPlayLastSlowMotion1->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    btnPlayLastSlowMotion1->setStyleSheet("font-size: 10pt");
     connect(btnPlayLastSlowMotion1, SIGNAL(clicked()), SLOT(PlaySlowMotion()));
 
     btnPlayLastSlowMotion2 = new QPushButton("Просмотр\nзамедленный");
     btnPlayLastSlowMotion2->setObjectName("btnPlayLastSlowMotion2");
     btnPlayLastSlowMotion2->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    btnPlayLastSlowMotion2->setStyleSheet("font-size: 10pt");
     connect(btnPlayLastSlowMotion2, SIGNAL(clicked()), SLOT(PlaySlowMotion()));
 
     btnPlaySlowMotion = new QPushButton("Просмотр с выбором файла");
     btnPlaySlowMotion->setObjectName("btnPlaySlowMotion");
     btnPlaySlowMotion->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    btnPlaySlowMotion->setStyleSheet("font-size: 10pt");
     connect(btnPlaySlowMotion, SIGNAL(clicked()), SLOT(PlaySelectedFile()));
 
     btnStopRecord = new QPushButton("Стоп запись");
     btnStopRecord->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    btnStopRecord->setStyleSheet("font-size: 10pt");
     connect(btnStopRecord, SIGNAL(clicked()), SLOT(StopRecord()));
     //connect(mainTimer, SIGNAL(sigStopped(bool)), btnStopRecord, SLOT(setEnabled(bool)));
 
@@ -254,11 +259,25 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
                                      "border-width: 2px;"
                                      "border-color: white;"
                                      "border-top-style: none;"
-                                     "border-bottom-left-radius: 5px;"
-                                     "border-bottom-right-radius: 5px;"
+                                     "border-bottom-left-radius: 10px;"
+                                     "border-bottom-right-radius: 10px;"
                                      "font-size: 12pt");
 
-    QLabel* lbl2 = new QLabel("Время - 'F1', сброс - 'Backspace', выход - 'Esc'");
+    QString ip = "";
+    QList<QHostAddress> list = QNetworkInterface::allAddresses();
+    for(int nIter=0; nIter<list.count(); nIter++){
+        if(!list[nIter].isLoopback())
+            if (list[nIter].protocol() == QAbstractSocket::IPv4Protocol ){
+                ip = list[nIter].toString();
+                break;
+            }
+    }
+
+    QLabel* lbl2 = new QLabel("Установка времени боя - 'F1', сброс - 'Backspace', выход - 'Esc'\n IP адрес: " + ip);
+    lbl2->setAlignment(Qt::AlignCenter);
+    lbl2->setStyleSheet("color: white; font-size: 12pt");
+
+    //lblTv.hide();
 
 	grid = new QGridLayout(this);
 	grid->setObjectName("grid");
@@ -267,13 +286,13 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     //сетка 68х42
 	grid->setSpacing(6);
 	grid->setMargin(6);
-    grid->addWidget(fam_red,                0,  0,  6,  34);
-    grid->addWidget(fam_blue,               0,  34, 6,  34);
+    grid->addWidget(fam_red,                0,  0,  4,  34);
+    grid->addWidget(fam_blue,               0,  34, 4,  34);
 
-    grid->addWidget(rateRed,                6,  0,  18, 24);
-    grid->addWidget(rateBlue,               6,  44, 18, 24);
-    grid->addWidget(actRed,                 24, 0,  13, 14);
-    grid->addWidget(actBlue,                24, 54, 13, 14);
+    grid->addWidget(rateRed,                4,  0,  20, 24);
+    grid->addWidget(rateBlue,               4,  44, 20, 24);
+    grid->addWidget(actRed,                 24, 0,  14, 14);
+    grid->addWidget(actBlue,                24, 54, 14, 14);
 
     grid->addWidget(np_red,                 24, 19, 5,  5);
     grid->addWidget(np_blue,                24, 44, 5,  5);
@@ -281,19 +300,21 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     grid->addWidget(nv_red,                 24, 14, 5,  5);
     grid->addWidget(nv_blue,                24, 49, 5,  5);
 
-    grid->addWidget(btnTehTime_red,         6,  24, 2,  6);
-    grid->addWidget(btnSettings,            6,  30, 2,  8);
-    grid->addWidget(btnTehTime_blue,        6,  38, 2,  6);
+    grid->addWidget(btnTehTime_red,         4,  24, 2,  6);
+    grid->addWidget(btnSettings,            4,  30, 2,  8);
+    grid->addWidget(btnTehTime_blue,        4,  38, 2,  6);
 
-    grid->addWidget(btnPlus_red,            8,  30, 2,  3);
-    grid->addWidget(btnPlus_blue,           8,  35, 2,  3);
+    grid->addWidget(btnPlus_red,            6,  30, 2,  3);
+    grid->addWidget(btnPlus_blue,           6,  35, 2,  3);
 
-    grid->addWidget(plus_red,               6,  20, 4,  4);
-    grid->addWidget(plus_blue,              6,  44, 4,  4);
+    grid->addWidget(plus_red,               4,  0, 4,  4);
+    grid->addWidget(plus_blue,              4,  44, 4,  4);
 
-    grid->addWidget(cat,                    8, 38, 2,  6);
+    grid->addWidget(cat,                    6, 38, 2,  6);
 
-    grid->addWidget(btnView,                8, 24, 2,  6);
+    grid->addWidget(btnView,                6, 24, 2,  6);
+
+    grid->addWidget(lbl2,                   8, 24, 2,  20);
 
     grid->addWidget(btnParter_red,          22, 24, 2,  6);
     grid->addWidget(btnTime,                22, 31, 2,  6);
@@ -302,7 +323,7 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
 
     //grid->addWidget(btnStartPlay,         20, 38, 2,  3);
 
-    grid->addWidget(mainTimer,              24, 24, 13, 20);
+    grid->addWidget(mainTimer,              24, 24, 14, 20);
 
     grid->addWidget(sec_red,                9,  0,  12, 24);
     grid->addWidget(sec_blue,               9,  44, 12, 24);
@@ -313,21 +334,23 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     grid->addWidget(flag_red,               29, 14, 8,  10);
     grid->addWidget(flag_blue,              29, 44, 8,  10);
 	
-    grid->addWidget(reg_red,                37, 0,  5,  34);
-    grid->addWidget(reg_blue,               37, 34, 5,  34);
+    grid->addWidget(reg_red,                38, 0,  4,  34);
+    grid->addWidget(reg_blue,               38, 34, 4,  34);
 
-    grid->addWidget(viewCam1,               11, 24,  6, 10);
-    grid->addWidget(btnPlayLastWithSound1,  17, 24,  2,  5);
-    grid->addWidget(btnPlayLastSlowMotion1, 17, 29,  2,  5);
+    grid->addWidget(viewCam1,               10, 24,  6, 10);
+    grid->addWidget(btnPlayLastWithSound1,  16, 24,  2,  5);
+    grid->addWidget(btnPlayLastSlowMotion1, 16, 29,  2,  5);
     grid->addWidget(btnPlaySlowMotion,      20, 24,  2, 10);
-    grid->addWidget(cbCam1,                 16, 25,  1,  8);
-    grid->addWidget(viewCam2,               11, 34,  6, 10);
-    grid->addWidget(btnPlayLastWithSound2,  17, 34,  2,  5);
-    grid->addWidget(btnPlayLastSlowMotion2, 17, 39,  2,  5);
+    grid->addWidget(cbCam1,                 15, 25,  1,  8);
+    grid->addWidget(viewCam2,               10, 34,  6, 10);
+    grid->addWidget(btnPlayLastWithSound2,  16, 34,  2,  5);
+    grid->addWidget(btnPlayLastSlowMotion2, 16, 39,  2,  5);
     grid->addWidget(btnStopRecord,          20, 34,  2, 10);
-    grid->addWidget(cbCam2,                 16, 35,  1,  8);
+    grid->addWidget(cbCam2,                 15 , 35,  1, 8);
 
-    grid->addWidget(lbl,                    19, 24,  1, 20);
+    grid->addWidget(lbl,                    18, 24,  2, 20);
+
+    //grid->addWidget(&lblTv,                 21,  0, 21, 34);
 
     //grid->addWidget(rV,              0, 13,  23,  42);
 
@@ -343,14 +366,16 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     //if (desk->numScreens() == 2){
     if(QGuiApplication::screens().count() == 2){
         showFullScreen();
-    }else{
+    }else{      
         show();
+        setGeometry(QApplication::desktop()->availableGeometry(this).width() / 2, QApplication::desktop()->availableGeometry(this).height() / 2,
+                    QApplication::desktop()->availableGeometry(this).width() / 2, QApplication::desktop()->availableGeometry(this).height() / 2);
     }
 
     //if (desk->numScreens() == 1) {
     if(QGuiApplication::screens().count() == 1){
-        QMessageBox::information(this, u8"ВНИМАНИЕ!",
-        u8"Подключите к компьютеру дисплей в режиме \"Расширенный рабочий стол!\"",
+        QMessageBox::information(this, "ВНИМАНИЕ!",
+        "Подключите к компьютеру дисплей в режиме \"Расширенный рабочий стол!\"",
 		QMessageBox::Ok);
 	}
     //else {
@@ -463,9 +488,9 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
         dir.mkdir("video");
     }
 
-    //KeyFilter kf(this);
-    //this->installEventFilter(&kf);
-    //pwgt->installEventFilter(&kf);
+    QTimer* tmr = new QTimer(this);
+    connect(tmr, SIGNAL(timeout()), this, SLOT(drawTvScreenshot()));
+    tmr->start(100);
 
 }
 
@@ -607,7 +632,17 @@ void PCScreen::turnCamera(bool state){
 
 
 void PCScreen::closeEvent(QCloseEvent *){
-
+    if(cbCam1->isChecked()){
+        cbCam1->toggle();
+        threadCam1->quit();
+        threadCam1->wait();
+    }
+    if(cbCam2->isChecked()){
+        cbCam2->toggle();
+        threadCam2->quit();
+        threadCam2->wait();
+    }
+    qApp->quit();
 }
 
 
@@ -720,10 +755,6 @@ void PCScreen::showView(){
     formView->show();
 }
 
-
-
-
-
 void PCScreen::paintEvent(QPaintEvent * ) {
 	QPainter pn;
 	pn.begin(this);
@@ -741,23 +772,7 @@ void PCScreen::paintEvent(QPaintEvent * ) {
 }
 
 void PCScreen::keyPressEvent(QKeyEvent * pe){
-    //qDebug()<<pe;
-	if (pe->key() == Qt::Key_Up)
-		changeSize(0);
-	else if (pe->key() == Qt::Key_Down)
-		changeSize(1);
-	else if (pe->key() == Qt::Key_Right)
-		changeSize(2);
-	else if (pe->key() == Qt::Key_Left)
-		changeSize(3);
-    else if (pe->key() == Qt::Key_F1){
-        //setCategory();
-        frmTime->show();
-    }
-	else {
-        qDebug() << "key = " << pe->key();
-		sendKey(pe->key());
-	}
+   sendKey(pe->key());
 }
 
 void PCScreen::resizeEvent(QResizeEvent *){
@@ -773,7 +788,7 @@ void PCScreen::showEvent(QShowEvent *){
 	minimum_height = (height() - 12) / 42;
 
 	percent_height = (height() - 12) / 100;
-
+    /*
 	grid->setRowMinimumHeight(0, minimum_height);
 	grid->setRowMinimumHeight(1, minimum_height);
 	grid->setRowMinimumHeight(2, minimum_height);
@@ -785,7 +800,7 @@ void PCScreen::showEvent(QShowEvent *){
 	grid->setRowMinimumHeight(39, minimum_height);
 	grid->setRowMinimumHeight(40, minimum_height);
 	grid->setRowMinimumHeight(41, minimum_height);
-
+    */
 }
 
 void PCScreen::sendEV_L(QObject * pObj)
@@ -823,10 +838,10 @@ void PCScreen::setFlagBlue(QString s){
 void PCScreen::setView(void){
 	if (ui.rbView1->isChecked()) {
 		View = 0;
-        //ball_red->setViewStyle(0,  ui.sbFrame->value());
-        //ball_blue->setViewStyle(0, ui.sbFrame->value());
-        //akt_red->setViewStyle(0,   ui.sbFrame->value());
-        //akt_blue->setViewStyle(0,  ui.sbFrame->value());
+        rateRed->setViewStyle(0,  ui.sbFrame->value());
+        rateBlue->setViewStyle(0, ui.sbFrame->value());
+        actRed->setViewStyle(0,   ui.sbFrame->value());
+        actBlue->setViewStyle(0,  ui.sbFrame->value());
 		fam_red->setViewStyle(0);
 		fam_blue->setViewStyle(0);
 		reg_red->setViewStyle(0);
@@ -840,10 +855,10 @@ void PCScreen::setView(void){
 		plus_blue->setColor("white");
         //if (desk->numScreens() != 1) {
             tvScreen->View = 0;
-            //tvScreen->ball_red->setViewStyle(0,  ui.sbFrame->value());
-            //tvScreen->ball_blue->setViewStyle(0, ui.sbFrame->value());
-            //tvScreen->akt_red->setViewStyle(0,   ui.sbFrame->value());
-            //tvScreen->akt_blue->setViewStyle(0,  ui.sbFrame->value());
+            tvScreen->ball_red->setViewStyle(0,  ui.sbFrame->value());
+            tvScreen->ball_blue->setViewStyle(0, ui.sbFrame->value());
+            tvScreen->akt_red->setViewStyle(0,   ui.sbFrame->value());
+            tvScreen->akt_blue->setViewStyle(0,  ui.sbFrame->value());
             tvScreen->fam_red->setViewStyle(0);
             tvScreen->fam_blue->setViewStyle(0);
             tvScreen->reg_red->setViewStyle(0);
@@ -860,10 +875,10 @@ void PCScreen::setView(void){
 	}
 	else if (ui.rbView2->isChecked()) {
 		View = 1;
-        //ball_red->setViewStyle(1, ui.sbFrame->value());
-        //ball_blue->setViewStyle(2, ui.sbFrame->value());
-        //akt_red->setViewStyle(1, ui.sbFrame->value());
-        //akt_blue->setViewStyle(2, ui.sbFrame->value());
+        rateRed->setViewStyle(1, ui.sbFrame->value());
+        rateBlue->setViewStyle(2, ui.sbFrame->value());
+        actRed->setViewStyle(1, ui.sbFrame->value());
+        actBlue->setViewStyle(2, ui.sbFrame->value());
 		fam_red->setViewStyle(1);
 		fam_blue->setViewStyle(2);
 		reg_red->setViewStyle(1);
@@ -877,10 +892,10 @@ void PCScreen::setView(void){
 		plus_blue->setColor("blue");
         //if (desk->numScreens() != 1) {
             tvScreen->View = 1;
-            //tvScreen->ball_red->setViewStyle(1, ui.sbFrame->value());
-            //tvScreen->ball_blue->setViewStyle(2, ui.sbFrame->value());
-            //tvScreen->akt_red->setViewStyle(1, ui.sbFrame->value());
-            //tvScreen->akt_blue->setViewStyle(2, ui.sbFrame->value());
+            tvScreen->ball_red->setViewStyle(1, ui.sbFrame->value());
+            tvScreen->ball_blue->setViewStyle(2, ui.sbFrame->value());
+            tvScreen->akt_red->setViewStyle(1, ui.sbFrame->value());
+            tvScreen->akt_blue->setViewStyle(2, ui.sbFrame->value());
             tvScreen->fam_red->setViewStyle(1);
             tvScreen->fam_blue->setViewStyle(2);
             tvScreen->reg_red->setViewStyle(1);
@@ -897,10 +912,10 @@ void PCScreen::setView(void){
 	}
 	else {
 		View = 1;
-        //ball_red->setViewStyle(3, ui.sbFrame->value());
-        //ball_blue->setViewStyle(4, ui.sbFrame->value());
-        //akt_red->setViewStyle(3, ui.sbFrame->value());
-        //akt_blue->setViewStyle(4, ui.sbFrame->value());
+        rateRed->setViewStyle(3, ui.sbFrame->value());
+        rateBlue->setViewStyle(4, ui.sbFrame->value());
+        actRed->setViewStyle(3, ui.sbFrame->value());
+        actBlue->setViewStyle(4, ui.sbFrame->value());
 		fam_red->setViewStyle(1);
 		fam_blue->setViewStyle(2);
 		reg_red->setViewStyle(1);
@@ -914,10 +929,10 @@ void PCScreen::setView(void){
 		plus_blue->setColor("blue");
         //if (desk->numScreens() != 1) {
             tvScreen->View = 1;
-            //tvScreen->ball_red->setViewStyle(3,  ui.sbFrame->value());
-            //tvScreen->ball_blue->setViewStyle(4, ui.sbFrame->value());
-            //tvScreen->akt_red->setViewStyle(3,   ui.sbFrame->value());
-            //tvScreen->akt_blue->setViewStyle(4,  ui.sbFrame->value());
+            tvScreen->ball_red->setViewStyle(3,  ui.sbFrame->value());
+            tvScreen->ball_blue->setViewStyle(4, ui.sbFrame->value());
+            tvScreen->akt_red->setViewStyle(3,   ui.sbFrame->value());
+            tvScreen->akt_blue->setViewStyle(4,  ui.sbFrame->value());
             tvScreen->fam_red->setViewStyle(1);
             tvScreen->fam_blue->setViewStyle(2);
             tvScreen->reg_red->setViewStyle(1);
@@ -940,20 +955,20 @@ void PCScreen::setFrameWidth(int f){
     tvScreen->sec->setLineWidth(f);
 	if (View == 0) {
 
-        //ball_red->setViewStyle(0, f);
-        //ball_blue->setViewStyle(0, f);
-        //akt_red->setViewStyle(0, f);
-        //akt_blue->setViewStyle(0, f);
+        rateRed->setViewStyle(0, f);
+        rateBlue->setViewStyle(0, f);
+        actRed->setViewStyle(0, f);
+        actBlue->setViewStyle(0, f);
 		fam_red->setViewStyle(0);
 		fam_blue->setViewStyle(0);
 		reg_red->setViewStyle(0);
 		reg_blue->setViewStyle(0);
         mainTimer->setFrameShape(QFrame::Box);
 
-        //tvScreen->ball_red->setViewStyle(0, f);
-        //tvScreen->ball_blue->setViewStyle(0, f);
-        //tvScreen->akt_red->setViewStyle(0, f);
-        //tvScreen->akt_blue->setViewStyle(0, f);
+        tvScreen->ball_red->setViewStyle(0, f);
+        tvScreen->ball_blue->setViewStyle(0, f);
+        tvScreen->akt_red->setViewStyle(0, f);
+        tvScreen->akt_blue->setViewStyle(0, f);
         tvScreen->fam_red->setViewStyle(0);
         tvScreen->fam_blue->setViewStyle(0);
         tvScreen->reg_red->setViewStyle(0);
@@ -961,20 +976,20 @@ void PCScreen::setFrameWidth(int f){
         tvScreen->sec->setFrameShape(QFrame::Box);
 	}
 	else {
-        //ball_red->setViewStyle(1, f);
-        //ball_blue->setViewStyle(2, f);
-        //akt_red->setViewStyle(1, f);
-        //akt_blue->setViewStyle(2, f);
+        rateRed->setViewStyle(1, f);
+        rateBlue->setViewStyle(2, f);
+        actRed->setViewStyle(1, f);
+        actBlue->setViewStyle(2, f);
 		fam_red->setViewStyle(1);
 		fam_blue->setViewStyle(2);
 		reg_red->setViewStyle(1);
 		reg_blue->setViewStyle(2);
         mainTimer->setFrameShape(QFrame::Box);
 
-        //tvScreen->ball_red->setViewStyle(1, f);
-        //tvScreen->ball_blue->setViewStyle(2, f);
-        //tvScreen->akt_red->setViewStyle(1, f);
-        //tvScreen->akt_blue->setViewStyle(2, f);
+        tvScreen->ball_red->setViewStyle(1, f);
+        tvScreen->ball_blue->setViewStyle(2, f);
+        tvScreen->akt_red->setViewStyle(1, f);
+        tvScreen->akt_blue->setViewStyle(2, f);
         tvScreen->fam_red->setViewStyle(1);
         tvScreen->fam_blue->setViewStyle(2);
         tvScreen->reg_red->setViewStyle(1);
@@ -987,40 +1002,49 @@ void PCScreen::setFrameWidth(int f){
 }
 
 void PCScreen::setSpace(int s){
-	grid->setSpacing(s);
+    //grid->setSpacing(s);
     tvScreen->grid->setSpacing(s);
 	repaint();
 }
 
 void PCScreen::setSec(int m) {
-    qDebug()<<m;
+    //qDebug()<<m;
 	//grid->setMargin(m);
 	//repaint();
-    grid->removeWidget(mainTimer);
+    //grid->removeWidget(mainTimer);
     tvScreen->grid->removeWidget(tvScreen->sec);
     if(m == 3){
-        grid->addWidget(mainTimer, 24, 24, 13, 20);
+        //grid->addWidget(mainTimer, 24, 24, 13, 20);
         tvScreen->grid->addWidget(tvScreen->sec, 24, 24, 13, 20);
     }else if(m == 2){
-        grid->addWidget(mainTimer, 25, 24, 11, 20);
+        //grid->addWidget(mainTimer, 25, 24, 11, 20);
         tvScreen->grid->addWidget(tvScreen->sec, 25, 24, 11, 20);
     }else{
-        grid->addWidget(mainTimer, 26, 24, 9, 20);
+        //grid->addWidget(mainTimer, 26, 24, 9, 20);
         tvScreen->grid->addWidget(tvScreen->sec, 26, 24, 9, 20);
     }
 }
 
-void PCScreen::changeSize(int i) {
-    qDebug()<<"changeSize";
+void PCScreen::changeSize() {
+    int i = 0;
+    if(sender()->objectName() == "btnNameDown")
+        i = 1;
+    if(sender()->objectName() == "btnRegUp")
+        i = 2;
+    if(sender()->objectName() == "btnRegDown")
+        i = 3;
+
 	if (i == 0) {
 		if (HEIGHT_FAMILY < 5) {
 			HEIGHT_FAMILY += 1;
+            /*
 			grid->setRowMinimumHeight(0, minimum_height + HEIGHT_FAMILY * percent_height / 6);
 			grid->setRowMinimumHeight(1, minimum_height + HEIGHT_FAMILY * percent_height / 6);
 			grid->setRowMinimumHeight(2, minimum_height + HEIGHT_FAMILY * percent_height / 6);
 			grid->setRowMinimumHeight(3, minimum_height + HEIGHT_FAMILY * percent_height / 6);
 			grid->setRowMinimumHeight(4, minimum_height + HEIGHT_FAMILY * percent_height / 6);
 			grid->setRowMinimumHeight(5, minimum_height + HEIGHT_FAMILY * percent_height / 6);
+            */
             //if (desk->numScreens() != 1) {
                 tvScreen->grid->setRowMinimumHeight(0, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
                 tvScreen->grid->setRowMinimumHeight(1, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
@@ -1031,10 +1055,11 @@ void PCScreen::changeSize(int i) {
 
             //}
 			if (HEIGHT_FAMILY == -5) {
+
 				fam_red->setVisible(true);
 				fam_blue->setVisible(true);
-				grid->addWidget(fam_red, 0, 0, 6, 34);
-				grid->addWidget(fam_blue, 0, 34, 6, 34);
+                grid->addWidget(fam_red, 0, 0, 4, 34);
+                grid->addWidget(fam_blue, 0, 34, 4, 34);
                 //if (desk->numScreens() != 1) {
                     tvScreen->fam_red->setVisible(true);
                     tvScreen->fam_blue->setVisible(true);
@@ -1048,12 +1073,14 @@ void PCScreen::changeSize(int i) {
 		if (HEIGHT_FAMILY > -6) {
 			HEIGHT_FAMILY -= 1;
 			if (HEIGHT_FAMILY != -6) {
+                /*
 				grid->setRowMinimumHeight(0, minimum_height + HEIGHT_FAMILY * percent_height / 6);
 				grid->setRowMinimumHeight(1, minimum_height + HEIGHT_FAMILY * percent_height / 6);
 				grid->setRowMinimumHeight(2, minimum_height + HEIGHT_FAMILY * percent_height / 6);
 				grid->setRowMinimumHeight(3, minimum_height + HEIGHT_FAMILY * percent_height / 6);
 				grid->setRowMinimumHeight(4, minimum_height + HEIGHT_FAMILY * percent_height / 6);
 				grid->setRowMinimumHeight(5, minimum_height + HEIGHT_FAMILY * percent_height / 6);
+                */
                 //if (desk->numScreens() != 1) {
                     tvScreen->grid->setRowMinimumHeight(0, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
                     tvScreen->grid->setRowMinimumHeight(1, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
@@ -1064,12 +1091,14 @@ void PCScreen::changeSize(int i) {
                 //}
 			}
 			else {
+                /*
 				grid->setRowMinimumHeight(0, 0);
 				grid->setRowMinimumHeight(1, 0);
 				grid->setRowMinimumHeight(2, 0);
 				grid->setRowMinimumHeight(3, 0);
 				grid->setRowMinimumHeight(4, 0);
 				grid->setRowMinimumHeight(5, 0);
+                */
 				fam_red->setVisible(false);
 				fam_blue->setVisible(false);
 				grid->removeWidget(fam_red);
@@ -1094,11 +1123,13 @@ void PCScreen::changeSize(int i) {
 	else if (i == 2) {
 		if (HEIGHT_REGION < 5) {
 			HEIGHT_REGION += 1;
+            /*
 			grid->setRowMinimumHeight(37, minimum_height + HEIGHT_REGION * percent_height / 5);
 			grid->setRowMinimumHeight(38, minimum_height + HEIGHT_REGION * percent_height / 5);
 			grid->setRowMinimumHeight(39, minimum_height + HEIGHT_REGION * percent_height / 5);
 			grid->setRowMinimumHeight(40, minimum_height + HEIGHT_REGION * percent_height / 5);
 			grid->setRowMinimumHeight(41, minimum_height + HEIGHT_REGION * percent_height / 5);
+            */
             //if (desk->numScreens() != 1) {
                 tvScreen->grid->setRowMinimumHeight(37, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
                 tvScreen->grid->setRowMinimumHeight(38, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
@@ -1109,8 +1140,8 @@ void PCScreen::changeSize(int i) {
 			if (HEIGHT_REGION == -5) {
 				reg_red->setVisible(true);
 				reg_blue->setVisible(true);
-				grid->addWidget(reg_red, 37, 0, 5, 34);
-				grid->addWidget(reg_blue, 37, 34, 5, 34);
+                grid->addWidget(reg_red, 38, 0, 4, 34);
+                grid->addWidget(reg_blue, 38, 34, 4, 34);
 
 				flag_red->setVisible(true);
 				flag_blue->setVisible(true);
@@ -1154,11 +1185,13 @@ void PCScreen::changeSize(int i) {
 		if (HEIGHT_REGION > -6) {
 			HEIGHT_REGION -= 1;
 			if (HEIGHT_REGION != -6) {
+                /*
 				grid->setRowMinimumHeight(37, minimum_height + HEIGHT_REGION * percent_height / 5);
 				grid->setRowMinimumHeight(38, minimum_height + HEIGHT_REGION * percent_height / 5);
 				grid->setRowMinimumHeight(39, minimum_height + HEIGHT_REGION * percent_height / 5);
 				grid->setRowMinimumHeight(40, minimum_height + HEIGHT_REGION * percent_height / 5);
 				grid->setRowMinimumHeight(41, minimum_height + HEIGHT_REGION * percent_height / 5);
+                */
                 //if (desk->numScreens() != 1) {
                     tvScreen->grid->setRowMinimumHeight(37, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
                     tvScreen->grid->setRowMinimumHeight(38, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
@@ -1168,11 +1201,13 @@ void PCScreen::changeSize(int i) {
                 //}
 			}
 			else {
+                /*
 				grid->setRowMinimumHeight(37, 0);
 				grid->setRowMinimumHeight(38, 0);
 				grid->setRowMinimumHeight(39, 0);
 				grid->setRowMinimumHeight(40, 0);
 				grid->setRowMinimumHeight(41, 0);
+                */
 				reg_red->setVisible(false);
 				reg_blue->setVisible(false);
 				grid->removeWidget(reg_red);
@@ -1221,6 +1256,9 @@ void PCScreen::changeSize(int i) {
 			}
 		}
 	}
+
+
+    //repaint();
     //tvScreen->grid->removeWidget(tvScreen->rV);
     //tvScreen->grid->addWidget(tvScreen->rV, 0, 0, 42, 68);
     //tvScreen->repaint();
@@ -1228,3 +1266,10 @@ void PCScreen::changeSize(int i) {
     //tvScreen->rV->setGeometry(0, 0, tvScreen->width(), tvScreen->height());
 }
 
+void PCScreen::drawTvScreenshot(){
+    if(formView->isVisible()){
+        QPixmap pix = tvScreen->grab();
+        pix = pix.scaled(ui.lblTvscreen->width(), ui.lblTvscreen->height());
+        ui.lblTvscreen->setPixmap(pix);
+    }
+}

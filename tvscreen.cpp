@@ -14,6 +14,7 @@
 #include "list_family.h"
 #include "category.h"
 #include "lcdstopwatch.h"
+#include <QScreen>
 
 TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
 
@@ -128,7 +129,7 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
     grid->addWidget(nv_blue,    24, 14, 5, 5);
     grid->addWidget(nv_red,     24, 49, 5, 5);
 
-    grid->addWidget(plus_blue,   6, 18, 6, 6);
+    grid->addWidget(plus_blue,   6,  0, 6, 6);
     grid->addWidget(plus_red,    6, 44, 6, 6);
 
     grid->addWidget(cat,        18, 31, 4, 6);
@@ -179,6 +180,7 @@ void TVScreen::paintEvent(QPaintEvent * ) {
 }
 
 void TVScreen::showEvent(QShowEvent *){
+    /*
 	minimum_height = static_cast<int>((height() - 12) / 42);
 	qDebug() << "minimum_height = " << minimum_height;
 	percent_height = static_cast<int>((height() - 12) / 100);
@@ -194,6 +196,7 @@ void TVScreen::showEvent(QShowEvent *){
 	grid->setRowMinimumHeight(39, minimum_height);
 	grid->setRowMinimumHeight(40, minimum_height);
 	grid->setRowMinimumHeight(41, minimum_height);
+    */
 }
 
 void TVScreen::resizeEvent(QResizeEvent *){
@@ -201,5 +204,18 @@ void TVScreen::resizeEvent(QResizeEvent *){
 
     minimum_height = (height() - 12) / 42;
     percent_height = (height() - 12) / 100;
+    grid->setRowMinimumHeight(0, minimum_height);
+    grid->setRowMinimumHeight(1, minimum_height);
+    grid->setRowMinimumHeight(2, minimum_height);
+    grid->setRowMinimumHeight(3, minimum_height);
+    grid->setRowMinimumHeight(4, minimum_height);
+    grid->setRowMinimumHeight(5, minimum_height);
+    grid->setRowMinimumHeight(37, minimum_height);
+    grid->setRowMinimumHeight(38, minimum_height);
+    grid->setRowMinimumHeight(39, minimum_height);
+    grid->setRowMinimumHeight(40, minimum_height);
+    grid->setRowMinimumHeight(41, minimum_height);
 }
+
+
 

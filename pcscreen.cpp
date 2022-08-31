@@ -24,6 +24,21 @@
 #include <QHostAddress>
 #include <QNetworkInterface>
 
+WidgetFilter::WidgetFilter(QObject* pobj) : QObject(pobj){
+    qDebug()<<"constructor event";
+}
+
+WidgetFilter::~WidgetFilter(){
+    qDebug()<<"destructor event";
+}
+
+bool WidgetFilter::eventFilter(QObject* pobj, QEvent* pe){
+    if(pe->type() == QEvent::Close){
+        sigClose();
+        return true;
+    }
+    return false;
+}
 
 class MyEvent : public QEvent {
 public:
@@ -175,7 +190,13 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
 	cat->setStyleSheet("background-color: black");
 
 	formView = new QWidget;
-	ui.setupUi(formView);
+    ui.setupUi(formView);
+    WidgetFilter* wf = new WidgetFilter(formView);
+    formView->installEventFilter(wf);
+    connect(wf, SIGNAL(sigClose()), this, SLOT(closeView()));
+
+
+    //connect(formView, SIGNAL())
 
     connect(ui.btnNameDown, SIGNAL(clicked()), this, SLOT(changeSize()));
     connect(ui.btnNameUp,   SIGNAL(clicked()), this, SLOT(changeSize()));
@@ -252,6 +273,9 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     cbCam2->setObjectName("cbCam2");
     cbCam2->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     connect(cbCam2, SIGNAL(toggled(bool)), this, SLOT(turnCamera(bool)));
+
+    connect(ui.cbAutoCam1, SIGNAL(toggled(bool)), this, SLOT(autoCamera(bool)));
+    connect(ui.cbAutoCam2, SIGNAL(toggled(bool)), this, SLOT(autoCamera(bool)));
 
     QLabel* lbl = new QLabel("Последний записанный файл");
     lbl->setAlignment(Qt::AlignCenter);
@@ -492,6 +516,76 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     connect(tmr, SIGNAL(timeout()), this, SLOT(drawTvScreenshot()));
     tmr->start(100);
 
+}
+
+void PCScreen::autoCamera(bool state){
+    if(state){
+        if(sender()->objectName() == "cbAutoCam1"){
+            ui.cbAutoCam2->setEnabled(false);
+            camConn = new CameraConnection(this);
+            ui.leCam1->setText("");
+            ui.leCam1->setStyleSheet("background-color: red");
+        }
+        else{
+            ui.cbAutoCam1->setEnabled(false);
+            camConn = new CameraConnection(this, 2);
+            ui.leCam2->setText("");
+            ui.leCam2->setStyleSheet("background-color: red");
+        }
+        connect(camConn, SIGNAL(sigCamera(QString)), this, SLOT(setCamera(QString)));
+    }
+    else{
+        if(sender()->objectName() == "cbAutoCam1"){
+            ui.cbAutoCam2->setEnabled(true);
+            ui.leCam1->setStyleSheet("background-color: white");
+            QFile f("cam1.txt");
+            f.open(QIODevice::ReadOnly);
+            ui.leCam1->setText(f.readLine());
+            f.close();
+        }
+        else{
+            ui.cbAutoCam1->setEnabled(true);
+            ui.leCam2->setStyleSheet("background-color: white");
+            QFile f("cam2.txt");
+            f.open(QIODevice::ReadOnly);
+            ui.leCam2->setText(f.readLine());
+            f.close();
+        }
+        if(camConn){
+            disconnect(camConn, SIGNAL(sigCamera(QString)), nullptr, nullptr);
+            camConn->deleteLater();
+        }
+    }
+}
+
+void PCScreen::setCamera(QString ip){
+    if(ui.cbAutoCam1->isChecked()){
+        QFile f;
+        QTextStream out(&f);
+        f.setFileName("cam1.txt");
+        f.open(QIODevice::WriteOnly);
+        out << "srt://" + ip + ":1111";
+        f.close();
+        cam1Url = "srt://" + ip + ":1111";
+        ui.cbAutoCam1->setChecked(false);
+    }
+    if(ui.cbAutoCam2->isChecked()){
+        QFile f;
+        QTextStream out(&f);
+        f.setFileName("cam2.txt");
+        f.open(QIODevice::WriteOnly);
+        out << "srt://" + ip + ":2222";
+        f.close();
+        cam2Url = "srt://" + ip + ":2222";
+        ui.cbAutoCam2->setChecked(false);
+    }
+}
+
+void PCScreen::closeView(){
+    if(ui.cbAutoCam1->isChecked())
+        ui.cbAutoCam1->setChecked(false);
+    if(ui.cbAutoCam2->isChecked())
+        ui.cbAutoCam2->setChecked(false);
 }
 
 void PCScreen::StartRecord(bool b){

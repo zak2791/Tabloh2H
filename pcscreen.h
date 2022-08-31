@@ -17,6 +17,21 @@
 #include "playerviewer.h"
 #include <QPointer>
 #include <QCheckBox>
+#include "cameraconnection.h"
+
+class WidgetFilter : public QObject {
+    Q_OBJECT
+
+public:
+    WidgetFilter(QObject* pobj = nullptr);
+
+    ~WidgetFilter();
+
+    virtual bool eventFilter(QObject*, QEvent*);
+
+signals:
+    void sigClose(void);
+};
 
 class PCScreen : public QWidget {
 	Q_OBJECT
@@ -61,6 +76,10 @@ private slots:
     void changeSize(void);
     void drawTvScreenshot(void);
 
+    void autoCamera(bool);
+    void closeView(void);
+    void setCamera(QString);
+
 private:
 	QWidget * formView;
     QWidget * frmTime;
@@ -72,6 +91,8 @@ private:
     virtual void keyPressEvent(QKeyEvent *);
 	virtual void showEvent(QShowEvent *);
     virtual void resizeEvent(QResizeEvent *);
+
+
 
     void process_line(int, QString);
 
@@ -139,5 +160,7 @@ private:
 
     QThread* cam1Thread;
     QThread* cam2Thread;
+
+    QPointer<CameraConnection> camConn;
 
 };

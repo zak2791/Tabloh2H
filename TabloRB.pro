@@ -3,6 +3,7 @@ QT += core gui widgets qml
 HEADERS += \
     JSTools.h \
     camera.h \
+    cameraconnection.h \
     cameraviewer.h \
     category.h \
     fam_reg.h \
@@ -21,6 +22,7 @@ HEADERS += \
 SOURCES += \
     JSTools.cpp \
     camera.cpp \
+    cameraconnection.cpp \
     cameraviewer.cpp \
     category.cpp \
     fam_reg.cpp \

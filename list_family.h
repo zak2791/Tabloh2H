@@ -37,10 +37,12 @@ public:
 
 	~ListFamily();
 
+    QComboBox * weight;
+
 signals:
 	void sig_hide(QString, QString);
 	//void family();
-	void sig_category(QString);
+    //void sig_category(QString);
 
 private slots:
     void selectWeight(QString);
@@ -52,7 +54,6 @@ public slots:
 	void sel(QItemSelection, QItemSelection);
 	void sell(int);
 	void _hide();
-	void set_weight(QString);
     void addWeight(QList<QString>);
 
 private:
@@ -65,11 +66,10 @@ private:
 	QLabel * lbl_blue;
 	QLabel * lbl_red;
 	QString b, r, sel_data;
-    //QLineEdit * url1, * url2, * url3, * url4;
-	QFile * pFile;
+
 	int col;				//количество колонок в таблице
 	FamilyView * tbl;
-    QComboBox * weight;
+
     QComboBox * age;
     QCheckBox * cBox;
     QList<QString> sportsmens;

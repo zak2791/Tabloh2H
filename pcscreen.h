@@ -31,6 +31,8 @@ public:
 
 signals:
     void sigClose(void);
+    //void setCategory(void);
+
 };
 
 class PCScreen : public QWidget {
@@ -38,7 +40,7 @@ class PCScreen : public QWidget {
 public:
     explicit PCScreen(QWidget *parent = 0);
 
-    ~PCScreen();
+    //~PCScreen();
 
 
 
@@ -48,8 +50,8 @@ signals:
     //void signalReplay(void);
 
 public slots:
-	void sendEV_L(QObject *);
-	void sendEV_R(QObject *);
+    //void sendEV_L(QObject *);
+    //void sendEV_R(QObject *);
 	void setFlagRed(QString);
 	void setFlagBlue(QString);
 	void setView(void);
@@ -80,6 +82,8 @@ private slots:
     void closeView(void);
     void setCamera(QString);
 
+    void setCat(QString);
+
 private:
 	QWidget * formView;
     QWidget * frmTime;
@@ -94,14 +98,14 @@ private:
 
 
 
-    void process_line(int, QString);
+    //void process_line(int, QString);
 
 	QLabel * flag_blue;
 	QLabel * flag_red;
 	QString col_red;
 	QString col_blue;
-	QEvent * ev_L;
-	QEvent * ev_R;
+    //QEvent * ev_L;
+    //QEvent * ev_R;
 	int minimum_height_family;
 	int minimum_height_region;
 	QGridLayout * grid;
@@ -128,7 +132,7 @@ private:
 	int minimum_height;
 	int percent_height;
     TVScreen * tvScreen;
-    QLabel * cat;
+    QPushButton * cat;
 
     CameraViewer* viewCam1;
     CameraViewer* viewCam2;

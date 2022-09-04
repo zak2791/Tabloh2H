@@ -38,7 +38,7 @@ CameraConnection::~CameraConnection(){
 void CameraConnection::timerEvent(QTimerEvent*){
     QUdpSocket* m_pudp = new QUdpSocket(this);
     QByteArray baDatagram;
-    baDatagram.append("Camera" + QString::number(camera));
+    baDatagram.append("Camera" + QString::number(camera) + "\0");
     for(int i = 0; i < ip.length(); i++){
         QList<QString> _ip = ip[i].split(".");
         if(_ip.length() == 4){
@@ -49,6 +49,7 @@ void CameraConnection::timerEvent(QTimerEvent*){
 }
 
 void CameraConnection::clientProcessDatagrams(){
+    qDebug()<<"datagramm";
     QNetworkDatagram dtg;
     do {
         dtg = udpClient->receiveDatagram();
@@ -58,4 +59,5 @@ void CameraConnection::clientProcessDatagrams(){
         sIP = sIP.remove("::ffff:");
     if(dtg.data() == "Camera")
         sigCamera(sIP);
+    qDebug()<<dtg.data();
 }

@@ -93,11 +93,11 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
 	ListFamily * lf = new ListFamily(this);
 	lf->setObjectName("lf");
 
-    cat = new QLabel(this);//("yellow", this);
+    cat = new QPushButton(this);//("yellow", this);
 	cat->setObjectName("cat");
 	//cat->setText("55");
 	cat->setAutoFillBackground(true);
-	cat->setStyleSheet("background-color: black");
+    cat->setStyleSheet("background-color: black; color: white; text-align: center");
 
 
 
@@ -132,7 +132,7 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
     grid->addWidget(plus_blue,   6,  0, 6, 6);
     grid->addWidget(plus_red,    6, 44, 6, 6);
 
-    grid->addWidget(cat,        18, 31, 4, 6);
+    grid->addWidget(cat,        18, 30, 4, 8);
 
     grid->addWidget(sec,      24, 24, 13, 20);
     grid->addWidget(sec_blue,   8, 0, 14, 24);
@@ -215,6 +215,9 @@ void TVScreen::resizeEvent(QResizeEvent *){
     grid->setRowMinimumHeight(39, minimum_height);
     grid->setRowMinimumHeight(40, minimum_height);
     grid->setRowMinimumHeight(41, minimum_height);
+    QFont f;
+    f.setPixelSize(cat->height() * 0.8);
+    cat->setFont(f);
 }
 
 

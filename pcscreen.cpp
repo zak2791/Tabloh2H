@@ -21,8 +21,8 @@
 #include "category.h"
 #include "lcdstopwatch.h"
 
-#include <QHostAddress>
-#include <QNetworkInterface>
+//#include <QHostAddress>
+//#include <QNetworkInterface>
 
 WidgetFilter::WidgetFilter(QObject* pobj) : QObject(pobj){
     qDebug()<<"constructor event";
@@ -32,7 +32,7 @@ WidgetFilter::~WidgetFilter(){
     qDebug()<<"destructor event";
 }
 
-bool WidgetFilter::eventFilter(QObject* pobj, QEvent* pe){
+bool WidgetFilter::eventFilter(QObject* , QEvent* pe){
     if(pe->type() == QEvent::Close){
         sigClose();
         return true;
@@ -40,15 +40,17 @@ bool WidgetFilter::eventFilter(QObject* pobj, QEvent* pe){
     return false;
 }
 
+/*
 class MyEvent : public QEvent {
 public:
 	MyEvent(int ev) : QEvent{ (Type)(QEvent::User + ev) } {}
 
 };
+*/
 
 PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
-	ev_L = new MyEvent(200);
-	ev_R = new MyEvent(201);
+    //ev_L = new MyEvent(200);
+    //ev_R = new MyEvent(201);
 
 	col_red = "white";
 	col_blue = "white";
@@ -180,14 +182,14 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
 	nv_blue->setObjectName("nv_blue");
     //nv_blue->setFocusPolicy(Qt::NoFocus);
 
+    cat = new QPushButton(this);//("yellow", this);
+    cat->setAutoFillBackground(true);
+    cat->setStyleSheet("background-color: black; color: white; text-align: center");
+
+
     ListFamily * lf = new ListFamily(this);
 	lf->setObjectName("lf");
-	
-    cat = new QLabel(this);//("yellow", this);
-	cat->setObjectName("cat");
-	//cat->setText("55");
-	cat->setAutoFillBackground(true);
-	cat->setStyleSheet("background-color: black");
+    connect(lf->weight, SIGNAL(activated(const QString&)), this, SLOT(setCat(QString)));
 
 	formView = new QWidget;
     ui.setupUi(formView);
@@ -286,7 +288,7 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
                                      "border-bottom-left-radius: 10px;"
                                      "border-bottom-right-radius: 10px;"
                                      "font-size: 12pt");
-
+/*
     QString ip = "";
     QList<QHostAddress> list = QNetworkInterface::allAddresses();
     for(int nIter=0; nIter<list.count(); nIter++){
@@ -296,8 +298,8 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
                 break;
             }
     }
-
-    QLabel* lbl2 = new QLabel("Установка времени боя - 'F1', сброс - 'Backspace', выход - 'Esc'\n IP адрес: " + ip);
+*/
+    QLabel* lbl2 = new QLabel("Установка времени боя - 'F1', сброс - 'Backspace', выход - 'Esc'");
     lbl2->setAlignment(Qt::AlignCenter);
     lbl2->setStyleSheet("color: white; font-size: 12pt");
 
@@ -516,6 +518,11 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     connect(tmr, SIGNAL(timeout()), this, SLOT(drawTvScreenshot()));
     tmr->start(100);
 
+}
+
+void PCScreen::setCat(QString s){
+    cat->setText(s);
+    tvScreen->cat->setText(s);
 }
 
 void PCScreen::autoCamera(bool state){
@@ -739,7 +746,7 @@ void PCScreen::closeEvent(QCloseEvent *){
     qApp->quit();
 }
 
-
+/*
 void PCScreen::process_line(int i, QString s){
     switch (i) {
     case 1:
@@ -798,7 +805,9 @@ void PCScreen::process_line(int i, QString s){
     }
 
 }
+*/
 
+/*
 PCScreen::~PCScreen(){
     QFile f("start.txt");
     f.open(QIODevice::WriteOnly | QIODevice::Text);
@@ -824,8 +833,7 @@ PCScreen::~PCScreen(){
     out << reg_red->getText() << "\n";
     out << reg_blue->getText() << "\n";
 }
-
-
+*/
 
 void PCScreen::setTime(){
     int min = uiTime.dMin->value();
@@ -873,9 +881,12 @@ void PCScreen::resizeEvent(QResizeEvent *){
     minimum_height = (height() - 12) / 42;
 
     percent_height = (height() - 12) / 100;
-    int w = (width() - 12) * 4 / 68;
+    //int w = (width() - 12) * 4 / 68;
     //cv_left->setSize(w, w / 2);
     //cv_left->resize(w, w / 2);
+    QFont f;
+    f.setPixelSize(cat->height() * 0.8);
+    cat->setFont(f);
 }
 
 void PCScreen::showEvent(QShowEvent *){
@@ -897,6 +908,7 @@ void PCScreen::showEvent(QShowEvent *){
     */
 }
 
+/*
 void PCScreen::sendEV_L(QObject * pObj)
 {
 	QApplication::sendEvent(pObj, ev_L);
@@ -906,6 +918,7 @@ void PCScreen::sendEV_R(QObject * pObj)
 {
 	QApplication::sendEvent(pObj, ev_R);
 }
+*/
 
 void PCScreen::setFlagRed(QString s){
 	QString st = "./flags/" + s + ".png";
@@ -915,6 +928,9 @@ void PCScreen::setFlagRed(QString s){
 		flag.load(st);
 		flag = flag.scaled(flag_red->size());
 		flag_red->setPixmap(flag);
+        flag.load(st);
+        flag = flag.scaled(tvScreen->flag_red->size());
+        tvScreen->flag_red->setPixmap(flag);
 	}
 }
 
@@ -926,6 +942,9 @@ void PCScreen::setFlagBlue(QString s){
 		flag.load(st);
 		flag = flag.scaled(flag_red->size());
 		flag_blue->setPixmap(flag);
+        flag.load(st);
+        flag = flag.scaled(tvScreen->flag_blue->size());
+        tvScreen->flag_blue->setPixmap(flag);
 	}
 }
 
@@ -1121,12 +1140,9 @@ void PCScreen::setSec(int m) {
 
 void PCScreen::changeSize() {
     int i = 0;
-    if(sender()->objectName() == "btnNameDown")
-        i = 1;
-    if(sender()->objectName() == "btnRegUp")
-        i = 2;
-    if(sender()->objectName() == "btnRegDown")
-        i = 3;
+    if(sender()->objectName() == "btnNameDown") i = 1;
+    if(sender()->objectName() == "btnRegUp")    i = 2;
+    if(sender()->objectName() == "btnRegDown")  i = 3;
 
 	if (i == 0) {
 		if (HEIGHT_FAMILY < 5) {

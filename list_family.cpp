@@ -37,12 +37,6 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
 	//setWindowState(Qt::WindowFullScreen);
 	sel_data = "";
 
-
-	pFile = new QFile("cam.txt");
-	if (pFile->exists() != true) {
-		pFile->open(QFile::WriteOnly);
-		pFile->close();	
-	}
 	//выбор весовой категории
     weight = new QComboBox(this);
 
@@ -71,7 +65,7 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
 
     doc.workbook()->setActiveSheet(0);
 
-    QList<QString>* qL;
+    //QList<QString>* qL;
     QVector<CellLocation> clList;
     int maxRow = -1;
     int maxCol = -1;
@@ -169,7 +163,7 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
 	connect(sel, SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)), this, SLOT(sel(QItemSelection, QItemSelection)));
     connect(tbl, SIGNAL(mouse_button(int)), this, SLOT(sell(int)));
 	connect(inFam, SIGNAL(textEdited(const QString&)), this, SLOT(textEdited(QString)));
-	connect(weight, SIGNAL(activated(const QString&)), this, SLOT(set_weight(QString)));
+    //connect(weight, SIGNAL(activated(const QString&)), this, SLOT(set_weight(QString)));
     connect(weight, SIGNAL(activated(const QString&)), this, SLOT(selectWeight(QString)));
     connect(age, SIGNAL(activated(const QString&)), this, SLOT(selectAge(QString)));
     connect(cBox, SIGNAL(stateChanged(int)), this, SLOT(allowSorting(int)));
@@ -224,11 +218,6 @@ void ListFamily::addWeight(QList<QString> s){
         weight->removeItem(i);
     weight->addItems(s);
 
-}
-
-void ListFamily::set_weight(QString s)
-{
-	emit sig_category(s);
 }
 
 void ListFamily::showEvent(QShowEvent  * )

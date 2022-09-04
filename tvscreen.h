@@ -42,7 +42,7 @@ public:
     LCDTimer * sec_blue_t;
 
     //Category * cat;
-    QLabel* cat;
+    QPushButton* cat;
 
 	QGridLayout * grid;
 

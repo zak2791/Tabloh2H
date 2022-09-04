@@ -70,3 +70,6 @@ QXLSX_HEADERPATH=./header/  # current QXlsx header path is ./header/
 QXLSX_SOURCEPATH=./source/  # current QXlsx source path is ./source/
 include(./QXlsx.pri)
 #CONFIG     += debug
+
+RESOURCES += \
+    res.qrc

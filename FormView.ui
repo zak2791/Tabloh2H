@@ -337,8 +337,8 @@
     <string/>
    </property>
    <property name="icon">
-    <iconset>
-     <normaloff>../build-TabloRB-Desktop_Qt_5_12_11_MinGW_64_bit-Debug/DOWN.png</normaloff>../build-TabloRB-Desktop_Qt_5_12_11_MinGW_64_bit-Debug/DOWN.png</iconset>
+    <iconset resource="res.qrc">
+     <normaloff>:/images/DOWN.png</normaloff>:/images/DOWN.png</iconset>
    </property>
   </widget>
   <widget class="QPushButton" name="btnNameUp">
@@ -354,8 +354,8 @@
     <string/>
    </property>
    <property name="icon">
-    <iconset>
-     <normaloff>../build-TabloRB-Desktop_Qt_5_12_11_MinGW_64_bit-Debug/UP.png</normaloff>../build-TabloRB-Desktop_Qt_5_12_11_MinGW_64_bit-Debug/UP.png</iconset>
+    <iconset resource="res.qrc">
+     <normaloff>:/images/UP.png</normaloff>:/images/UP.png</iconset>
    </property>
   </widget>
   <widget class="QPushButton" name="btnRegDown">
@@ -371,8 +371,8 @@
     <string/>
    </property>
    <property name="icon">
-    <iconset>
-     <normaloff>../build-TabloRB-Desktop_Qt_5_12_11_MinGW_64_bit-Debug/DOWN.png</normaloff>../build-TabloRB-Desktop_Qt_5_12_11_MinGW_64_bit-Debug/DOWN.png</iconset>
+    <iconset resource="res.qrc">
+     <normaloff>:/images/DOWN.png</normaloff>:/images/DOWN.png</iconset>
    </property>
   </widget>
   <widget class="QPushButton" name="btnRegUp">
@@ -388,8 +388,8 @@
     <string/>
    </property>
    <property name="icon">
-    <iconset>
-     <normaloff>../build-TabloRB-Desktop_Qt_5_12_11_MinGW_64_bit-Debug/UP.png</normaloff>../build-TabloRB-Desktop_Qt_5_12_11_MinGW_64_bit-Debug/UP.png</iconset>
+    <iconset resource="res.qrc">
+     <normaloff>:/images/UP.png</normaloff>:/images/UP.png</iconset>
    </property>
   </widget>
   <widget class="QLabel" name="lblTvscreen">
@@ -445,7 +445,9 @@
    </property>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="res.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>rbView1</sender>

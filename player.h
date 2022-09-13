@@ -46,6 +46,7 @@ signals:
     void sigParam(int, int, int);
     void sigFrame(int);
     void sigBuffer(int, int);
+    void sigStartStopPlay(bool);
 
 };
 

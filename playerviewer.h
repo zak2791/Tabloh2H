@@ -50,6 +50,7 @@ private slots:
     void draw_image(QImage);
     void parametersMedia(int, int, int);
     void drawBuffer(int, int);
+    void playEnable(bool);
 
 signals:
     void sigClose(void);

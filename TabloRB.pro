@@ -1,3 +1,9 @@
+QMAKE_CXXFLAGS_RELEASE -= -O3
+QMAKE_CXXFLAGS_RELEASE -= -O1
+QMAKE_CXXFLAGS_RELEASE -= -O2
+QMAKE_CXXFLAGS_RELEASE -= -O0
+
+RC_ICONS = appico.ico
 
 QT += core gui widgets qml
 HEADERS += \
@@ -45,7 +51,8 @@ FORMS += \
 
 DISTFILES += \
     ../build-TabloRB-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/script.js \
-    ../build-TabloRB-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/script.js
+    ../build-TabloRB-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/script.js \
+    script.js
 
 win32: LIBS += -L$$PWD/ffmpeg/lib/ -lavformat
 

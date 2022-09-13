@@ -54,6 +54,8 @@ PlayerViewer::PlayerViewer(QString file, QWidget* parent) : QGraphicsView(parent
     connect(player, SIGNAL(sigParam(int, int, int)), this, SLOT(parametersMedia(int, int, int)));
     connect(player, SIGNAL(sigFrame(int)), slider, SLOT(setValue(int)));
     connect(player, SIGNAL(sigBuffer(int, int)), this, SLOT(drawBuffer(int, int)));
+    connect(player, SIGNAL(sigStartStopPlay(bool)), this, SLOT(playEnable(bool)));
+
 
     thread->start();
 
@@ -61,6 +63,10 @@ PlayerViewer::PlayerViewer(QString file, QWidget* parent) : QGraphicsView(parent
 
     player->turnPlay();
 
+}
+
+void PlayerViewer::playEnable(bool b){
+    slider->setEnabled(b);
 }
 
 void PlayerViewer::closeEvent(QCloseEvent*){

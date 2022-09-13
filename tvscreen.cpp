@@ -97,7 +97,8 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
 	cat->setObjectName("cat");
 	//cat->setText("55");
 	cat->setAutoFillBackground(true);
-    cat->setStyleSheet("background-color: black; color: white; text-align: center");
+    cat->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    cat->setStyleSheet("background-color: black; color: white; text-align: center; border-radius: 20px");
 
 
 
@@ -132,7 +133,7 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
     grid->addWidget(plus_blue,   6,  0, 6, 6);
     grid->addWidget(plus_red,    6, 44, 6, 6);
 
-    grid->addWidget(cat,        18, 30, 4, 8);
+    grid->addWidget(cat,        12, 28, 6, 12);
 
     grid->addWidget(sec,      24, 24, 13, 20);
     grid->addWidget(sec_blue,   8, 0, 14, 24);

@@ -85,6 +85,7 @@ void Player::Play(){
             if(flag_seek){
                 ret =av_seek_frame(ifmt_ctx, best_stream, flag_seek, AVSEEK_FLAG_FRAME);
                 flag_seek = 0;
+                qDebug()<<"seek = 0";
                 bufImage->clear();
             }
             ret = av_read_frame(ifmt_ctx, pkt);
@@ -145,15 +146,20 @@ end:
 
 void Player::seek(int s){
     flag_seek = s * oneFrameDuration;
+    currentImage = -1;
+    qDebug()<<"flag_seek = "<<s<<oneFrameDuration<<flag_seek;
 }
 
 void Player::turnPlay(){
     if(flag_play){
         flag_play = false;
         currentImage = bufImage->length() - 1;
+        sigStartStopPlay(true);
     }
-    else
+    else{
         flag_play = true;
+        sigStartStopPlay(false);
+    }
 }
 
 QImage Player::avFrame2QImage(AVFrame* frame){
@@ -194,7 +200,8 @@ void Player::nextFrame(){
 }
 
 void Player::previewFrame(){
-    if(currentImage && !flag_play){
+    qDebug()<<"currentImage"<<currentImage<<"bufImage->length()"<<bufImage->length();
+    if(currentImage > 0 && !flag_play){
         sigImage(bufImage->at(--currentImage));
         sigBuffer(bufImage->length(), currentImage);
     }

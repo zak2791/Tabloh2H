@@ -62,11 +62,11 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
     sec = new LCDTimer(this);
 	//sec->setObjectName("sec");
 
-    sec_red = new LCDTimer(this, "0:20", QColor(255, 0, 0), QColor(255, 102, 102), false, true);
+    sec_red = new LCDStopwatch(this, "0:20", QColor(255, 0, 0), QColor(255, 102, 102), false, true);
     //sec_red->setObjectName("sd_sec_red");
 	sec_red->hide();
 
-    sec_blue = new LCDTimer(this, "0:20", QColor(0, 0, 255), QColor(102, 102, 255), false, true);
+    sec_blue = new LCDStopwatch(this, "0:20", QColor(0, 0, 255), QColor(102, 102, 255), false, true);
 	//sec_blue->setObjectName("sec_blue");
 	sec_blue->hide();
 

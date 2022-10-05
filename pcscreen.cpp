@@ -151,19 +151,19 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     mainTimer->setObjectName("mainTimer");
     //connect(btnTime, SIGNAL(clicked()), mainTimer, SLOT(StartStop()));
 
-    LCDTimer * sec_red = new LCDTimer(this, "0:20", QColor(255, 0, 0), QColor(255, 102, 102), true, true);
+    LCDStopwatch * sec_red = new LCDStopwatch(this, "0:20", QColor(255, 0, 0), QColor(255, 102, 102), true, true);
 	sec_red->setObjectName("sec_red");
 	sec_red->hide();
 
-    LCDTimer * sec_blue = new LCDTimer(this, "0:20", QColor(0, 0, 255), QColor(102, 102, 255), true, true);
+    LCDStopwatch * sec_blue = new LCDStopwatch(this, "0:20", QColor(0, 0, 255), QColor(102, 102, 255), true, true);
 	sec_blue->setObjectName("sec_blue");
 	sec_blue->hide();
 
-    LCDTimer * sec_red_t = new LCDStopwatch(this, "2:00", QColor(255, 0, 0), QColor(255, 102, 102), true, true);
+    LCDStopwatch * sec_red_t = new LCDStopwatch(this, "2:00", QColor(255, 0, 0), QColor(255, 102, 102), true, true);
     sec_red_t->setObjectName("sec_red_t");
     sec_red_t->hide();
 
-    LCDTimer * sec_blue_t = new LCDStopwatch(this, "2:00", QColor(0, 0, 255), QColor(102, 102, 255), true, true);
+    LCDStopwatch * sec_blue_t = new LCDStopwatch(this, "2:00", QColor(0, 0, 255), QColor(102, 102, 255), true, true);
     sec_blue_t->setObjectName("sec_blue_t");
     sec_blue_t->hide();
 
@@ -618,14 +618,18 @@ void PCScreen::StartRecord(bool b){
 }
 
 void PCScreen::StopRecord(){
+    qDebug()<<"1";
     camera1->StopRecord();
+    qDebug()<<"2";
     camera2->StopRecord();
+    qDebug()<<"3";
     btnPlayLastWithSound1->setEnabled(true);
     btnPlayLastSlowMotion1->setEnabled(true);
     btnPlayLastWithSound2->setEnabled(true);
     btnPlayLastSlowMotion2->setEnabled(true);
     btnPlaySlowMotion->setEnabled(true);
     btnStopRecord->setEnabled(false);
+    qDebug()<<"4";
 }
 
 void PCScreen::PlayFile(){
@@ -874,7 +878,10 @@ void PCScreen::paintEvent(QPaintEvent * ) {
 }
 
 void PCScreen::keyPressEvent(QKeyEvent * pe){
-   sendKey(pe->key());
+    if(pe->key() == Qt::Key_F1)
+        frmTime->show();
+    else
+        sendKey(pe->key());
 }
 
 void PCScreen::resizeEvent(QResizeEvent *){

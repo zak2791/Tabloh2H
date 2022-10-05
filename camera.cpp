@@ -16,7 +16,8 @@ void Camera::StartRecord(QString s){
 }
 
 void Camera::StopRecord(){
-    flag_record = 4;
+    if(flag_record)
+        flag_record = 4;
 }
 
 void Camera::setUrl(QString u){

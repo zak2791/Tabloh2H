@@ -11,6 +11,7 @@
 #include "fam_reg.h"
 #include "plus.h"
 #include "category.h"
+#include "lcdstopwatch.h"
 
 class TVScreen : public QWidget {
 	Q_OBJECT
@@ -36,10 +37,10 @@ public:
 	Plus * plus_red;
 	Plus * plus_blue;
     LCDTimer * sec;
-    LCDTimer * sec_red;
-    LCDTimer * sec_blue;
-    LCDTimer * sec_red_t;
-    LCDTimer * sec_blue_t;
+    LCDStopwatch * sec_red;
+    LCDStopwatch * sec_blue;
+    LCDStopwatch * sec_red_t;
+    LCDStopwatch * sec_blue_t;
 
     //Category * cat;
     QPushButton* cat;

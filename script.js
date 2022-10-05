@@ -118,14 +118,14 @@ function keyEvent(key){
 	switch(key) {
 		case 16777219:  //backspace 
 			sbros();
-		break;
+            break;
 		case 16777216:  //esc
             if(JSTools.alert(decodeURIComponent(escape("Выход"))) === 16384){
 				wgt.close();
 			}
-        break;
+            break;
 		default:
-        break;
+            break;
 	}
 }
 

@@ -84,7 +84,10 @@ private slots:
 
     void setCat(QString);
 
+    void CpuUsage(void);
+
 private:
+    QLabel* lblCpuUsage;
 	QWidget * formView;
     QWidget * frmTime;
 	int View;									//вид табло: 0-красно-синий фон, 

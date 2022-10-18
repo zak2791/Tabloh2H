@@ -303,6 +303,10 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     lbl2->setAlignment(Qt::AlignCenter);
     lbl2->setStyleSheet("color: white; font-size: 12pt");
 
+    lblCpuUsage = new QLabel;
+    lblCpuUsage->setAlignment(Qt::AlignCenter);
+    lblCpuUsage->setStyleSheet("background-color: black; color: white; font-size: 12pt");
+
     //lblTv.hide();
 
 	grid = new QGridLayout(this);
@@ -331,6 +335,7 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     grid->addWidget(btnTehTime_blue,        4,  38, 2,  6);
 
     grid->addWidget(btnPlus_red,            6,  30, 2,  3);
+    grid->addWidget(lblCpuUsage,            6,  33, 2,  2);
     grid->addWidget(btnPlus_blue,           6,  35, 2,  3);
 
     grid->addWidget(plus_red,               4,  0, 4,  4);
@@ -518,6 +523,29 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     connect(tmr, SIGNAL(timeout()), this, SLOT(drawTvScreenshot()));
     tmr->start(100);
 
+    QTimer* tmrCpu = new QTimer(this);
+    connect(tmrCpu, SIGNAL(timeout()), this, SLOT(CpuUsage()));
+    tmrCpu->start(1000);
+
+}
+
+void PCScreen::CpuUsage(){
+    static ULARGE_INTEGER TimeIdle, TimeKernel, TimeUser;
+    FILETIME Idle, Kernel, User;
+    ULARGE_INTEGER uIdle, uKernel, uUser;
+    GetSystemTimes(&Idle, &Kernel, &User);
+    memcpy(&uIdle, &Idle, sizeof(FILETIME));
+    memcpy(&uKernel, &Kernel, sizeof(FILETIME));
+    memcpy(&uUser, &User, sizeof(FILETIME));
+    long long t;
+    t = (((((uKernel.QuadPart-TimeKernel.QuadPart)+(uUser.QuadPart-TimeUser.QuadPart))-
+        (uIdle.QuadPart-TimeIdle.QuadPart))*(100))/((uKernel.QuadPart-
+            TimeKernel.QuadPart)+(uUser.QuadPart-TimeUser.QuadPart)));
+    TimeIdle.QuadPart = uIdle.QuadPart;
+    TimeUser.QuadPart = uUser.QuadPart;
+    TimeKernel.QuadPart = uKernel.QuadPart;
+    lblCpuUsage->setText(QString::number(t) + " %");
+    //qDebug()<<"cpu usage = "<<t<<"%";
 }
 
 void PCScreen::setCat(QString s){

@@ -498,17 +498,19 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     camera1->setObjectName("camera1");
     threadCam1 = new QThread;
     camera1->moveToThread(threadCam1);
-    connect(threadCam1, SIGNAL(started()), camera1, SLOT(TurnOnCamera()));
-    connect(camera1, SIGNAL(sigImage(QImage)), viewCam1, SLOT(draw_image(QImage)));
-    connect(camera1, SIGNAL(finished()), this, SLOT(finishedCamera()));
+    connect(threadCam1, SIGNAL(started()),        camera1,  SLOT(TurnOnCamera()));
+    connect(camera1,    SIGNAL(sigImage(QImage)), viewCam1, SLOT(draw_image(QImage)));
+    connect(camera1,    SIGNAL(finished()),       this,     SLOT(finishedCamera()));
+    connect(ui.cbKey,   SIGNAL(toggled(bool)),    camera1,  SLOT(onlyKeyFrame(bool)), Qt::DirectConnection);
 
     camera2 = new Camera;
     camera2->setObjectName("camera2");
     threadCam2 = new QThread;
     camera2->moveToThread(threadCam2);
-    connect(threadCam2, SIGNAL(started()), camera2, SLOT(TurnOnCamera()));
-    connect(camera2, SIGNAL(sigImage(QImage)), viewCam2, SLOT(draw_image(QImage)));
-    connect(camera2, SIGNAL(finished()), this, SLOT(finishedCamera()));
+    connect(threadCam2, SIGNAL(started()),        camera2,  SLOT(TurnOnCamera()));
+    connect(camera2,    SIGNAL(sigImage(QImage)), viewCam2, SLOT(draw_image(QImage)));
+    connect(camera2,    SIGNAL(finished()),       this,     SLOT(finishedCamera()));
+    connect(ui.cbKey,   SIGNAL(toggled(bool)),    camera2,  SLOT(onlyKeyFrame(bool)), Qt::DirectConnection);
 
     connect(mainTimer, SIGNAL(sigStarted(bool)), this, SLOT(StartRecord(bool)));
     connect(mainTimer, SIGNAL(sigReset()), this, SLOT(StopRecord()));

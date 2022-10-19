@@ -13,7 +13,7 @@
     <x>0</x>
     <y>0</y>
     <width>363</width>
-    <height>439</height>
+    <height>488</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -282,7 +282,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>240</y>
+     <y>280</y>
      <width>150</width>
      <height>20</height>
     </rect>
@@ -292,7 +292,7 @@
    <property name="geometry">
     <rect>
      <x>192</x>
-     <y>240</y>
+     <y>280</y>
      <width>150</width>
      <height>20</height>
     </rect>
@@ -302,7 +302,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>220</y>
+     <y>250</y>
      <width>71</width>
      <height>16</height>
     </rect>
@@ -315,7 +315,7 @@
    <property name="geometry">
     <rect>
      <x>270</x>
-     <y>220</y>
+     <y>250</y>
      <width>71</width>
      <height>16</height>
     </rect>
@@ -396,7 +396,7 @@
    <property name="geometry">
     <rect>
      <x>26</x>
-     <y>272</y>
+     <y>320</y>
      <width>311</width>
      <height>151</height>
     </rect>
@@ -409,7 +409,7 @@
    <property name="geometry">
     <rect>
      <x>100</x>
-     <y>220</y>
+     <y>250</y>
      <width>21</width>
      <height>17</height>
     </rect>
@@ -422,7 +422,7 @@
    <property name="geometry">
     <rect>
      <x>250</x>
-     <y>220</y>
+     <y>250</y>
      <width>21</width>
      <height>17</height>
     </rect>
@@ -435,13 +435,26 @@
    <property name="geometry">
     <rect>
      <x>116</x>
-     <y>217</y>
+     <y>247</y>
      <width>131</width>
      <height>20</height>
     </rect>
    </property>
    <property name="text">
     <string>&lt;---- автонастройка ----&gt;</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="cbKey">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>220</y>
+     <width>321</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Показ только ключевых кадров (снижает нагрузку на ЦП)</string>
    </property>
   </widget>
  </widget>

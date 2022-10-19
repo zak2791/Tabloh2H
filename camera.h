@@ -28,7 +28,8 @@ public:
     void setUrl(QString);
 
 public slots:
-        void TurnOnCamera();
+        void TurnOnCamera(void);
+        void onlyKeyFrame(bool);
 
 private:
     QImage avFrame2QImage(AVFrame*);
@@ -42,6 +43,7 @@ private:
     QString url;
     QString file;
     int prepareRecord(AVFormatContext*, int*, QString);
+    bool only_key_frame;
 
 signals:
     void sigImage(QImage);

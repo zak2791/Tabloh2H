@@ -61,6 +61,7 @@ void LCDTimer::setTime(int t){
     QString sTime = intTimeToStr(t);
     display(sTime);
     emit sigTime(sTime, palette());
+    intInitTime = t;
 }
 
 void LCDTimer::Reset(){

@@ -6,7 +6,7 @@ Camera::Camera(QObject *parent) : QObject(parent){
     url = QString("");
     file = "";
     flag_record = 0;
-    only_key_frame = false;
+    only_key_frame = true;
 }
 
 void Camera::StartRecord(QString s){
@@ -188,7 +188,6 @@ end:
 
 void Camera::onlyKeyFrame(bool b){
     only_key_frame = b;
-    qDebug()<<"only_key_frame = "<<only_key_frame;
 }
 
 void Camera::TurnOffCamera(){

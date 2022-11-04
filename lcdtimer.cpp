@@ -42,14 +42,14 @@ void LCDTimer::StartStop(){
         timer->stop();
         status = 0;
         setPalette(palStopped);
-        sigStarted(false);
+        emit sigStarted(false);
     }
     else {
         if (status != 2) {
             timer->start(1000);
             status = 1;
             setPalette(palWorks);
-            sigStarted(true);
+            emit sigStarted(true);
         }    
     }
     qDebug()<<objectName()<<time;
@@ -71,7 +71,7 @@ void LCDTimer::Reset(){
         QString sTime = intTimeToStr(intInitTime);
         display(sTime);
         emit sigTime(sTime, palette());
-        sigReset();
+        emit sigReset();
     }
 }
 
@@ -80,7 +80,7 @@ void LCDTimer::showTime(){
         status = 2;
         timer->stop();
         setPalette(palStopped);
-        sigStarted(false);
+        emit sigStarted(false);
         if(_sound)
             MessageBeep(MB_OK);
     }
@@ -124,12 +124,12 @@ QString LCDTimer::intTimeToStr(int iTime){
 
 void LCDTimer::showEvent(QShowEvent*){
     visible = true;
-    sigVisible(true);
+    emit sigVisible(true);
 }
 
 void LCDTimer::hideEvent(QHideEvent*){
     visible = false;
-    sigVisible(false);
+    emit sigVisible(false);
 }
 
 bool LCDTimer::getVisible(){

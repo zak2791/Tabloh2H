@@ -1,4 +1,5 @@
 #include "lcdstopwatch.h"
+#include <QDebug>
 
 LCDStopwatch::LCDStopwatch(QWidget* parent,
                            QString strInitTime,
@@ -17,14 +18,14 @@ void LCDStopwatch::StartStop(){
         timer->stop();
         status = 0;
         setPalette(palStopped);
-        sigStarted(false);
+        emit sigStarted(false);
     }
     else {
         if (status != 2) {
             timer->start(1000);
             status = 1;
             setPalette(palWorks);
-            sigStarted(true);
+            emit sigStarted(true);
         }
     }
 
@@ -44,6 +45,7 @@ void LCDStopwatch::showTime(){
     QString sTime = intTimeToStr(time);
     display(sTime);
     emit sigTime(sTime, palette());
+    qDebug()<<"status = "<<status;
 }
 
 void LCDStopwatch::Reset(){

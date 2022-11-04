@@ -71,7 +71,7 @@ function parter_red(){
             sec_red.sigVisible(true);
     }else{
         if(mainTimer.Status == 1){
-            if(!sec_red.Status == 1){
+            if(!(sec_red.Status == 1)){
                 sec_red.Reset();
             }
             sec_red.StartStop();
@@ -92,7 +92,7 @@ function parter_blue(){
             sec_blue.sigVisible(true);
     }else{
         if(mainTimer.Status == 1){
-            if(!sec_blue.Status == 1){
+            if(!(sec_blue.Status == 1)){
                 sec_blue.Reset();
             }
             sec_blue.StartStop();

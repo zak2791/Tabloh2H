@@ -34,7 +34,7 @@ WidgetFilter::~WidgetFilter(){
 
 bool WidgetFilter::eventFilter(QObject* , QEvent* pe){
     if(pe->type() == QEvent::Close){
-        sigClose();
+        emit sigClose();
         return true;
     }
     return false;

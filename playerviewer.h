@@ -12,6 +12,7 @@
 #include <QHBoxLayout>
 #include <QKeyEvent>
 #include <QPaintEvent>
+#include <QLabel>
 
 class PlayerViewer : public QGraphicsView
 {
@@ -31,6 +32,7 @@ private:
     QPushButton* btnNextFrame;
     QPushButton* btnPreviewFrame;
     QPushButton* btnClose;
+    QLabel* lblTime;
 
     Player* player;
     QThread* thread;

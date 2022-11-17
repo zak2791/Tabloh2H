@@ -59,9 +59,15 @@ PlayerViewer::PlayerViewer(QString file, QWidget* parent) : QGraphicsView(parent
 
     thread->start();
 
+    lblTime = new QLabel("time", this);
+    lblTime->setStyleSheet("color: red; background-color: white; font-size: 20px");
+    connect(player, SIGNAL(sigTime(QString)), lblTime, SLOT(setText(QString)));
+
     showFullScreen();
 
     player->turnPlay();
+
+
 
 }
 
@@ -92,8 +98,14 @@ void PlayerViewer::draw_image(QImage img){
     if(pi)
         delete pi;
     pi = scene->addPixmap(QPixmap::fromImage(img.scaled(this->width(), this->height() - 100)));
+    //QGraphicsTextItem* textItem = new QGraphicsTextItem("a");
+    //textItem->setPos(100, 100);
+    //scene->addItem(textItem);
     scene->setSceneRect(this->rect());
+
+
     setScene(scene);
+    lblTime->adjustSize();
 }
 
 void PlayerViewer::parametersMedia(int numberFrames, int avgFps, int durationMediaInSecunds){

@@ -515,10 +515,16 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     connect(mainTimer, SIGNAL(sigStarted(bool)), this, SLOT(StartRecord(bool)));
     connect(mainTimer, SIGNAL(sigReset()), this, SLOT(StopRecord()));
 
-    QDir dir("video");
+    QDir dir("camera1");
     if(!dir.exists()){
         QDir dir;
-        dir.mkdir("video");
+        dir.mkdir("camera1");
+    }
+
+    dir.setPath("camera2");
+    if(!dir.exists()){
+        QDir dir;
+        dir.mkdir("camera2");
     }
 
     QTimer* tmr = new QTimer(this);
@@ -632,12 +638,14 @@ void PCScreen::StartRecord(bool b){
     }
     QString currentTime = QTime::currentTime().toString().replace(":", "_");
     if(threadCam1->isRunning()){
-        currentFileCam1 = "video/cam1_" + currentTime + ".mp4";
-        camera1->StartRecord(currentFileCam1);    
+        //currentFileCam1 = "camera1/" + currentTime + ".mp4";
+        //camera1->StartRecord(currentFileCam1);
+        camera1->StartRecord("camera1/" + currentTime + ".mp4");
     }
     if(threadCam2->isRunning()){
-        currentFileCam2 = "video/cam2_" + currentTime + ".mp4";
-        camera2->StartRecord(currentFileCam2);
+        //currentFileCam2 = "camera2/" + currentTime + ".mp4";
+        //camera2->StartRecord(currentFileCam2);
+        camera2->StartRecord("camera2/" + currentTime + ".mp4");
     }
     btnPlayLastWithSound1->setEnabled(false);
     btnPlayLastSlowMotion1->setEnabled(false);
@@ -666,10 +674,23 @@ void PCScreen::PlayFile(){
     QProcess proc;
     QStringList l;
     l.append(QString("-fs"));
-    if(sender()->objectName() == "btnPlayLastWithSound1")
-        l.append(currentFileCam1);
-    else
-        l.append(currentFileCam2);
+    if(sender()->objectName() == "btnPlayLastWithSound1"){
+        //l.append(currentFileCam1);
+        QDir dir("camera1");
+        QStringList dirList = dir.entryList(QDir::Files, QDir::Time);
+        if(dirList.count() == 0)
+            return;
+        l.append("camera1/" + dirList.at(0));
+        //qDebug()<<l;
+    }else{
+        //l.append(currentFileCam2);
+        QDir dir("camera2");
+        QStringList dirList = dir.entryList(QDir::Files, QDir::Time);
+        if(dirList.count() == 0)
+            return;
+        l.append("camera2/" + dirList.at(0));
+
+    }
     proc.start("ffplay", l);
     proc.waitForFinished(-1);
 }
@@ -677,8 +698,13 @@ void PCScreen::PlayFile(){
 void PCScreen::PlaySlowMotion(){
     if(!slowMotionPlayer){
         if(sender()->objectName() == "btnPlayLastSlowMotion1"){
-            if(currentFileCam1 == "") return;
-            slowMotionPlayer = new PlayerViewer(currentFileCam1);
+            //if(currentFileCam1 == "") return;
+            //slowMotionPlayer = new PlayerViewer(currentFileCam1);
+            QDir dir("camera1");
+            QStringList dirList = dir.entryList(QDir::Files, QDir::Time);
+            if(dirList.count() == 0)
+                return;
+            slowMotionPlayer = new PlayerViewer("camera1/" + dirList.at(0));
             connect(slowMotionPlayer, SIGNAL(sigClose()), this, SLOT(closePlayer()));
             btnPlayLastWithSound1->setEnabled(false);
             btnPlayLastSlowMotion1->setEnabled(false);
@@ -686,8 +712,13 @@ void PCScreen::PlaySlowMotion(){
             btnPlayLastSlowMotion2->setEnabled(false);
             btnPlaySlowMotion->setEnabled(false);
         }else{
-            if(currentFileCam2 == "") return;
-            slowMotionPlayer = new PlayerViewer(currentFileCam2);
+            //if(currentFileCam2 == "") return;
+            //slowMotionPlayer = new PlayerViewer(currentFileCam2);
+            QDir dir("camera2");
+            QStringList dirList = dir.entryList(QDir::Files, QDir::Time);
+            if(dirList.count() == 0)
+                return;
+            slowMotionPlayer = new PlayerViewer("camera2/" + dirList.at(0));
             connect(slowMotionPlayer, SIGNAL(sigClose()), this, SLOT(closePlayer()));
             btnPlayLastWithSound1->setEnabled(false);
             btnPlayLastSlowMotion1->setEnabled(false);

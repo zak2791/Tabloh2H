@@ -78,7 +78,7 @@ void Player::Play(){
     oneFrameDuration = durationMedia / numberFrames;
     durationMediaInSecunds = numberFrames / avgFps;
 
-    sigParam(numberFrames, avgFps, durationMediaInSecunds);
+    emit sigParam(numberFrames, avgFps, durationMediaInSecunds);
 
     while (process) {
         if(flag_seek || flag_play || flag_one_next_frame){
@@ -97,7 +97,29 @@ void Player::Play(){
 
             if (pkt->stream_index == best_stream){
                 if(flag_play || flag_one_next_frame)
-                    sigFrame(pkt->pts / oneFrameDuration);
+                    emit sigFrame(pkt->pts / oneFrameDuration);
+                int cel = (pkt->pts / oneFrameDuration) * 0.033;
+                float drob = (pkt->pts / oneFrameDuration) * 0.033 - cel;
+                QString min = "";
+                QString sec = "";
+                QString msec = "";
+                if(cel / 60){
+                    min = QString::number(cel / 60) + ":";
+                    int s = cel % 60;
+                    if(s < 10)
+                        sec = "0" + QString::number(s);
+                    else
+                        sec = QString::number(s);
+                }else{
+                    min = "0:";
+                    if(cel < 10)
+                        sec = "0" + QString::number(cel);
+                    else
+                        sec = QString::number(cel);
+                }
+                msec = QString::number(drob).remove(0, 1);
+
+                emit sigTime(min + sec + msec);
                 ret = avcodec_send_packet(pCodecCtx, pkt);
                 if (ret < 0) {
                     goto end_preview;
@@ -128,7 +150,7 @@ void Player::Play(){
                                 bufImage->removeFirst();
                             currentImage = bufImage->length() - 1;
                         }
-                        sigBuffer(bufImage->length(), bufImage->length() - 1);
+                        emit sigBuffer(bufImage->length(), bufImage->length() - 1);
                         emit sigImage(img);
                     }
                 }
@@ -154,11 +176,11 @@ void Player::turnPlay(){
     if(flag_play){
         flag_play = false;
         currentImage = bufImage->length() - 1;
-        sigStartStopPlay(true);
+        emit sigStartStopPlay(true);
     }
     else{
         flag_play = true;
-        sigStartStopPlay(false);
+        emit sigStartStopPlay(false);
     }
 }
 
@@ -190,8 +212,8 @@ void Player::turnOff(){
 void Player::nextFrame(){
     if(!flag_play){
         if(currentImage < bufImage->length() - 1){
-            sigImage(bufImage->at(++currentImage));
-            sigBuffer(bufImage->length(), currentImage);
+            emit sigImage(bufImage->at(++currentImage));
+            emit sigBuffer(bufImage->length(), currentImage);
         }
         else{
             flag_one_next_frame = true;
@@ -202,7 +224,7 @@ void Player::nextFrame(){
 void Player::previewFrame(){
     qDebug()<<"currentImage"<<currentImage<<"bufImage->length()"<<bufImage->length();
     if(currentImage > 0 && !flag_play){
-        sigImage(bufImage->at(--currentImage));
-        sigBuffer(bufImage->length(), currentImage);
+        emit sigImage(bufImage->at(--currentImage));
+        emit sigBuffer(bufImage->length(), currentImage);
     }
 }

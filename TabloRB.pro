@@ -17,12 +17,12 @@ HEADERS += \
     lcdtimer.h \
     list_family.h \
     narusheniya_pravil.h \
-    narusheniya_vyhod.h \
     pcscreen.h \
     player.h \
     playerviewer.h \
     plus.h \
     rate.h \
+    togglebutton.h \
     tvscreen.h
 
 SOURCES += \
@@ -37,12 +37,12 @@ SOURCES += \
     list_family.cpp \
     main.cpp \
     narusheniya_pravil.cpp \
-    narusheniya_vyhod.cpp \
     pcscreen.cpp \
     player.cpp \
     playerviewer.cpp \
     plus.cpp \
     rate.cpp \
+    togglebutton.cpp \
     tvscreen.cpp
 
 FORMS += \

@@ -19,7 +19,7 @@ Plus::~Plus()
 void Plus::resizeEvent(QResizeEvent * ) {
 	QFont fnt;
 	fnt.setWeight(50);
-	fnt.setPixelSize(height() * 0.8);
+    fnt.setPixelSize(height() * 0.8);
 	setFont(fnt);
 }
 

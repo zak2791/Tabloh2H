@@ -6,7 +6,6 @@
 #include <QLabel>
 #include "narusheniya_pravil.h"
 #include "rate.h"
-#include "narusheniya_vyhod.h"
 #include "ui_frmTime.h"
 #include "ui_FormView.h"
 #include "fam_reg.h"
@@ -50,13 +49,8 @@ signals:
     //void signalReplay(void);
 
 public slots:
-    //void sendEV_L(QObject *);
-    //void sendEV_R(QObject *);
-	void setFlagRed(QString);
-	void setFlagBlue(QString);
-	void setView(void);
-	void setFrameWidth(int);
-	void setSpace(int);
+    //void setFrameWidth(int);
+    //void setSpace(int);
 	void setSec(int);
     void setTime(void);
 
@@ -86,25 +80,22 @@ private slots:
 
     void CpuUsage(void);
 
+    void HIDE(QString, QString, QString, QString);
+
 private:
     QLabel* lblCpuUsage;
 	QWidget * formView;
     QWidget * frmTime;
-	int View;									//вид табло: 0-красно-синий фон, 
-												//			 1-чёрный фон с рамками,
-												//			 2-чёрный фон без рамок
+
 	virtual void paintEvent(QPaintEvent *);
     virtual void closeEvent(QCloseEvent*);
     virtual void keyPressEvent(QKeyEvent *);
-	virtual void showEvent(QShowEvent *);
     virtual void resizeEvent(QResizeEvent *);
 
 
 
     //void process_line(int, QString);
 
-	QLabel * flag_blue;
-	QLabel * flag_red;
 	QString col_red;
 	QString col_blue;
     //QEvent * ev_L;
@@ -114,8 +105,7 @@ private:
 	QGridLayout * grid;
 	NP * np_red;
 	NP * np_blue;
-	NV * nv_red;
-	NV * nv_blue;
+
     Rate * rateRed;
     Rate * rateBlue;
     Rate * actRed;
@@ -124,6 +114,8 @@ private:
 	Fam * fam_blue;
 	Fam * reg_red;
 	Fam * reg_blue;
+    Fam * fam_next_red;
+    Fam * fam_next_blue;
 	Plus * plus_red;
 	Plus * plus_blue;
     LCDTimer * mainTimer;
@@ -132,6 +124,7 @@ private:
 	QDesktopWidget* desk;
 	int HEIGHT_REGION;
 	int HEIGHT_FAMILY;
+    int HEIGHT_NEXT_FAMILY;
 	int minimum_height;
 	int percent_height;
     TVScreen * tvScreen;

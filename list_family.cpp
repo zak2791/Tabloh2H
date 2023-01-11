@@ -12,6 +12,7 @@
 #include "xlsxchart.h"
 #include "xlsxrichstring.h"
 #include "xlsxworkbook.h"
+
 using namespace QXlsx;
 
 FamilyView::FamilyView(QWidget * parent) : QTableView(parent) {
@@ -33,6 +34,8 @@ void FamilyView::mouseReleaseEvent(QMouseEvent * e)
 ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
 	b = "";
 	r = "";
+    r_next = "";
+    b_next = "";
 	setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint);
 	//setWindowState(Qt::WindowFullScreen);
 	sel_data = "";
@@ -46,6 +49,14 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
 	//фамилия красного
 	lbl_red = new QLabel("<font color=\"Red\">red fam</font>", this);
 	lbl_red->setAlignment(Qt::AlignCenter);
+
+    //фамилия "синего" следующего
+    lbl_next_blue = new QLabel("<font color=\"Blue\">blue fam next</font>", this);
+    lbl_next_blue->setAlignment(Qt::AlignCenter);
+    //фамилия красного следующего
+    lbl_next_red = new QLabel("<font color=\"Red\">red fam next</font>", this);
+    lbl_next_red->setAlignment(Qt::AlignCenter);
+
 	//кнопка скрытия
 	QPushButton * btnHide = new QPushButton(u8"СКРЫТЬ");
 	connect(btnHide, SIGNAL(clicked()), this, SLOT(_hide()));
@@ -124,8 +135,41 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
 		}
 	}
 
+    toggleButton = new ToggleButton(10, 8);
+    connect(toggleButton, SIGNAL(clicked()), this, SLOT(set_state_toggle()));
+    state_toggle = false;
+
+    QFrame* lineLeft = new QFrame(this);
+    lineLeft->setFrameShape(QFrame::VLine); // Horizontal line
+    lineLeft->setFrameShadow(QFrame::Sunken);
+    lineLeft->setLineWidth(1);
+
+    QFrame* lineMiddle = new QFrame(this);
+    lineMiddle->setFrameShape(QFrame::VLine); // Horizontal line
+    lineMiddle->setFrameShadow(QFrame::Sunken);
+    lineMiddle->setLineWidth(1);
+
+    QFrame* lineRight = new QFrame(this);
+    lineRight->setFrameShape(QFrame::VLine); // Horizontal line
+    lineRight->setFrameShadow(QFrame::Sunken);
+    lineRight->setLineWidth(1);
+
 	QHBoxLayout * hbox = new QHBoxLayout();
-	hbox->addWidget(lbl_red, 10);
+    QVBoxLayout * red_box = new QVBoxLayout();
+    red_box->addWidget(lbl_red);
+    QFrame* lineRed = new QFrame(this);
+    lineRed->setFrameShape(QFrame::HLine); // Horizontal line
+    lineRed->setFrameShadow(QFrame::Sunken);
+    lineRed->setLineWidth(1);
+    red_box->addWidget(lineRed);
+    red_box->addWidget(lbl_next_red);
+    hbox->addLayout(red_box, 10);
+    //hbox->addWidget(lbl_red, 10);
+    hbox->addWidget(lineLeft);
+    hbox->addWidget(new QLabel("Выбор для текущего боя ->"));
+    hbox->addWidget(toggleButton, 10);
+    hbox->addWidget(new QLabel("<- Выбор для следующего боя"));
+    hbox->addWidget(lineMiddle);
     hbox->addWidget(new QLabel(u8"Сортировать по возрасту и весу"));
     hbox->addWidget(cBox, 1);
     hbox->addWidget(new QLabel(u8"Вес:"));
@@ -137,7 +181,16 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
 	hbox->addSpacing(10);
 	hbox->addWidget(new QLabel(u8"Ввод"));
 	hbox->addWidget(inFam, 2);
-	hbox->addWidget(lbl_blue, 10);
+    hbox->addWidget(lineRight);
+    QVBoxLayout * blue_box = new QVBoxLayout();
+    blue_box->addWidget(lbl_blue);
+    QFrame* lineBlue = new QFrame(this);
+    lineBlue->setFrameShape(QFrame::HLine); // Horizontal line
+    lineBlue->setFrameShadow(QFrame::Sunken);
+    lineBlue->setLineWidth(1);
+    blue_box->addWidget(lineBlue);
+    blue_box->addWidget(lbl_next_blue);
+    hbox->addLayout(blue_box, 10);
 
 
 	tbl = new FamilyView();
@@ -160,12 +213,12 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
 
 	setLayout(mainbox);
 
-	connect(sel, SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)), this, SLOT(sel(QItemSelection, QItemSelection)));
+    connect(sel, SIGNAL(selectionChanged(QItemSelection, QItemSelection)), this, SLOT(sel(QItemSelection, QItemSelection)));
     connect(tbl, SIGNAL(mouse_button(int)), this, SLOT(sell(int)));
-	connect(inFam, SIGNAL(textEdited(const QString&)), this, SLOT(textEdited(QString)));
+    connect(inFam, SIGNAL(textEdited(QString)), this, SLOT(textEdited(QString)));
     //connect(weight, SIGNAL(activated(const QString&)), this, SLOT(set_weight(QString)));
-    connect(weight, SIGNAL(activated(const QString&)), this, SLOT(selectWeight(QString)));
-    connect(age, SIGNAL(activated(const QString&)), this, SLOT(selectAge(QString)));
+    connect(weight, SIGNAL(activated(QString)), this, SLOT(selectWeight(QString)));
+    connect(age, SIGNAL(activated(QString)), this, SLOT(selectAge(QString)));
     connect(cBox, SIGNAL(stateChanged(int)), this, SLOT(allowSorting(int)));
 
 }
@@ -223,6 +276,9 @@ void ListFamily::addWeight(QList<QString> s){
 void ListFamily::showEvent(QShowEvent  * )
 {
     inFam->setFocus();
+    just_opened_red = true;
+    just_opened_blue = true;
+    state_toggle = toggleButton->isChecked();
 }
 
 void ListFamily::resizeEvent(QResizeEvent * )
@@ -270,8 +326,9 @@ void ListFamily::textEdited(QString s){
 
 void ListFamily::_hide()
 {
-	emit sig_hide(r, b);
+    emit sig_hide(r, b, r_next, b_next);
 	hide();
+    qDebug()<<r<< b<< r_next<< b_next;
 }
 
 void ListFamily::sel(QItemSelection a, QItemSelection )
@@ -282,12 +339,46 @@ void ListFamily::sel(QItemSelection a, QItemSelection )
 void ListFamily::sell(int _sel)
 {
 	if (_sel) {
-        lbl_blue->setText("<font color='Blue'size=3>" + sel_data + "</font>");
-		b = sel_data;
+        if(!state_toggle){  //если выбираем вызываемого спортсмена
+            lbl_blue->setText("<font color='Blue'size=3>" + sel_data + "</font>");
+            b = sel_data;
+        }else{
+            if(just_opened_blue){
+                just_opened_blue = false;
+                lbl_blue->setText("<font color='Blue'size=3>" + lbl_next_blue->text() + "</font>");
+                b_next = lbl_next_blue->text();
+
+            }
+            lbl_next_blue->setText("<font color='Blue'size=3>" + sel_data + "</font>");
+            b_next = sel_data;
+            qDebug()<<"b_next = "<<b_next;
+        }
+        //lbl_blue->setText("<font color='Blue'size=3>" + sel_data + "</font>");
+        //b = sel_data;
 	}
 	else {
-        lbl_red->setText("<font color='Red' size=3>" + sel_data + "</font>");
-		r = sel_data;
+        if(!state_toggle){  //если выбираем вызываемого спортсмена
+            lbl_red->setText("<font color='Red' size=3>" + sel_data + "</font>");
+            r = sel_data;
+        }else{
+            if(just_opened_red){
+                just_opened_red = false;
+                lbl_red->setText("<font color='Red' size=3>" + lbl_next_red->text() + "</font>");
+                r_next = lbl_next_red->text();
+
+            }
+            lbl_next_red->setText("<font color='Red' size=3>" + sel_data + "</font>");
+            r_next = sel_data;
+            qDebug()<<"r_next = "<<r_next;
+        }
+        //lbl_red->setText("<font color='Red' size=3>" + sel_data + "</font>");
+        //r = sel_data;
 	}
     //inFam->setFocus();
+}
+
+void ListFamily::set_state_toggle(){
+    state_toggle = toggleButton->isChecked();
+    just_opened_blue = false;
+    just_opened_red = false;
 }

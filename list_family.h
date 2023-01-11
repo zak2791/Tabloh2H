@@ -13,6 +13,7 @@
 #include <QHeaderView>
 #include <QItemSelection>
 #include <QCheckBox>
+#include "togglebutton.h"
 
 class FamilyView : public QTableView {
 	Q_OBJECT
@@ -40,7 +41,7 @@ public:
     QComboBox * weight;
 
 signals:
-	void sig_hide(QString, QString);
+    void sig_hide(QString, QString, QString, QString);
 	//void family();
     //void sig_category(QString);
 
@@ -55,6 +56,7 @@ public slots:
 	void sell(int);
 	void _hide();
     void addWeight(QList<QString>);
+    void set_state_toggle(void);
 
 private:
 	virtual void showEvent(QShowEvent *);
@@ -65,7 +67,9 @@ private:
 	QLineEdit * inFam;
 	QLabel * lbl_blue;
 	QLabel * lbl_red;
-	QString b, r, sel_data;
+    QLabel * lbl_next_blue;
+    QLabel * lbl_next_red;
+    QString b, r, r_next, b_next, sel_data;
 
 	int col;				//количество колонок в таблице
 	FamilyView * tbl;
@@ -73,4 +77,9 @@ private:
     QComboBox * age;
     QCheckBox * cBox;
     QList<QString> sportsmens;
+    bool just_opened_red;   //флаг открытия окна при вводе фамилии готовящегося спортсмена с красным поясом
+    bool just_opened_blue;  //флаг открытия окна при вводе фамилии готовящегося спортсмена с синим поясом
+    bool state_toggle;      //состояние переключателя: false - выбор вызываемого спортсмена;
+                            //                         true - выбор готовящегося спортсмена.
+    ToggleButton* toggleButton;
 };

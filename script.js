@@ -129,13 +129,12 @@ function keyEvent(key){
 	}
 }
 
-function set_family(a, b){
+function set_family(a, b, a_next, b_next){
 	var st;
     if(a !=="-" && a !== ""){
 		st	= a.split(";");
         fam_red.text = (st[0].split(" ")[0]);
         reg_red.text = (st[1].toUpperCase());
-		wgt.setFlagRed(st[1]);
 	}else {
         fam_red.text = ("");
         reg_red.text = ("")
@@ -144,10 +143,21 @@ function set_family(a, b){
 		st = b.split(";");
         fam_blue.text = (st[0].split(" ")[0]);
         reg_blue.text = (st[1].toUpperCase());
-		wgt.setFlagBlue(st[1]);
 	}else {
         fam_blue.text = ("");
         reg_blue.text = ("");
+	}
+	if(a_next !=="-" && a_next !== ""){
+		st	= a_next.split(";");
+		fam_next_red = (st[0].split(" ")[0]);
+	}else {
+		fam_next_red = ("");
+	}
+    if(b_next !== "-" && b_next !== ""){
+		st = b_next.split(";");
+		fam_next_blue = (st[0].split(" ")[0]);
+	}else {
+		fam_next_blue = ("");
 	}
 }
 

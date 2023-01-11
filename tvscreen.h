@@ -6,7 +6,6 @@
 #include <QLabel>
 #include "narusheniya_pravil.h"
 #include "rate.h"
-#include "narusheniya_vyhod.h"
 #include "ui_FormView.h"
 #include "fam_reg.h"
 #include "plus.h"
@@ -27,11 +26,11 @@ public:
 
 	NP * np_red;
 	NP * np_blue;
-	NV * nv_red;
-	NV * nv_blue;
 
 	Fam * fam_red;
 	Fam * fam_blue;
+    Fam * fam_next_red;
+    Fam * fam_next_blue;
 	Fam * reg_red;
 	Fam * reg_blue;
 	Plus * plus_red;

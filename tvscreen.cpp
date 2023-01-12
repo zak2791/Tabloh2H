@@ -18,6 +18,15 @@
 
 TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
 
+    QLabel* lblNextRed = new QLabel("");
+    lblNextRed->setPixmap(QPixmap(":/images/next_red.png"));
+    lblNextRed->setScaledContents( true );
+    lblNextRed->setSizePolicy( QSizePolicy::Ignored, QSizePolicy::Ignored );
+
+    QLabel* lblNextBlue = new QLabel("");
+    lblNextBlue->setPixmap(QPixmap(":/images/next_blue.png"));
+    lblNextBlue->setScaledContents( true );
+    lblNextBlue->setSizePolicy( QSizePolicy::Ignored, QSizePolicy::Ignored );
 
 	col_red = "white";
 	col_blue = "white";
@@ -136,6 +145,9 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
     grid->addWidget(sec_red,    13, 47, 14, 18);
     grid->addWidget(sec_blue_t, 13,  3, 14, 18);
     grid->addWidget(sec_red_t,  13, 47, 14, 18);
+
+    grid->addWidget(lblNextBlue,   36, 0,  5, 5);
+    grid->addWidget(lblNextRed,    36,  63,  5, 5);
 
     grid->addWidget(fam_next_blue,    41, 0, 4, 34);
     grid->addWidget(fam_next_red,    41, 34, 4, 34);

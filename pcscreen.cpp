@@ -418,21 +418,23 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
 
         tvScreen->show();
 
-        connect(rateRed,	SIGNAL(sigRate(int)),		tvScreen->ball_red,	SLOT(setRate(int)));
-        connect(rateBlue,	SIGNAL(sigRate(int)),		tvScreen->ball_blue,SLOT(setRate(int)));
-        connect(actRed,     SIGNAL(sigRate(int)),		tvScreen->akt_red,	SLOT(setRate(int)));
-        connect(actBlue,	SIGNAL(sigRate(int)),		tvScreen->akt_blue,	SLOT(setRate(int)));
+        connect(rateRed,	SIGNAL(sigRate(int)),		 tvScreen->ball_red,	  SLOT(setRate(int)));
+        connect(rateBlue,	SIGNAL(sigRate(int)),		 tvScreen->ball_blue,     SLOT(setRate(int)));
+        connect(actRed,     SIGNAL(sigRate(int)),		 tvScreen->akt_red,	      SLOT(setRate(int)));
+        connect(actBlue,	SIGNAL(sigRate(int)),		 tvScreen->akt_blue,	  SLOT(setRate(int)));
 
-        connect(np_red,		SIGNAL(ball(QString)),	tvScreen->np_red,		SLOT(setValue(QString)));
-        connect(np_blue,	SIGNAL(ball(QString)),	tvScreen->np_blue,	SLOT(setValue(QString)));
+        connect(np_red,		SIGNAL(ball(QString)),	     tvScreen->np_red,		  SLOT(setValue(QString)));
+        connect(np_blue,	SIGNAL(ball(QString)),	     tvScreen->np_blue,	      SLOT(setValue(QString)));
 
-        connect(plus_red,   SIGNAL(textChange(QString)), tvScreen->plus_red, SLOT(setData(QString)));
-        connect(plus_blue,  SIGNAL(textChange(QString)), tvScreen->plus_blue, SLOT(setData(QString)));
+        connect(plus_red,   SIGNAL(textChange(QString)), tvScreen->plus_red,      SLOT(setData(QString)));
+        connect(plus_blue,  SIGNAL(textChange(QString)), tvScreen->plus_blue,     SLOT(setData(QString)));
 
-        connect(fam_red,    SIGNAL(sigText(QString)), tvScreen->fam_red, SLOT(Text(QString)));
-        connect(fam_blue,   SIGNAL(sigText(QString)), tvScreen->fam_blue, SLOT(Text(QString)));
-        connect(reg_red,    SIGNAL(sigText(QString)), tvScreen->reg_red, SLOT(Text(QString)));
-        connect(reg_blue,   SIGNAL(sigText(QString)), tvScreen->reg_blue, SLOT(Text(QString)));
+        connect(fam_red,       SIGNAL(sigText(QString)), tvScreen->fam_red,       SLOT(Text(QString)));
+        connect(fam_blue,      SIGNAL(sigText(QString)), tvScreen->fam_blue,      SLOT(Text(QString)));
+        connect(reg_red,       SIGNAL(sigText(QString)), tvScreen->reg_red,       SLOT(Text(QString)));
+        connect(reg_blue,      SIGNAL(sigText(QString)), tvScreen->reg_blue,      SLOT(Text(QString)));
+        connect(fam_next_red,  SIGNAL(sigText(QString)), tvScreen->fam_next_red,  SLOT(Text(QString)));
+        connect(fam_next_blue, SIGNAL(sigText(QString)), tvScreen->fam_next_blue, SLOT(Text(QString)));
 
         //connect(cat,  SIGNAL(sigText(QString)), tvScreen->cat, SLOT(setText(QString)));
 

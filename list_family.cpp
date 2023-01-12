@@ -46,16 +46,20 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
 	//фамилия "синего"
 	lbl_blue = new QLabel("<font color=\"Blue\">blue fam</font>", this);
 	lbl_blue->setAlignment(Qt::AlignCenter);
+    lbl_blue->setStyleSheet("color: blue;");
 	//фамилия красного
 	lbl_red = new QLabel("<font color=\"Red\">red fam</font>", this);
 	lbl_red->setAlignment(Qt::AlignCenter);
+    lbl_red->setStyleSheet("color: red;");
 
     //фамилия "синего" следующего
     lbl_next_blue = new QLabel("<font color=\"Blue\">blue fam next</font>", this);
     lbl_next_blue->setAlignment(Qt::AlignCenter);
+    lbl_next_blue->setStyleSheet("color: blue;");
     //фамилия красного следующего
     lbl_next_red = new QLabel("<font color=\"Red\">red fam next</font>", this);
     lbl_next_red->setAlignment(Qt::AlignCenter);
+    lbl_next_red->setStyleSheet("color: red;");
 
 	//кнопка скрытия
 	QPushButton * btnHide = new QPushButton(u8"СКРЫТЬ");
@@ -321,7 +325,7 @@ void ListFamily::textEdited(QString s){
 	}
 
 	tbl->setModel(mdl);
-	connect(tbl->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)), this, SLOT(sel(QItemSelection, QItemSelection)));
+    connect(tbl->selectionModel(), SIGNAL(selectionChanged(QItemSelection, QItemSelection)), this, SLOT(sel(QItemSelection, QItemSelection)));
 }
 
 void ListFamily::_hide()
@@ -340,41 +344,35 @@ void ListFamily::sell(int _sel)
 {
 	if (_sel) {
         if(!state_toggle){  //если выбираем вызываемого спортсмена
-            lbl_blue->setText("<font color='Blue'size=3>" + sel_data + "</font>");
+            lbl_blue->setText(sel_data);
             b = sel_data;
         }else{
             if(just_opened_blue){
                 just_opened_blue = false;
-                lbl_blue->setText("<font color='Blue'size=3>" + lbl_next_blue->text() + "</font>");
-                b_next = lbl_next_blue->text();
+                lbl_blue->setText(lbl_next_blue->text());
+                b = lbl_next_blue->text();
 
             }
-            lbl_next_blue->setText("<font color='Blue'size=3>" + sel_data + "</font>");
+            lbl_next_blue->setText(sel_data);
             b_next = sel_data;
-            qDebug()<<"b_next = "<<b_next;
         }
-        //lbl_blue->setText("<font color='Blue'size=3>" + sel_data + "</font>");
-        //b = sel_data;
 	}
 	else {
         if(!state_toggle){  //если выбираем вызываемого спортсмена
-            lbl_red->setText("<font color='Red' size=3>" + sel_data + "</font>");
+            lbl_red->setText(sel_data);
             r = sel_data;
         }else{
             if(just_opened_red){
                 just_opened_red = false;
-                lbl_red->setText("<font color='Red' size=3>" + lbl_next_red->text() + "</font>");
-                r_next = lbl_next_red->text();
+                lbl_red->setText(lbl_next_red->text());
+                r = lbl_next_red->text();
 
             }
-            lbl_next_red->setText("<font color='Red' size=3>" + sel_data + "</font>");
+            lbl_next_red->setText(sel_data);
             r_next = sel_data;
-            qDebug()<<"r_next = "<<r_next;
         }
-        //lbl_red->setText("<font color='Red' size=3>" + sel_data + "</font>");
-        //r = sel_data;
 	}
-    //inFam->setFocus();
+    inFam->setFocus();
 }
 
 void ListFamily::set_state_toggle(){

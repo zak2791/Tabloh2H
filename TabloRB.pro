@@ -5,7 +5,7 @@ QMAKE_CXXFLAGS_RELEASE -= -O0
 
 RC_ICONS = appico.ico
 
-QT += core gui widgets qml
+QT += core gui widgets qml multimedia
 HEADERS += \
     JSTools.h \
     camera.h \

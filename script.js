@@ -133,7 +133,7 @@ function set_family(a, b, a_next, b_next){
 	var st;
     if(a !=="-" && a !== ""){
 		st	= a.split(";");
-        fam_red.text = (st[0].split(" ")[0]);
+        fam_red.text = (st[0].split(" ")[0].toUpperCase());
         reg_red.text = (st[1].toUpperCase());
 	}else {
         fam_red.text = ("");
@@ -141,7 +141,7 @@ function set_family(a, b, a_next, b_next){
 	}
     if(b !== "-" && b !== ""){
 		st = b.split(";");
-        fam_blue.text = (st[0].split(" ")[0]);
+        fam_blue.text = (st[0].split(" ")[0].toUpperCase());
         reg_blue.text = (st[1].toUpperCase());
 	}else {
         fam_blue.text = ("");
@@ -149,15 +149,15 @@ function set_family(a, b, a_next, b_next){
 	}
 	if(a_next !=="-" && a_next !== ""){
 		st	= a_next.split(";");
-		fam_next_red = (st[0].split(" ")[0]);
+		fam_next_red.text = (st[0].split(" ")[0].toUpperCase());
 	}else {
-		fam_next_red = ("");
+		fam_next_red.text = ("");
 	}
     if(b_next !== "-" && b_next !== ""){
 		st = b_next.split(";");
-		fam_next_blue = (st[0].split(" ")[0]);
+		fam_next_blue.text = (st[0].split(" ")[0].toUpperCase());
 	}else {
-		fam_next_blue = ("");
+		fam_next_blue.text = ("");
 	}
 }
 

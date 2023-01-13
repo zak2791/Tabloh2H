@@ -82,6 +82,8 @@ private slots:
 
     void HIDE(QString, QString, QString, QString);
 
+    void changeFontWeight(QString);
+
 private:
     QLabel* lblCpuUsage;
 	QWidget * formView;

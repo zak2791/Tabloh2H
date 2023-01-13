@@ -230,7 +230,7 @@ void TVScreen::resizeEvent(QResizeEvent *){
     grid->setRowMinimumHeight(44, minimum_height);
     QFont f;
     f.setPixelSize(cat->height() * 1.5);
-    cat->setFont(f);
+    //cat->setFont(f);
 }
 
 

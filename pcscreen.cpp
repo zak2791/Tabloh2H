@@ -207,6 +207,9 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     connect(ui.btnRegDown,      SIGNAL(clicked()), this, SLOT(changeSize()));
     connect(ui.btnRegUp,        SIGNAL(clicked()), this, SLOT(changeSize()));
 
+    ui.cmbFont->addItems({"10", "12", "14", "16", "18", "20", "23", "26", "29", "34", "39", "45", "50", "55", "60"});
+    connect(ui.cmbFont,         SIGNAL(currentTextChanged(QString)), this, SLOT(changeFontWeight(QString)));
+
     frmTime = new QWidget;
     uiTime.setupUi(frmTime);
 
@@ -528,6 +531,19 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     QTimer* tmrCpu = new QTimer(this);
     connect(tmrCpu, SIGNAL(timeout()), this, SLOT(CpuUsage()));
     tmrCpu->start(1000);
+
+    QFile font_size("font_size.txt");
+    if(!font_size.exists()){
+        font_size.open(QIODevice::WriteOnly);
+        font_size.write("20");
+        font_size.close();
+    }
+    font_size.open(QIODevice::ReadOnly);
+    //int size = font_size.readLine().toInt();
+    ui.cmbFont->setCurrentText(font_size.readLine());
+    //QFont font_weight;
+    //font_weight.setPixelSize(size);
+    //tvScreen->cat->setFont(font_weight);
 
 }
 
@@ -1005,4 +1021,18 @@ void PCScreen::drawTvScreenshot(){
 
 void PCScreen::HIDE(QString s1, QString s2, QString s3, QString s4){
     qDebug()<<"s1 s2 s3 s4 = "<<s1<<s2<<s3<<s4;
+}
+
+void PCScreen::changeFontWeight(QString s){
+    QFile font_size("font_size.txt");
+
+    font_size.open(QIODevice::WriteOnly);
+    QTextStream out(&font_size);
+    out << s;
+    font_size.close();
+
+    QFont font;
+    font.setPixelSize(s.toInt());
+    tvScreen->cat->setFont(font);
+
 }

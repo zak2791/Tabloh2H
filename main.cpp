@@ -13,7 +13,7 @@ int main(int argc, char** argv){
 
 	
     PCScreen * pwgt = new PCScreen();
-
+    pwgt->setObjectName("pwgt");
 
 	QJSEngine se;
 	
@@ -25,10 +25,11 @@ int main(int argc, char** argv){
 		se.globalObject().setProperty("wgt", sw);
 
         QList<QObject*> lst = pwgt->findChildren<QObject*>();
+        lst.prepend(pwgt);
 		foreach(QObject* pobj, lst) {
 			sw = se.newQObject(pobj);
 			se.globalObject().setProperty(pobj->objectName(), sw);
-            //qDebug()<<pobj->objectName();
+            qDebug()<<pobj->objectName();
 		}
 		JSTools* pjt = new JSTools;
 		sw = se.newQObject(pjt);

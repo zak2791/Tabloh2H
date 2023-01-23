@@ -47,6 +47,7 @@ signals:
 	void sendKey(int);
     //void setCategory(void);
     //void signalReplay(void);
+    void changeViewName(int);
 
 public slots:
     //void setFrameWidth(int);

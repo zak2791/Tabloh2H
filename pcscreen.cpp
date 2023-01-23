@@ -210,6 +210,10 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     ui.cmbFont->addItems({"10", "12", "14", "16", "18", "20", "23", "26", "29", "34", "39", "45", "50", "55", "60"});
     connect(ui.cmbFont,         SIGNAL(currentTextChanged(QString)), this, SLOT(changeFontWeight(QString)));
 
+    ui.cmbFam->addItems({"ФАМИЛИЯ ИМЯ", "ФАМИЛИЯ И.", "ФАМИЛИЯ"});
+    //ui.cmbFont->setObjectName("viewName");
+    connect(ui.cmbFam,         SIGNAL(currentIndexChanged(int)), this, SIGNAL(changeViewName(int)));
+
     frmTime = new QWidget;
     uiTime.setupUi(frmTime);
 

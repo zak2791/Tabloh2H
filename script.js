@@ -10,8 +10,8 @@ function sbros(){
         sec_blue_t.Reset();
 		np_red.sbros();
 		np_blue.sbros();
-		nv_red.sbros();
-		nv_blue.sbros();
+		//nv_red.sbros();
+		//nv_blue.sbros();
 		ball_red.sbros();
 		ball_blue.sbros();
 		akt_red.sbros();

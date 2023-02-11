@@ -2,7 +2,7 @@ var minimum_height = 0;
 var viewName = 0;
 
 function sbros(){
-    if(JSTools.alert(decodeURIComponent(escape("Сброс"))) === 16384){
+    //if(JSTools.alert(decodeURIComponent(escape("Сброс"))) === 16384){
 		mainTimer.Reset();
         sec_red.Reset();
         sec_blue.Reset();
@@ -18,7 +18,7 @@ function sbros(){
 		akt_blue.sbros();
         plus_red.setData("");
         plus_blue.setData("");
-	}
+	//}
 }
 
 function Plus_red(){

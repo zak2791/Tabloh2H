@@ -40,9 +40,11 @@ public:
     LCDStopwatch * sec_blue;
     LCDStopwatch * sec_red_t;
     LCDStopwatch * sec_blue_t;
+    LCDStopwatch * sec_doctor;
 
     //Category * cat;
     QPushButton* cat;
+    QPushButton* age;
 
 	QGridLayout * grid;
 

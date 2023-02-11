@@ -15,6 +15,15 @@
 #include <QCheckBox>
 #include "togglebutton.h"
 
+#include "xlsxdocument.h"
+#include "xlsxchartsheet.h"
+#include "xlsxcellrange.h"
+#include "xlsxchart.h"
+#include "xlsxrichstring.h"
+#include "xlsxworkbook.h"
+
+using namespace QXlsx;
+
 class FamilyView : public QTableView {
 	Q_OBJECT
 
@@ -39,6 +48,7 @@ public:
 	~ListFamily();
 
     QComboBox * weight;
+    QComboBox * age;
 
 signals:
     void sig_hide(QString, QString, QString, QString);
@@ -49,6 +59,7 @@ private slots:
     void selectWeight(QString);
     void selectAge(QString);
     void allowSorting(int);
+    void sortByNum(int);
 
 public slots:
 	virtual void textEdited(QString);
@@ -62,6 +73,8 @@ private:
 	virtual void showEvent(QShowEvent *);
 	//virtual void hideEvent(QEvent *);
 	virtual void resizeEvent(QResizeEvent *);
+
+    Document* doc;
 	
 	QList<QString> l;
 	QLineEdit * inFam;
@@ -70,12 +83,14 @@ private:
     QLabel * lbl_next_blue;
     QLabel * lbl_next_red;
     QString b, r, r_next, b_next, sel_data;
+    QString currentAge, currentWeight, nextAge, nextWeight;
 
 	int col;				//количество колонок в таблице
 	FamilyView * tbl;
 
-    QComboBox * age;
     QCheckBox * cBox;
+    QCheckBox * cbNum;      //включение выбора по номерам
+
     QList<QString> sportsmens;
     bool just_opened_red;   //флаг открытия окна при вводе фамилии готовящегося спортсмена с красным поясом
     bool just_opened_blue;  //флаг открытия окна при вводе фамилии готовящегося спортсмена с синим поясом

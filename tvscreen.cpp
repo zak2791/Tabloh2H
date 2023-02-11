@@ -74,6 +74,10 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
     sec = new LCDTimer(this);
 	//sec->setObjectName("sec");
 
+    sec_doctor = new LCDStopwatch(this, "2:00", QColor(255, 255, 0), QColor(255, 255, 0), false, true);
+    //sec_red->setObjectName("sd_sec_red");
+    sec_doctor->hide();
+
     sec_red = new LCDStopwatch(this, "0:20", QColor(255, 0, 0), QColor(255, 102, 102), false, true);
     //sec_red->setObjectName("sd_sec_red");
 	sec_red->hide();
@@ -105,7 +109,11 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
     cat->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     cat->setStyleSheet("background-color: black; color: white; text-align: center; border-radius: 20px");
 
-
+    age = new QPushButton(this);//("yellow", this);
+    age->setObjectName("age");
+    age->setAutoFillBackground(true);
+    age->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    age->setStyleSheet("background-color: black; color: white; text-align: center; border-radius: 20px");
 
 	flag_blue = new QLabel(this);
 	flag_blue->setScaledContents(true);
@@ -138,9 +146,11 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
     grid->addWidget(plus_blue,   11,  0, 6, 6);
     grid->addWidget(plus_red,    11, 44, 6, 6);
 
-    grid->addWidget(cat,        32, 28, 6, 12);
+    grid->addWidget(age,        29, 28, 6, 12);
+    grid->addWidget(cat,        35, 28, 6, 12);
 
     grid->addWidget(sec,        13, 25, 14, 18);
+    grid->addWidget(sec_doctor, 13, 25, 14, 18);
     grid->addWidget(sec_blue,   13,  3, 14, 18);
     grid->addWidget(sec_red,    13, 47, 14, 18);
     grid->addWidget(sec_blue_t, 13,  3, 14, 18);

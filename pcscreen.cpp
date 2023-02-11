@@ -19,7 +19,6 @@
 
 #include "list_family.h"
 #include "category.h"
-#include "lcdstopwatch.h"
 
 //#include <QHostAddress>
 //#include <QNetworkInterface>
@@ -93,6 +92,11 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     fam_next_blue = new Fam(col_blue, "", 63,"",this);
     fam_next_blue->setObjectName("fam_next_blue");
 
+    QPushButton* doctor = new QPushButton(u8"ВРАЧ", this);
+    doctor->setObjectName("btnParter_red");
+    doctor->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    doctor->setStyleSheet("color: red; font: bold " + QString::number(round(doctor->height() / 2)) + "px;");
+    connect(doctor, SIGNAL(clicked()), this, SLOT(turnDoctor()));
 
 	QPushButton * btnParter_red = new QPushButton(u8"ПАРТЕР", this);
 	btnParter_red->setObjectName("btnParter_red");
@@ -157,6 +161,9 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     mainTimer->setObjectName("mainTimer");
     //connect(btnTime, SIGNAL(clicked()), mainTimer, SLOT(StartStop()));
 
+    sec_doctor = new LCDStopwatch(this, "2:00", QColor(255, 255, 0), QColor(255, 255, 0), true, true);
+    sec_doctor->hide();
+
     LCDStopwatch * sec_red = new LCDStopwatch(this, "0:20", QColor(255, 0, 0), QColor(255, 102, 102), true, true);
 	sec_red->setObjectName("sec_red");
 	sec_red->hide();
@@ -186,9 +193,15 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     cat->setStyleSheet("background-color: black; color: white; text-align: center");
     cat->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
+    age = new QPushButton(this);//("yellow", this);
+    age->setAutoFillBackground(true);
+    age->setStyleSheet("background-color: black; color: white; text-align: center");
+    age->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+
     ListFamily * lf = new ListFamily(this);
 	lf->setObjectName("lf");
-    connect(lf->weight, SIGNAL(activated(QString)), this, SLOT(setCat(QString)));
+    connect(lf->weight, SIGNAL(currentTextChanged(QString)), this, SLOT(setCat(QString)));
+    connect(lf->age, SIGNAL(currentTextChanged(QString)), this, SLOT(setAge(QString)));
     connect(lf, SIGNAL(sig_hide(QString, QString, QString, QString)), this, SLOT(HIDE(QString, QString, QString, QString)));
 
 	formView = new QWidget;
@@ -207,7 +220,8 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     connect(ui.btnRegDown,      SIGNAL(clicked()), this, SLOT(changeSize()));
     connect(ui.btnRegUp,        SIGNAL(clicked()), this, SLOT(changeSize()));
 
-    ui.cmbFont->addItems({"10", "12", "14", "16", "18", "20", "23", "26", "29", "34", "39", "45", "50", "55", "60"});
+    ui.cmbFont->addItems({"10", "12", "14", "16", "18", "20", "23", "26", "29", "34", "39", "45", "50", "55", "60",
+                          "65", "70", "75", "80", "85", "90", "100", "110"});
     connect(ui.cmbFont,         SIGNAL(currentTextChanged(QString)), this, SLOT(changeFontWeight(QString)));
 
     ui.cmbFam->addItems({"ФАМИЛИЯ ИМЯ", "ФАМИЛИЯ И.", "ФАМИЛИЯ"});
@@ -341,7 +355,8 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     grid->addWidget(plus_red,               8,   20, 4,  4);
     grid->addWidget(plus_blue,              8,  44, 4,  4);
 
-    grid->addWidget(cat,                    10, 38, 2,  6);
+    grid->addWidget(age,                    10, 38, 2,  3);
+    grid->addWidget(cat,                    10, 41, 2,  3);
 
     grid->addWidget(btnView,                10, 24, 2,  6);
 
@@ -355,6 +370,7 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     //grid->addWidget(btnStartPlay,         20, 38, 2,  3);
 
     grid->addWidget(mainTimer,              28, 24, 14, 20);
+    grid->addWidget(sec_doctor,             28, 24, 14, 20);
 
     grid->addWidget(sec_red,                11,  0,  12, 24);
     grid->addWidget(sec_blue,               11,  44, 12, 24);
@@ -380,7 +396,7 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     grid->addWidget(fam_next_red,           42,  0,  4,  34);
     grid->addWidget(fam_next_blue,          42,  34, 4,  34);
 
-
+    grid->addWidget(doctor,                 29,  45, 2,   6);
 
     //grid->addWidget(&lblTv,                 21,  0, 21, 34);
 
@@ -467,6 +483,8 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     connect(sec_blue_t, SIGNAL(sigVisible(bool)), tvScreen->sec_blue_t, SLOT(setVisible(bool)));
     connect(sec_blue_t,  SIGNAL(sigTime(QString, QPalette)), tvScreen->sec_blue_t, SLOT(showTime(QString, QPalette)));
 
+    //connect(sec_doctor, SIGNAL(sigVisible(bool)), tvScreen->sec_doctor, SLOT(setVisible(bool)));
+    connect(sec_doctor,  SIGNAL(sigTime(QString, QPalette)), tvScreen->sec_doctor, SLOT(showTime(QString, QPalette)));
 
     ui.leCam1->setObjectName("leCam1");
     ui.leCam2->setObjectName("leCam2");
@@ -573,6 +591,11 @@ void PCScreen::CpuUsage(){
 void PCScreen::setCat(QString s){
     cat->setText(s);
     tvScreen->cat->setText(s);
+}
+
+void PCScreen::setAge(QString s){
+    age->setText(s);
+    tvScreen->age->setText(s);
 }
 
 void PCScreen::autoCamera(bool state){
@@ -880,7 +903,7 @@ void PCScreen::resizeEvent(QResizeEvent *){
     QFont f;
     f.setPixelSize(cat->height() * 0.8);
     cat->setFont(f);
-
+    age->setFont(f);
 }
 
 /*
@@ -957,9 +980,9 @@ void PCScreen::changeSize() {
 		}
 	}
 	else if (i == 1) {
-		if (HEIGHT_FAMILY > -6) {
+        if (HEIGHT_FAMILY > -10) {
 			HEIGHT_FAMILY -= 1;
-			if (HEIGHT_FAMILY != -6) {
+            if (HEIGHT_FAMILY != -10) {
                 tvScreen->grid->setRowMinimumHeight(0, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
                 tvScreen->grid->setRowMinimumHeight(1, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
                 tvScreen->grid->setRowMinimumHeight(2, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
@@ -980,9 +1003,9 @@ void PCScreen::changeSize() {
 		}
 	}
     else if (i == 3){
-		if (HEIGHT_REGION > -6) {
+        if (HEIGHT_REGION > -8) {
 			HEIGHT_REGION -= 1;
-			if (HEIGHT_REGION != -6) {
+            if (HEIGHT_REGION != -8) {
                 tvScreen->grid->setRowMinimumHeight(6, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
                 tvScreen->grid->setRowMinimumHeight(7, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
                 tvScreen->grid->setRowMinimumHeight(8, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
@@ -1038,5 +1061,18 @@ void PCScreen::changeFontWeight(QString s){
     QFont font;
     font.setPixelSize(s.toInt());
     tvScreen->cat->setFont(font);
+    tvScreen->age->setFont(font);
+}
 
+void PCScreen::turnDoctor(){
+    if(sec_doctor->isVisible()){
+        sec_doctor->setVisible(false);
+        sec_doctor->StartStop();
+        sec_doctor->Reset();
+        tvScreen->sec_doctor->setVisible(false);
+    }else{
+        sec_doctor->setVisible(true);
+        sec_doctor->StartStop();
+        tvScreen->sec_doctor->setVisible(true);
+    }
 }

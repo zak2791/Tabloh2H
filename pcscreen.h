@@ -17,6 +17,7 @@
 #include <QPointer>
 #include <QCheckBox>
 #include "cameraconnection.h"
+#include "lcdstopwatch.h"
 
 class WidgetFilter : public QObject {
     Q_OBJECT
@@ -78,6 +79,7 @@ private slots:
     void setCamera(QString);
 
     void setCat(QString);
+    void setAge(QString);
 
     void CpuUsage(void);
 
@@ -85,10 +87,13 @@ private slots:
 
     void changeFontWeight(QString);
 
+    void turnDoctor(void);
+
 private:
     QLabel* lblCpuUsage;
 	QWidget * formView;
     QWidget * frmTime;
+    LCDStopwatch * sec_doctor;
 
 	virtual void paintEvent(QPaintEvent *);
     virtual void closeEvent(QCloseEvent*);
@@ -131,7 +136,8 @@ private:
 	int minimum_height;
 	int percent_height;
     TVScreen * tvScreen;
-    QPushButton * cat;
+    QPushButton * cat;  //категория
+    QPushButton * age;  //возраст
 
     CameraViewer* viewCam1;
     CameraViewer* viewCam2;

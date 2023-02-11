@@ -6,14 +6,9 @@
 #include <QHBoxLayout>
 #include <QDebug>
 
-#include "xlsxdocument.h"
-#include "xlsxchartsheet.h"
-#include "xlsxcellrange.h"
-#include "xlsxchart.h"
-#include "xlsxrichstring.h"
-#include "xlsxworkbook.h"
 
-using namespace QXlsx;
+
+
 
 FamilyView::FamilyView(QWidget * parent) : QTableView(parent) {
 
@@ -36,6 +31,11 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
 	r = "";
     r_next = "";
     b_next = "";
+    currentAge = "";
+    currentWeight = "";
+    nextAge = "";
+    nextWeight = "";
+
 	setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint);
 	//setWindowState(Qt::WindowFullScreen);
 	sel_data = "";
@@ -73,18 +73,18 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
 	inFam->setFont(f);
 	weight->setFont(f);
 
-    Document doc("sportsmens.xlsx");
-    if (doc.load()){
+    doc = new Document("sportsmens.xlsx");
+    if (doc->load()){
 
     }
 
-    doc.workbook()->setActiveSheet(0);
+    doc->workbook()->setActiveSheet(0);
 
     //QList<QString>* qL;
     QVector<CellLocation> clList;
     int maxRow = -1;
     int maxCol = -1;
-    Worksheet* wsheet = (Worksheet*)doc.workbook()->activeSheet();
+    Worksheet* wsheet = (Worksheet*)doc->workbook()->activeSheet();
     clList = wsheet->getFullCells( &maxRow, &maxCol );
 
     QList<QString> lAge;
@@ -95,13 +95,14 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
     //QList<QString> sportsmens;
 
     for(int i = 1; i <= maxRow; i++){
-        sportsmens.append(doc.read(i, 1).toString() + ";"
-                          + doc.read(i, 2).toString() + ";"
-                          + doc.read(i, 3).toString() + ";"
-                          + doc.read(i, 4).toString());
-        l.append(doc.read(i, 1).toString() + ";" + doc.read(i, 2).toString());
-        lAge.append(doc.read(i, 3).toString());
-        lWeight.append(doc.read(i, 4).toString());
+        sportsmens.append(doc->read(i, 1).toString() + ";"
+                          + doc->read(i, 2).toString() + ";"
+                          + doc->read(i, 3).toString() + ";"
+                          + doc->read(i, 4).toString() + ";"
+                          + doc->read(i, 5).toString());
+        l.append(doc->read(i, 1).toString() + ";" + doc->read(i, 2).toString() + ";" + doc->read(i, 5).toString());
+        lAge.append(doc->read(i, 3).toString());
+        lWeight.append(doc->read(i, 4).toString());
     }
     lAge.removeDuplicates();
     lWeight.removeDuplicates();
@@ -115,6 +116,7 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
     weight->addItems(lWeight);
 
     cBox = new QCheckBox(this);
+    cbNum = new QCheckBox(this);
 
 	l.sort();
 
@@ -170,12 +172,29 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
     hbox->addLayout(red_box, 10);
     //hbox->addWidget(lbl_red, 10);
     hbox->addWidget(lineLeft);
-    hbox->addWidget(new QLabel("Выбор для текущего боя ->"));
+    hbox->addWidget(new QLabel("Выбор для\nтекущего боя ->"));
     hbox->addWidget(toggleButton, 10);
-    hbox->addWidget(new QLabel("<- Выбор для следующего боя"));
+    hbox->addWidget(new QLabel("<- Выбор для\nследующего боя"));
     hbox->addWidget(lineMiddle);
-    hbox->addWidget(new QLabel(u8"Сортировать по возрасту и весу"));
+
+    hbox->addWidget(new QLabel(u8"Выбор\nпо номерам"));
+    hbox->addWidget(cbNum, 1);
+
+    QFrame* line1 = new QFrame(this);
+    line1->setFrameShape(QFrame::VLine); // Horizontal line
+    line1->setFrameShadow(QFrame::Sunken);
+    line1->setLineWidth(1);
+    hbox->addWidget(line1);
+
+    hbox->addWidget(new QLabel(u8"Сортировать\nпо возрасту и весу"));
     hbox->addWidget(cBox, 1);
+
+    QFrame* line2 = new QFrame(this);
+    line2->setFrameShape(QFrame::VLine); // Horizontal line
+    line2->setFrameShadow(QFrame::Sunken);
+    line2->setLineWidth(1);
+    hbox->addWidget(line2);
+
     hbox->addWidget(new QLabel(u8"Вес:"));
     hbox->addWidget(weight, 1);
     hbox->addWidget(new QLabel(u8"Возраст:"));
@@ -224,6 +243,7 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
     connect(weight, SIGNAL(activated(QString)), this, SLOT(selectWeight(QString)));
     connect(age, SIGNAL(activated(QString)), this, SLOT(selectAge(QString)));
     connect(cBox, SIGNAL(stateChanged(int)), this, SLOT(allowSorting(int)));
+    connect(cbNum, SIGNAL(stateChanged(int)), this, SLOT(sortByNum(int)));
 
 }
  
@@ -237,10 +257,40 @@ void ListFamily::allowSorting(int i){
     }else{
         l.clear();
         for(int i = 0; i < sportsmens.count(); i++){
-            l.append(sportsmens.at(i).split(";")[0] + QString(";") + sportsmens.at(i).split(";")[1]);
+            //if(cbNum->isChecked() == false){
+                l.append(sportsmens.at(i).split(";")[0] + QString(";") + sportsmens.at(i).split(";")[1] + QString(";")
+                        + sportsmens.at(i).split(";")[4]);
+            //}else{
+            //    l.append(doc->read(i, 1).toString() + ";" + doc->read(i, 2).toString() + " (" + doc->read(i, 5).toString() + ")");
+                //1qDebug()<<"l = "<<l;
+            //}
         }
         l.prepend("-");
         textEdited(inFam->text());
+    }
+}
+
+void ListFamily::sortByNum(int i){
+    if(i == 0){
+        age->setEnabled(true);
+        weight->setEnabled(true);
+        cBox->setEnabled(true);
+        //if(cBox->isChecked())
+        //    allowSorting(1);
+        //connect(cBox, SIGNAL(stateChanged(int)), this, SLOT(allowSorting(int)));
+    }else{
+        age->setCurrentText("");
+        age->setEnabled(false);
+        weight->setCurrentText("");
+        weight->setEnabled(false);
+        //disconnect(cBox);
+        cBox->setChecked(false);
+        cBox->setEnabled(false);
+        //allowSorting(0);
+        //qDebug()<<cBox->isCheckable();
+        //if(cBox->isChecked())
+        //    cBox->toggle();     //setChecked(false);
+
     }
 }
 
@@ -296,8 +346,18 @@ void ListFamily::textEdited(QString s){
 	QStringList inL = QStringList();
 
 	foreach (QString str, l){
-		if(str.startsWith(s , Qt::CaseInsensitive))
-			inL << str;
+        if(cbNum->isChecked() == false){
+            if(str.startsWith(s , Qt::CaseInsensitive))
+                inL << str;
+        }else{
+            QString ss = "";
+            if(str != "-"){
+                //qDebug()<<"str = "<<str;
+                ss = str.split(";").at(2);
+                if(ss == s)
+                    inL << str;
+            }
+        }
 	}
 	QStringList lst;
 	if (s.compare("") == 0)
@@ -305,26 +365,28 @@ void ListFamily::textEdited(QString s){
 	else
 		lst = inL;
 
-	int num_fam = lst.count();   //количество фамилий в списке
-	int raw = num_fam / col;
-	if (num_fam % col)
-		raw++;        //количество строк в таблице
 
-	QStandardItemModel * mdl = new QStandardItemModel(raw, col);
-	QStandardItem * item;
-	int i = 0;
 
-	int _c, _r;
-	for (_c = 0; _c < col; _c++) {
-		for (_r = 0; _r < raw; _r++) {
-			i++;
-			if (i > num_fam) break;
-			item = new QStandardItem(lst[i - 1]);
-			mdl->setItem(_r, _c, item);
-		}
-	}
+    int num_fam = lst.count();   //количество фамилий в списке
+    int raw = num_fam / col;
+    if (num_fam % col)
+        raw++;        //количество строк в таблице
 
-	tbl->setModel(mdl);
+    QStandardItemModel * mdl = new QStandardItemModel(raw, col);
+    QStandardItem * item;
+    int i = 0;
+
+    int _c, _r;
+    for (_c = 0; _c < col; _c++) {
+        for (_r = 0; _r < raw; _r++) {
+            i++;
+            if (i > num_fam) break;
+            item = new QStandardItem(lst[i - 1]);
+            mdl->setItem(_r, _c, item);
+        }
+    }
+
+    tbl->setModel(mdl);
     connect(tbl->selectionModel(), SIGNAL(selectionChanged(QItemSelection, QItemSelection)), this, SLOT(sel(QItemSelection, QItemSelection)));
 }
 
@@ -332,25 +394,61 @@ void ListFamily::_hide()
 {
     emit sig_hide(r, b, r_next, b_next);
 	hide();
-    qDebug()<<r<< b<< r_next<< b_next;
+    //qDebug()<<r<< b<< r_next<< b_next;
 }
 
 void ListFamily::sel(QItemSelection a, QItemSelection )
 {
 	sel_data = a.indexes()[0].data().toString();
+    //qDebug()<<sel_data;
 }
 
-void ListFamily::sell(int _sel)
-{
+void ListFamily::sell(int _sel){
+    qDebug()<<"sel_data = "<<sel_data;
+    QString num;
+    if(cbNum->isChecked() && sel_data != "-"){
+        num = sel_data.split(";").at(2);
+        //num = ss.remove(")");
+
+        foreach(QString s, sportsmens){
+            if(s.split(";").at(4) == num){
+                if(!state_toggle){
+                    currentAge = s.split(";").at(2);
+                    currentWeight = s.split(";").at(3);
+                    age->setCurrentText(currentAge);
+                    weight->setCurrentText(currentWeight);
+                }else{
+                    if (_sel){
+                        if(just_opened_blue){
+                            currentAge = nextAge;
+                            currentWeight = nextWeight;
+                            age->setCurrentText(currentAge);
+                            weight->setCurrentText(currentWeight);
+                        }
+                        nextAge = s.split(";").at(2);
+                        nextWeight = s.split(";").at(3);
+                    }
+                }
+            }
+        }
+
+    }
+    //qDebug()<<"sel_data = "<<sel_data;
+
+    //qDebug()<<"weight = "<<doc->
 	if (_sel) {
         if(!state_toggle){  //если выбираем вызываемого спортсмена
             lbl_blue->setText(sel_data);
             b = sel_data;
+            //currentAge =
+            //currentWeight =
+
         }else{
             if(just_opened_blue){
                 just_opened_blue = false;
                 lbl_blue->setText(lbl_next_blue->text());
                 b = lbl_next_blue->text();
+
 
             }
             lbl_next_blue->setText(sel_data);

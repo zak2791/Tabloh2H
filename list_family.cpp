@@ -407,7 +407,12 @@ void ListFamily::sell(int _sel){
     qDebug()<<"sel_data = "<<sel_data;
     QString num;
     if(cbNum->isChecked() && sel_data != "-"){
-        num = sel_data.split(";").at(2);
+        if(sel_data.split(";").length() > 2)
+            num = sel_data.split(";").at(2);
+        else
+            return;
+
+
         //num = ss.remove(")");
 
         foreach(QString s, sportsmens){

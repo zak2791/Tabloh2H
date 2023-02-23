@@ -30,7 +30,6 @@ public:
     virtual void hideEvent(QHideEvent*);
 
 
-
 private:
 
 

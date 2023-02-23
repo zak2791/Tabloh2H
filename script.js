@@ -197,6 +197,13 @@ function setViewName(v){
 	viewName = v
 }
 
+function stopParter(){
+	if(sec_red.Status == 1)
+		sec_red.StartStop();
+    if(sec_blue.Status == 1)
+        sec_blue.StartStop();
+}
+
 btnTime.clicked.connect(fightTime);
 btnPlus_red.clicked.connect(Plus_red);
 btnPlus_blue.clicked.connect(Plus_blue);
@@ -208,3 +215,4 @@ btnParter_blue.clicked.connect(parter_blue);
 btnSettings.clicked.connect(function() {lf.showFullScreen();});
 lf.sig_hide.connect(set_family);
 pwgt.changeViewName.connect(setViewName);
+mainTimer.sigStarted.connect(stopParter);

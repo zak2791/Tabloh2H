@@ -565,7 +565,7 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     ui.cmbFont->setCurrentText(font_size.readLine());
     //QFont font_weight;
     //font_weight.setPixelSize(size);
-    //tvScreen->cat->setFont(font_weight);
+    //tvScreen->cat->setFont(font_weight);\
 
 }
 

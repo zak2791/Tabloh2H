@@ -44,7 +44,7 @@
   <widget class="QSpinBox" name="sbSec">
    <property name="geometry">
     <rect>
-     <x>40</x>
+     <x>80</x>
      <y>50</y>
      <width>42</width>
      <height>22</height>
@@ -63,9 +63,9 @@
   <widget class="QLabel" name="lblSpace">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>50</x>
      <y>10</y>
-     <width>91</width>
+     <width>101</width>
      <height>31</height>
     </rect>
    </property>
@@ -389,9 +389,9 @@
   <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
-     <x>140</x>
+     <x>220</x>
      <y>10</y>
-     <width>121</width>
+     <width>141</width>
      <height>31</height>
     </rect>
    </property>
@@ -406,7 +406,7 @@
   <widget class="QComboBox" name="cmbFont">
    <property name="geometry">
     <rect>
-     <x>180</x>
+     <x>270</x>
      <y>50</y>
      <width>42</width>
      <height>22</height>
@@ -419,7 +419,7 @@
   <widget class="Line" name="line_5">
    <property name="geometry">
     <rect>
-     <x>126</x>
+     <x>193</x>
      <y>10</y>
      <width>16</width>
      <height>61</height>
@@ -427,49 +427,6 @@
    </property>
    <property name="orientation">
     <enum>Qt::Vertical</enum>
-   </property>
-  </widget>
-  <widget class="Line" name="line_6">
-   <property name="geometry">
-    <rect>
-     <x>256</x>
-     <y>10</y>
-     <width>16</width>
-     <height>61</height>
-    </rect>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Vertical</enum>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_3">
-   <property name="geometry">
-    <rect>
-     <x>260</x>
-     <y>10</y>
-     <width>121</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Отображение
-фамилий</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignCenter</set>
-   </property>
-  </widget>
-  <widget class="QComboBox" name="cmbFam">
-   <property name="geometry">
-    <rect>
-     <x>271</x>
-     <y>50</y>
-     <width>121</width>
-     <height>22</height>
-    </rect>
-   </property>
-   <property name="currentText">
-    <string/>
    </property>
   </widget>
  </widget>

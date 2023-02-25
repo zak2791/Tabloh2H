@@ -11,6 +11,7 @@
 #include "plus.h"
 #include "category.h"
 #include "lcdstopwatch.h"
+#include "firstlastname.h"
 
 class TVScreen : public QWidget {
 	Q_OBJECT
@@ -21,14 +22,14 @@ public:
 
     Rate * ball_red;
     Rate * ball_blue;
-    Rate * akt_red;
-    Rate * akt_blue;
+    //Rate * akt_red;
+    //Rate * akt_blue;
 
 	NP * np_red;
 	NP * np_blue;
 
-	Fam * fam_red;
-	Fam * fam_blue;
+    FirstLastName * fam_red;
+    FirstLastName * fam_blue;
     Fam * fam_next_red;
     Fam * fam_next_blue;
 	Fam * reg_red;

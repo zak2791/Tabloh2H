@@ -68,13 +68,13 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     rateBlue->setFrameShape(QFrame::Box);
     rateBlue->setObjectName("ball_blue");
 
-    actRed = new Rate(this);
-    actRed->setFrameShape(QFrame::Box);
-    actRed->setObjectName("akt_red");
+    //actRed = new Rate(this);
+    //actRed->setFrameShape(QFrame::Box);
+    //actRed->setObjectName("akt_red");
 
-    actBlue = new Rate(this);
-    actBlue->setFrameShape(QFrame::Box);
-    actBlue->setObjectName("akt_blue");
+    //actBlue = new Rate(this);
+    //actBlue->setFrameShape(QFrame::Box);
+    //actBlue->setObjectName("akt_blue");
 
 	fam_red = new Fam(col_red, "", 63,"",this);
 	fam_red->setObjectName("fam_red");
@@ -224,9 +224,9 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
                           "65", "70", "75", "80", "85", "90", "100", "110"});
     connect(ui.cmbFont,         SIGNAL(currentTextChanged(QString)), this, SLOT(changeFontWeight(QString)));
 
-    ui.cmbFam->addItems({"ФАМИЛИЯ ИМЯ", "ФАМИЛИЯ И.", "ФАМИЛИЯ"});
+    //ui.cmbFam->addItems({"ФАМИЛИЯ ИМЯ", "ФАМИЛИЯ И.", "ФАМИЛИЯ"});
     //ui.cmbFont->setObjectName("viewName");
-    connect(ui.cmbFam,         SIGNAL(currentIndexChanged(int)), this, SIGNAL(changeViewName(int)));
+    //connect(ui.cmbFam,         SIGNAL(currentIndexChanged(int)), this, SIGNAL(changeViewName(int)));
 
     frmTime = new QWidget;
     uiTime.setupUi(frmTime);
@@ -338,11 +338,11 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
 
     grid->addWidget(rateRed,                8,  0,  20, 24);
     grid->addWidget(rateBlue,               8,  44, 20, 24);
-    grid->addWidget(actRed,                 28, 0,  14, 16);
-    grid->addWidget(actBlue,                28, 52, 14, 16);//////////
+    //grid->addWidget(actRed,                 28, 0,  14, 16);
+    //grid->addWidget(actBlue,                28, 52, 14, 16);//////////
 
-    grid->addWidget(np_red,                 32, 17, 6,  6);
-    grid->addWidget(np_blue,                32, 45, 6,  6);
+    grid->addWidget(np_red,                 32,  9, 6,  7);
+    grid->addWidget(np_blue,                32, 53, 6,  7);
 
     grid->addWidget(btnTehTime_red,         8,  24, 2,  6);
     grid->addWidget(btnSettings,            8,  31, 2,  6);
@@ -443,8 +443,8 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
 
         connect(rateRed,	SIGNAL(sigRate(int)),		 tvScreen->ball_red,	  SLOT(setRate(int)));
         connect(rateBlue,	SIGNAL(sigRate(int)),		 tvScreen->ball_blue,     SLOT(setRate(int)));
-        connect(actRed,     SIGNAL(sigRate(int)),		 tvScreen->akt_red,	      SLOT(setRate(int)));
-        connect(actBlue,	SIGNAL(sigRate(int)),		 tvScreen->akt_blue,	  SLOT(setRate(int)));
+        //connect(actRed,     SIGNAL(sigRate(int)),		 tvScreen->akt_red,	      SLOT(setRate(int)));
+        //connect(actBlue,	SIGNAL(sigRate(int)),		 tvScreen->akt_blue,	  SLOT(setRate(int)));
 
         connect(np_red,		SIGNAL(ball(QString)),	     tvScreen->np_red,		  SLOT(setValue(QString)));
         connect(np_blue,	SIGNAL(ball(QString)),	     tvScreen->np_blue,	      SLOT(setValue(QString)));
@@ -949,13 +949,13 @@ void PCScreen::setSec(int m) {
     tvScreen->grid->removeWidget(tvScreen->sec);
     if(m == 3){
         //grid->addWidget(mainTimer, 24, 24, 13, 20);
-        tvScreen->grid->addWidget(tvScreen->sec, 13, 25, 14, 18);
+        tvScreen->grid->addWidget(tvScreen->sec, 18, 25, 14, 18);
     }else if(m == 2){
         //grid->addWidget(mainTimer, 25, 24, 11, 20);
-        tvScreen->grid->addWidget(tvScreen->sec, 14, 25, 12, 18);
+        tvScreen->grid->addWidget(tvScreen->sec, 19, 25, 12, 18);
     }else{
         //grid->addWidget(mainTimer, 26, 24, 9, 20);
-        tvScreen->grid->addWidget(tvScreen->sec, 15, 25, 10, 18);
+        tvScreen->grid->addWidget(tvScreen->sec, 20, 25, 10, 18);
     }
 }
 
@@ -976,6 +976,11 @@ void PCScreen::changeSize() {
             tvScreen->grid->setRowMinimumHeight(3, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
             tvScreen->grid->setRowMinimumHeight(4, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
             tvScreen->grid->setRowMinimumHeight(5, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
+            tvScreen->grid->setRowMinimumHeight(6, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
+            tvScreen->grid->setRowMinimumHeight(7, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
+            tvScreen->grid->setRowMinimumHeight(8, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
+            tvScreen->grid->setRowMinimumHeight(9, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
+            tvScreen->grid->setRowMinimumHeight(10, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
 
 		}
 	}
@@ -989,28 +994,33 @@ void PCScreen::changeSize() {
                 tvScreen->grid->setRowMinimumHeight(3, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
                 tvScreen->grid->setRowMinimumHeight(4, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
                 tvScreen->grid->setRowMinimumHeight(5, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
+                tvScreen->grid->setRowMinimumHeight(6, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
+                tvScreen->grid->setRowMinimumHeight(7, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
+                tvScreen->grid->setRowMinimumHeight(8, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
+                tvScreen->grid->setRowMinimumHeight(9, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
+                tvScreen->grid->setRowMinimumHeight(10, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
 			}
 		}
 	}
 	else if (i == 2) {
 		if (HEIGHT_REGION < 5) {
 			HEIGHT_REGION += 1;
-            tvScreen->grid->setRowMinimumHeight(6, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
-            tvScreen->grid->setRowMinimumHeight(7, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
-            tvScreen->grid->setRowMinimumHeight(8, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
-            tvScreen->grid->setRowMinimumHeight(9, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
-            tvScreen->grid->setRowMinimumHeight(10, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
+            tvScreen->grid->setRowMinimumHeight(11, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
+            tvScreen->grid->setRowMinimumHeight(12, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
+            tvScreen->grid->setRowMinimumHeight(13, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
+            tvScreen->grid->setRowMinimumHeight(14, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
+            tvScreen->grid->setRowMinimumHeight(15, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
 		}
 	}
     else if (i == 3){
         if (HEIGHT_REGION > -8) {
 			HEIGHT_REGION -= 1;
             if (HEIGHT_REGION != -8) {
-                tvScreen->grid->setRowMinimumHeight(6, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
-                tvScreen->grid->setRowMinimumHeight(7, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
-                tvScreen->grid->setRowMinimumHeight(8, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
-                tvScreen->grid->setRowMinimumHeight(9, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
-                tvScreen->grid->setRowMinimumHeight(10, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
+                tvScreen->grid->setRowMinimumHeight(11, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
+                tvScreen->grid->setRowMinimumHeight(12, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
+                tvScreen->grid->setRowMinimumHeight(13, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
+                tvScreen->grid->setRowMinimumHeight(14, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
+                tvScreen->grid->setRowMinimumHeight(15, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
 			}
 		}
 	}

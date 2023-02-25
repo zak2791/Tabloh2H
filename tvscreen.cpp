@@ -43,22 +43,22 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
 	//ball_blue->id = 0;
 	//ball_blue->setObjectName("ball_blue");
 
-    akt_red = new Rate(this);
-	akt_red->setFrameShape(QFrame::Box);
+    //akt_red = new Rate(this);
+    //akt_red->setFrameShape(QFrame::Box);
 	//akt_red->id = 3;
 	//akt_red->setObjectName("akt_red");
 
-    akt_blue = new Rate(this);
-	akt_blue->setFrameShape(QFrame::Box);
+    //akt_blue = new Rate(this);
+    //akt_blue->setFrameShape(QFrame::Box);
 	//akt_blue->id = 2;
 	//akt_blue->setObjectName("akt_blue");
 
-	fam_red = new Fam(col_red, "", 63, "", this);
+    fam_red = new FirstLastName(col_red, "", 63, "", this);
 	//fam_red->setObjectName("fam_red");
 	reg_red = new Fam(col_red, "", 10, "Lucida Console");
 	//reg_red->setObjectName("reg_red");
 
-	fam_blue = new Fam(col_blue, "", 63, "", this);
+    fam_blue = new FirstLastName(col_blue, "", 63, "", this);
 	//fam_blue->setObjectName("fam_blue");
 	reg_blue = new Fam(col_blue, "", 10, "Lucida Console");
 	//reg_blue->setObjectName("reg_blue");
@@ -129,32 +129,32 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
 	grid->setObjectName("grid");
 	//grid->setSpacing(6);
 	//grid->setMargin(6);
-    grid->addWidget(fam_blue,    0, 0, 6, 34);
-    grid->addWidget(fam_red,    0, 34, 6, 34);
+    grid->addWidget(fam_blue,    0, 0, 11, 34);
+    grid->addWidget(fam_red,    0, 34, 11, 34);
 
-    grid->addWidget(reg_blue,   6, 0, 5, 34);
-    grid->addWidget(reg_red,   6, 34, 5, 34);
+    grid->addWidget(reg_blue,   11, 0, 5, 34);
+    grid->addWidget(reg_red,   11, 34, 5, 34);
 
-    grid->addWidget(ball_blue,  11, 0, 18, 24);
-    grid->addWidget(ball_red,  11, 44, 18, 24);
-    grid->addWidget(akt_blue,  29, 5, 12, 14);
-    grid->addWidget(akt_red,  29, 49, 12, 14);
+    grid->addWidget(ball_blue,  16,  0, 18, 24);
+    grid->addWidget(ball_red,   16, 44, 18, 24);
+    //grid->addWidget(akt_blue,  29, 5, 12, 14);
+    //grid->addWidget(akt_red,  29, 49, 12, 14);
 
-    grid->addWidget(np_blue,    32, 21, 6, 6);
-    grid->addWidget(np_red,     32, 41, 6, 6);
+    grid->addWidget(np_blue,    34,  8, 7, 9);
+    grid->addWidget(np_red,     34, 51, 7, 9);
 
     grid->addWidget(plus_blue,   11,  0, 6, 6);
     grid->addWidget(plus_red,    11, 44, 6, 6);
 
-    grid->addWidget(age,        29, 28, 6, 12);
-    grid->addWidget(cat,        35, 28, 6, 12);
+    grid->addWidget(age,        35, 22, 5, 12);
+    grid->addWidget(cat,        35, 34, 5, 12);
 
-    grid->addWidget(sec,        13, 25, 14, 18);
-    grid->addWidget(sec_doctor, 13, 25, 14, 18);
-    grid->addWidget(sec_blue,   13,  3, 14, 18);
-    grid->addWidget(sec_red,    13, 47, 14, 18);
-    grid->addWidget(sec_blue_t, 13,  3, 14, 18);
-    grid->addWidget(sec_red_t,  13, 47, 14, 18);
+    grid->addWidget(sec,        18, 25, 14, 18);
+    grid->addWidget(sec_doctor, 18, 25, 14, 18);
+    grid->addWidget(sec_blue,   18,  3, 14, 18);
+    grid->addWidget(sec_red,    18, 47, 14, 18);
+    grid->addWidget(sec_blue_t, 18,  3, 14, 18);
+    grid->addWidget(sec_red_t,  18, 47, 14, 18);
 
     grid->addWidget(lblNextBlue,   36, 0,  5, 5);
     grid->addWidget(lblNextRed,    36,  63,  5, 5);
@@ -234,6 +234,11 @@ void TVScreen::resizeEvent(QResizeEvent *){
     grid->setRowMinimumHeight(8, minimum_height);
     grid->setRowMinimumHeight(9, minimum_height);
     grid->setRowMinimumHeight(10, minimum_height);
+    grid->setRowMinimumHeight(11, minimum_height);
+    grid->setRowMinimumHeight(12, minimum_height);
+    grid->setRowMinimumHeight(13, minimum_height);
+    grid->setRowMinimumHeight(14, minimum_height);
+    grid->setRowMinimumHeight(15, minimum_height);
     grid->setRowMinimumHeight(41, minimum_height);
     grid->setRowMinimumHeight(42, minimum_height);
     grid->setRowMinimumHeight(43, minimum_height);
@@ -241,6 +246,7 @@ void TVScreen::resizeEvent(QResizeEvent *){
     QFont f;
     f.setPixelSize(cat->height() * 1.5);
     //cat->setFont(f);
+
 }
 
 

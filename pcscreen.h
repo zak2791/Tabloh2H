@@ -48,7 +48,7 @@ signals:
 	void sendKey(int);
     //void setCategory(void);
     //void signalReplay(void);
-    void changeViewName(int);
+    //void changeViewName(int);
 
 public slots:
     //void setFrameWidth(int);
@@ -116,8 +116,8 @@ private:
 
     Rate * rateRed;
     Rate * rateBlue;
-    Rate * actRed;
-    Rate * actBlue;
+    //Rate * actRed;
+    //Rate * actBlue;
 	Fam * fam_red;
 	Fam * fam_blue;
 	Fam * reg_red;

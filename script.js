@@ -1,5 +1,5 @@
 var minimum_height = 0;
-var viewName = 0;
+//var viewName = 0;
 
 function sbros(){
     //if(JSTools.alert(decodeURIComponent(escape("Сброс"))) === 16384){
@@ -141,13 +141,13 @@ function set_family(a, b, a_next, b_next){
 	var st;
     if(a !=="-" && a !== ""){
 		st	= a.split(";");
-		if(viewName == 0){
+		//if(viewName == 0){
 			fam_red.text = (st[0].toUpperCase());
-		}else if(viewName == 1){
-			fam_red.text = (st[0].split(" ")[0].toUpperCase() + " " + st[0].split(" ")[1][0].toUpperCase() + ".");
-		}else{
-			fam_red.text = (st[0].split(" ")[0].toUpperCase());
-		}
+		//}else if(viewName == 1){
+		//	fam_red.text = (st[0].split(" ")[0].toUpperCase() + " " + st[0].split(" ")[1][0].toUpperCase() + ".");
+		//}else{
+		//	fam_red.text = (st[0].split(" ")[0].toUpperCase());
+		//}
         reg_red.text = (st[1].toUpperCase());
 	}else {
         fam_red.text = ("");
@@ -155,13 +155,13 @@ function set_family(a, b, a_next, b_next){
 	}
     if(b !== "-" && b !== ""){
 		st = b.split(";");
-		if(viewName == 0){
+		//if(viewName == 0){
 			fam_blue.text = (st[0].toUpperCase());
-		}else if(viewName == 1){
-			fam_blue.text = (st[0].split(" ")[0].toUpperCase() + " " + st[0].split(" ")[1][0].toUpperCase() + ".");
-		}else{
-			fam_blue.text = (st[0].split(" ")[0].toUpperCase());
-		}
+		//}else if(viewName == 1){
+		//	fam_blue.text = (st[0].split(" ")[0].toUpperCase() + " " + st[0].split(" ")[1][0].toUpperCase() + ".");
+		//}else{
+		//	fam_blue.text = (st[0].split(" ")[0].toUpperCase());
+		//}
         reg_blue.text = (st[1].toUpperCase());
 	}else {
         fam_blue.text = ("");
@@ -169,33 +169,33 @@ function set_family(a, b, a_next, b_next){
 	}
 	if(a_next !=="-" && a_next !== ""){
 		st	= a_next.split(";");
-		if(viewName == 0){
+		//if(viewName == 0){
 			fam_next_red.text = (st[0].toUpperCase());
-		}else if(viewName == 1){
-			fam_next_red.text = (st[0].split(" ")[0].toUpperCase() + " " + st[0].split(" ")[1][0].toUpperCase() + ".");
-		}else{
-			fam_next_red.text = (st[0].split(" ")[0].toUpperCase());
-		}
+		//}else if(viewName == 1){
+		//	fam_next_red.text = (st[0].split(" ")[0].toUpperCase() + " " + st[0].split(" ")[1][0].toUpperCase() + ".");
+		//}else{
+		//	fam_next_red.text = (st[0].split(" ")[0].toUpperCase());
+		//}
 	}else {
 		fam_next_red.text = ("");
 	}
     if(b_next !== "-" && b_next !== ""){
 		st = b_next.split(";");
-		if(viewName == 0){
+		//if(viewName == 0){
 			fam_next_blue.text = (st[0].toUpperCase());
-		}else if(viewName == 1){
-			fam_next_blue.text = (st[0].split(" ")[0].toUpperCase() + " " + st[0].split(" ")[1][0].toUpperCase() + ".");
-		}else{
-			fam_next_blue.text = (st[0].split(" ")[0].toUpperCase());
-		}
+		//}else if(viewName == 1){
+		//	fam_next_blue.text = (st[0].split(" ")[0].toUpperCase() + " " + st[0].split(" ")[1][0].toUpperCase() + ".");
+		//}else{
+		//	fam_next_blue.text = (st[0].split(" ")[0].toUpperCase());
+		//}
 	}else {
 		fam_next_blue.text = ("");
 	}
 }
 
-function setViewName(v){
-	viewName = v
-}
+//function setViewName(v){
+//	viewName = v
+//}
 
 function stopParter(){
 	if(sec_red.Status == 1)
@@ -214,5 +214,5 @@ btnParter_red.clicked.connect(parter_red);
 btnParter_blue.clicked.connect(parter_blue);
 btnSettings.clicked.connect(function() {lf.showFullScreen();});
 lf.sig_hide.connect(set_family);
-pwgt.changeViewName.connect(setViewName);
+//pwgt.changeViewName.connect(setViewName);
 mainTimer.sigStarted.connect(stopParter);

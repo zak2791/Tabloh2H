@@ -7,17 +7,19 @@
 
 NP::NP(QLabel *parent) : QLabel(parent)
 {
-	bl = "";
+    bl = "";
 
 	QFile styleFile;
 
-	style =			QString("QLabel{background-color: black; border-radius: 30px; border-color:white; border-width: 2px; border-style: solid; color: white}");
+    style =			QString("QLabel{background-color: black; border-radius: 30px; border-color:white; border-width: 2px; border-style: solid; color:white;}");
 	style_red =		QString("QLabel{background-color: red; border-radius: 30px; border-color:white; border-width: 2px; border-style: solid; color: black}");
+    style_orange =	QString("QLabel{background-color: orange; border-radius: 30px; border-color:white; border-width: 2px; border-style: solid; color: black}");
 	style_yellow =	QString("QLabel{background-color: yellow; border-radius: 30px; border-color:white; border-width: 2px; border-style: solid; color: black}");
 	style_green =	QString("QLabel{background-color: green; border-radius: 30px; border-color:white; border-width: 2px; border-style: solid; color: black }");
 
 	setStyleSheet(style);
 	setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
 	QThread * thread = new QThread;
 	Blinks * blinks = new Blinks();
@@ -27,6 +29,8 @@ NP::NP(QLabel *parent) : QLabel(parent)
 	connect(thread, SIGNAL(started()), blinks, SLOT(process()));
 
 	thread->start();
+
+    sbros();
 };
 
 
@@ -36,7 +40,7 @@ NP::~NP()
 }
 
 void NP::prg(bool b) {
-	if (QString::compare(bl, u8"П2") == 0) {
+    if (QString::compare(bl, u8"П3") == 0) {
 		if (b)
 			setStyleSheet(style);
 		else
@@ -45,24 +49,24 @@ void NP::prg(bool b) {
 }
 
 void NP::sbros() {
-	bl = u8"";
+    bl = u8"";
 	setText(bl);
 	setStyleSheet(style);
 	emit ball(bl);
 }
 
 void NP::set_red(){
-	if (QString::compare(bl, u8"П2") == 0)
+    if (QString::compare(bl, u8"П3") == 0)
 		setStyleSheet(style_red);
 }
 
 void NP::set_black(){
-	if (QString::compare(bl, u8"П2") == 0)
+    if (QString::compare(bl, u8"П3") == 0)
 		setStyleSheet(style);
 }
 
 void NP::plus(){
-	if (QString::compare(bl, u8"") == 0) {
+    if (QString::compare(bl, u8"") == 0) {
 		bl = u8"ЗП";
 		setText(bl);
 		setStyleSheet(style_green);
@@ -75,35 +79,49 @@ void NP::plus(){
 	else if (QString::compare(bl, u8"П1") == 0) {
 		bl = u8"П2";
 		setText(bl);
-		setStyleSheet(style_red);
+        setStyleSheet(style_orange);
 	}
+    else if (QString::compare(bl, u8"П2") == 0) {
+        bl = u8"П3";
+        setText(bl);
+        setStyleSheet(style_red);
+    }
 	emit ball(bl);
 }
 
 void NP::minus(){
-	if (QString::compare(bl, u8"П2") == 0) {
-		bl = u8"П1";
+    if (QString::compare(bl, u8"П3") == 0) {
+        bl = u8"П2";
 		setText(bl);
-		setStyleSheet(style_yellow);
+        setStyleSheet(style_orange);
 	}
-	else if (QString::compare(bl, u8"П1") == 0) {
-		bl = u8"ЗП";
+    else if (QString::compare(bl, u8"П2") == 0) {
+        bl = u8"П1";
 		setText(bl);
-		setStyleSheet(style_green);
+        setStyleSheet(style_yellow);
 	}
-	else if (QString::compare(bl, u8"ЗП") == 0) {
-		bl = u8"";
+    else if (QString::compare(bl, u8"П1") == 0) {
+        bl = u8"ЗП";
 		setText(bl);
-		setStyleSheet(style);
+        setStyleSheet(style_green);
 	}
+    else if (QString::compare(bl, u8"ЗП") == 0) {
+        bl = u8"";
+        setText(bl);
+        setStyleSheet(style);
+    }
 	emit ball(bl);
 }
 
 void NP::setValue(QString b){
 	bl = b;
-	if (QString::compare(bl, u8"П2") == 0) {
+    if (QString::compare(bl, u8"П3") == 0) {
+            setText(bl);
+            setStyleSheet(style_red);
+    }
+    else if (QString::compare(bl, u8"П2") == 0) {
 		setText(bl);
-		setStyleSheet(style_red);
+        setStyleSheet(style_orange);
 	}
 	else if (QString::compare(bl, u8"П1") == 0){
 		setText(bl);
@@ -113,7 +131,7 @@ void NP::setValue(QString b){
 		setText(bl);
 		setStyleSheet(style_green);
 	}
-	else if (QString::compare(bl, u8"") == 0) {
+    else if (QString::compare(bl, u8"") == 0) {
 		setText(bl);
 		setStyleSheet(style);
 	}
@@ -130,10 +148,17 @@ void NP::mousePressEvent(QMouseEvent *  pe) {
 void NP::resizeEvent(QResizeEvent * ) {
 	QFont fnt;
 	fnt.setWeight(50);
-	QFontMetrics fm(fnt);
-	int a = height() * 0.75;
+    //QFontMetrics fm(fnt);
+    int a = height() * 0.75;
 	fnt.setPixelSize(a);
 	setFont(fnt);
+    //int w = width();
+    int h = height();
+    //if(w>h)
+    setFixedWidth(h);
+    //else
+        //np_red->setFixedHeight(w);
+
 }
 
 Blinks::Blinks() {

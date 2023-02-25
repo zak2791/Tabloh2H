@@ -30,11 +30,13 @@ public slots:
 
 private:
 	virtual void paintEvent(QPaintEvent *);
-	int wt;
-	//QString fn;
-	QString tx;
-	QFont fm;
 
+
+protected:
+    int wt;
+    //QString fn;
+    QString tx;
+    QFont fm;
 
 
 signals:

@@ -221,7 +221,7 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     connect(ui.btnRegUp,        SIGNAL(clicked()), this, SLOT(changeSize()));
 
     ui.cmbFont->addItems({"10", "12", "14", "16", "18", "20", "23", "26", "29", "34", "39", "45", "50", "55", "60",
-                          "65", "70", "75", "80", "85", "90", "100", "110"});
+                          "65", "70", "75", "80", "85", "90", "100", "110", "120", "130", "140", "150", "170"});
     connect(ui.cmbFont,         SIGNAL(currentTextChanged(QString)), this, SLOT(changeFontWeight(QString)));
 
     //ui.cmbFam->addItems({"ФАМИЛИЯ ИМЯ", "ФАМИЛИЯ И.", "ФАМИЛИЯ"});

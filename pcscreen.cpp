@@ -60,6 +60,8 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
 	minimum_height = 0;
 	percent_height = 0;
 
+
+
     rateRed = new Rate(this);
     rateRed->setFrameShape(QFrame::Box);
     rateRed->setObjectName("ball_red");
@@ -324,6 +326,8 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
 
     //lblTv.hide();
 
+
+
 	grid = new QGridLayout(this);
 	grid->setObjectName("grid");
 	//spacing = 6;
@@ -408,6 +412,8 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
 	//minimum_height_region = minimum_height_family;
 
     btnTime->setStyleSheet("color: green; font: bold " + QString::number(round(btnTime->height() / 2)) + "px;");
+
+    lblEndTimer = new EndTime(this);
 
     //desk = QApplication::desktop();
 
@@ -566,6 +572,9 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     //QFont font_weight;
     //font_weight.setPixelSize(size);
     //tvScreen->cat->setFont(font_weight);\
+
+    connect(mainTimer, SIGNAL(sigEndTime()), tvScreen->lblEndTimer, SLOT(startProcess()));
+    connect(mainTimer, SIGNAL(sigEndTime()), lblEndTimer, SLOT(startProcess()));
 
 }
 
@@ -904,6 +913,9 @@ void PCScreen::resizeEvent(QResizeEvent *){
     f.setPixelSize(cat->height() * 0.8);
     cat->setFont(f);
     age->setFont(f);
+
+    lblEndTimer->setGeometry(0, 0, width(), height());
+
 }
 
 /*
@@ -1086,3 +1098,5 @@ void PCScreen::turnDoctor(){
         tvScreen->sec_doctor->setVisible(true);
     }
 }
+
+

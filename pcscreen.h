@@ -18,6 +18,7 @@
 #include <QCheckBox>
 #include "cameraconnection.h"
 #include "lcdstopwatch.h"
+#include "endtime.h"
 
 class WidgetFilter : public QObject {
     Q_OBJECT
@@ -42,6 +43,7 @@ public:
 
     //~PCScreen();
 
+    EndTime * lblEndTimer;         //красный фон по окончании времени
 
 
 signals:

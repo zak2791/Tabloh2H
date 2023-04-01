@@ -11,7 +11,6 @@ int main(int argc, char** argv){
     QApplication app(argc, argv);
 
 
-	
     PCScreen * pwgt = new PCScreen();
     pwgt->setObjectName("pwgt");
 
@@ -29,7 +28,7 @@ int main(int argc, char** argv){
 		foreach(QObject* pobj, lst) {
 			sw = se.newQObject(pobj);
 			se.globalObject().setProperty(pobj->objectName(), sw);
-            qDebug()<<pobj->objectName();
+            //qDebug()<<pobj->objectName();
 		}
 		JSTools* pjt = new JSTools;
 		sw = se.newQObject(pjt);
@@ -48,7 +47,7 @@ int main(int argc, char** argv){
 							  "Can not open the script file",
 							  QMessageBox::Yes);
 	}
-    qDebug()<<333;
+    //qDebug()<<333;
 	return app.exec();
 }
 

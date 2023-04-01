@@ -6,7 +6,8 @@
 #include <QHBoxLayout>
 #include <QDebug>
 
-
+#include <QDir>
+#include <QMessageBox>
 
 
 
@@ -73,7 +74,16 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
 	inFam->setFont(f);
 	weight->setFont(f);
 
-    doc = new Document("sportsmens.xlsx");
+
+
+    QDir dir = QDir::current();
+
+    QString path(dir.path() + "/sportsmens.xlsx");
+
+    QString path1(dir.path() + "/bin");
+    dir.setCurrent(path1);  //закомментить для работы из Qt Creator
+
+    doc = new Document(path);
     if (doc->load()){
 
     }

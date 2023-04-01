@@ -125,6 +125,8 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
 
     //rV = new ReplayViewer(this);
 
+
+
 	grid = new QGridLayout(this);
 	grid->setObjectName("grid");
 	//grid->setSpacing(6);
@@ -143,8 +145,8 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
     grid->addWidget(np_blue,    34,  8, 7, 9);
     grid->addWidget(np_red,     34, 51, 7, 9);
 
-    grid->addWidget(plus_blue,   11,  0, 6, 6);
-    grid->addWidget(plus_red,    11, 44, 6, 6);
+    grid->addWidget(plus_blue,   17,  0, 6, 6);
+    grid->addWidget(plus_red,    17, 44, 6, 6);
 
     grid->addWidget(age,        35, 22, 5, 12);
     grid->addWidget(cat,        35, 34, 5, 12);
@@ -162,6 +164,8 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
     grid->addWidget(fam_next_blue,    41, 0, 4, 34);
     grid->addWidget(fam_next_red,    41, 34, 4, 34);
 
+    //grid->addWidget(lblEndTimer,    0, 0, 45, 68);
+
     //grid->addWidget(reg_blue,   37, 0, 5, 34);
     //grid->addWidget(reg_red,   37, 34, 5, 34);
 
@@ -169,13 +173,24 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
     //grid->addWidget(rV, 37, 0, 5, 68);
     //rV->setGeometry(0, 0, width(), height());
     //rV->raise();
-    showFullScreen();
 
+    lblEndTimer = new EndTime(this);
+    //QPalette pal;
+    //pal.setColor(QPalette::Window, QColor(255, 0, 0, 100));
+    //lblEndTimer->setPalette(pal);
+    //lblEndTimer->setStyleSheet("background-color: rgba(255, 0, 0, 200);");
+
+
+    showFullScreen();
+    //lblEndTimer->startProcess();
 	minimum_height_family = (height() - 12) / 42;
 	minimum_height_region = minimum_height_family;
 
     //rV->setStyleSheet("z-index: -10");
     //rV->setFrameStyle(QFrame::Box);
+
+
+
 }
 
 TVScreen::~TVScreen()
@@ -185,16 +200,12 @@ TVScreen::~TVScreen()
 void TVScreen::paintEvent(QPaintEvent * ) {
 	QPainter pn;
 	pn.begin(this);
-	if (View == 0) {
-		pn.setBrush(Qt::blue);
-		pn.drawRect(0, 0, width() / 2, height());
-		pn.setBrush(Qt::red);
-		pn.drawRect(width() / 2, 0, width() / 2, height());
-	}
-	else {
-		pn.setBrush(Qt::black);
-		pn.drawRect(0, 0, width(), height());
-	}
+
+    pn.setBrush(Qt::blue);
+    pn.drawRect(0, 0, width() / 2, height());
+    pn.setBrush(Qt::red);
+    pn.drawRect(width() / 2, 0, width() / 2, height());
+
 	pn.end();
 }
 
@@ -246,6 +257,7 @@ void TVScreen::resizeEvent(QResizeEvent *){
     QFont f;
     f.setPixelSize(cat->height() * 1.5);
     //cat->setFont(f);
+    lblEndTimer->setGeometry(0, 0, width(), height());
 
 }
 

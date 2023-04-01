@@ -12,6 +12,7 @@
 #include "category.h"
 #include "lcdstopwatch.h"
 #include "firstlastname.h"
+#include "endtime.h"
 
 class TVScreen : public QWidget {
 	Q_OBJECT
@@ -24,6 +25,8 @@ public:
     Rate * ball_blue;
     //Rate * akt_red;
     //Rate * akt_blue;
+
+    EndTime * lblEndTimer;         //красный фон по окончании времени
 
 	NP * np_red;
 	NP * np_blue;
@@ -70,5 +73,6 @@ private:
 	QEvent * ev_R;
 	int minimum_height_family;
 	int minimum_height_region;
+
 
 };

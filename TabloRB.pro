@@ -12,6 +12,7 @@ HEADERS += \
     cameraconnection.h \
     cameraviewer.h \
     category.h \
+    endtime.h \
     fam_reg.h \
     firstlastname.h \
     lcdstopwatch.h \
@@ -32,6 +33,7 @@ SOURCES += \
     cameraconnection.cpp \
     cameraviewer.cpp \
     category.cpp \
+    endtime.cpp \
     fam_reg.cpp \
     firstlastname.cpp \
     lcdstopwatch.cpp \

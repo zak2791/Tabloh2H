@@ -69,6 +69,7 @@ signals:
     void sigStarted(bool);
     void sigReset(void);
     void sigVisible(bool);
+    void sigEndTime(void);
 
 };
 

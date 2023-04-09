@@ -188,7 +188,7 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
 
     //rV->setStyleSheet("z-index: -10");
     //rV->setFrameStyle(QFrame::Box);
-
+    setWindowTitle("TabloOnTV");
 
 
 }

@@ -1,4 +1,4 @@
-#pragma once
+ #pragma once
 #include <QWidget>
 #include <QPushButton>
 #include "lcdtimer.h"
@@ -91,6 +91,14 @@ private slots:
 
     void turnDoctor(void);
 
+    void addDisplay(int);
+
+    void setAddress(bool);
+
+    void udpSend(void);
+
+    void slotProcessDatagrams(void);
+
 private:
     QLabel* lblCpuUsage;
 	QWidget * formView;
@@ -128,7 +136,13 @@ private:
     Fam * fam_next_blue;
 	Plus * plus_red;
 	Plus * plus_blue;
+
     LCDTimer * mainTimer;
+    LCDStopwatch * sec_red;
+    LCDStopwatch * sec_blue;
+    LCDStopwatch * sec_red_t;
+    LCDStopwatch * sec_blue_t;
+
 	Ui::frmView ui;
     Ui::Form uiTime;
 	QDesktopWidget* desk;
@@ -173,5 +187,12 @@ private:
     QThread* cam2Thread;
 
     QPointer<CameraConnection> camConn;
+
+    QString address;
+    QHostAddress* remoteAddress;
+    QUdpSocket* s_udp;
+    QTimer* udpTimer;
+    int flagUdp;    //0 - запрос адреса удаленного компьютера
+                    //1 - отправка данных
 
 };

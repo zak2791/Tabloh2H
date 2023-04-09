@@ -21,7 +21,9 @@
 #include "category.h"
 
 //#include <QHostAddress>
-//#include <QNetworkInterface>
+#include <QNetworkInterface>
+//#include <QHostInfo>
+#include <QRadioButton>
 
 WidgetFilter::WidgetFilter(QObject* pobj) : QObject(pobj){
     qDebug()<<"constructor event";
@@ -50,6 +52,16 @@ public:
 PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     //ev_L = new MyEvent(200);
     //ev_R = new MyEvent(201);
+
+    address = "";
+    remoteAddress = new QHostAddress;
+    s_udp = new QUdpSocket(this);
+    s_udp->bind(2425 );
+    flagUdp = 0;
+    connect(s_udp, SIGNAL(readyRead()), this, SLOT(slotProcessDatagrams()));
+    udpTimer = new QTimer(this);
+    connect(udpTimer, SIGNAL(timeout()), this, SLOT(udpSend()));
+    //qDebug()<<s_udp->localAddress().toString();
 
 	col_red = "white";
 	col_blue = "white";
@@ -93,6 +105,10 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
 
     fam_next_blue = new Fam(col_blue, "", 63,"",this);
     fam_next_blue->setObjectName("fam_next_blue");
+
+    QCheckBox* cbAddDisp = new QCheckBox("дополнительный\nдисплей", this);     //передача данных для дополнительного дисплея
+    cbAddDisp->setStyleSheet("color: white");
+    connect(cbAddDisp, SIGNAL(stateChanged(int)), this, SLOT(addDisplay(int)));
 
     QPushButton* doctor = new QPushButton(u8"ВРАЧ", this);
     doctor->setObjectName("btnParter_red");
@@ -166,19 +182,19 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     sec_doctor = new LCDStopwatch(this, "2:00", QColor(255, 255, 0), QColor(255, 255, 0), true, true);
     sec_doctor->hide();
 
-    LCDStopwatch * sec_red = new LCDStopwatch(this, "0:20", QColor(255, 0, 0), QColor(255, 102, 102), true, true);
+    sec_red = new LCDStopwatch(this, "0:20", QColor(255, 0, 0), QColor(255, 102, 102), true, true);
 	sec_red->setObjectName("sec_red");
 	sec_red->hide();
 
-    LCDStopwatch * sec_blue = new LCDStopwatch(this, "0:20", QColor(0, 0, 255), QColor(102, 102, 255), true, true);
+    sec_blue = new LCDStopwatch(this, "0:20", QColor(0, 0, 255), QColor(102, 102, 255), true, true);
 	sec_blue->setObjectName("sec_blue");
 	sec_blue->hide();
 
-    LCDStopwatch * sec_red_t = new LCDStopwatch(this, "2:00", QColor(255, 0, 0), QColor(255, 102, 102), true, true);
+    sec_red_t = new LCDStopwatch(this, "2:00", QColor(255, 0, 0), QColor(255, 102, 102), true, true);
     sec_red_t->setObjectName("sec_red_t");
     sec_red_t->hide();
 
-    LCDStopwatch * sec_blue_t = new LCDStopwatch(this, "2:00", QColor(0, 0, 255), QColor(102, 102, 255), true, true);
+    sec_blue_t = new LCDStopwatch(this, "2:00", QColor(0, 0, 255), QColor(102, 102, 255), true, true);
     sec_blue_t->setObjectName("sec_blue_t");
     sec_blue_t->hide();
 
@@ -401,6 +417,7 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     grid->addWidget(fam_next_blue,          42,  34, 4,  34);
 
     grid->addWidget(doctor,                 29,  45, 2,   6);
+    grid->addWidget(cbAddDisp,              28,  4, 4,  20);
 
     //grid->addWidget(&lblTv,                 21,  0, 21, 34);
 
@@ -1100,3 +1117,123 @@ void PCScreen::turnDoctor(){
 }
 
 
+void PCScreen::addDisplay(int i){
+    if(i == 0){
+        udpTimer->stop();
+        flagUdp = 0;
+        return;
+    }
+    QByteArray baDatagram;
+    QDataStream out(&baDatagram, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_5_3);
+    QDateTime dt = QDateTime::currentDateTime();
+    baDatagram.append("hello display!");
+    //out << baDatagram;
+    QHostAddress addr;
+    addr.setAddress("192.168.0.255");
+    int count = s_udp->writeDatagram(baDatagram, addr, 2424);
+    QWidget* w = new QWidget;
+    w->setWindowTitle("Выбор IP адреса");
+    w->setWindowFlag(Qt::WindowStaysOnTopHint);
+    w->setMinimumWidth(300);
+
+    int y = 10;
+
+    foreach (const QNetworkInterface &netInterface, QNetworkInterface::allInterfaces()) {
+        QNetworkInterface::InterfaceFlags flags = netInterface.flags();
+
+        if( (bool)(flags & QNetworkInterface::IsRunning) && !(bool)(flags & QNetworkInterface::IsLoopBack)){
+            foreach (const QNetworkAddressEntry &address, netInterface.addressEntries()) {
+                if(address.ip().protocol() == QAbstractSocket::IPv4Protocol){
+
+                    qDebug() << address.ip().toString()<<y;
+                    QRadioButton* rb = new QRadioButton(address.ip().toString(), w);
+                    rb->move(10, y);
+                    connect(rb, SIGNAL(toggled(bool)), this, SLOT(setAddress(bool)));
+                    y += 20;
+
+                }
+            }
+        }
+    }
+
+    w->show();
+    qDebug()<<count;
+}
+
+void PCScreen::setAddress(bool state){
+
+    if(state){
+        address = static_cast<QRadioButton*>(sender())->text();
+        QList<QString> l_address = address.split(".");
+        address = l_address.at(0) + "." + l_address.at(1) + "." +l_address.at(2) + ".255";
+        //start timer
+        qDebug()<<address;
+        flagUdp = 0;
+        udpTimer->start(1000);
+    }
+
+}
+
+void PCScreen::udpSend(){
+    qDebug()<<"udpSend";
+    QByteArray baDatagram;
+    QDataStream out(&baDatagram, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_5_3);
+    if(flagUdp == 0){
+        baDatagram.append("hello display!");
+        QHostAddress addr;
+        addr.setAddress(address);
+        s_udp->writeDatagram(baDatagram, addr, 2424);
+    }
+    if(flagUdp == 1){
+        QString data;
+        data.append(rateRed->text() + ";" + rateBlue->text() + ";");
+        data.append(np_red->text() + ";" + np_blue->text() + ";");
+
+        data.append(mainTimer->getTime() + ";");
+        if(mainTimer->getStatus() == 1)
+            data.append("1;");
+        else
+            data.append("0;");
+
+        data.append(sec_red->getTime() + ";");
+        if(sec_red->isVisible()){
+            if(sec_red->getStatus() == 1)
+                data.append("1;");
+            else
+                data.append("0;");
+        }else
+            data.append("-1;");
+
+        data.append(sec_blue->getTime() + ";");
+        if(sec_blue->isVisible()){
+            if(sec_blue->getStatus() == 1)
+                data.append("1");
+            else
+                data.append("0");
+        }else
+            data.append("-1");
+
+        baDatagram.append(data);
+        //QHostAddress addr;
+        //addr.setAddress(address);
+        s_udp->writeDatagram(baDatagram, *remoteAddress, 2424);
+    }
+}
+
+void PCScreen::slotProcessDatagrams(){
+    QByteArray baDatagram;
+    QHostAddress addr;
+    do{
+        baDatagram.resize(s_udp->pendingDatagramSize());
+        s_udp->readDatagram(baDatagram.data(), baDatagram.size(), &addr);
+    }while(s_udp->hasPendingDatagrams());
+    qDebug()<<"QString(baDatagram) = "<<QString(baDatagram);
+    if(QString(baDatagram) == "ok tablo!"){
+        flagUdp = 1;
+        udpTimer->start(500);
+        *remoteAddress = addr;
+        qDebug()<<"udpTimer->stop()"<<addr.toString();
+    }
+}

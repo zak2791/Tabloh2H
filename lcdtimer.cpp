@@ -66,6 +66,10 @@ void LCDTimer::setTime(int t){
     intInitTime = t;
 }
 
+QString LCDTimer::getTime(){
+    return intTimeToStr(time);
+}
+
 void LCDTimer::Reset(){
     if (status != 1) {
         time = intInitTime;

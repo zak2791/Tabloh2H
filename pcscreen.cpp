@@ -17,7 +17,7 @@
 #include <math.h>
 
 
-#include "list_family.h"
+
 #include "category.h"
 
 //#include <QHostAddress>
@@ -52,6 +52,8 @@ public:
 PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     //ev_L = new MyEvent(200);
     //ev_R = new MyEvent(201);
+
+    newSportsman = new NewSportsman;
 
     address = "";
     remoteAddress = new QHostAddress;
@@ -110,6 +112,11 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     cbAddDisp->setStyleSheet("color: white");
     connect(cbAddDisp, SIGNAL(stateChanged(int)), this, SLOT(addDisplay(int)));
 
+//    QPushButton* addSportsman = new QPushButton(u8"Добавить\nспортсмена", this);
+//    addSportsman->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+//    //addSportsman->setStyleSheet("color: red; font: bold " + QString::number(round(doctor->height() / 2)) + "px;");
+//    connect(addSportsman, SIGNAL(clicked()), newSportsman, SLOT(show()));
+
     QPushButton* doctor = new QPushButton(u8"ВРАЧ", this);
     doctor->setObjectName("btnParter_red");
     doctor->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
@@ -144,6 +151,7 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
 	btnSettings->setObjectName("btnSettings");
 	btnSettings->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 	btnSettings->setStyleSheet("color: green; font: bold " + QString::number(round(btnSettings->height() / 2)) + "px;");
+    connect(btnSettings, SIGNAL(clicked()), this, SLOT(showListSportsmens()));
     //btnSettings->setFocusPolicy(Qt::NoFocus);
 	
 	QPushButton * btnTehTime_blue = new QPushButton(u8"Т.ВРЕМЯ", this);
@@ -216,11 +224,11 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     age->setStyleSheet("background-color: black; color: white; text-align: center");
     age->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
-    ListFamily * lf = new ListFamily(this);
-	lf->setObjectName("lf");
-    connect(lf->weight, SIGNAL(currentTextChanged(QString)), this, SLOT(setCat(QString)));
-    connect(lf->age, SIGNAL(currentTextChanged(QString)), this, SLOT(setAge(QString)));
-    connect(lf, SIGNAL(sig_hide(QString, QString, QString, QString)), this, SLOT(HIDE(QString, QString, QString, QString)));
+//    ListFamily * lf = new ListFamily(this);
+//	lf->setObjectName("lf");
+//    connect(lf->weight, SIGNAL(currentTextChanged(QString)), this, SLOT(setCat(QString)));
+//    connect(lf->age, SIGNAL(currentTextChanged(QString)), this, SLOT(setAge(QString)));
+//    connect(lf, SIGNAL(sig_hide(QString, QString, QString, QString)), this, SLOT(HIDE(QString, QString, QString, QString)));
 
 	formView = new QWidget;
     ui.setupUi(formView);
@@ -336,6 +344,10 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     lbl2->setAlignment(Qt::AlignCenter);
     lbl2->setStyleSheet("color: white; font-size: 12pt");
 
+    QLabel* lbl3 = new QLabel("Добавить спортсмена - 'F2'");
+    //lbl3->setAlignment(Qt::);
+    lbl3->setStyleSheet("color: white; font-size: 12pt");
+
     lblCpuUsage = new QLabel;
     lblCpuUsage->setAlignment(Qt::AlignCenter);
     lblCpuUsage->setStyleSheet("background-color: black; color: white; font-size: 12pt");
@@ -417,8 +429,9 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     grid->addWidget(fam_next_blue,          42,  34, 4,  34);
 
     grid->addWidget(doctor,                 29,  45, 2,   6);
-    grid->addWidget(cbAddDisp,              28,  4, 4,  20);
 
+    grid->addWidget(cbAddDisp,              28,  4, 4,   20);
+    grid->addWidget(lbl3,                   38,  4, 2,   20);
     //grid->addWidget(&lblTv,                 21,  0, 21, 34);
 
     //grid->addWidget(rV,              0, 13,  23,  42);
@@ -915,6 +928,8 @@ void PCScreen::paintEvent(QPaintEvent * ) {
 void PCScreen::keyPressEvent(QKeyEvent * pe){
     if(pe->key() == Qt::Key_F1)
         frmTime->show();
+    else if(pe->key() == Qt::Key_F2)
+        newSportsman->show();
     else
         emit sendKey(pe->key());
 }
@@ -1086,7 +1101,14 @@ void PCScreen::drawTvScreenshot(){
 }
 
 void PCScreen::HIDE(QString s1, QString s2, QString s3, QString s4){
-    qDebug()<<"s1 s2 s3 s4 = "<<s1<<s2<<s3<<s4;
+    emit sig_hide(s1, s2, s3, s4);
+}
+
+void PCScreen::showListSportsmens(){
+    ListFamily* lf = new ListFamily;
+    connect(lf->weight, SIGNAL(currentTextChanged(QString)), this, SLOT(setCat(QString)));
+    connect(lf->age, SIGNAL(currentTextChanged(QString)), this, SLOT(setAge(QString)));
+    connect(lf, SIGNAL(sig_hide(QString, QString, QString, QString)), this, SLOT(HIDE(QString, QString, QString, QString)));
 }
 
 void PCScreen::changeFontWeight(QString s){
@@ -1126,7 +1148,7 @@ void PCScreen::addDisplay(int i){
     QByteArray baDatagram;
     QDataStream out(&baDatagram, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_5_3);
-    QDateTime dt = QDateTime::currentDateTime();
+    //QDateTime dt = QDateTime::currentDateTime();
     baDatagram.append("hello display!");
     //out << baDatagram;
     QHostAddress addr;
@@ -1237,3 +1259,5 @@ void PCScreen::slotProcessDatagrams(){
         qDebug()<<"udpTimer->stop()"<<addr.toString();
     }
 }
+
+

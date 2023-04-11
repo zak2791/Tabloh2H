@@ -99,8 +99,8 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
 	//np_blue->setObjectName("np_blue");
 	//np_blue->sbros();
 
-	ListFamily * lf = new ListFamily(this);
-	lf->setObjectName("lf");
+    //ListFamily * lf = new ListFamily(this);
+    //lf->setObjectName("lf");
 
     cat = new QPushButton(this);//("yellow", this);
 	cat->setObjectName("cat");

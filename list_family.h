@@ -97,4 +97,7 @@ private:
     bool state_toggle;      //состояние переключателя: false - выбор вызываемого спортсмена;
                             //                         true - выбор готовящегося спортсмена.
     ToggleButton* toggleButton;
+
+    void initListSportsmens(void);
+
 };

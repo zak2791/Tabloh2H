@@ -14,8 +14,8 @@ function sbros(){
 		//nv_blue.sbros();
 		ball_red.sbros();
 		ball_blue.sbros();
-		akt_red.sbros();
-		akt_blue.sbros();
+		//akt_red.sbros();
+		//akt_blue.sbros();
         plus_red.setData("");
         plus_blue.setData("");
 	//}
@@ -212,7 +212,8 @@ btnTehTime_blue.clicked.connect(t_blue);
 wgt.sendKey.connect(keyEvent);
 btnParter_red.clicked.connect(parter_red);
 btnParter_blue.clicked.connect(parter_blue);
-btnSettings.clicked.connect(function() {lf.showFullScreen();});
-lf.sig_hide.connect(set_family);
+//btnSettings.clicked.connect(function() {lf.showFullScreen();});
+//lf.sig_hide.connect(set_family);
+pwgt.sig_hide.connect(set_family);
 //pwgt.changeViewName.connect(setViewName);
 mainTimer.sigStarted.connect(stopParter);

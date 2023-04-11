@@ -84,8 +84,9 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
     dir.setCurrent(path1);  //закомментить для работы из Qt Creator
 
     doc = new Document(path);
-    if (doc->load()){
-
+    if (!doc->load()){
+        QMessageBox::warning(this, "Внимание!", "Не найден файл со списком спортсменов", QMessageBox::Ok);
+        //return;
     }
 
     doc->workbook()->setActiveSheet(0);
@@ -95,6 +96,8 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
     int maxRow = -1;
     int maxCol = -1;
     Worksheet* wsheet = (Worksheet*)doc->workbook()->activeSheet();
+
+
     clList = wsheet->getFullCells( &maxRow, &maxCol );
 
     QList<QString> lAge;
@@ -114,6 +117,7 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
         lAge.append(doc->read(i, 3).toString());
         lWeight.append(doc->read(i, 4).toString());
     }
+
     lAge.removeDuplicates();
     lWeight.removeDuplicates();
 
@@ -255,10 +259,15 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
     connect(cBox, SIGNAL(stateChanged(int)), this, SLOT(allowSorting(int)));
     connect(cbNum, SIGNAL(stateChanged(int)), this, SLOT(sortByNum(int)));
 
+    showFullScreen();
 }
  
 ListFamily::~ListFamily()
 {
+}
+
+void ListFamily::initListSportsmens(){
+
 }
 
 void ListFamily::allowSorting(int i){
@@ -404,6 +413,7 @@ void ListFamily::_hide()
 {
     emit sig_hide(r, b, r_next, b_next);
 	hide();
+    deleteLater();
     //qDebug()<<r<< b<< r_next<< b_next;
 }
 

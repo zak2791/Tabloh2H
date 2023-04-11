@@ -19,6 +19,8 @@
 #include "cameraconnection.h"
 #include "lcdstopwatch.h"
 #include "endtime.h"
+#include "newsportsman.h"
+#include "list_family.h"
 
 class WidgetFilter : public QObject {
     Q_OBJECT
@@ -51,6 +53,7 @@ signals:
     //void setCategory(void);
     //void signalReplay(void);
     //void changeViewName(int);
+    void sig_hide(QString, QString, QString, QString);
 
 public slots:
     //void setFrameWidth(int);
@@ -99,6 +102,8 @@ private slots:
 
     void slotProcessDatagrams(void);
 
+    void showListSportsmens(void);
+
 private:
     QLabel* lblCpuUsage;
 	QWidget * formView;
@@ -110,7 +115,9 @@ private:
     virtual void keyPressEvent(QKeyEvent *);
     virtual void resizeEvent(QResizeEvent *);
 
+    NewSportsman* newSportsman;
 
+    //ListFamily * lf;
 
     //void process_line(int, QString);
 

@@ -19,6 +19,7 @@ HEADERS += \
     lcdtimer.h \
     list_family.h \
     narusheniya_pravil.h \
+    newsportsman.h \
     pcscreen.h \
     player.h \
     playerviewer.h \
@@ -41,6 +42,7 @@ SOURCES += \
     list_family.cpp \
     main.cpp \
     narusheniya_pravil.cpp \
+    newsportsman.cpp \
     pcscreen.cpp \
     player.cpp \
     playerviewer.cpp \
@@ -51,7 +53,8 @@ SOURCES += \
 
 FORMS += \
     FormView.ui \
-    frmTime.ui
+    frmTime.ui \
+    new_sportsman.ui
 
 DISTFILES += \
     ../build-TabloRB-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/script.js \

@@ -10,6 +10,9 @@
 int main(int argc, char** argv){
     QApplication app(argc, argv);
 
+    QCoreApplication::setOrganizationName("zak2791");
+    QCoreApplication::setApplicationName("Tablo H2H");
+
 
     PCScreen * pwgt = new PCScreen();
     pwgt->setObjectName("pwgt");

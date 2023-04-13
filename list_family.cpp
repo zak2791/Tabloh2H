@@ -78,10 +78,14 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
 
     QDir dir = QDir::current();
 
+    dir.cdUp();
+
     QString path(dir.path() + "/sportsmens.xlsx");
 
     QString path1(dir.path() + "/bin");
     dir.setCurrent(path1);  //закомментить для работы из Qt Creator
+
+    QMessageBox::warning(this, "Внимание!", path, QMessageBox::Ok);
 
     doc = new Document(path);
     if (!doc->load()){

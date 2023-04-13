@@ -78,14 +78,14 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
 
     QDir dir = QDir::current();
 
-    dir.cdUp();
+    //dir.cdUp();
 
     QString path(dir.path() + "/sportsmens.xlsx");
 
     QString path1(dir.path() + "/bin");
     dir.setCurrent(path1);  //закомментить для работы из Qt Creator
 
-    QMessageBox::warning(this, "Внимание!", path, QMessageBox::Ok);
+    //QMessageBox::warning(this, "Внимание!", path, QMessageBox::Ok);
 
     doc = new Document(path);
     if (!doc->load()){
@@ -263,7 +263,7 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
     connect(cBox, SIGNAL(stateChanged(int)), this, SLOT(allowSorting(int)));
     connect(cbNum, SIGNAL(stateChanged(int)), this, SLOT(sortByNum(int)));
 
-    showFullScreen();
+    //showFullScreen();
 }
  
 ListFamily::~ListFamily()
@@ -417,7 +417,7 @@ void ListFamily::_hide()
 {
     emit sig_hide(r, b, r_next, b_next);
 	hide();
-    deleteLater();
+    //deleteLater();
     //qDebug()<<r<< b<< r_next<< b_next;
 }
 

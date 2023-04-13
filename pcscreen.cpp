@@ -53,7 +53,7 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     //ev_L = new MyEvent(200);
     //ev_R = new MyEvent(201);
 
-    newSportsman = new NewSportsman;
+    //newSportsman = new NewSportsman;
 
     address = "";
     remoteAddress = new QHostAddress;
@@ -224,11 +224,11 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     age->setStyleSheet("background-color: black; color: white; text-align: center");
     age->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
-//    ListFamily * lf = new ListFamily(this);
-//	lf->setObjectName("lf");
-//    connect(lf->weight, SIGNAL(currentTextChanged(QString)), this, SLOT(setCat(QString)));
-//    connect(lf->age, SIGNAL(currentTextChanged(QString)), this, SLOT(setAge(QString)));
-//    connect(lf, SIGNAL(sig_hide(QString, QString, QString, QString)), this, SLOT(HIDE(QString, QString, QString, QString)));
+    lf = new ListFamily(this);
+    lf->setObjectName("lf");
+    connect(lf->weight, SIGNAL(currentTextChanged(QString)), this, SLOT(setCat(QString)));
+    connect(lf->age, SIGNAL(currentTextChanged(QString)), this, SLOT(setAge(QString)));
+    connect(lf, SIGNAL(sig_hide(QString, QString, QString, QString)), this, SLOT(HIDE(QString, QString, QString, QString)));
 
 	formView = new QWidget;
     ui.setupUi(formView);
@@ -431,7 +431,7 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     grid->addWidget(doctor,                 29,  45, 2,   6);
 
     grid->addWidget(cbAddDisp,              28,  4, 4,   20);
-    grid->addWidget(lbl3,                   38,  4, 2,   20);
+    //grid->addWidget(lbl3,                   38,  4, 2,   20);
     //grid->addWidget(&lblTv,                 21,  0, 21, 34);
 
     //grid->addWidget(rV,              0, 13,  23,  42);
@@ -928,8 +928,8 @@ void PCScreen::paintEvent(QPaintEvent * ) {
 void PCScreen::keyPressEvent(QKeyEvent * pe){
     if(pe->key() == Qt::Key_F1)
         frmTime->show();
-    else if(pe->key() == Qt::Key_F2)
-        newSportsman->show();
+    //else if(pe->key() == Qt::Key_F2)
+    //    newSportsman->show();
     else
         emit sendKey(pe->key());
 }
@@ -1105,10 +1105,11 @@ void PCScreen::HIDE(QString s1, QString s2, QString s3, QString s4){
 }
 
 void PCScreen::showListSportsmens(){
-    ListFamily* lf = new ListFamily;
-    connect(lf->weight, SIGNAL(currentTextChanged(QString)), this, SLOT(setCat(QString)));
-    connect(lf->age, SIGNAL(currentTextChanged(QString)), this, SLOT(setAge(QString)));
-    connect(lf, SIGNAL(sig_hide(QString, QString, QString, QString)), this, SLOT(HIDE(QString, QString, QString, QString)));
+    //ListFamily* lf = new ListFamily;
+    //connect(lf->weight, SIGNAL(currentTextChanged(QString)), this, SLOT(setCat(QString)));
+    //connect(lf->age, SIGNAL(currentTextChanged(QString)), this, SLOT(setAge(QString)));
+    //connect(lf, SIGNAL(sig_hide(QString, QString, QString, QString)), this, SLOT(HIDE(QString, QString, QString, QString)));
+    lf->showFullScreen();
 }
 
 void PCScreen::changeFontWeight(QString s){

@@ -19,7 +19,7 @@
 #include "cameraconnection.h"
 #include "lcdstopwatch.h"
 #include "endtime.h"
-#include "newsportsman.h"
+//#include "newsportsman.h"
 #include "list_family.h"
 
 class WidgetFilter : public QObject {
@@ -115,9 +115,9 @@ private:
     virtual void keyPressEvent(QKeyEvent *);
     virtual void resizeEvent(QResizeEvent *);
 
-    NewSportsman* newSportsman;
+    //NewSportsman* newSportsman;
 
-    //ListFamily * lf;
+    ListFamily * lf;
 
     //void process_line(int, QString);
 

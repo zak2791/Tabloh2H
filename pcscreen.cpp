@@ -1232,11 +1232,18 @@ void PCScreen::udpSend(){
         data.append(sec_blue->getTime() + ";");
         if(sec_blue->isVisible()){
             if(sec_blue->getStatus() == 1)
-                data.append("1");
+                data.append("1;");
             else
-                data.append("0");
+                data.append("0;");
         }else
-            data.append("-1");
+            data.append("-1;");
+
+        if(plus_red->getText() == "+")
+            data.append("1");
+        else if(plus_blue->getText() == "+")
+            data.append("2");
+        else
+            data.append("0");
 
         baDatagram.append(data);
         //QHostAddress addr;

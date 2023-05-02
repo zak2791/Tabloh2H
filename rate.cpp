@@ -23,6 +23,8 @@ QLabel(parent)
     largeFont = QFont();
     smallFont = QFont();
 
+    //setAttribute(Qt::WA_TranslucentBackground);
+
 };
 
 

@@ -180,8 +180,10 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
 
     plus_red = new Plus(col_red, this);
 	plus_red->setObjectName("plus_red");
+    plus_red->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     plus_blue = new Plus(col_blue, this);
 	plus_blue->setObjectName("plus_blue");
+    plus_blue->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
     mainTimer = new LCDTimer(this);
     mainTimer->setObjectName("mainTimer");
@@ -384,8 +386,8 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     grid->addWidget(lblCpuUsage,            10,  33, 2,  2);
     grid->addWidget(btnPlus_blue,           10,  35, 2,  2);
 
-    grid->addWidget(plus_red,               8,   20, 4,  4);
-    grid->addWidget(plus_blue,              8,  44, 4,  4);
+    grid->addWidget(plus_red,               9,   19, 4,  4);
+    grid->addWidget(plus_blue,              9,   45, 4,  4);
 
     grid->addWidget(age,                    10, 38, 2,  3);
     grid->addWidget(cat,                    10, 41, 2,  3);

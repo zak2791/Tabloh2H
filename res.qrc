@@ -4,5 +4,6 @@
         <file>images/UP.png</file>
         <file>images/next_blue.png</file>
         <file>images/next_red.png</file>
+        <file>images/plus.png</file>
     </qresource>
 </RCC>

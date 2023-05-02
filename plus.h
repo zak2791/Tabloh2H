@@ -18,6 +18,7 @@ public slots:
 private:
 	virtual void resizeEvent(QResizeEvent *);
 	QString Text;
+    QPixmap* pix_plus;
 
 signals:
     void textChange(QString);

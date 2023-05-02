@@ -67,8 +67,10 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
     fam_next_blue = new Fam(col_blue, "", 63, "", this);
 
 	plus_red = new Plus(col_red, this);
+    plus_red->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     //plus_red->setObjectName("sd_plus_red");
 	plus_blue = new Plus(col_blue, this);
+    plus_blue->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     //plus_blue->setObjectName("sd_plus_blue");
 
     sec = new LCDTimer(this);
@@ -145,8 +147,8 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
     grid->addWidget(np_blue,    34,  8, 7, 9);
     grid->addWidget(np_red,     34, 51, 7, 9);
 
-    grid->addWidget(plus_blue,   17,  0, 6, 6);
-    grid->addWidget(plus_red,    17, 44, 6, 6);
+    grid->addWidget(plus_blue,   22,  1, 6, 6);
+    grid->addWidget(plus_red,    22, 45, 6, 6);
 
     grid->addWidget(age,        35, 22, 5, 12);
     grid->addWidget(cat,        35, 34, 5, 12);

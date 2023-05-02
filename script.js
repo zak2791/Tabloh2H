@@ -22,13 +22,17 @@ function sbros(){
 }
 
 function Plus_red(){
-    if(plus_red.text === "+")
+	if(plus_blue.Text === "+")
+		return;
+    if(plus_red.Text === "+")
         plus_red.setData("");
     else if(plus_blue.text === "")
         plus_red.setData("+");
 }
 
 function Plus_blue(){
+	if(plus_red.Text === "+")
+		return;
     if(plus_blue.Text === "+")
         plus_blue.setData("");
     else if(plus_red.Text === "")

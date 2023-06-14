@@ -234,6 +234,9 @@
    </property>
   </widget>
   <widget class="QCheckBox" name="cbKey">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -250,6 +253,9 @@
    </property>
   </widget>
   <widget class="QGroupBox" name="groupBox_2">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>19</x>
@@ -262,6 +268,9 @@
     <string>Автонастройка камер</string>
    </property>
    <widget class="QCheckBox" name="cbAutoCam1">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -275,6 +284,9 @@
     </property>
    </widget>
    <widget class="QCheckBox" name="cbAutoCam2">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>190</x>
@@ -288,6 +300,9 @@
     </property>
    </widget>
    <widget class="QLineEdit" name="leCam1">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -298,6 +313,9 @@
     </property>
    </widget>
    <widget class="QLineEdit" name="leCam2">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>190</x>

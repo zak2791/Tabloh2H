@@ -249,7 +249,7 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     connect(ui.btnRegUp,        SIGNAL(clicked()), this, SLOT(changeSize()));
 
     ui.cmbFont->addItems({"10", "12", "14", "16", "18", "20", "23", "26", "29", "34", "39", "45", "50", "55", "60",
-                          "65", "70", "75", "80", "85", "90", "100", "110", "120", "130", "140", "150", "170"});
+                          "65", "70", "75", "80", "85", "90", "100", "110", "120", "130", "140", "150", "170", "180", "190", "200", "210", "220", "230"});
     connect(ui.cmbFont,         SIGNAL(currentTextChanged(QString)), this, SLOT(changeFontWeight(QString)));
 
     //ui.cmbFam->addItems({"ФАМИЛИЯ ИМЯ", "ФАМИЛИЯ И.", "ФАМИЛИЯ"});
@@ -356,7 +356,17 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
 
     //lblTv.hide();
 
+    QPushButton * btnSetTime = new QPushButton("Настройка времени", this);
+    btnSetTime->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    connect(btnSetTime, SIGNAL(clicked()), this, SLOT(setTimeFight()));
 
+    QPushButton * btnClose = new QPushButton("Выход", this);
+    btnClose->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    connect(btnClose, SIGNAL(clicked()), this, SLOT(closeTablo()));
+
+    QPushButton * btnReset = new QPushButton("Сброс", this);
+    btnReset->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    connect(btnReset, SIGNAL(clicked()), this, SLOT(resetTablo()));
 
 	grid = new QGridLayout(this);
 	grid->setObjectName("grid");
@@ -394,7 +404,10 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
 
     grid->addWidget(btnView,                10, 24, 2,  6);
 
-    grid->addWidget(lbl2,                   12, 24, 2,  20);
+    //grid->addWidget(lbl2,                   12, 24, 2,  20);
+    grid->addWidget(btnSetTime,             12, 24, 2,  6);
+    grid->addWidget(btnClose,               12, 32, 2,  4);
+    grid->addWidget(btnReset,               12, 38, 2,  6);
 
     grid->addWidget(btnParter_red,          26, 24, 2,  6);
     grid->addWidget(btnTime,                26, 31, 2,  6);
@@ -934,6 +947,20 @@ void PCScreen::keyPressEvent(QKeyEvent * pe){
     //    newSportsman->show();
     else
         emit sendKey(pe->key());
+}
+
+void PCScreen::setTimeFight(){
+    frmTime->show();
+}
+
+void PCScreen::closeTablo(){
+    QKeyEvent *key_press = new QKeyEvent(QKeyEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
+    QApplication::sendEvent(this, key_press);
+}
+
+void PCScreen::resetTablo(){
+    QKeyEvent *key_press = new QKeyEvent(QKeyEvent::KeyPress, Qt::Key_Backspace, Qt::NoModifier);
+    QApplication::sendEvent(this, key_press);
 }
 
 void PCScreen::resizeEvent(QResizeEvent *){

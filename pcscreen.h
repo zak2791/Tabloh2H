@@ -104,6 +104,10 @@ private slots:
 
     void showListSportsmens(void);
 
+    void setTimeFight(void);
+    void closeTablo(void);
+    void resetTablo(void);
+
 private:
     QLabel* lblCpuUsage;
 	QWidget * formView;

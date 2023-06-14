@@ -111,6 +111,7 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     QCheckBox* cbAddDisp = new QCheckBox("дополнительный\nдисплей", this);     //передача данных для дополнительного дисплея
     cbAddDisp->setStyleSheet("color: white");
     connect(cbAddDisp, SIGNAL(stateChanged(int)), this, SLOT(addDisplay(int)));
+    cbAddDisp->setVisible(false);
 
 //    QPushButton* addSportsman = new QPushButton(u8"Добавить\nспортсмена", this);
 //    addSportsman->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
@@ -393,7 +394,7 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     grid->addWidget(btnTehTime_blue,        8,  38, 2,  6);
 
     grid->addWidget(btnPlus_red,            10,  31, 2,  2);
-    grid->addWidget(lblCpuUsage,            10,  33, 2,  2);
+    //grid->addWidget(lblCpuUsage,            10,  33, 2,  2);
     grid->addWidget(btnPlus_blue,           10,  35, 2,  2);
 
     grid->addWidget(plus_red,               9,   19, 4,  4);
@@ -425,6 +426,7 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     grid->addWidget(sec_red_t,              11,  0,  12, 24);
     grid->addWidget(sec_blue_t,             11,  44, 12, 24);
 
+    /*
     grid->addWidget(viewCam1,               14, 24,  6, 10);
     grid->addWidget(btnPlayLastWithSound1,  22, 24,  2,  5);
     grid->addWidget(btnPlayLastSlowMotion1, 22, 29,  2,  5);
@@ -435,9 +437,9 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     grid->addWidget(btnPlayLastSlowMotion2, 22, 39,  2,  5);
     grid->addWidget(btnStopRecord,          24, 34,  2, 10);
     grid->addWidget(cbCam2,                 19 , 35,  1, 8);
+    */
 
-
-    grid->addWidget(lbl,                    20, 24,  2, 20);
+    //grid->addWidget(lbl,                    20, 24,  2, 20);
 
 
     grid->addWidget(fam_next_red,           42,  0,  4,  34);
@@ -445,7 +447,7 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
 
     grid->addWidget(doctor,                 29,  45, 2,   6);
 
-    grid->addWidget(cbAddDisp,              28,  4, 4,   20);
+    //grid->addWidget(cbAddDisp,              28,  4, 4,   20);
     //grid->addWidget(lbl3,                   38,  4, 2,   20);
     //grid->addWidget(&lblTv,                 21,  0, 21, 34);
 

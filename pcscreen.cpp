@@ -463,13 +463,13 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     //desk = QApplication::desktop();
 
     //if (desk->numScreens() == 2){
-    if(QGuiApplication::screens().count() == 2){
-        showFullScreen();
-    }else{      
-        show();
-        setGeometry(QApplication::desktop()->availableGeometry(this).width() / 2, QApplication::desktop()->availableGeometry(this).height() / 2,
-                    QApplication::desktop()->availableGeometry(this).width() / 2, QApplication::desktop()->availableGeometry(this).height() / 2);
-    }
+//    if(QGuiApplication::screens().count() == 2){
+//        showFullScreen();
+//    }else{
+//        show();
+//        setGeometry(QApplication::desktop()->availableGeometry(this).width() / 2, QApplication::desktop()->availableGeometry(this).height() / 2,
+//                    QApplication::desktop()->availableGeometry(this).width() / 2, QApplication::desktop()->availableGeometry(this).height() / 2);
+//    }
 
     //if (desk->numScreens() == 1) {
     if(QGuiApplication::screens().count() == 1){

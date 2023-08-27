@@ -18,6 +18,7 @@ HEADERS += \
     lcdstopwatch.h \
     lcdtimer.h \
     list_family.h \
+    mainwindow.h \
     narusheniya_pravil.h \
     newsportsman.h \
     pcscreen.h \
@@ -41,6 +42,7 @@ SOURCES += \
     lcdtimer.cpp \
     list_family.cpp \
     main.cpp \
+    mainwindow.cpp \
     narusheniya_pravil.cpp \
     newsportsman.cpp \
     pcscreen.cpp \
@@ -54,6 +56,7 @@ SOURCES += \
 FORMS += \
     FormView.ui \
     frmTime.ui \
+    mainwindow.ui \
     new_sportsman.ui
 
 DISTFILES += \

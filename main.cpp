@@ -4,7 +4,7 @@
 #include "pcscreen.h"
 #include "rate.h"
 
-
+#include "mainwindow.h"
 
 
 int main(int argc, char** argv){
@@ -13,9 +13,14 @@ int main(int argc, char** argv){
     //QCoreApplication::setOrganizationName("zak2791");
     //QCoreApplication::setApplicationName("Tablo H2H");
 
+    MainWindow* mWin = new MainWindow;
 
     PCScreen * pwgt = new PCScreen();
     pwgt->setObjectName("pwgt");
+
+    mWin->setCentralWidget(pwgt);
+    mWin->show();
+
 
 	QJSEngine se;
 	

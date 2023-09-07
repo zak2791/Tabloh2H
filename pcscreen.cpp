@@ -13,6 +13,7 @@
 #include <QFileDialog>
 #include <QTime>
 #include "pcscreen.h"
+#include "QAction"
 
 #include <math.h>
 
@@ -49,11 +50,15 @@ public:
 };
 */
 
-PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
+PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     //ev_L = new MyEvent(200);
     //ev_R = new MyEvent(201);
 
     //newSportsman = new NewSportsman;
+
+    setWindowFlags (Qt::CustomizeWindowHint | Qt::WindowTitleHint);
+
+    mainwin = mw;
 
     address = "";
     remoteAddress = new QHostAddress;
@@ -172,10 +177,10 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
 	btnPlus_blue->setStyleSheet("color: blue; font: bold " + QString::number(btnPlus_blue->height()) + "px;");
     //btnPlus_blue->setFocusPolicy(Qt::NoFocus);
 
-    QPushButton * btnView = new QPushButton("НАСТРОЙКИ", this);
+    //QPushButton * btnView = new QPushButton("НАСТРОЙКИ", this);
 	//btnView->setObjectName("btnPlus_blue");
-	btnView->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-	btnView->setStyleSheet("font: bold " + QString::number(round(btnView->height() / 2)) + "px;");
+    //btnView->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    //btnView->setStyleSheet("font: bold " + QString::number(round(btnView->height() / 2)) + "px;");
     //btnView->setFocusPolicy(Qt::NoFocus);
 
     plus_red = new Plus(col_red, this);
@@ -259,7 +264,8 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     frmTime = new QWidget;
     uiTime.setupUi(frmTime);
 
-    connect(btnView, SIGNAL(clicked(bool)), this, SLOT(showView()));
+    //connect(btnView, SIGNAL(clicked(bool)), this, SLOT(showView()));
+    connect(mainwin->winSettings, SIGNAL(triggered()), this, SLOT(showView()));
 
     //connect(ui.rbView1, SIGNAL(toggled(bool)), this, SLOT(setView(void)));
     //connect(ui.rbView2, SIGNAL(toggled(bool)), this, SLOT(setView(void)));
@@ -350,9 +356,9 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     //lbl3->setAlignment(Qt::);
     lbl3->setStyleSheet("color: white; font-size: 12pt");
 
-    lblCpuUsage = new QLabel;
-    lblCpuUsage->setAlignment(Qt::AlignCenter);
-    lblCpuUsage->setStyleSheet("background-color: black; color: white; font-size: 12pt");
+    //lblCpuUsage = new QLabel;
+    //lblCpuUsage->setAlignment(Qt::AlignCenter);
+    //lblCpuUsage->setStyleSheet("background-color: black; color: white; font-size: 12pt");
 
     //lblTv.hide();
 
@@ -360,9 +366,10 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     btnSetTime->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     connect(btnSetTime, SIGNAL(clicked()), this, SLOT(setTimeFight()));
 
-    QPushButton * btnClose = new QPushButton("Выход", this);
-    btnClose->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    connect(btnClose, SIGNAL(clicked()), this, SLOT(closeTablo()));
+    //QPushButton * btnClose = new QPushButton("Выход", this);
+    //btnClose->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    //connect(btnClose, SIGNAL(clicked()), this, SLOT(closeTablo()));
+    connect(mainwin->closeProg, SIGNAL(triggered()), this, SLOT(closeTablo()));
 
     QPushButton * btnReset = new QPushButton("Сброс", this);
     btnReset->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
@@ -393,7 +400,7 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     grid->addWidget(btnTehTime_blue,        8,  38, 2,  6);
 
     grid->addWidget(btnPlus_red,            10,  31, 2,  2);
-    grid->addWidget(lblCpuUsage,            10,  33, 2,  2);
+    //grid->addWidget(lblCpuUsage,            10,  33, 2,  2);
     grid->addWidget(btnPlus_blue,           10,  35, 2,  2);
 
     grid->addWidget(plus_red,               9,   19, 4,  4);
@@ -402,11 +409,11 @@ PCScreen::PCScreen(QWidget * parent) : QWidget(parent){
     grid->addWidget(age,                    10, 38, 2,  3);
     grid->addWidget(cat,                    10, 41, 2,  3);
 
-    grid->addWidget(btnView,                10, 24, 2,  6);
+    //grid->addWidget(btnView,                10, 24, 2,  6);
 
     //grid->addWidget(lbl2,                   12, 24, 2,  20);
     grid->addWidget(btnSetTime,             12, 24, 2,  6);
-    grid->addWidget(btnClose,               12, 32, 2,  4);
+    //grid->addWidget(btnClose,               12, 32, 2,  4);
     grid->addWidget(btnReset,               12, 38, 2,  6);
 
     grid->addWidget(btnParter_red,          26, 24, 2,  6);
@@ -638,8 +645,21 @@ void PCScreen::CpuUsage(){
     TimeIdle.QuadPart = uIdle.QuadPart;
     TimeUser.QuadPart = uUser.QuadPart;
     TimeKernel.QuadPart = uKernel.QuadPart;
-    lblCpuUsage->setText(QString::number(t) + " %");
-    //qDebug()<<"cpu usage = "<<t<<"%";
+
+    double fTotal;
+    double fFree;
+    QString memory;
+    ULARGE_INTEGER free,total;
+    bool bRes = ::GetDiskFreeSpaceExA( 0 , &free , &total , NULL );
+    if ( bRes ){
+        fFree = static_cast<__int64>(free.QuadPart);
+        fTotal = static_cast<double>(static_cast<__int64>(total.QuadPart));
+        memory = QString::number((fFree / fTotal) * 100).split(".").at(0);
+    }else
+        memory = "";
+
+    mainwin->lblStatus->setText("Нагрузка ЦПУ: " + QString::number(t) +
+                                " %\tСвободное место на диске: " + memory + " %");
 }
 
 void PCScreen::setCat(QString s){
@@ -889,6 +909,7 @@ void PCScreen::turnCamera(bool state){
 
 
 void PCScreen::closeEvent(QCloseEvent *){
+    qDebug()<<"close event";
     if(cbCam1->isChecked()){
         cbCam1->toggle();
         threadCam1->quit();
@@ -899,7 +920,9 @@ void PCScreen::closeEvent(QCloseEvent *){
         threadCam2->quit();
         threadCam2->wait();
     }
+    qDebug()<<"close event";
     qApp->quit();
+
 }
 
 void PCScreen::setTime(){

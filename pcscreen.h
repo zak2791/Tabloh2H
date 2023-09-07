@@ -21,6 +21,7 @@
 #include "endtime.h"
 //#include "newsportsman.h"
 #include "list_family.h"
+#include <mainwindow.h>
 
 class WidgetFilter : public QObject {
     Q_OBJECT
@@ -41,7 +42,8 @@ signals:
 class PCScreen : public QWidget {
 	Q_OBJECT
 public:
-    explicit PCScreen(QWidget *parent = 0);
+    explicit PCScreen(MainWindow*, QWidget *parent = 0);
+    MainWindow* mainwin;
 
     //~PCScreen();
 
@@ -109,7 +111,7 @@ private slots:
     void resetTablo(void);
 
 private:
-    QLabel* lblCpuUsage;
+    //QLabel* lblCpuUsage;
 	QWidget * formView;
     QWidget * frmTime;
     LCDStopwatch * sec_doctor;

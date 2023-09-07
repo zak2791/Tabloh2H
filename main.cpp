@@ -15,7 +15,7 @@ int main(int argc, char** argv){
 
     MainWindow* mWin = new MainWindow;
 
-    PCScreen * pwgt = new PCScreen();
+    PCScreen * pwgt = new PCScreen(mWin);
     pwgt->setObjectName("pwgt");
 
     mWin->setCentralWidget(pwgt);

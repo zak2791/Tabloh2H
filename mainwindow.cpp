@@ -6,6 +6,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    lblStatus = new QLabel();
+    statusBar()->addWidget(lblStatus);
+    winSettings = ui->winSettings;
+    closeProg = ui->close;
+
 }
 
 MainWindow::~MainWindow()

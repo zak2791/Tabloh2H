@@ -56,8 +56,6 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 
     //newSportsman = new NewSportsman;
 
-    setWindowFlags (Qt::CustomizeWindowHint | Qt::WindowTitleHint);
-
     mainwin = mw;
 
     address = "";
@@ -362,9 +360,10 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 
     //lblTv.hide();
 
-    QPushButton * btnSetTime = new QPushButton("Настройка времени", this);
-    btnSetTime->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    connect(btnSetTime, SIGNAL(clicked()), this, SLOT(setTimeFight()));
+    //QPushButton * btnSetTime = new QPushButton("Настройка времени", this);
+    //btnSetTime->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    //connect(btnSetTime, SIGNAL(clicked()), this, SLOT(setTimeFight()));
+    connect(mainwin->time, SIGNAL(triggered()), this, SLOT(setTimeFight()));
 
     //QPushButton * btnClose = new QPushButton("Выход", this);
     //btnClose->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
@@ -412,7 +411,7 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     //grid->addWidget(btnView,                10, 24, 2,  6);
 
     //grid->addWidget(lbl2,                   12, 24, 2,  20);
-    grid->addWidget(btnSetTime,             12, 24, 2,  6);
+    //grid->addWidget(btnSetTime,             12, 24, 2,  6);
     //grid->addWidget(btnClose,               12, 32, 2,  4);
     grid->addWidget(btnReset,               12, 38, 2,  6);
 

@@ -19,9 +19,11 @@ public:
     QLabel* lblStatus;
     QAction* winSettings;
     QAction* closeProg;
+    QAction* time;
 
 private:
     Ui::MainWindow *ui;
+    virtual void closeEvent(QCloseEvent*);
 };
 
 #endif // MAINWINDOW_H

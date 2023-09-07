@@ -13,6 +13,7 @@
 #include "lcdstopwatch.h"
 #include "firstlastname.h"
 #include "endtime.h"
+#include "logofrb.h"
 
 class TVScreen : public QWidget {
 	Q_OBJECT
@@ -74,5 +75,6 @@ private:
 	int minimum_height_family;
 	int minimum_height_region;
 
+    logofrb* logo;
 
 };

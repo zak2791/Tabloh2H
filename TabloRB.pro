@@ -18,6 +18,7 @@ HEADERS += \
     lcdstopwatch.h \
     lcdtimer.h \
     list_family.h \
+    logofrb.h \
     mainwindow.h \
     narusheniya_pravil.h \
     newsportsman.h \
@@ -41,6 +42,7 @@ SOURCES += \
     lcdstopwatch.cpp \
     lcdtimer.cpp \
     list_family.cpp \
+    logofrb.cpp \
     main.cpp \
     mainwindow.cpp \
     narusheniya_pravil.cpp \

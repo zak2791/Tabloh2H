@@ -15,6 +15,7 @@
 #include "category.h"
 #include "lcdstopwatch.h"
 #include <QScreen>
+#include <QPicture>
 
 TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
 
@@ -166,6 +167,14 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
     grid->addWidget(fam_next_blue,    41, 0, 4, 34);
     grid->addWidget(fam_next_red,    41, 34, 4, 34);
 
+    logo = new logofrb;
+
+
+    grid->addWidget(logo,    16, 0, 18, 68);
+
+
+
+
     //grid->addWidget(lblEndTimer,    0, 0, 45, 68);
 
     //grid->addWidget(reg_blue,   37, 0, 5, 34);
@@ -260,6 +269,9 @@ void TVScreen::resizeEvent(QResizeEvent *){
     f.setPixelSize(cat->height() * 1.5);
     //cat->setFont(f);
     lblEndTimer->setGeometry(0, 0, width(), height());
+
+    //logo->setGeometry(0, 0, width(), height());
+    //logo->repaint();
 
 }
 

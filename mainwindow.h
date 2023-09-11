@@ -24,6 +24,12 @@ public:
 private:
     Ui::MainWindow *ui;
     virtual void closeEvent(QCloseEvent*);
+    QString lastDir;        //последняя директория, из которой выбирали файл со спортсменами
+    QList<QString> listFiles;  //список последних файлов
+
+private slots:
+    void openFile(void);
+
 };
 
 #endif // MAINWINDOW_H

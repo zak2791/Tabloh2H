@@ -26,6 +26,8 @@ private:
     virtual void closeEvent(QCloseEvent*);
     QString lastDir;        //последняя директория, из которой выбирали файл со спортсменами
     QList<QString> listFiles;  //список последних файлов
+    QString fileSportsmens;
+    QMenu* lastFiles;
 
 private slots:
     void openFile(void);

@@ -17,8 +17,10 @@ MainWindow::MainWindow(QWidget *parent) :
     lblStatus = new QLabel();
     statusBar()->addWidget(lblStatus);
     winSettings = ui->winSettings;
-    closeProg = ui->close;
+    //closeProg = ui->close;
     time = ui->setTime;
+
+    fileSportsmens = "";
 
     QAction* openFile = ui->openFile;
     connect(openFile, SIGNAL(triggered()), this, SLOT(openFile()));
@@ -26,8 +28,17 @@ MainWindow::MainWindow(QWidget *parent) :
     QSettings settings("settings.ini",QSettings::IniFormat);
     settings.beginGroup("files");
     lastDir = settings.value("lastDir", "").toString();
-    listFiles = settings.value("listFiles", "").toString().split(";");
+    QString lFiles = settings.value("listFiles", "").toString();
     settings.endGroup();
+
+    lastFiles = ui->mFile->addMenu("Последние файлы");
+    closeProg = ui->mFile->addAction("Выход");
+    if(lFiles == "")
+        lastFiles->setEnabled(false);
+    else{
+        listFiles = lFiles.split(";");
+    }
+
 
 }
 
@@ -52,11 +63,18 @@ void MainWindow::openFile(){
     QString file = QFileDialog::getOpenFileName(this, tr("Выберите файл"),  lastDir, tr("*.xlsx *.xls"));
     if(file == "")
         return;
-    qDebug()<<lastDir<<listFiles<<file<<file.lastIndexOf('/')<<file.remove(file.lastIndexOf('/'), 100);
-    QSettings settings;
+    fileSportsmens = file;
+    listFiles.append(fileSportsmens);
+    QAction* act = lastFiles->addAction(fileSportsmens);
+    lastFiles->setEnabled(true);
+    lastDir = file.remove(file.lastIndexOf('/'), 100);
+
+    QSettings settings("settings.ini",QSettings::IniFormat);
     settings.beginGroup("files");
-    settings.setValue("lastDir", file.remove(file.lastIndexOf('/'), 100));
-    //listFiles = settings.value("listFiles", "").toString().split(";");
-    settings.endGroup();
-    //file.lastIndexOf('/');
+    settings.setValue("lastDir", lastDir);
+    settings.setValue("listFiles", listFiles.join(";"));
+    settings.endGroup();   
+    settings.sync();
+
+
 }

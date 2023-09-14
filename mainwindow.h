@@ -20,17 +20,22 @@ public:
     QAction* winSettings;
     QAction* closeProg;
     QAction* time;
+    QString getFileSportsmens(void){return fileSportsmens;}
 
 private:
     Ui::MainWindow *ui;
     virtual void closeEvent(QCloseEvent*);
-    QString lastDir;        //последняя директория, из которой выбирали файл со спортсменами
-    QList<QString> listFiles;  //список последних файлов
-    QString fileSportsmens;
+    QString lastDir;            //последняя директория, из которой выбирали файл со спортсменами
+    QList<QString> listFiles;   //список последних файлов
+    QString fileSportsmens;     //текущий файл со списком спортсменов
     QMenu* lastFiles;
 
 private slots:
     void openFile(void);
+    void choiceFile(void);
+
+signals:
+    void newFile(void);
 
 };
 

@@ -21,6 +21,7 @@ int main(int argc, char** argv){
     mWin->setCentralWidget(pwgt);
     mWin->show();
 
+    QObject::connect(mWin, SIGNAL(newFile()), pwgt, SLOT(newListSportsmens()));
 
 	QJSEngine se;
 	

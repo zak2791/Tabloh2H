@@ -29,7 +29,7 @@ MainWindow::MainWindow(QWidget *parent) :
     settings.beginGroup("files");
     lastDir = settings.value("lastDir", "").toString();
     QString lFiles = settings.value("listFiles", "").toString();
-    settings.endGroup();
+
 
     lastFiles = ui->mFile->addMenu("Последние файлы");
     closeProg = ui->mFile->addAction("Выход");
@@ -37,9 +37,23 @@ MainWindow::MainWindow(QWidget *parent) :
         lastFiles->setEnabled(false);
     else{
         listFiles = lFiles.split(";");
+        foreach(QString str, listFiles){
+            if(QFile::exists(str)){
+                QAction* act = lastFiles->addAction(str);
+                act->setCheckable(true);
+                if(str == listFiles.at(0)){
+                    act->setChecked(true);
+                    fileSportsmens = str;
+                }
+                connect(act, SIGNAL(triggered()), SLOT(choiceFile()));
+            }
+            else{
+                listFiles.removeOne(str);
+            }
+        }
+        settings.setValue("listFiles", listFiles.join(";"));
     }
-
-
+    settings.endGroup();
 }
 
 MainWindow::~MainWindow()
@@ -59,13 +73,25 @@ void MainWindow::closeEvent(QCloseEvent* e){
 }
 
 void MainWindow::openFile(){
-    qDebug()<<lastDir;
     QString file = QFileDialog::getOpenFileName(this, tr("Выберите файл"),  lastDir, tr("*.xlsx *.xls"));
     if(file == "")
         return;
     fileSportsmens = file;
-    listFiles.append(fileSportsmens);
-    QAction* act = lastFiles->addAction(fileSportsmens);
+
+    listFiles.removeOne(fileSportsmens);
+    listFiles.prepend(fileSportsmens);
+
+    foreach(QAction* a, lastFiles->findChildren<QAction*>())
+        lastFiles->removeAction(a);
+
+    foreach(QString str, listFiles){
+        QAction* act = lastFiles->addAction(str);
+        act->setCheckable(true);
+        if(str == listFiles.at(0))
+            act->setChecked(true);
+        connect(act, SIGNAL(triggered()), SLOT(choiceFile()));
+    }
+
     lastFiles->setEnabled(true);
     lastDir = file.remove(file.lastIndexOf('/'), 100);
 
@@ -76,5 +102,34 @@ void MainWindow::openFile(){
     settings.endGroup();   
     settings.sync();
 
+    emit newFile();
+}
 
+void MainWindow::choiceFile(){
+    QAction* action = static_cast<QAction*>(sender());
+    qDebug()<<action->text();
+    action->setChecked(true);
+    fileSportsmens = action->text();
+
+    listFiles.removeOne(fileSportsmens);
+    listFiles.prepend(fileSportsmens);
+
+    foreach(QAction* a, lastFiles->findChildren<QAction*>())
+        lastFiles->removeAction(a);
+
+    foreach(QString str, listFiles){
+        QAction* act = lastFiles->addAction(str);
+        act->setCheckable(true);
+        if(str == listFiles.at(0))
+            act->setChecked(true);
+        connect(act, SIGNAL(triggered()), SLOT(choiceFile()));
+    }
+
+    QSettings settings("settings.ini",QSettings::IniFormat);
+    settings.beginGroup("files");
+    settings.setValue("listFiles", listFiles.join(";"));
+    settings.endGroup();
+    settings.sync();
+
+    emit newFile();
 }

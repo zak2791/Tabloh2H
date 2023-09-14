@@ -8,7 +8,7 @@
 
 #include <QDir>
 #include <QMessageBox>
-
+#include "pcscreen.h"
 
 
 FamilyView::FamilyView(QWidget * parent) : QTableView(parent) {
@@ -79,11 +79,11 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
     QDir dir = QDir::current();
 
     //dir.cdUp();
+    QString path = static_cast<PCScreen*>(parent)->mainwin->getFileSportsmens();
+    //QString path(dir.path() + "/sportsmens.xlsx");
 
-    QString path(dir.path() + "/sportsmens.xlsx");
-
-    QString path1(dir.path() + "/bin");
-    dir.setCurrent(path1);  //закомментить для работы из Qt Creator
+    //QString path1(dir.path() + "/bin");
+    //dir.setCurrent(path1);  //закомментить для работы из Qt Creator
 
     //QMessageBox::warning(this, "Внимание!", path, QMessageBox::Ok);
 

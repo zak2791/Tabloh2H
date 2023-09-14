@@ -62,6 +62,7 @@ public slots:
     //void setSpace(int);
 	void setSec(int);
     void setTime(void);
+    void newListSportsmens(void);
 
 private slots:
     void setCam(void);

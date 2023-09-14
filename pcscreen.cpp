@@ -1155,6 +1155,14 @@ void PCScreen::HIDE(QString s1, QString s2, QString s3, QString s4){
     emit sig_hide(s1, s2, s3, s4);
 }
 
+void PCScreen::newListSportsmens(){
+    lf->deleteLater();
+    lf = new ListFamily;
+    connect(lf->weight, SIGNAL(currentTextChanged(QString)), this, SLOT(setCat(QString)));
+    connect(lf->age, SIGNAL(currentTextChanged(QString)), this, SLOT(setAge(QString)));
+    connect(lf, SIGNAL(sig_hide(QString, QString, QString, QString)), this, SLOT(HIDE(QString, QString, QString, QString)));
+}
+
 void PCScreen::showListSportsmens(){
     //ListFamily* lf = new ListFamily;
     //connect(lf->weight, SIGNAL(currentTextChanged(QString)), this, SLOT(setCat(QString)));

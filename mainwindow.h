@@ -20,7 +20,8 @@ public:
     QAction* winSettings;
     QAction* closeProg;
     QAction* time;
-    QString getFileSportsmens(void){return fileSportsmens;}
+    QAction* actSbros;
+    QString getFileSportsmens(void);
 
 private:
     Ui::MainWindow *ui;

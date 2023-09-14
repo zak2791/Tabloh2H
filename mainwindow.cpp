@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
     winSettings = ui->winSettings;
     //closeProg = ui->close;
     time = ui->setTime;
+    actSbros = ui->actSbros;
 
     fileSportsmens = "";
 
@@ -132,4 +133,8 @@ void MainWindow::choiceFile(){
     settings.sync();
 
     emit newFile();
+}
+
+QString MainWindow::getFileSportsmens(void){
+    return fileSportsmens;
 }

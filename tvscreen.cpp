@@ -145,8 +145,8 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
     //grid->addWidget(akt_blue,  29, 5, 12, 14);
     //grid->addWidget(akt_red,  29, 49, 12, 14);
 
-    grid->addWidget(np_blue,    34,  8, 7, 9);
-    grid->addWidget(np_red,     34, 51, 7, 9);
+    grid->addWidget(np_blue,    34,  7, 7, 9);
+    grid->addWidget(np_red,     34, 50, 7, 9);
 
     grid->addWidget(plus_blue,   22,  1, 6, 6);
     grid->addWidget(plus_red,    22, 45, 6, 6);

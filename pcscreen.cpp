@@ -370,9 +370,11 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     //connect(btnClose, SIGNAL(clicked()), this, SLOT(closeTablo()));
     connect(mainwin->closeProg, SIGNAL(triggered()), this, SLOT(closeTablo()));
 
-    QPushButton * btnReset = new QPushButton("Сброс", this);
-    btnReset->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    connect(btnReset, SIGNAL(clicked()), this, SLOT(resetTablo()));
+    connect(mainwin->actSbros, SIGNAL(triggered()), this, SLOT(resetTablo()));
+
+//    QPushButton * btnReset = new QPushButton("Сброс", this);
+//    btnReset->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+//    connect(btnReset, SIGNAL(clicked()), this, SLOT(resetTablo()));
 
 	grid = new QGridLayout(this);
 	grid->setObjectName("grid");
@@ -405,15 +407,15 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     grid->addWidget(plus_red,               9,   19, 4,  4);
     grid->addWidget(plus_blue,              9,   45, 4,  4);
 
-    grid->addWidget(age,                    10, 38, 2,  3);
-    grid->addWidget(cat,                    10, 41, 2,  3);
+    grid->addWidget(age,                    12, 29, 2,  5);
+    grid->addWidget(cat,                    12, 34, 2,  5);
 
     //grid->addWidget(btnView,                10, 24, 2,  6);
 
     //grid->addWidget(lbl2,                   12, 24, 2,  20);
     //grid->addWidget(btnSetTime,             12, 24, 2,  6);
     //grid->addWidget(btnClose,               12, 32, 2,  4);
-    grid->addWidget(btnReset,               12, 38, 2,  6);
+    //grid->addWidget(btnReset,               29, 20, 2,  4);
 
     grid->addWidget(btnParter_red,          26, 24, 2,  6);
     grid->addWidget(btnTime,                26, 31, 2,  6);
@@ -1157,7 +1159,7 @@ void PCScreen::HIDE(QString s1, QString s2, QString s3, QString s4){
 
 void PCScreen::newListSportsmens(){
     lf->deleteLater();
-    lf = new ListFamily;
+    lf = new ListFamily(this);
     connect(lf->weight, SIGNAL(currentTextChanged(QString)), this, SLOT(setCat(QString)));
     connect(lf->age, SIGNAL(currentTextChanged(QString)), this, SLOT(setAge(QString)));
     connect(lf, SIGNAL(sig_hide(QString, QString, QString, QString)), this, SLOT(HIDE(QString, QString, QString, QString)));

@@ -20,7 +20,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="mFile">
@@ -55,9 +55,16 @@
     </property>
     <addaction name="winHelp"/>
    </widget>
+   <widget class="QMenu" name="mSbros">
+    <property name="title">
+     <string>Сброс</string>
+    </property>
+    <addaction name="actSbros"/>
+   </widget>
    <addaction name="mFile"/>
    <addaction name="settings"/>
    <addaction name="time"/>
+   <addaction name="mSbros"/>
    <addaction name="help"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -99,6 +106,11 @@
   <action name="setTime">
    <property name="text">
     <string>Установить время</string>
+   </property>
+  </action>
+  <action name="actSbros">
+   <property name="text">
+    <string>Сброс</string>
    </property>
   </action>
  </widget>

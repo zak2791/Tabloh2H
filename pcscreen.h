@@ -23,6 +23,35 @@
 #include "list_family.h"
 #include <mainwindow.h>
 
+#include <QSvgRenderer>
+
+class IconButton : public QPushButton{
+
+public:
+        IconButton(const QString& iconPath, QRect view){
+            icon = QIcon(iconPath);
+            path = iconPath;
+            vBox = view;
+        }
+
+    void paintEvent(QPaintEvent* ev){
+        QPushButton::paintEvent(ev);
+
+        QPainter painter(this);
+        QSvgRenderer renderer(path);
+        //renderer.setViewBox(QRect(0,0,90,30));
+        //qDebug()<<renderer.viewBox();
+        renderer.render(&painter);
+
+    }
+
+private:
+    QIcon icon;
+    QString path;
+    QRect vBox;
+
+};
+
 class WidgetFilter : public QObject {
     Q_OBJECT
 
@@ -63,6 +92,7 @@ public slots:
 	void setSec(int);
     void setTime(void);
     void newListSportsmens(void);
+    void sbrosLogo(void);
 
 private slots:
     void setCam(void);

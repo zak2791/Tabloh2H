@@ -18,6 +18,7 @@ function sbros(){
 		//akt_blue.sbros();
         plus_red.setData("");
         plus_blue.setData("");
+        pwgt.sbrosLogo();
 	//}
 }
 

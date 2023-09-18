@@ -167,10 +167,10 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
     grid->addWidget(fam_next_blue,    41, 0, 4, 34);
     grid->addWidget(fam_next_red,    41, 34, 4, 34);
 
-    logo = new logofrb;
+    logo = new logofrb(this);
 
 
-    grid->addWidget(logo,    16, 0, 18, 68);
+    grid->addWidget(logo,    16, 25, 18, 18);
 
 
 

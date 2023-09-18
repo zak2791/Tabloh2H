@@ -1,4 +1,4 @@
-#include <QPainter>
+ #include <QPainter>
 #include <QGridLayout>
 #include <QPushButton>
 #include <QEvent>
@@ -126,11 +126,13 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     doctor->setStyleSheet("color: red; font: bold " + QString::number(round(doctor->height() / 2)) + "px;");
     connect(doctor, SIGNAL(clicked()), this, SLOT(turnDoctor()));
 
-	QPushButton * btnParter_red = new QPushButton(u8"ПАРТЕР", this);
+    IconButton * btnParter_red = new IconButton(":/images/parter_red.svg", QRect(0, 0, 90, 30));
 	btnParter_red->setObjectName("btnParter_red");
 	btnParter_red->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-	btnParter_red->setStyleSheet("color: red; font: bold " + QString::number(round(btnParter_red->height() / 2)) + "px;");
+    //btnParter_red->setStyleSheet("color: red; font: bold " + QString::number(round(btnParter_red->height() / 2)) + "px;");
     //btnParter_red->setFocusPolicy(Qt::NoFocus);
+    //btnParter_red->setIcon(QIcon(":/images/parter_red.png"));
+    //btnParter_red->setIconSize(QSize(btnParter_red->width(), btnParter_red->height()));
 	
 	QPushButton * btnTime = new QPushButton(u8"ВРЕМЯ", this);
     btnTime->setObjectName("btnTime");
@@ -138,7 +140,7 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 	//btnTime->setStyleSheet("color: green; font: bold " + QString::number(round(btnTime->height() / 2)) + "px;");
     //btnTime->setFocusPolicy(Qt::NoFocus);
 
-	QPushButton * btnParter_blue = new QPushButton(u8"ПАРТЕР", this);
+    QPushButton * btnParter_blue = new QPushButton(u8"ПАРТЕР", this);
 	btnParter_blue->setObjectName("btnParter_blue");
 	btnParter_blue->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 	btnParter_blue->setStyleSheet("color: blue; font: bold " + QString::number(round(btnParter_blue->height() / 2)) + "px;");
@@ -191,6 +193,8 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     mainTimer = new LCDTimer(this);
     mainTimer->setObjectName("mainTimer");
     //connect(btnTime, SIGNAL(clicked()), mainTimer, SLOT(StartStop()));
+
+
 
     sec_doctor = new LCDStopwatch(this, "2:00", QColor(255, 255, 0), QColor(255, 255, 0), true, true);
     sec_doctor->hide();
@@ -280,36 +284,36 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     btnPlayLastWithSound1 = new QPushButton("Просмотр\nсо звуком");
     btnPlayLastWithSound1->setObjectName("btnPlayLastWithSound1");
     btnPlayLastWithSound1->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    btnPlayLastWithSound1->setStyleSheet("font-size: 10pt");
+    btnPlayLastWithSound1->setStyleSheet("font-size: 8pt");
     connect(btnPlayLastWithSound1, SIGNAL(clicked()), SLOT(PlayFile()));
 
     btnPlayLastWithSound2 = new QPushButton("Просмотр\nсо звуком");
     btnPlayLastWithSound2->setObjectName("btnPlayLastWithSound2");
     btnPlayLastWithSound2->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    btnPlayLastWithSound1->setStyleSheet("font-size: 10pt");
+    btnPlayLastWithSound2->setStyleSheet("font-size: 8pt");
     connect(btnPlayLastWithSound2, SIGNAL(clicked()), SLOT(PlayFile()));
 
     btnPlayLastSlowMotion1 = new QPushButton("Просмотр\nзамедленный");
     btnPlayLastSlowMotion1->setObjectName("btnPlayLastSlowMotion1");
     btnPlayLastSlowMotion1->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    btnPlayLastSlowMotion1->setStyleSheet("font-size: 10pt");
+    btnPlayLastSlowMotion1->setStyleSheet("font-size: 8pt");
     connect(btnPlayLastSlowMotion1, SIGNAL(clicked()), SLOT(PlaySlowMotion()));
 
     btnPlayLastSlowMotion2 = new QPushButton("Просмотр\nзамедленный");
     btnPlayLastSlowMotion2->setObjectName("btnPlayLastSlowMotion2");
     btnPlayLastSlowMotion2->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    btnPlayLastSlowMotion2->setStyleSheet("font-size: 10pt");
+    btnPlayLastSlowMotion2->setStyleSheet("font-size: 8pt");
     connect(btnPlayLastSlowMotion2, SIGNAL(clicked()), SLOT(PlaySlowMotion()));
 
     btnPlaySlowMotion = new QPushButton("Просмотр с выбором файла");
     btnPlaySlowMotion->setObjectName("btnPlaySlowMotion");
     btnPlaySlowMotion->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    btnPlaySlowMotion->setStyleSheet("font-size: 10pt");
+    btnPlaySlowMotion->setStyleSheet("font-size: 8pt");
     connect(btnPlaySlowMotion, SIGNAL(clicked()), SLOT(PlaySelectedFile()));
 
     btnStopRecord = new QPushButton("Стоп запись");
     btnStopRecord->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    btnStopRecord->setStyleSheet("font-size: 10pt");
+    btnStopRecord->setStyleSheet("font-size: 8pt");
     connect(btnStopRecord, SIGNAL(clicked()), SLOT(StopRecord()));
     //connect(mainTimer, SIGNAL(sigStopped(bool)), btnStopRecord, SLOT(setEnabled(bool)));
 
@@ -400,15 +404,15 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     grid->addWidget(btnSettings,            8,  31, 2,  6);
     grid->addWidget(btnTehTime_blue,        8,  38, 2,  6);
 
-    grid->addWidget(btnPlus_red,            10,  31, 2,  2);
+    grid->addWidget(btnPlus_red,            10,  24, 2,  2);
     //grid->addWidget(lblCpuUsage,            10,  33, 2,  2);
-    grid->addWidget(btnPlus_blue,           10,  35, 2,  2);
+    grid->addWidget(btnPlus_blue,           10,  42, 2,  2);
 
     grid->addWidget(plus_red,               9,   19, 4,  4);
     grid->addWidget(plus_blue,              9,   45, 4,  4);
 
-    grid->addWidget(age,                    12, 29, 2,  5);
-    grid->addWidget(cat,                    12, 34, 2,  5);
+    grid->addWidget(age,                    12, 26, 2,  7);
+    grid->addWidget(cat,                    12, 35, 2,  7);
 
     //grid->addWidget(btnView,                10, 24, 2,  6);
 
@@ -434,18 +438,18 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     grid->addWidget(sec_blue_t,             11,  44, 12, 24);
 
     grid->addWidget(viewCam1,               14, 24,  6, 10);
-    grid->addWidget(btnPlayLastWithSound1,  22, 24,  2,  5);
-    grid->addWidget(btnPlayLastSlowMotion1, 22, 29,  2,  5);
+    grid->addWidget(btnPlayLastWithSound1,  20, 24,  2,  5);
+    grid->addWidget(btnPlayLastSlowMotion1, 20, 29,  2,  5);
     grid->addWidget(btnPlaySlowMotion,      24, 24,  2, 10);
     grid->addWidget(cbCam1,                 19, 25,  1,  8);
     grid->addWidget(viewCam2,               14, 34,  6, 10);
-    grid->addWidget(btnPlayLastWithSound2,  22, 34,  2,  5);
-    grid->addWidget(btnPlayLastSlowMotion2, 22, 39,  2,  5);
+    grid->addWidget(btnPlayLastWithSound2,  20, 34,  2,  5);
+    grid->addWidget(btnPlayLastSlowMotion2, 20, 39,  2,  5);
     grid->addWidget(btnStopRecord,          24, 34,  2, 10);
     grid->addWidget(cbCam2,                 19 , 35,  1, 8);
 
 
-    grid->addWidget(lbl,                    20, 24,  2, 20);
+    grid->addWidget(lbl,                    22, 24,  2, 20);
 
 
     grid->addWidget(fam_next_red,           42,  0,  4,  34);
@@ -486,8 +490,8 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 		QMessageBox::Ok);
 	}
     //else {
-        tvScreen = new TVScreen();
-
+        tvScreen = new TVScreen;
+        //tvScreen->setObjectName("tvScreen");
     //if (desk->numScreens() == 1)
     if(QGuiApplication::screens().count() == 1)
         tvScreen->setGeometry(0, 0, QApplication::desktop()->availableGeometry(this).width() / 2, QApplication::desktop()->availableGeometry(this).height() / 2);
@@ -521,6 +525,9 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
         //connect(cat,  SIGNAL(sigText(QString)), tvScreen->cat, SLOT(setText(QString)));
 
         connect(mainTimer, SIGNAL(sigTime(QString, QPalette)), tvScreen->sec, SLOT(showTime(QString, QPalette)));
+
+        connect(mainTimer, SIGNAL(sigStarted(bool)), tvScreen->logo, SLOT(off_logo()));
+
         //connect(btnSettings, SIGNAL(clicked()), this, SIGNAL(setCategory()));
 
         connect(uiTime.dMin, SIGNAL(valueChanged(int)), this, SLOT(setTime()));
@@ -983,6 +990,8 @@ void PCScreen::closeTablo(){
 }
 
 void PCScreen::resetTablo(){
+    //tvScreen->logo->on_logo();
+    //tvScreen->grid->removeWidget(tvScreen->logo);
     QKeyEvent *key_press = new QKeyEvent(QKeyEvent::KeyPress, Qt::Key_Backspace, Qt::NoModifier);
     QApplication::sendEvent(this, key_press);
 }
@@ -1329,4 +1338,6 @@ void PCScreen::slotProcessDatagrams(){
     }
 }
 
-
+void PCScreen::sbrosLogo(){
+    tvScreen->logo->on_logo();
+}

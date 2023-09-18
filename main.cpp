@@ -34,6 +34,7 @@ int main(int argc, char** argv){
 
         QList<QObject*> lst = pwgt->findChildren<QObject*>();
         lst.prepend(pwgt);
+
 		foreach(QObject* pobj, lst) {
 			sw = se.newQObject(pobj);
 			se.globalObject().setProperty(pobj->objectName(), sw);

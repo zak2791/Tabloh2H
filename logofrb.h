@@ -9,10 +9,12 @@ class logofrb : public QWidget
 public:
     explicit logofrb(QWidget *parent = nullptr);
 
+public slots:
+    void on_logo(void);
+    void off_logo(void);
+
 private:
     virtual void paintEvent(QPaintEvent*);
-
-signals:
 
 };
 

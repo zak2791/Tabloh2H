@@ -6,5 +6,8 @@
         <file>images/next_red.png</file>
         <file>images/plus.png</file>
         <file>images/frb.png</file>
+        <file>images/parter_red.png</file>
+        <file>images/parter_red.svg</file>
+        <file>images/sound.svg</file>
     </qresource>
 </RCC>

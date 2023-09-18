@@ -2,9 +2,8 @@
 
 #include <QPainter>
 
-logofrb::logofrb(QWidget *parent) : QWidget(parent)
-{
-
+logofrb::logofrb(QWidget *parent) : QWidget(parent){
+    // setObjectName("logo");
 }
 
 void logofrb::paintEvent(QPaintEvent*){
@@ -13,6 +12,13 @@ void logofrb::paintEvent(QPaintEvent*){
     pix.load(":/images/frb.png");
     int ratio = pix.width() / pix.height();
     QRect rect((width() - height() * ratio) / 2, 0, height() * ratio, height());
-    painter.setOpacity(0.8);
     painter.drawPixmap(rect, pix);
+}
+
+void logofrb::on_logo(){
+    setVisible(true);
+}
+
+void logofrb::off_logo(){
+    setVisible(false);
 }

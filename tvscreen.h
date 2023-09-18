@@ -59,6 +59,9 @@ public:
 	int percent_height;
 	QLabel * flag_blue;
 	QLabel * flag_red;
+
+    logofrb* logo;
+
 	int View;									//вид табло: 0-красно-синий фон, 
 												//			 1-чёрный фон с рамками,
 												//			 2-чёрный фон без рамок
@@ -75,6 +78,6 @@ private:
 	int minimum_height_family;
 	int minimum_height_region;
 
-    logofrb* logo;
+
 
 };

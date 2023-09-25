@@ -21,6 +21,8 @@ public:
     QAction* closeProg;
     QAction* time;
     QAction* actSbros;
+    QAction* video;
+    QAction* no_video;
     QString getFileSportsmens(void);
 
 private:
@@ -30,13 +32,16 @@ private:
     QList<QString> listFiles;   //список последних файлов
     QString fileSportsmens;     //текущий файл со списком спортсменов
     QMenu* lastFiles;
+    QString fileSettings;
 
 private slots:
     void openFile(void);
     void choiceFile(void);
+    void Variant(void);
 
 signals:
     void newFile(void);
+    void variant(int);  //0-без видео, 1-с видео
 
 };
 

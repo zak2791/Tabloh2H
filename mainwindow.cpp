@@ -8,6 +8,8 @@
 #include <QFileDialog>
 #include <QSettings>
 
+
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -20,13 +22,22 @@ MainWindow::MainWindow(QWidget *parent) :
     //closeProg = ui->close;
     time = ui->setTime;
     actSbros = ui->actSbros;
+    video = ui->video;
+    no_video = ui->no_video;
+
+#ifdef APP_LAUNCH_FROM_IDE
+    fileSettings = "settings.ini";
+#else
+    fileSettings = "bin/settings.ini";
+#endif
+
 
     fileSportsmens = "";
 
     QAction* openFile = ui->openFile;
     connect(openFile, SIGNAL(triggered()), this, SLOT(openFile()));
 
-    QSettings settings("settings.ini",QSettings::IniFormat);
+    QSettings settings(fileSettings, QSettings::IniFormat);
     settings.beginGroup("files");
     lastDir = settings.value("lastDir", "").toString();
     QString lFiles = settings.value("listFiles", "").toString();
@@ -55,11 +66,43 @@ MainWindow::MainWindow(QWidget *parent) :
         settings.setValue("listFiles", listFiles.join(";"));
     }
     settings.endGroup();
+
+    no_video->setCheckable(true);
+    no_video->setObjectName("0");
+    video->setCheckable(true);
+    video->setObjectName("1");
+
+    connect(no_video, SIGNAL(triggered()), this, SLOT(Variant()));
+    connect(video,    SIGNAL(triggered()), this, SLOT(Variant()));
+
+    no_video->setChecked(true);
+
+
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::Variant(){
+    if(sender()->objectName() == "0"){
+        if(no_video->isChecked() == true){
+            video->setChecked(false);
+            emit variant(0);
+        }
+        else
+            no_video->setChecked(true);
+    }
+    else{
+        if(video->isChecked() == true){
+            no_video->setChecked(false);
+            emit variant(1);
+        }
+        else
+            video->setChecked(true);
+    }
+
 }
 
 void MainWindow::closeEvent(QCloseEvent* e){
@@ -96,7 +139,7 @@ void MainWindow::openFile(){
     lastFiles->setEnabled(true);
     lastDir = file.remove(file.lastIndexOf('/'), 100);
 
-    QSettings settings("settings.ini",QSettings::IniFormat);
+    QSettings settings(fileSettings, QSettings::IniFormat);
     settings.beginGroup("files");
     settings.setValue("lastDir", lastDir);
     settings.setValue("listFiles", listFiles.join(";"));
@@ -126,7 +169,7 @@ void MainWindow::choiceFile(){
         connect(act, SIGNAL(triggered()), SLOT(choiceFile()));
     }
 
-    QSettings settings("settings.ini",QSettings::IniFormat);
+    QSettings settings(fileSettings, QSettings::IniFormat);
     settings.beginGroup("files");
     settings.setValue("listFiles", listFiles.join(";"));
     settings.endGroup();

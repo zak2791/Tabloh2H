@@ -22,6 +22,7 @@
 //#include "newsportsman.h"
 #include "list_family.h"
 #include <mainwindow.h>
+#include <QSettings>
 
 #include <QSvgRenderer>
 
@@ -93,6 +94,7 @@ public slots:
     void setTime(void);
     void newListSportsmens(void);
     void sbrosLogo(void);
+    void Variant(int);
 
 private slots:
     void setCam(void);
@@ -143,6 +145,9 @@ private slots:
 
 private:
     //QLabel* lblCpuUsage;
+    QCheckBox* cbAddDisp;
+    QSettings* settings;
+    QString fileSettings;
 	QWidget * formView;
     QWidget * frmTime;
     LCDStopwatch * sec_doctor;
@@ -151,6 +156,8 @@ private:
     virtual void closeEvent(QCloseEvent*);
     virtual void keyPressEvent(QKeyEvent *);
     virtual void resizeEvent(QResizeEvent *);
+
+    void setSize(void);
 
     //NewSportsman* newSportsman;
 
@@ -216,6 +223,7 @@ private:
     QPushButton* btnPlayLastWithSound2;
     QPushButton* btnPlayLastSlowMotion2;
     QPushButton* btnPlaySlowMotion;
+    QLabel* lbl;
 
     QString cam1Url = "";
     QString cam2Url = "";

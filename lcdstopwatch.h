@@ -6,7 +6,6 @@
 class LCDStopwatch : public LCDTimer
 {
 
-
 public:
     LCDStopwatch(QWidget *parent = 0,
                  QString initTime = "2:00",
@@ -22,6 +21,10 @@ private slots:
 public slots:
     void StartStop();
     void Reset();
+
+//signals:
+//    void sigEndTime(void);
+
 };
 
 #endif // LCDSTOPWATCH_H

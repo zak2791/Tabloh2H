@@ -1,5 +1,7 @@
 #include "lcdstopwatch.h"
+#include <QMediaPlayer>
 #include <QDebug>
+#include <QDir>
 
 LCDStopwatch::LCDStopwatch(QWidget* parent,
                            QString strInitTime,
@@ -38,8 +40,12 @@ void LCDStopwatch::showTime(){
         timer->stop();
         setPalette(palStopped);
         sigStarted(false);
-        if(_sound)
-            MessageBeep(MB_OK);
+        if(_sound){
+            QMediaPlayer * pPlayer = new QMediaPlayer;
+            pPlayer->setMedia(QUrl::fromLocalFile(QDir::currentPath() + "\\gong.mp3"));
+            emit sigEndTime();
+            pPlayer->play() ;
+        }
     }
 
     QString sTime = intTimeToStr(time);

@@ -12,6 +12,7 @@ class LCDTimer : public QLCDNumber
     Q_OBJECT
     Q_PROPERTY(bool Visible READ getVisible)
     Q_PROPERTY(int  Status  READ getStatus)
+    Q_PROPERTY(int  time    READ getITime)
 
 public:
     LCDTimer(QWidget *parent = 0,
@@ -25,6 +26,7 @@ public:
 
 
     int getStatus(void);
+    int getITime(void);
     void setTime(int);
     QString getTime();
     virtual void showEvent(QShowEvent*);

@@ -71,9 +71,22 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 	col_red = "white";
 	col_blue = "white";
 
-	HEIGHT_REGION = 0;
-	HEIGHT_FAMILY = 0;
-    HEIGHT_NEXT_FAMILY = 0;
+#ifdef APP_LAUNCH_FROM_IDE
+    fileSettings = "settings.ini";
+#else
+   fileSettings = "bin/settings.ini";
+#endif
+
+
+    settings = new QSettings(fileSettings, QSettings::IniFormat);
+    settings->beginGroup("height");
+
+    HEIGHT_REGION = settings->value("HEIGHT_REGION", 0).toInt();
+    HEIGHT_FAMILY = settings->value("HEIGHT_FAMILY", 0).toInt();
+    HEIGHT_NEXT_FAMILY = settings->value("HEIGHT_NEXT_FAMILY", 0).toInt();
+
+    settings->endGroup();
+
 	minimum_height = 0;
 	percent_height = 0;
 
@@ -111,7 +124,7 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     fam_next_blue = new Fam(col_blue, "", 63,"",this);
     fam_next_blue->setObjectName("fam_next_blue");
 
-    QCheckBox* cbAddDisp = new QCheckBox("дополнительный\nдисплей", this);     //передача данных для дополнительного дисплея
+    cbAddDisp = new QCheckBox("дополнительный\nдисплей", this);     //передача данных для дополнительного дисплея
     cbAddDisp->setStyleSheet("color: white");
     connect(cbAddDisp, SIGNAL(stateChanged(int)), this, SLOT(addDisplay(int)));
 
@@ -120,10 +133,10 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 //    //addSportsman->setStyleSheet("color: red; font: bold " + QString::number(round(doctor->height() / 2)) + "px;");
 //    connect(addSportsman, SIGNAL(clicked()), newSportsman, SLOT(show()));
 
-    QPushButton* doctor = new QPushButton(u8"ВРАЧ", this);
-    doctor->setObjectName("btnParter_red");
+    IconButton* doctor = new IconButton(":/images/doctor.svg", QRect(0, 0, 90, 30));
+    //doctor->setObjectName("btnParter_red");
     doctor->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    doctor->setStyleSheet("color: red; font: bold " + QString::number(round(doctor->height() / 2)) + "px;");
+    //doctor->setStyleSheet("color: red; font: bold " + QString::number(round(doctor->height() / 2)) + "px;");
     connect(doctor, SIGNAL(clicked()), this, SLOT(turnDoctor()));
 
     IconButton * btnParter_red = new IconButton(":/images/parter_red.svg", QRect(0, 0, 90, 30));
@@ -134,44 +147,44 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     //btnParter_red->setIcon(QIcon(":/images/parter_red.png"));
     //btnParter_red->setIconSize(QSize(btnParter_red->width(), btnParter_red->height()));
 	
-	QPushButton * btnTime = new QPushButton(u8"ВРЕМЯ", this);
+    IconButton * btnTime = new IconButton(":/images/time.svg", QRect(0, 0, 90, 30));
     btnTime->setObjectName("btnTime");
 	btnTime->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 	//btnTime->setStyleSheet("color: green; font: bold " + QString::number(round(btnTime->height() / 2)) + "px;");
     //btnTime->setFocusPolicy(Qt::NoFocus);
 
-    QPushButton * btnParter_blue = new QPushButton(u8"ПАРТЕР", this);
+    IconButton * btnParter_blue = new IconButton(":/images/parter_blue.svg", QRect(0, 0, 90, 30));
 	btnParter_blue->setObjectName("btnParter_blue");
 	btnParter_blue->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-	btnParter_blue->setStyleSheet("color: blue; font: bold " + QString::number(round(btnParter_blue->height() / 2)) + "px;");
+    //btnParter_blue->setStyleSheet("color: blue; font: bold " + QString::number(round(btnParter_blue->height() / 2)) + "px;");
     //btnParter_blue->setFocusPolicy(Qt::NoFocus);
 	
-	QPushButton * btnTehTime_red = new QPushButton(u8"Т.ВРЕМЯ", this);
+    IconButton * btnTehTime_red = new IconButton(":/images/ttech_red.svg", QRect(0, 0, 90, 30));
 	btnTehTime_red->setObjectName("btnTehTime_red");
 	btnTehTime_red->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 	btnTehTime_red->setStyleSheet("color: red; font: bold " + QString::number(round(btnTehTime_red->height() / 2)) + "px;");
     //btnTehTime_red->setFocusPolicy(Qt::NoFocus);
 
-    QPushButton * btnSettings = new QPushButton("СПОРТСМЕНЫ", this);
+    IconButton * btnSettings = new IconButton(":/images/sportsmens.svg", QRect(0, 0, 120, 30));
 	btnSettings->setObjectName("btnSettings");
 	btnSettings->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-	btnSettings->setStyleSheet("color: green; font: bold " + QString::number(round(btnSettings->height() / 2)) + "px;");
+    //btnSettings->setStyleSheet("color: green; font: bold " + QString::number(round(btnSettings->height() / 2)) + "px;");
     connect(btnSettings, SIGNAL(clicked()), this, SLOT(showListSportsmens()));
     //btnSettings->setFocusPolicy(Qt::NoFocus);
 	
-	QPushButton * btnTehTime_blue = new QPushButton(u8"Т.ВРЕМЯ", this);
+    IconButton * btnTehTime_blue = new IconButton(":/images/ttech_blue.svg", QRect(0, 0, 90, 30));
 	btnTehTime_blue->setObjectName("btnTehTime_blue");
 	btnTehTime_blue->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-	btnTehTime_blue->setStyleSheet("color: blue; font: bold " + QString::number(round(btnTehTime_blue->height() / 2)) + "px;");
+    //btnTehTime_blue->setStyleSheet("color: blue; font: bold " + QString::number(round(btnTehTime_blue->height() / 2)) + "px;");
     //btnTehTime_blue->setFocusPolicy(Qt::NoFocus);
 
-	QPushButton * btnPlus_red = new QPushButton("+", this);
+    IconButton * btnPlus_red = new IconButton(":/images/plus_red.svg", QRect(0, 0, 30, 30));
 	btnPlus_red->setObjectName("btnPlus_red");
 	btnPlus_red->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 	btnPlus_red->setStyleSheet("color: red; font: bold " + QString::number(btnPlus_red->height()) + "px;");
     //btnPlus_red->setFocusPolicy(Qt::NoFocus);
 
-	QPushButton * btnPlus_blue = new QPushButton("+", this);
+    IconButton * btnPlus_blue = new IconButton(":/images/plus_blue.svg", QRect(0, 0, 30, 30));
 	btnPlus_blue->setObjectName("btnPlus_blue");
 	btnPlus_blue->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 	btnPlus_blue->setStyleSheet("color: blue; font: bold " + QString::number(btnPlus_blue->height()) + "px;");
@@ -330,7 +343,7 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     connect(ui.cbAutoCam1, SIGNAL(toggled(bool)), this, SLOT(autoCamera(bool)));
     connect(ui.cbAutoCam2, SIGNAL(toggled(bool)), this, SLOT(autoCamera(bool)));
 
-    QLabel* lbl = new QLabel("Последний записанный файл");
+    lbl = new QLabel("Последний записанный файл");
     lbl->setAlignment(Qt::AlignCenter);
     lbl->setStyleSheet("color: white; border-style: solid;"
                                      "border-width: 2px;"
@@ -401,7 +414,7 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     grid->addWidget(np_blue,                32, 53, 6,  7);
 
     grid->addWidget(btnTehTime_red,         8,  24, 2,  6);
-    grid->addWidget(btnSettings,            8,  31, 2,  6);
+    grid->addWidget(btnSettings,            8,  30, 2,  8);
     grid->addWidget(btnTehTime_blue,        8,  38, 2,  6);
 
     grid->addWidget(btnPlus_red,            10,  24, 2,  2);
@@ -471,6 +484,7 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     btnTime->setStyleSheet("color: green; font: bold " + QString::number(round(btnTime->height() / 2)) + "px;");
 
     lblEndTimer = new EndTime(this);
+    lblEndTimer->setObjectName("lblEndTimer");
 
     //desk = QApplication::desktop();
 
@@ -557,27 +571,32 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     connect(ui.leCam1, SIGNAL(editingFinished()), this, SLOT(setCam()));
     connect(ui.leCam2, SIGNAL(editingFinished()), this, SLOT(setCam()));
 
-    QFile cam1("cam1.txt");
-    if(!cam1.exists()){
-        cam1.open(QIODevice::WriteOnly);
-        cam1.close();
-    }
-    else{
-        cam1.open(QIODevice::ReadOnly);
-        cam1Url = cam1.readAll();
-        cam1.close();
-    }
+//    QFile cam1("cam1.txt");
+//    if(!cam1.exists()){
+//        cam1.open(QIODevice::WriteOnly);
+//        cam1.close();
+//    }
+//    else{
+//        cam1.open(QIODevice::ReadOnly);
+//        cam1Url = cam1.readAll();
+//        cam1.close();
+//    }
 
-    QFile cam2("cam2.txt");
-    if(!cam2.exists()){
-        cam2.open(QIODevice::WriteOnly);
-        cam2.close();
-    }
-    else{
-        cam2.open(QIODevice::ReadOnly);
-        cam2Url = cam2.readAll();
-        cam2.close();
-    }
+//    QFile cam2("cam2.txt");
+//    if(!cam2.exists()){
+//        cam2.open(QIODevice::WriteOnly);
+//        cam2.close();
+//    }
+//    else{
+//        cam2.open(QIODevice::ReadOnly);
+//        cam2Url = cam2.readAll();
+//        cam2.close();
+//    }
+
+    settings->beginGroup("URL");
+    cam1Url = settings->value("cam1", "").toString();
+    cam2Url = settings->value("cam2", "").toString();
+    settings->endGroup();
 
     camera1 = new Camera;
     camera1->setObjectName("camera1");
@@ -620,21 +639,39 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     connect(tmrCpu, SIGNAL(timeout()), this, SLOT(CpuUsage()));
     tmrCpu->start(1000);
 
-    QFile font_size("font_size.txt");
-    if(!font_size.exists()){
-        font_size.open(QIODevice::WriteOnly);
-        font_size.write("20");
-        font_size.close();
-    }
-    font_size.open(QIODevice::ReadOnly);
+//    QFile font_size("font_size.txt");
+//    if(!font_size.exists()){
+//        font_size.open(QIODevice::WriteOnly);
+//        font_size.write("20");
+//        font_size.close();
+//    }
+//    font_size.open(QIODevice::ReadOnly);
     //int size = font_size.readLine().toInt();
-    ui.cmbFont->setCurrentText(font_size.readLine());
+
+    settings->beginGroup("font");
+    ui.cmbFont->setCurrentText(settings->value("font_size", "20").toString());
+    settings->endGroup();
+
+    //ui.cmbFont->setCurrentText(font_size.readLine());
     //QFont font_weight;
     //font_weight.setPixelSize(size);
     //tvScreen->cat->setFont(font_weight);\
 
-    connect(mainTimer, SIGNAL(sigEndTime()), tvScreen->lblEndTimer, SLOT(startProcess()));
-    connect(mainTimer, SIGNAL(sigEndTime()), lblEndTimer, SLOT(startProcess()));
+    connect(mainTimer, SIGNAL(sigEndTime()), tvScreen->lblEndTimer,     SLOT(startProcess()));
+    connect(mainTimer, SIGNAL(sigEndTime()), lblEndTimer,               SLOT(startProcess()));
+
+    connect(sec_red_t,  SIGNAL(sigEndTime()), tvScreen->lblEndTimer,    SLOT(startProcess()));
+    connect(sec_red_t,  SIGNAL(sigEndTime()), lblEndTimer,              SLOT(startProcess()));
+
+    connect(sec_blue_t, SIGNAL(sigEndTime()), tvScreen->lblEndTimer,    SLOT(startProcess()));
+    connect(sec_blue_t, SIGNAL(sigEndTime()), lblEndTimer,              SLOT(startProcess()));
+
+    settings->beginGroup("timer");
+    setSec(settings->value("height", 3).toInt());
+    settings->endGroup();
+
+    setSize();
+    Variant(0);
 
 }
 
@@ -700,18 +737,24 @@ void PCScreen::autoCamera(bool state){
         if(sender()->objectName() == "cbAutoCam1"){
             ui.cbAutoCam2->setEnabled(true);
             ui.leCam1->setStyleSheet("background-color: white");
-            QFile f("cam1.txt");
-            f.open(QIODevice::ReadOnly);
-            ui.leCam1->setText(f.readLine());
-            f.close();
+            //QFile f("cam1.txt");
+            //f.open(QIODevice::ReadOnly);
+            //ui.leCam1->setText(f.readLine());
+            settings->beginGroup("URL");
+            ui.leCam1->setText(settings->value("cam1", "").toString());
+            settings->endGroup();
+            //f.close();
         }
         else{
             ui.cbAutoCam1->setEnabled(true);
             ui.leCam2->setStyleSheet("background-color: white");
-            QFile f("cam2.txt");
-            f.open(QIODevice::ReadOnly);
-            ui.leCam2->setText(f.readLine());
-            f.close();
+            //QFile f("cam2.txt");
+            //f.open(QIODevice::ReadOnly);
+            //ui.leCam2->setText(f.readLine());
+            settings->beginGroup("URL");
+            ui.leCam2->setText(settings->value("cam2", "").toString());
+            settings->endGroup();
+            //f.close();
         }
         if(camConn){
             disconnect(camConn, SIGNAL(sigCamera(QString)), nullptr, nullptr);
@@ -722,23 +765,31 @@ void PCScreen::autoCamera(bool state){
 
 void PCScreen::setCamera(QString ip){
     if(ui.cbAutoCam1->isChecked()){
-        QFile f;
-        QTextStream out(&f);
-        f.setFileName("cam1.txt");
-        f.open(QIODevice::WriteOnly);
-        out << "srt://" + ip + ":1111";
-        f.close();
+        //QSettings settings("");
+//        QFile f;
+//        QTextStream out(&f);
+//        f.setFileName("cam1.txt");
+//        f.open(QIODevice::WriteOnly);
+
+//        out << "srt://" + ip + ":1111";
+//        f.close();
         cam1Url = "srt://" + ip + ":1111";
+        settings->beginGroup("URL");
+        settings->setValue("cam1", cam1Url);
+        settings->endGroup();
         ui.cbAutoCam1->setChecked(false);
     }
     if(ui.cbAutoCam2->isChecked()){
-        QFile f;
-        QTextStream out(&f);
-        f.setFileName("cam2.txt");
-        f.open(QIODevice::WriteOnly);
-        out << "srt://" + ip + ":2222";
-        f.close();
+//        QFile f;
+//        QTextStream out(&f);
+//        f.setFileName("cam2.txt");
+//        f.open(QIODevice::WriteOnly);
+//        out << "srt://" + ip + ":2222";
+//        f.close();
         cam2Url = "srt://" + ip + ":2222";
+        settings->beginGroup("URL");
+        settings->setValue("cam2", cam2Url);
+        settings->endGroup();
         ui.cbAutoCam2->setChecked(false);
     }
 }
@@ -880,20 +931,26 @@ void PCScreen::finishedCamera(){
 }
 
 void PCScreen::setCam(){
-    QFile f;
-    QTextStream out(&f);
+//    QFile f;
+    //QTextStream out(&f);
     if(sender()->objectName() == "leCam1"){
-        f.setFileName("cam1.txt");
-        f.open(QIODevice::WriteOnly);
-        out << ui.leCam1->text();
+//        f.setFileName("cam1.txt");
+//        f.open(QIODevice::WriteOnly);
+//        out << ui.leCam1->text();
         cam1Url = ui.leCam1->text();
+        settings->beginGroup("URL");
+        settings->setValue("cam1", cam1Url);
+        settings->endGroup();
     }else{
-        f.setFileName("cam2.txt");
-        f.open(QIODevice::WriteOnly);
-        out << ui.leCam2->text();
+//        f.setFileName("cam2.txt");
+//        f.open(QIODevice::WriteOnly);
+//        out << ui.leCam2->text();
+        settings->beginGroup("URL");
+        settings->setValue("cam2", cam2Url);
+        settings->endGroup();
         cam2Url = ui.leCam2->text();
     }
-    f.close();
+//    f.close();
 }
 
 void PCScreen::turnCamera(bool state){
@@ -917,7 +974,7 @@ void PCScreen::turnCamera(bool state){
 
 
 void PCScreen::closeEvent(QCloseEvent *){
-    qDebug()<<"close event";
+//    qDebug()<<"close event";
     if(cbCam1->isChecked()){
         cbCam1->toggle();
         threadCam1->quit();
@@ -928,7 +985,7 @@ void PCScreen::closeEvent(QCloseEvent *){
         threadCam2->quit();
         threadCam2->wait();
     }
-    qDebug()<<"close event";
+//    qDebug()<<"close event";
     qApp->quit();
 
 }
@@ -944,14 +1001,24 @@ void PCScreen::setTime(){
 }
 
 void PCScreen::showView(){
-    QFile f1("cam1.txt");
-    f1.open(QIODevice::ReadOnly);
-    ui.leCam1->setText(f1.readLine());
-    f1.close();
-    QFile f2("cam2.txt");
-    f2.open(QIODevice::ReadOnly);
-    ui.leCam2->setText(f2.readLine());
-    f2.close();
+    //QFile f1("cam1.txt");
+    //f1.open(QIODevice::ReadOnly);
+
+    settings->beginGroup("URL");
+    ui.leCam1->setText(settings->value("cam1", "").toString());
+    settings->endGroup();
+
+    //ui.leCam1->setText(f1.readLine());
+    //f1.close();
+    //QFile f2("cam2.txt");
+    //f2.open(QIODevice::ReadOnly);
+
+    settings->beginGroup("URL");
+    ui.leCam2->setText(settings->value("cam2", "").toString());
+    settings->endGroup();
+
+    //ui.leCam2->setText(f2.readLine());
+    //f2.close();
     formView->show();
 }
 
@@ -1063,9 +1130,45 @@ void PCScreen::setSec(int m) {
         //grid->addWidget(mainTimer, 26, 24, 9, 20);
         tvScreen->grid->addWidget(tvScreen->sec, 20, 25, 10, 18);
     }
+    settings->beginGroup("timer");
+    settings->setValue("height", m);
+    settings->endGroup();
+}
+
+void PCScreen::setSize() {
+    tvScreen->grid->setRowMinimumHeight(0, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
+    tvScreen->grid->setRowMinimumHeight(1, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
+    tvScreen->grid->setRowMinimumHeight(2, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
+    tvScreen->grid->setRowMinimumHeight(3, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
+    tvScreen->grid->setRowMinimumHeight(4, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
+    tvScreen->grid->setRowMinimumHeight(5, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
+    tvScreen->grid->setRowMinimumHeight(6, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
+    tvScreen->grid->setRowMinimumHeight(7, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
+    tvScreen->grid->setRowMinimumHeight(8, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
+    tvScreen->grid->setRowMinimumHeight(9, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
+    tvScreen->grid->setRowMinimumHeight(10, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
+
+    tvScreen->grid->setRowMinimumHeight(11, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
+    tvScreen->grid->setRowMinimumHeight(12, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
+    tvScreen->grid->setRowMinimumHeight(13, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
+    tvScreen->grid->setRowMinimumHeight(14, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
+    tvScreen->grid->setRowMinimumHeight(15, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
+
+    tvScreen->grid->setRowMinimumHeight(41, tvScreen->minimum_height + HEIGHT_NEXT_FAMILY * tvScreen->percent_height / 4);
+    tvScreen->grid->setRowMinimumHeight(42, tvScreen->minimum_height + HEIGHT_NEXT_FAMILY * tvScreen->percent_height / 4);
+    tvScreen->grid->setRowMinimumHeight(43, tvScreen->minimum_height + HEIGHT_NEXT_FAMILY * tvScreen->percent_height / 4);
+    tvScreen->grid->setRowMinimumHeight(44, tvScreen->minimum_height + HEIGHT_NEXT_FAMILY * tvScreen->percent_height / 4);
 }
 
 void PCScreen::changeSize() {
+    //QSettings settings(fileSettings, QSettings::IniFormat);
+    settings->beginGroup("height");
+
+    HEIGHT_REGION = settings->value("HEIGHT_REGION", 0).toInt();
+    HEIGHT_FAMILY = settings->value("HEIGHT_FAMILY", 0).toInt();
+    HEIGHT_NEXT_FAMILY = settings->value("HEIGHT_NEXT_FAMILY", 0).toInt();
+
+
     int i = 0;
     if(sender()->objectName() == "btnNameDown")     i = 1;
     if(sender()->objectName() == "btnRegUp")        i = 2;
@@ -1087,7 +1190,7 @@ void PCScreen::changeSize() {
             tvScreen->grid->setRowMinimumHeight(8, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
             tvScreen->grid->setRowMinimumHeight(9, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
             tvScreen->grid->setRowMinimumHeight(10, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
-
+            settings->setValue("HEIGHT_FAMILY", HEIGHT_FAMILY);
 		}
 	}
 	else if (i == 1) {
@@ -1105,6 +1208,7 @@ void PCScreen::changeSize() {
                 tvScreen->grid->setRowMinimumHeight(8, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
                 tvScreen->grid->setRowMinimumHeight(9, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
                 tvScreen->grid->setRowMinimumHeight(10, tvScreen->minimum_height + HEIGHT_FAMILY * tvScreen->percent_height / 6);
+                settings->setValue("HEIGHT_FAMILY", HEIGHT_FAMILY);
 			}
 		}
 	}
@@ -1116,6 +1220,7 @@ void PCScreen::changeSize() {
             tvScreen->grid->setRowMinimumHeight(13, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
             tvScreen->grid->setRowMinimumHeight(14, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
             tvScreen->grid->setRowMinimumHeight(15, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
+            settings->setValue("HEIGHT_REGION", HEIGHT_REGION);
 		}
 	}
     else if (i == 3){
@@ -1127,6 +1232,7 @@ void PCScreen::changeSize() {
                 tvScreen->grid->setRowMinimumHeight(13, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
                 tvScreen->grid->setRowMinimumHeight(14, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
                 tvScreen->grid->setRowMinimumHeight(15, tvScreen->minimum_height + HEIGHT_REGION * tvScreen->percent_height / 5);
+                settings->setValue("HEIGHT_REGION", HEIGHT_REGION);
 			}
 		}
 	}
@@ -1137,6 +1243,7 @@ void PCScreen::changeSize() {
             tvScreen->grid->setRowMinimumHeight(42, tvScreen->minimum_height + HEIGHT_NEXT_FAMILY * tvScreen->percent_height / 4);
             tvScreen->grid->setRowMinimumHeight(43, tvScreen->minimum_height + HEIGHT_NEXT_FAMILY * tvScreen->percent_height / 4);
             tvScreen->grid->setRowMinimumHeight(44, tvScreen->minimum_height + HEIGHT_NEXT_FAMILY * tvScreen->percent_height / 4);
+            settings->setValue("HEIGHT_NEXT_FAMILY", HEIGHT_NEXT_FAMILY);
         }
     }
     else {
@@ -1147,10 +1254,11 @@ void PCScreen::changeSize() {
                 tvScreen->grid->setRowMinimumHeight(42, tvScreen->minimum_height + HEIGHT_NEXT_FAMILY * tvScreen->percent_height / 4);
                 tvScreen->grid->setRowMinimumHeight(43, tvScreen->minimum_height + HEIGHT_NEXT_FAMILY * tvScreen->percent_height / 4);
                 tvScreen->grid->setRowMinimumHeight(44, tvScreen->minimum_height + HEIGHT_NEXT_FAMILY * tvScreen->percent_height / 4);
+                settings->setValue("HEIGHT_NEXT_FAMILY", HEIGHT_NEXT_FAMILY);
             }
         }
     }
-
+    settings->endGroup();
     qDebug()<<"i = "<<i;
 }
 
@@ -1185,10 +1293,17 @@ void PCScreen::showListSportsmens(){
 void PCScreen::changeFontWeight(QString s){
     QFile font_size("font_size.txt");
 
-    font_size.open(QIODevice::WriteOnly);
-    QTextStream out(&font_size);
-    out << s;
-    font_size.close();
+    //font_size.open(QIODevice::WriteOnly);
+    //QTextStream out(&font_size);
+
+    settings->beginGroup("font");
+    settings->setValue("font_size", s);
+    settings->endGroup();
+
+    //out << s;
+    //font_size.close();
+
+
 
     QFont font;
     font.setPixelSize(s.toInt());
@@ -1340,4 +1455,35 @@ void PCScreen::slotProcessDatagrams(){
 
 void PCScreen::sbrosLogo(){
     tvScreen->logo->on_logo();
+}
+
+void PCScreen::Variant(int variant){
+    if(variant == 0){
+        viewCam1->setVisible(false);
+        btnPlayLastWithSound1->setVisible(false);
+        btnPlayLastSlowMotion1->setVisible(false);
+        btnPlaySlowMotion->setVisible(false);
+        cbCam1->setVisible(false);
+        viewCam2->setVisible(false);
+        btnPlayLastWithSound2->setVisible(false);
+        btnPlayLastSlowMotion2->setVisible(false);
+        btnStopRecord->setVisible(false);
+        cbCam2->setVisible(false);
+        lbl->setVisible(false);
+        cbAddDisp->setVisible(false);
+    }
+    else{
+        viewCam1->setVisible(true);
+        btnPlayLastWithSound1->setVisible(true);
+        btnPlayLastSlowMotion1->setVisible(true);
+        btnPlaySlowMotion->setVisible(true);
+        cbCam1->setVisible(true);
+        viewCam2->setVisible(true);
+        btnPlayLastWithSound2->setVisible(true);
+        btnPlayLastSlowMotion2->setVisible(true);
+        btnStopRecord->setVisible(true);
+        cbCam2->setVisible(true);
+        lbl->setVisible(true);
+        cbAddDisp->setVisible(true);
+    }
 }

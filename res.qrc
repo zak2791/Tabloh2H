@@ -9,5 +9,13 @@
         <file>images/parter_red.png</file>
         <file>images/parter_red.svg</file>
         <file>images/sound.svg</file>
+        <file>images/parter_blue.svg</file>
+        <file>images/time.svg</file>
+        <file>images/ttech_blue.svg</file>
+        <file>images/ttech_red.svg</file>
+        <file>images/sportsmens.svg</file>
+        <file>images/doctor.svg</file>
+        <file>images/plus_red.svg</file>
+        <file>images/plus_blue.svg</file>
     </qresource>
 </RCC>

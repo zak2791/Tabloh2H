@@ -6,6 +6,7 @@
 
 #include "mainwindow.h"
 
+//#define APP_LAUNCH_FROM_IDE
 
 int main(int argc, char** argv){
     QApplication app(argc, argv);
@@ -22,11 +23,18 @@ int main(int argc, char** argv){
     mWin->show();
 
     QObject::connect(mWin, SIGNAL(newFile()), pwgt, SLOT(newListSportsmens()));
+    QObject::connect(mWin, SIGNAL(variant(int)), pwgt, SLOT(Variant(int)));
 
 	QJSEngine se;
-	
+
+#ifdef APP_LAUNCH_FROM_IDE
     QFile  file("script.js");
+#else
+    QFile  file("bin/script.js");
+#endif
 	
+
+
     if (file.open(QFile::ReadOnly)) {
 
         QJSValue sw = se.newQObject((QObject *)pwgt);

@@ -70,6 +70,10 @@ QString LCDTimer::getTime(){
     return intTimeToStr(time);
 }
 
+int LCDTimer::getITime(){
+    return time - intInitTime;
+}
+
 void LCDTimer::Reset(){
     if (status != 1) {
         time = intInitTime;

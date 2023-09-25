@@ -12,15 +12,18 @@ class EndTime : public QLabel
 
     int id_timer;
     int transparent;
+    //int finishTransparent;
 
 public:
     EndTime(QWidget *parent = 0);
 
     virtual void timerEvent(QTimerEvent*);
     virtual void mousePressEvent(QMouseEvent*);
+    void sbros(void);
 
 public slots:
     void startProcess(void);
+    //void startTechProcess(void);
 
 };
 

@@ -67,6 +67,10 @@ function fightTime(){
             sec_red.Reset();
             sec_blue.Reset();
         }
+		if(mainTimer.time == 0){
+			sec_red_t.Reset();
+			sec_blue_t.Reset();
+		}
     }
 }
 

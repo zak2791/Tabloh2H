@@ -40,6 +40,8 @@ private:
     //QString strInitTime;
     int strTimeToInt(QString);
     bool getVisible(void);
+    QString pathToSound;
+
 
 protected:
     int status;     //0 - stopped

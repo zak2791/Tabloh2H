@@ -15,6 +15,7 @@ HEADERS += \
     endtime.h \
     fam_reg.h \
     firstlastname.h \
+    helpform.h \
     lcdstopwatch.h \
     lcdtimer.h \
     list_family.h \
@@ -39,6 +40,7 @@ SOURCES += \
     endtime.cpp \
     fam_reg.cpp \
     firstlastname.cpp \
+    helpform.cpp \
     lcdstopwatch.cpp \
     lcdtimer.cpp \
     list_family.cpp \
@@ -58,6 +60,7 @@ SOURCES += \
 FORMS += \
     FormView.ui \
     frmTime.ui \
+    helpform.ui \
     mainwindow.ui \
     new_sportsman.ui
 
@@ -93,5 +96,5 @@ include(./QXlsx.pri)
 RESOURCES += \
     res.qrc
 
-#DEFINES += APP_LAUNCH_FROM_IDE
+DEFINES += APP_LAUNCH_FROM_IDE
 

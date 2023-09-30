@@ -2,6 +2,7 @@
 #include <QMediaPlayer>
 #include <QDebug>
 #include <QDir>
+#include <QApplication>
 
 LCDStopwatch::LCDStopwatch(QWidget* parent,
                            QString strInitTime,
@@ -12,6 +13,12 @@ LCDStopwatch::LCDStopwatch(QWidget* parent,
                            ) : LCDTimer(parent, strInitTime, color_stopped, color_works, sound, transparency){
 
     Reset();
+
+//#ifdef APP_LAUNCH_FROM_IDE
+//    pathToSound = "gong.mp3";
+//#else
+//    pathToSound = "bin/gong.mp3";
+//#endif
 
 }
 
@@ -39,19 +46,14 @@ void LCDStopwatch::showTime(){
         status = 2;
         timer->stop();
         setPalette(palStopped);
-        sigStarted(false);
-        if(_sound){
-            QMediaPlayer * pPlayer = new QMediaPlayer;
-            pPlayer->setMedia(QUrl::fromLocalFile(QDir::currentPath() + "\\gong.mp3"));
-            emit sigEndTime();
-            pPlayer->play() ;
-        }
+        emit sigStarted(false);
+        if(_sound)
+            QApplication::beep();
     }
 
     QString sTime = intTimeToStr(time);
     display(sTime);
     emit sigTime(sTime, palette());
-    qDebug()<<"status = "<<status;
 }
 
 void LCDStopwatch::Reset(){
@@ -61,6 +63,6 @@ void LCDStopwatch::Reset(){
         QString sTime = intTimeToStr(0);
         display(sTime);
         emit sigTime(sTime, palette());
-        sigReset();
+        emit sigReset();
     }
 }

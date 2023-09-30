@@ -17,5 +17,6 @@
         <file>images/doctor.svg</file>
         <file>images/plus_red.svg</file>
         <file>images/plus_blue.svg</file>
+        <file>images/next.svg</file>
     </qresource>
 </RCC>

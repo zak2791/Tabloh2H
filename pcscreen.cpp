@@ -133,13 +133,13 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 //    //addSportsman->setStyleSheet("color: red; font: bold " + QString::number(round(doctor->height() / 2)) + "px;");
 //    connect(addSportsman, SIGNAL(clicked()), newSportsman, SLOT(show()));
 
-    IconButton* doctor = new IconButton(":/images/doctor.svg", QRect(0, 0, 90, 30));
+    IconButton* doctor = new IconButton(":/images/doctor.svg");
     //doctor->setObjectName("btnParter_red");
     doctor->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     //doctor->setStyleSheet("color: red; font: bold " + QString::number(round(doctor->height() / 2)) + "px;");
     connect(doctor, SIGNAL(clicked()), this, SLOT(turnDoctor()));
 
-    IconButton * btnParter_red = new IconButton(":/images/parter_red.svg", QRect(0, 0, 90, 30));
+    IconButton * btnParter_red = new IconButton(":/images/parter_red.svg");
 	btnParter_red->setObjectName("btnParter_red");
 	btnParter_red->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     //btnParter_red->setStyleSheet("color: red; font: bold " + QString::number(round(btnParter_red->height() / 2)) + "px;");
@@ -147,44 +147,44 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     //btnParter_red->setIcon(QIcon(":/images/parter_red.png"));
     //btnParter_red->setIconSize(QSize(btnParter_red->width(), btnParter_red->height()));
 	
-    IconButton * btnTime = new IconButton(":/images/time.svg", QRect(0, 0, 90, 30));
+    IconButton * btnTime = new IconButton(":/images/time.svg");
     btnTime->setObjectName("btnTime");
 	btnTime->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 	//btnTime->setStyleSheet("color: green; font: bold " + QString::number(round(btnTime->height() / 2)) + "px;");
     //btnTime->setFocusPolicy(Qt::NoFocus);
 
-    IconButton * btnParter_blue = new IconButton(":/images/parter_blue.svg", QRect(0, 0, 90, 30));
+    IconButton * btnParter_blue = new IconButton(":/images/parter_blue.svg");
 	btnParter_blue->setObjectName("btnParter_blue");
 	btnParter_blue->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     //btnParter_blue->setStyleSheet("color: blue; font: bold " + QString::number(round(btnParter_blue->height() / 2)) + "px;");
     //btnParter_blue->setFocusPolicy(Qt::NoFocus);
 	
-    IconButton * btnTehTime_red = new IconButton(":/images/ttech_red.svg", QRect(0, 0, 90, 30));
+    IconButton * btnTehTime_red = new IconButton(":/images/ttech_red.svg");
 	btnTehTime_red->setObjectName("btnTehTime_red");
 	btnTehTime_red->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 	btnTehTime_red->setStyleSheet("color: red; font: bold " + QString::number(round(btnTehTime_red->height() / 2)) + "px;");
     //btnTehTime_red->setFocusPolicy(Qt::NoFocus);
 
-    IconButton * btnSettings = new IconButton(":/images/sportsmens.svg", QRect(0, 0, 120, 30));
+    IconButton * btnSettings = new IconButton(":/images/sportsmens.svg");
 	btnSettings->setObjectName("btnSettings");
 	btnSettings->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     //btnSettings->setStyleSheet("color: green; font: bold " + QString::number(round(btnSettings->height() / 2)) + "px;");
     connect(btnSettings, SIGNAL(clicked()), this, SLOT(showListSportsmens()));
     //btnSettings->setFocusPolicy(Qt::NoFocus);
 	
-    IconButton * btnTehTime_blue = new IconButton(":/images/ttech_blue.svg", QRect(0, 0, 90, 30));
+    IconButton * btnTehTime_blue = new IconButton(":/images/ttech_blue.svg");
 	btnTehTime_blue->setObjectName("btnTehTime_blue");
 	btnTehTime_blue->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     //btnTehTime_blue->setStyleSheet("color: blue; font: bold " + QString::number(round(btnTehTime_blue->height() / 2)) + "px;");
     //btnTehTime_blue->setFocusPolicy(Qt::NoFocus);
 
-    IconButton * btnPlus_red = new IconButton(":/images/plus_red.svg", QRect(0, 0, 30, 30));
+    IconButton * btnPlus_red = new IconButton(":/images/plus_red.svg");
 	btnPlus_red->setObjectName("btnPlus_red");
 	btnPlus_red->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 	btnPlus_red->setStyleSheet("color: red; font: bold " + QString::number(btnPlus_red->height()) + "px;");
     //btnPlus_red->setFocusPolicy(Qt::NoFocus);
 
-    IconButton * btnPlus_blue = new IconButton(":/images/plus_blue.svg", QRect(0, 0, 30, 30));
+    IconButton * btnPlus_blue = new IconButton(":/images/plus_blue.svg");
 	btnPlus_blue->setObjectName("btnPlus_blue");
 	btnPlus_blue->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 	btnPlus_blue->setStyleSheet("color: blue; font: bold " + QString::number(btnPlus_blue->height()) + "px;");

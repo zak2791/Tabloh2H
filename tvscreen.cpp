@@ -19,14 +19,14 @@
 
 TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
 
-    QLabel* lblNextRed = new QLabel("");
-    lblNextRed->setPixmap(QPixmap(":/images/next_red.png"));
-    lblNextRed->setScaledContents( true );
+    SvgLabel* lblNextRed = new SvgLabel(":/images/next.svg");
+    //lblNextRed->setPixmap(QPixmap(":/images/next_red.png"));
+    //lblNextRed->setScaledContents( true );
     lblNextRed->setSizePolicy( QSizePolicy::Ignored, QSizePolicy::Ignored );
 
-    QLabel* lblNextBlue = new QLabel("");
-    lblNextBlue->setPixmap(QPixmap(":/images/next_blue.png"));
-    lblNextBlue->setScaledContents( true );
+    SvgLabel* lblNextBlue = new SvgLabel(":/images/next.svg");
+    //lblNextBlue->setPixmap(QPixmap(":/images/next_blue.png"));
+    //lblNextBlue->setScaledContents( true );
     lblNextBlue->setSizePolicy( QSizePolicy::Ignored, QSizePolicy::Ignored );
 
 	col_red = "white";
@@ -128,7 +128,11 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
 
     //rV = new ReplayViewer(this);
 
+    QHBoxLayout* hbb = new QHBoxLayout;
+    hbb->addWidget(np_blue);
 
+    QHBoxLayout* hbr = new QHBoxLayout;
+    hbr->addWidget(np_red);
 
 	grid = new QGridLayout(this);
 	grid->setObjectName("grid");
@@ -145,8 +149,10 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
     //grid->addWidget(akt_blue,  29, 5, 12, 14);
     //grid->addWidget(akt_red,  29, 49, 12, 14);
 
-    grid->addWidget(np_blue,    34,  7, 7, 9);
-    grid->addWidget(np_red,     34, 50, 7, 9);
+    grid->addLayout(hbb, 34,  5, 7, 17);
+    //grid->addWidget(np_blue,    34,  7, 7, 8);
+    grid->addLayout(hbr, 34, 46, 7, 17);
+    //grid->addWidget(np_red,     34, 51, 7, 8);
 
     grid->addWidget(plus_blue,   22,  1, 6, 6);
     grid->addWidget(plus_red,    22, 45, 6, 6);
@@ -161,8 +167,8 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
     grid->addWidget(sec_blue_t, 18,  3, 14, 18);
     grid->addWidget(sec_red_t,  18, 47, 14, 18);
 
-    grid->addWidget(lblNextBlue,   36, 0,  5, 5);
-    grid->addWidget(lblNextRed,    36,  63,  5, 5);
+    grid->addWidget(lblNextBlue,   34,   0,  7, 5);
+    grid->addWidget(lblNextRed,    34,  63,  7, 5);
 
     grid->addWidget(fam_next_blue,    41, 0, 4, 34);
     grid->addWidget(fam_next_red,    41, 34, 4, 34);

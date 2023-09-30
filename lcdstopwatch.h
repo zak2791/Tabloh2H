@@ -17,6 +17,7 @@ public:
 
 private slots:
     void showTime(void);
+    QString pathToSound;
 
 public slots:
     void StartStop();

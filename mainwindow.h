@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QLabel>
+#include "helpform.h"
 
 namespace Ui {
 class MainWindow;
@@ -33,6 +34,8 @@ private:
     QString fileSportsmens;     //текущий файл со списком спортсменов
     QMenu* lastFiles;
     QString fileSettings;
+    HelpForm* hf;
+    QAction* winHelp;
 
 private slots:
     void openFile(void);

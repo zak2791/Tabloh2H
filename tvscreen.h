@@ -15,6 +15,28 @@
 #include "endtime.h"
 #include "logofrb.h"
 
+#include <QSvgRenderer>
+#include <QPainter>
+
+class SvgLabel : public QLabel{
+
+public:
+        SvgLabel(const QString& iconPath){
+            path = iconPath;
+        }
+
+    void paintEvent(QPaintEvent* ev){
+        QLabel::paintEvent(ev);
+        QPainter painter(this);
+        QSvgRenderer renderer(path);
+        renderer.render(&painter);
+    }
+
+private:
+    QString path;
+
+};
+
 class TVScreen : public QWidget {
 	Q_OBJECT
 public:

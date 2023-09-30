@@ -24,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
     actSbros = ui->actSbros;
     video = ui->video;
     no_video = ui->no_video;
+    winHelp = ui->winHelp;
 
 #ifdef APP_LAUNCH_FROM_IDE
     fileSettings = "settings.ini";
@@ -77,6 +78,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     no_video->setChecked(true);
 
+    hf = new HelpForm;
+    connect(winHelp, SIGNAL(triggered()), hf, SLOT(show()));
 
 }
 

@@ -112,6 +112,7 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
     //QList<QString> sportsmens;
 
     for(int i = 1; i <= maxRow; i++){
+        if(doc->read(i, 1).toString() == "") break;
         sportsmens.append(doc->read(i, 1).toString() + ";"
                           + doc->read(i, 2).toString() + ";"
                           + doc->read(i, 3).toString() + ";"
@@ -121,6 +122,8 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
         lAge.append(doc->read(i, 3).toString());
         lWeight.append(doc->read(i, 4).toString());
     }
+
+    //qDebug()<<sportsmens;
 
     lAge.removeDuplicates();
     lWeight.removeDuplicates();

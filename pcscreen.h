@@ -29,27 +29,20 @@
 class IconButton : public QPushButton{
 
 public:
-        IconButton(const QString& iconPath, QRect view){
-            icon = QIcon(iconPath);
+        IconButton(const QString& iconPath){
             path = iconPath;
-            vBox = view;
         }
 
     void paintEvent(QPaintEvent* ev){
         QPushButton::paintEvent(ev);
-
         QPainter painter(this);
         QSvgRenderer renderer(path);
-        //renderer.setViewBox(QRect(0,0,90,30));
-        //qDebug()<<renderer.viewBox();
         renderer.render(&painter);
 
     }
 
 private:
-    QIcon icon;
     QString path;
-    QRect vBox;
 
 };
 

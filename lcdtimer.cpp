@@ -37,6 +37,12 @@ LCDTimer::LCDTimer(QWidget *parent,
     setDigitCount(4);
     Reset();
 
+#ifdef APP_LAUNCH_FROM_IDE
+    pathToSound = "gong.mp3";
+#else
+    pathToSound = "bin/gong.mp3";
+#endif
+
 }
 
 void LCDTimer::StartStop(){
@@ -54,7 +60,6 @@ void LCDTimer::StartStop(){
             emit sigStarted(true);
         }    
     }
-    qDebug()<<objectName()<<time;
     emit sigTime(intTimeToStr(time), palette());
 }
 
@@ -93,7 +98,7 @@ void LCDTimer::showTime(){
         emit sigStarted(false);
         if(_sound){
             QMediaPlayer * pPlayer = new QMediaPlayer;
-            pPlayer->setMedia(QUrl::fromLocalFile(QDir::currentPath() + "\\gong.mp3"));
+            pPlayer->setMedia(QUrl::fromLocalFile(pathToSound));
             emit sigEndTime();
             pPlayer->play() ;
         }

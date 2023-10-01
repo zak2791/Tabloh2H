@@ -22,6 +22,8 @@
 #include "xlsxrichstring.h"
 #include "xlsxworkbook.h"
 
+#include "addform.h"
+
 using namespace QXlsx;
 
 class FamilyView : public QTableView {
@@ -60,6 +62,7 @@ private slots:
     void selectAge(QString);
     void allowSorting(int);
     void sortByNum(int);
+    void addedSportsmens(QString, int);
 
 public slots:
 	virtual void textEdited(QString);
@@ -99,5 +102,7 @@ private:
     ToggleButton* toggleButton;
 
     void initListSportsmens(void);
+
+    addForm* fAdd;
 
 };

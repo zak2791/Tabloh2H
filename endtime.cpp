@@ -15,6 +15,7 @@ EndTime::EndTime(QWidget *parent) : QLabel(parent)
 
 void EndTime::startProcess(){
     //finishTransparent = 0;
+    setStyleSheet("background-color: rgba(255, 0, 0, 255);");
     id_timer = startTimer(50);   
 }
 

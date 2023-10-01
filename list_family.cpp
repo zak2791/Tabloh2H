@@ -37,6 +37,8 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
     nextAge = "";
     nextWeight = "";
 
+    fAdd = new addForm;
+
 	setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint);
 	//setWindowState(Qt::WindowFullScreen);
 	sel_data = "";
@@ -61,6 +63,10 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
     lbl_next_red = new QLabel("<font color=\"Red\">red fam next</font>", this);
     lbl_next_red->setAlignment(Qt::AlignCenter);
     lbl_next_red->setStyleSheet("color: red;");
+
+    //кнопка добавления спортсмена
+    QPushButton * btnAdd = new QPushButton(u8"Добавить спортсмена");
+    connect(btnAdd, SIGNAL(clicked()), fAdd, SLOT(show()));
 
 	//кнопка скрытия
 	QPushButton * btnHide = new QPushButton(u8"СКРЫТЬ");
@@ -182,6 +188,7 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
     lineRight->setLineWidth(1);
 
 	QHBoxLayout * hbox = new QHBoxLayout();
+    QHBoxLayout * hboxBottom = new QHBoxLayout();
     QVBoxLayout * red_box = new QVBoxLayout();
     red_box->addWidget(lbl_red);
     QFrame* lineRed = new QFrame(this);
@@ -193,36 +200,56 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
     hbox->addLayout(red_box, 10);
     //hbox->addWidget(lbl_red, 10);
     hbox->addWidget(lineLeft);
-    hbox->addWidget(new QLabel("Выбор для\nтекущего боя ->"));
-    hbox->addWidget(toggleButton, 10);
-    hbox->addWidget(new QLabel("<- Выбор для\nследующего боя"));
-    hbox->addWidget(lineMiddle);
+    hboxBottom->addWidget(new QLabel("Выбор для текущего боя ->"), 1);
+    hboxBottom->addWidget(toggleButton, 1);
+    hboxBottom->addWidget(new QLabel("<- Выбор для следующего боя"));
+    hboxBottom->addWidget(lineMiddle);
 
-    hbox->addWidget(new QLabel(u8"Выбор\nпо номерам"));
-    hbox->addWidget(cbNum, 1);
+    hboxBottom->addWidget(new QLabel(u8"Выбор по номерам"), 1);
+    hboxBottom->addWidget(cbNum, 1);
 
     QFrame* line1 = new QFrame(this);
     line1->setFrameShape(QFrame::VLine); // Horizontal line
     line1->setFrameShadow(QFrame::Sunken);
     line1->setLineWidth(1);
-    hbox->addWidget(line1);
+    hboxBottom->addWidget(line1);
 
-    hbox->addWidget(new QLabel(u8"Сортировать\nпо возрасту и весу"));
-    hbox->addWidget(cBox, 1);
+    hboxBottom->addWidget(new QLabel(u8"Сортировать по возрасту и весу"), 1);
+    hboxBottom->addWidget(cBox, 1);
 
     QFrame* line2 = new QFrame(this);
     line2->setFrameShape(QFrame::VLine); // Horizontal line
     line2->setFrameShadow(QFrame::Sunken);
     line2->setLineWidth(1);
-    hbox->addWidget(line2);
+    hboxBottom->addWidget(line2);
 
-    hbox->addWidget(new QLabel(u8"Вес:"));
-    hbox->addWidget(weight, 1);
-    hbox->addWidget(new QLabel(u8"Возраст:"));
-    hbox->addWidget(age, 1);
-	hbox->addSpacing(10);
-	hbox->addWidget(btnHide);
-	hbox->addSpacing(10);
+    hboxBottom->addWidget(new QLabel(u8"Вес:"), 1);
+    hboxBottom->addWidget(weight, 2);
+
+    QFrame* line0 = new QFrame(this);
+    line0->setFrameShape(QFrame::VLine); // Horizontal line
+    line0->setFrameShadow(QFrame::Sunken);
+    line0->setLineWidth(1);
+    hboxBottom->addWidget(line0);
+
+    hboxBottom->addWidget(new QLabel(u8"Возраст:"), 1);
+    hboxBottom->addWidget(age, 2);
+    //hboxBottom->addSpacing(10);
+
+    QFrame* line3 = new QFrame(this);
+    line3->setFrameShape(QFrame::VLine); // Horizontal line
+    line3->setFrameShadow(QFrame::Sunken);
+    line3->setLineWidth(1);
+    hboxBottom->addWidget(line3);
+
+    hboxBottom->addSpacing(10);
+    hboxBottom->addWidget(btnAdd, 2);
+
+    hboxBottom->addSpacing(20);
+    hboxBottom->addWidget(btnHide, 2);
+    hboxBottom->addStretch(3);
+    //hboxBottom->addSpacing(50);
+
 	hbox->addWidget(new QLabel(u8"Ввод"));
 	hbox->addWidget(inFam, 2);
     hbox->addWidget(lineRight);
@@ -234,6 +261,9 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
     lineBlue->setLineWidth(1);
     blue_box->addWidget(lineBlue);
     blue_box->addWidget(lbl_next_blue);
+
+
+
     hbox->addLayout(blue_box, 10);
 
 
@@ -252,6 +282,14 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
 	tbl->setSelectionMode(QAbstractItemView::SingleSelection);
 
 	mainbox->addLayout(hbox);
+
+    QFrame* line = new QFrame(this);
+    line->setFrameShape(QFrame::HLine); // Horizontal line
+    line->setFrameShadow(QFrame::Sunken);
+    line->setLineWidth(1);
+    mainbox->addWidget(line);
+
+    mainbox->addLayout(hboxBottom);
     //mainbox->addWidget(box);
 	mainbox->addWidget(tbl);
 
@@ -265,6 +303,8 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
     connect(age, SIGNAL(activated(QString)), this, SLOT(selectAge(QString)));
     connect(cBox, SIGNAL(stateChanged(int)), this, SLOT(allowSorting(int)));
     connect(cbNum, SIGNAL(stateChanged(int)), this, SLOT(sortByNum(int)));
+
+    connect(fAdd, SIGNAL(selSportsman(QString, int)), this, SLOT(addedSportsmens(QString, int)));
 
     //showFullScreen();
 }
@@ -426,7 +466,7 @@ void ListFamily::_hide()
 
 void ListFamily::sel(QItemSelection a, QItemSelection )
 {
-	sel_data = a.indexes()[0].data().toString();
+    sel_data = a.indexes()[0].data().toString();
     //qDebug()<<sel_data;
 }
 
@@ -509,4 +549,36 @@ void ListFamily::set_state_toggle(){
     state_toggle = toggleButton->isChecked();
     just_opened_blue = false;
     just_opened_red = false;
+}
+
+void ListFamily::addedSportsmens(QString s, int i){
+    if (i == 1) {
+        if(!state_toggle){  //если выбираем вызываемого спортсмена
+            lbl_blue->setText(s);
+            b = s;
+        }else{
+            if(just_opened_blue){
+                just_opened_blue = false;
+                lbl_blue->setText(lbl_next_blue->text());
+                b = lbl_next_blue->text();
+            }
+            lbl_next_blue->setText(s);
+            b_next = s;
+        }
+    }
+    else {
+        if(!state_toggle){  //если выбираем вызываемого спортсмена
+            lbl_red->setText(s);
+            r = s;
+        }else{
+            if(just_opened_red){
+                just_opened_red = false;
+                lbl_red->setText(lbl_next_red->text());
+                r = lbl_next_red->text();
+
+            }
+            lbl_next_red->setText(s);
+            r_next = s;
+        }
+    }
 }

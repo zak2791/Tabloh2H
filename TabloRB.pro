@@ -8,6 +8,7 @@ RC_ICONS = appico.ico
 QT += core gui widgets qml multimedia svg
 HEADERS += \
     JSTools.h \
+    addform.h \
     camera.h \
     cameraconnection.h \
     cameraviewer.h \
@@ -19,6 +20,7 @@ HEADERS += \
     lcdstopwatch.h \
     lcdtimer.h \
     list_family.h \
+    listview.h \
     logofrb.h \
     mainwindow.h \
     narusheniya_pravil.h \
@@ -33,6 +35,7 @@ HEADERS += \
 
 SOURCES += \
     JSTools.cpp \
+    addform.cpp \
     camera.cpp \
     cameraconnection.cpp \
     cameraviewer.cpp \
@@ -59,6 +62,7 @@ SOURCES += \
 
 FORMS += \
     FormView.ui \
+    addform.ui \
     frmTime.ui \
     helpform.ui \
     mainwindow.ui \
@@ -96,5 +100,5 @@ include(./QXlsx.pri)
 RESOURCES += \
     res.qrc
 
-DEFINES += APP_LAUNCH_FROM_IDE
+#DEFINES += APP_LAUNCH_FROM_IDE
 

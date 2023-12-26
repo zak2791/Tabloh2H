@@ -8,6 +8,8 @@
 #include <QFileDialog>
 #include <QSettings>
 
+//#include "version.ui"
+
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -80,6 +82,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     hf = new HelpForm;
     connect(winHelp, SIGNAL(triggered()), hf, SLOT(show()));
+
+    QDialog* frmVersion = new QDialog;
+    frmVersion->setModal(true);
+    uiVersion.setupUi(frmVersion);
+    connect(ui->about, SIGNAL(triggered()), frmVersion, SLOT(show()));
 
 }
 

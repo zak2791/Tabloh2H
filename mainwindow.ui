@@ -20,7 +20,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="mFile">
@@ -54,6 +54,7 @@
      <string>Помощь</string>
     </property>
     <addaction name="winHelp"/>
+    <addaction name="about"/>
    </widget>
    <widget class="QMenu" name="mSbros">
     <property name="title">
@@ -111,6 +112,11 @@
   <action name="actSbros">
    <property name="text">
     <string>Сброс</string>
+   </property>
+  </action>
+  <action name="about">
+   <property name="text">
+    <string>О программе</string>
    </property>
   </action>
  </widget>

@@ -997,7 +997,8 @@ void PCScreen::setTime(){
     if(min == 0 && sec1 == 0 && sec2 == 0)
         return;
     mainTimer->setTime(min * 60 + sec1 * 10 + sec2);
-    qDebug()<<"setTime";
+    //mainTimer->R
+    //qDebug()<<"setTime";
 }
 
 void PCScreen::showView(){
@@ -1039,8 +1040,10 @@ void PCScreen::paintEvent(QPaintEvent * ) {
 }
 
 void PCScreen::keyPressEvent(QKeyEvent * pe){
-    if(pe->key() == Qt::Key_F1)
-        frmTime->show();
+    if(pe->key() == Qt::Key_F1){
+        if(mainTimer->getStatus() != 1)
+            frmTime->show();
+    }
     //else if(pe->key() == Qt::Key_F2)
     //    newSportsman->show();
     else
@@ -1048,7 +1051,8 @@ void PCScreen::keyPressEvent(QKeyEvent * pe){
 }
 
 void PCScreen::setTimeFight(){
-    frmTime->show();
+    if(mainTimer->getStatus() != 1)
+        frmTime->show();
 }
 
 void PCScreen::closeTablo(){

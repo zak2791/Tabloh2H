@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QLabel>
 #include "helpform.h"
+#include "ui_version.h"
 
 namespace Ui {
 class MainWindow;
@@ -36,6 +37,8 @@ private:
     QString fileSettings;
     HelpForm* hf;
     QAction* winHelp;
+
+    Ui::dlgVersion uiVersion;
 
 private slots:
     void openFile(void);

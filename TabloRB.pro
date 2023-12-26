@@ -66,7 +66,8 @@ FORMS += \
     frmTime.ui \
     helpform.ui \
     mainwindow.ui \
-    new_sportsman.ui
+    new_sportsman.ui \
+    version.ui
 
 DISTFILES += \
     ../build-TabloRB-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/script.js \

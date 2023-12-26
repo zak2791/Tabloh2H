@@ -64,6 +64,7 @@ void LCDTimer::StartStop(){
 }
 
 void LCDTimer::setTime(int t){
+    status = 0;
     time = t;
     QString sTime = intTimeToStr(t);
     display(sTime);

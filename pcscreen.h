@@ -26,6 +26,8 @@
 
 #include <QSvgRenderer>
 
+#include "choosingnames.h"
+
 class IconButton : public QPushButton{
 
 public:
@@ -155,6 +157,8 @@ private:
     //NewSportsman* newSportsman;
 
     ListFamily * lf;
+
+    ChoosingNames* choosingNames;
 
     //void process_line(int, QString);
 

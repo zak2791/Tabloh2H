@@ -5,7 +5,7 @@ QMAKE_CXXFLAGS_RELEASE -= -O0
 
 RC_ICONS = appico.ico
 
-QT += core gui widgets qml multimedia svg
+QT += core gui widgets qml multimedia svg quickwidgets
 HEADERS += \
     JSTools.h \
     addform.h \
@@ -13,6 +13,7 @@ HEADERS += \
     cameraconnection.h \
     cameraviewer.h \
     category.h \
+    choosingnames.h \
     endtime.h \
     fam_reg.h \
     firstlastname.h \
@@ -22,6 +23,7 @@ HEADERS += \
     list_family.h \
     listview.h \
     logofrb.h \
+    mainlistmodel.h \
     mainwindow.h \
     narusheniya_pravil.h \
     newsportsman.h \
@@ -30,6 +32,8 @@ HEADERS += \
     playerviewer.h \
     plus.h \
     rate.h \
+    sidelistmodel.h \
+    sportsman.h \
     togglebutton.h \
     tvscreen.h
 
@@ -40,6 +44,7 @@ SOURCES += \
     cameraconnection.cpp \
     cameraviewer.cpp \
     category.cpp \
+    choosingnames.cpp \
     endtime.cpp \
     fam_reg.cpp \
     firstlastname.cpp \
@@ -49,6 +54,7 @@ SOURCES += \
     list_family.cpp \
     logofrb.cpp \
     main.cpp \
+    mainlistmodel.cpp \
     mainwindow.cpp \
     narusheniya_pravil.cpp \
     newsportsman.cpp \
@@ -57,6 +63,8 @@ SOURCES += \
     playerviewer.cpp \
     plus.cpp \
     rate.cpp \
+    sidelistmodel.cpp \
+    sportsman.cpp \
     togglebutton.cpp \
     tvscreen.cpp
 
@@ -98,8 +106,10 @@ QXLSX_SOURCEPATH=./source/  # current QXlsx source path is ./source/
 include(./QXlsx.pri)
 #CONFIG     += debug
 
+#CONFIG+=qml_debug
+
 RESOURCES += \
     res.qrc
 
-#DEFINES += APP_LAUNCH_FROM_IDE
+DEFINES += APP_LAUNCH_FROM_IDE
 

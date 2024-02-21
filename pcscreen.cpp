@@ -246,11 +246,17 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     age->setStyleSheet("background-color: black; color: white; text-align: center");
     age->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
+    choosingNames = new ChoosingNames;
+
     lf = new ListFamily(this);
     lf->setObjectName("lf");
     connect(lf->weight, SIGNAL(currentTextChanged(QString)), this, SLOT(setCat(QString)));
     connect(lf->age, SIGNAL(currentTextChanged(QString)), this, SLOT(setAge(QString)));
     connect(lf, SIGNAL(sig_hide(QString, QString, QString, QString)), this, SLOT(HIDE(QString, QString, QString, QString)));
+
+    choosingNames->setNames(lf->getSportsmens());
+    choosingNames->setAge(lf->lAge);
+    choosingNames->setWeight(lf->lWeight);
 
 	formView = new QWidget;
     ui.setupUi(formView);
@@ -1044,9 +1050,10 @@ void PCScreen::keyPressEvent(QKeyEvent * pe){
         if(mainTimer->getStatus() != 1)
             frmTime->show();
     }
-    //else if(pe->key() == Qt::Key_F2)
-    //    newSportsman->show();
-    else
+    else if(pe->key() == Qt::Key_F2){
+        qDebug()<<"F2";
+        choosingNames->showMaximized();
+    }else
         emit sendKey(pe->key());
 }
 

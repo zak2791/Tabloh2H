@@ -10,6 +10,11 @@
 #include <QMessageBox>
 #include "pcscreen.h"
 
+//#include <QQmlApplicationEngine>
+//#include <QStringListModel>
+//#include <QQmlContext>
+//#include <QQmlComponent>
+//#include <QQuickItem>
 
 FamilyView::FamilyView(QWidget * parent) : QTableView(parent) {
 
@@ -21,15 +26,15 @@ FamilyView::~FamilyView()
 
 void FamilyView::mouseReleaseEvent(QMouseEvent * e)
 {
-	if (e->button() == Qt::LeftButton)
-		emit mouse_button(0);
-	else if (e->button() == Qt::RightButton)
-		emit mouse_button(1);
+    if (e->button() == Qt::LeftButton)
+        emit mouse_button(0);
+    else if (e->button() == Qt::RightButton)
+        emit mouse_button(1);
 }
 
 ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
-	b = "";
-	r = "";
+    b = "";
+    r = "";
     r_next = "";
     b_next = "";
     currentAge = "";
@@ -39,20 +44,20 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
 
     fAdd = new addForm;
 
-	setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint);
-	//setWindowState(Qt::WindowFullScreen);
-	sel_data = "";
+    setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint);
+    //setWindowState(Qt::WindowFullScreen);
+    sel_data = "";
 
-	//выбор весовой категории
+    //выбор весовой категории
     weight = new QComboBox(this);
 
-	//фамилия "синего"
-	lbl_blue = new QLabel("<font color=\"Blue\">blue fam</font>", this);
-	lbl_blue->setAlignment(Qt::AlignCenter);
+    //фамилия "синего"
+    lbl_blue = new QLabel("<font color=\"Blue\">blue fam</font>", this);
+    lbl_blue->setAlignment(Qt::AlignCenter);
     lbl_blue->setStyleSheet("color: blue;");
-	//фамилия красного
-	lbl_red = new QLabel("<font color=\"Red\">red fam</font>", this);
-	lbl_red->setAlignment(Qt::AlignCenter);
+    //фамилия красного
+    lbl_red = new QLabel("<font color=\"Red\">red fam</font>", this);
+    lbl_red->setAlignment(Qt::AlignCenter);
     lbl_red->setStyleSheet("color: red;");
 
     //фамилия "синего" следующего
@@ -68,17 +73,17 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
     QPushButton * btnAdd = new QPushButton(u8"Добавить спортсмена");
     connect(btnAdd, SIGNAL(clicked()), fAdd, SLOT(show()));
 
-	//кнопка скрытия
-	QPushButton * btnHide = new QPushButton(u8"СКРЫТЬ");
-	connect(btnHide, SIGNAL(clicked()), this, SLOT(_hide()));
-	//ввод фамилии
-	inFam = new QLineEdit(this);
-	inFam->setMaxLength(7);
-	l = QList<QString> ({ "-" });
-	QFont f;
-	f.setPointSize(10);
-	inFam->setFont(f);
-	weight->setFont(f);
+    //кнопка скрытия
+    QPushButton * btnHide = new QPushButton(u8"СКРЫТЬ");
+    connect(btnHide, SIGNAL(clicked()), this, SLOT(_hide()));
+    //ввод фамилии
+    inFam = new QLineEdit(this);
+    inFam->setMaxLength(7);
+    l = QList<QString> ({ "-" });
+    QFont f;
+    f.setPointSize(10);
+    inFam->setFont(f);
+    weight->setFont(f);
 
 
 
@@ -110,9 +115,8 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
 
     clList = wsheet->getFullCells( &maxRow, &maxCol );
 
-    QList<QString> lAge;
+    //QList<QString> lAge;
 
-    QList<QString> lWeight;
     //lAge = QList<QString>();
 
     //QList<QString> sportsmens;
@@ -129,8 +133,6 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
         lWeight.append(doc->read(i, 4).toString());
     }
 
-    //qDebug()<<sportsmens;
-
     lAge.removeDuplicates();
     lWeight.removeDuplicates();
 
@@ -145,28 +147,28 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
     cBox = new QCheckBox(this);
     cbNum = new QCheckBox(this);
 
-	l.sort();
+    l.sort();
 
-	int num_fam = l.length();   //количество фамилий в списке
-	col = 6;				//количество колонок в таблице
-	int	raw = num_fam / col;
-	if (num_fam % col)
-		raw += 1;				//количество строк в таблице
+    int num_fam = l.length();   //количество фамилий в списке
+    col = 6;				//количество колонок в таблице
+    int	raw = num_fam / col;
+    if (num_fam % col)
+        raw += 1;				//количество строк в таблице
 
-	QStandardItemModel * mdl = new QStandardItemModel(raw, col);
+    QStandardItemModel * mdl = new QStandardItemModel(raw, col);
 
-	int i = 0;
-	int _c, _r;
-	QStandardItem * item;
-	for (_c = 0; _c < col; _c++) {
-		for (_r = 0; _r < raw; _r++) {
-			i++;
-			if (i > num_fam) break;
-			item = new QStandardItem(l[i - 1]);
-			//QMessageBox::question(0, l[i - 1], "item->data().toString()");
-			mdl->setItem(_r, _c, item);
-		}
-	}
+    int i = 0;
+    int _c, _r;
+    QStandardItem * item;
+    for (_c = 0; _c < col; _c++) {
+        for (_r = 0; _r < raw; _r++) {
+            i++;
+            if (i > num_fam) break;
+            item = new QStandardItem(l[i - 1]);
+            //QMessageBox::question(0, l[i - 1], "item->data().toString()");
+            mdl->setItem(_r, _c, item);
+        }
+    }
 
     toggleButton = new ToggleButton(10, 8);
     connect(toggleButton, SIGNAL(clicked()), this, SLOT(set_state_toggle()));
@@ -187,7 +189,7 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
     lineRight->setFrameShadow(QFrame::Sunken);
     lineRight->setLineWidth(1);
 
-	QHBoxLayout * hbox = new QHBoxLayout();
+    QHBoxLayout * hbox = new QHBoxLayout();
     QHBoxLayout * hboxBottom = new QHBoxLayout();
     QVBoxLayout * red_box = new QVBoxLayout();
     red_box->addWidget(lbl_red);
@@ -250,8 +252,8 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
     hboxBottom->addStretch(3);
     //hboxBottom->addSpacing(50);
 
-	hbox->addWidget(new QLabel(u8"Ввод"));
-	hbox->addWidget(inFam, 2);
+    hbox->addWidget(new QLabel(u8"Ввод"));
+    hbox->addWidget(inFam, 2);
     hbox->addWidget(lineRight);
     QVBoxLayout * blue_box = new QVBoxLayout();
     blue_box->addWidget(lbl_blue);
@@ -267,21 +269,21 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
     hbox->addLayout(blue_box, 10);
 
 
-	tbl = new FamilyView();
-	QVBoxLayout * mainbox = new QVBoxLayout();
-	tbl->setModel(mdl);
-	QItemSelectionModel * sel = tbl->selectionModel();
-	tbl->setGridStyle(static_cast<Qt::PenStyle>(2));
+    tbl = new FamilyView();
+    QVBoxLayout * mainbox = new QVBoxLayout();
+    tbl->setModel(mdl);
+    QItemSelectionModel * sel = tbl->selectionModel();
+    tbl->setGridStyle(static_cast<Qt::PenStyle>(2));
     //int w = tbl->width();		//self.col
-	tbl->resizeRowsToContents();
-	//QHeaderView * hv = 
-	tbl->horizontalHeader()->hide();
-	//hv->hide();
-	tbl->verticalHeader()->hide();
-	tbl->setShowGrid(true);
-	tbl->setSelectionMode(QAbstractItemView::SingleSelection);
+    tbl->resizeRowsToContents();
+    //QHeaderView * hv =
+    tbl->horizontalHeader()->hide();
+    //hv->hide();
+    tbl->verticalHeader()->hide();
+    tbl->setShowGrid(true);
+    tbl->setSelectionMode(QAbstractItemView::SingleSelection);
 
-	mainbox->addLayout(hbox);
+    mainbox->addLayout(hbox);
 
     QFrame* line = new QFrame(this);
     line->setFrameShape(QFrame::HLine); // Horizontal line
@@ -291,9 +293,9 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
 
     mainbox->addLayout(hboxBottom);
     //mainbox->addWidget(box);
-	mainbox->addWidget(tbl);
+    mainbox->addWidget(tbl);
 
-	setLayout(mainbox);
+    setLayout(mainbox);
 
     connect(sel, SIGNAL(selectionChanged(QItemSelection, QItemSelection)), this, SLOT(sel(QItemSelection, QItemSelection)));
     connect(tbl, SIGNAL(mouse_button(int)), this, SLOT(sell(int)));
@@ -308,13 +310,24 @@ ListFamily::ListFamily(QWidget * parent) : QWidget(parent) {
 
     //showFullScreen();
 }
- 
+
 ListFamily::~ListFamily()
 {
 }
 
 void ListFamily::initListSportsmens(){
 
+}
+
+QStringList ListFamily::getSportsmens(){
+    QStringList list;
+    foreach(QString s, sportsmens){
+        s = s.remove(s.lastIndexOf(";"), 5);
+        s.replace(";", "\n");
+        list.append(s);
+    }
+    list.sort();
+    return list;
 }
 
 void ListFamily::allowSorting(int i){
@@ -324,11 +337,11 @@ void ListFamily::allowSorting(int i){
         l.clear();
         for(int i = 0; i < sportsmens.count(); i++){
             //if(cbNum->isChecked() == false){
-                l.append(sportsmens.at(i).split(";")[0] + QString(";") + sportsmens.at(i).split(";")[1] + QString(";")
-                        + sportsmens.at(i).split(";")[4]);
+            l.append(sportsmens.at(i).split(";")[0] + QString(";") + sportsmens.at(i).split(";")[1] + QString(";")
+                    + sportsmens.at(i).split(";")[4]);
             //}else{
             //    l.append(doc->read(i, 1).toString() + ";" + doc->read(i, 2).toString() + " (" + doc->read(i, 5).toString() + ")");
-                //1qDebug()<<"l = "<<l;
+            //1qDebug()<<"l = "<<l;
             //}
         }
         l.prepend("-");
@@ -403,15 +416,15 @@ void ListFamily::showEvent(QShowEvent  * )
 
 void ListFamily::resizeEvent(QResizeEvent * )
 {
-	for (int i = 0; i < col; i++)
-		tbl->setColumnWidth(i, (tbl->rect().width() - 20) / col);
+    for (int i = 0; i < col; i++)
+        tbl->setColumnWidth(i, (tbl->rect().width() - 20) / col);
 }
 
 void ListFamily::textEdited(QString s){
 
-	QStringList inL = QStringList();
+    QStringList inL = QStringList();
 
-	foreach (QString str, l){
+    foreach (QString str, l){
         if(cbNum->isChecked() == false){
             if(str.startsWith(s , Qt::CaseInsensitive))
                 inL << str;
@@ -424,12 +437,12 @@ void ListFamily::textEdited(QString s){
                     inL << str;
             }
         }
-	}
-	QStringList lst;
-	if (s.compare("") == 0)
-		lst = l;
-	else
-		lst = inL;
+    }
+    QStringList lst;
+    if (s.compare("") == 0)
+        lst = l;
+    else
+        lst = inL;
 
 
 
@@ -459,7 +472,7 @@ void ListFamily::textEdited(QString s){
 void ListFamily::_hide()
 {
     emit sig_hide(r, b, r_next, b_next);
-	hide();
+    hide();
     //deleteLater();
     //qDebug()<<r<< b<< r_next<< b_next;
 }
@@ -508,7 +521,7 @@ void ListFamily::sell(int _sel){
     //qDebug()<<"sel_data = "<<sel_data;
 
     //qDebug()<<"weight = "<<doc->
-	if (_sel) {
+    if (_sel) {
         if(!state_toggle){  //если выбираем вызываемого спортсмена
             lbl_blue->setText(sel_data);
             b = sel_data;
@@ -526,8 +539,8 @@ void ListFamily::sell(int _sel){
             lbl_next_blue->setText(sel_data);
             b_next = sel_data;
         }
-	}
-	else {
+    }
+    else {
         if(!state_toggle){  //если выбираем вызываемого спортсмена
             lbl_red->setText(sel_data);
             r = sel_data;
@@ -541,7 +554,7 @@ void ListFamily::sell(int _sel){
             lbl_next_red->setText(sel_data);
             r_next = sel_data;
         }
-	}
+    }
     inFam->setFocus();
 }
 

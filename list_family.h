@@ -51,11 +51,15 @@ public:
 
     QComboBox * weight;
     QComboBox * age;
+    QStringList getSportsmens(void);
+    QStringList lAge;
+    QStringList lWeight;
 
 signals:
     void sig_hide(QString, QString, QString, QString);
 	//void family();
     //void sig_category(QString);
+    void sigAge(QStringList);
 
 private slots:
     void selectWeight(QString);

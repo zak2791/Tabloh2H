@@ -18,5 +18,12 @@
         <file>images/plus_red.svg</file>
         <file>images/plus_blue.svg</file>
         <file>images/next.svg</file>
+        <file>ChoosingNames.qml</file>
+        <file>TableChoosingNames.qml</file>
+        <file>SliderNames.qml</file>
+        <file>SliderNamesNext.qml</file>
+        <file>TableAllSportsmens.qml</file>
+        <file>TableSide.qml</file>
+        <file>DelegateSide.qml</file>
     </qresource>
 </RCC>

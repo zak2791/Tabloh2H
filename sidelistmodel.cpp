@@ -32,23 +32,16 @@ QVariant SideListModel::data(const QModelIndex& index, int nRole) const {
         return m_list.at(index.row()).split("\n")[3];
 
     }
-
-    //    return (nRole == Qt::DisplayRole || nRole == Qt::EditRole)
-    //            ? m_list.at(index.row())
-    //            :QVariant();
 }
 
-//bool SideListModel::setData(const QModelIndex& index,
-//                            const QVariant& value,
-//                            int   nRole) {
-
-//    if (index.isValid() && nRole == Qt::EditRole) {
-//        m_list.replace(index.row(), value.value<QString>());
-//        emit dataChanged(index, index);
-//        return true;
-//    }
-//    return false;
-//}
+void SideListModel::swapData(int item1, int item2){
+    QString temp = m_list.at(item1);
+    m_list[item1] = m_list.at(item2);
+    m_list[item2] = temp;
+    QModelIndex topLeft = createIndex(0,0);
+    QModelIndex bottomRight = createIndex( m_list.count() ,0);
+    emit dataChanged( topLeft, bottomRight );
+}
 
 int SideListModel::rowCount(const QModelIndex& parent/*=QModelindex()*/ ) const {
     if (parent.isValid())
@@ -66,8 +59,6 @@ bool SideListModel::insertRows(int nRow, int nCount, const QModelIndex& parent/*
     if (parent.isValid())
         return false;
     beginInsertRows(QModelIndex(), nRow, nRow + nCount - 1);
-    //for (int i = 0; i < nCount; ++i)
-    //    m_list.insert(nRow, QJsonObject());
     endInsertRows();
     return true;
 }
@@ -84,24 +75,16 @@ bool SideListModel::removeRows(int nRow, int nCount, const QModelIndex& parent/*
 
 void SideListModel::setList(QStringList l){
     m_list = l;
-    if(insertRows(0, l.count()))
-        qDebug() << "ok insert";
-    else
-        qDebug() << "no insert";
-
+    insertRows(0, l.count());
 }
 
-void SideListModel::removeData(int item){
-    removeRows(item, 1);
+void SideListModel::removeData(int item, int count){
+    removeRows(item, count);
 }
 
 void SideListModel::insertData(QString list){
     m_list.append(list);
-    if(insertRows(m_list.count() - 1, 1))
-        qDebug() << "ok insert2";
-    else
-        qDebug() << "no insert2";
-    qDebug() << "m_list.count() "<<m_list.count();
+    insertRows(m_list.count() - 1, 1);
 }
 
 Q_INVOKABLE QString SideListModel::getNameRegion (int i) {

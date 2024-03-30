@@ -2,132 +2,89 @@ import QtQuick 2.12
 import QtQml.Models 2.1
 
 Item {
-    id: i
+    id: itemDelegateSide
     width: grid.cellWidth
     height: grid.cellHeight
-    //    Rectangle{
-    //        id: dragConteiner
-    //        width: grid.cellWidth
-    //        height: grid.cellHeight
-    //    }
-    //property int draggedItemIndex: -1
-    //Drag.active: visible // Add this line of code
+
+    GridView.onRemove: SequentialAnimation {
+        PropertyAction {
+            target: itemDelegateSide
+            property: "GridView.delayRemove"
+            value: true
+        }
+        NumberAnimation { target: itemDelegateSide; property: "scale"; to: 0; duration: 250; easing.type: Easing.InOutQuad }
+        PropertyAction { target: itemDelegateSide; property: "GridView.delayRemove"; value: false }
+    }
 
     Rectangle {
         id: dragItem
         width: grid.cellWidth
         height: grid.cellHeight
-        //anchors.fill: parent
         color: (index % 4 > 0 && (index - 1) % 4 > 0) ? "lightgray" : "transparent"
-
         Drag.active:  dragArea.drag.active
-        //Drag.active: visible
-
-        //Drag.hotSpot.x: 15
-        //Drag.hotSpot.y: 15
-
-        //        states: State {
-        //            when: dragArea.drag.active
-        //            AnchorChanges {
-        //                target: parent
-        //                anchors {
-        //                    verticalCenter: undefined
-        //                    horizontalCenter: undefined
-        //                }
-        //            }
-        //        }
 
         Text {
             id: txt
             anchors.centerIn: parent
-            //Drag.active:  dragArea.drag.active
             renderType: Text.NativeRendering
-            text: name + "; " + reg + "\n" + index
+            text: name + "; " + reg
             color: {
                 index % 2 > 0 ? "blue" : "red"
             }
         }
-
-
-
-
-
         MouseArea {
             id: dragArea
-
+            property int itemPress: -1
+            property int itemRelease: -1
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.fill: parent
-            //onReleased: dragItem.Drag.drop()
             onReleased: {
-                dragItem.Drag.drop()
-                console.log("indexR = " + index)
+                let p = mapToItem(grid, mouseX, mouseY)
+                itemRelease = grid.indexAt(p.x, p.y + grid.contentY)
+                if(itemRelease!= -1 && itemPress != itemRelease){
+                    console.log("move ", itemPress, itemRelease)
+                    grid.swapItems(itemPress, itemRelease)
+                }
+            }
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
+            onPressed: {
+                if (mouse.button === Qt.RightButton) { // 'mouse' is a MouseEvent argument passed into the onClicked signal handler
+                    grid.moveItem(index)
+                    mouse.accepted = false
+                }
+                itemPress = index
             }
             drag.target: dragItem
-
             drag.axis: Drag.XAndYAxis
-            hoverEnabled: true
-            onPressed: {
-                console.log("indexP = " + index)
-            }
-
             states: [
                 State {
                     when: dragItem.Drag.active
                     ParentChange {
                         target: dragItem
                         parent: grid
-
                     }
-                    StateChangeScript {
-                                    name: "firstScript"
-                                    script: console.log("entering first state")
-                                }
                     AnchorChanges {
                         target: dragItem
                         anchors.horizontalCenter: undefined
                         anchors.verticalCenter: undefined
                     }
-
+                    PropertyChanges {
+                        target: dragItem
+                        color: "darkGrey"
+                        border.color: "black"
+                        border.width: 2
+                    }
+                },
+                State {
+                    name: "s2"
+                    when: dragItem.Drag.active === false
+                    PropertyChanges {
+                        target: dragItem
+                        border.color: "white"
+                    }
                 }
             ]
-
-
-
-
-
-
-               Rectangle {
-                   id: rr
-                   parent: grid
-                    anchors.fill: grid
-
-
-                        //visible: parent.containsDrag
-                    }
-               }
-
-            DropArea {
-                id: dr
-                anchors.fill: parent
-
-                onDropped: {
-
-                    console.log("dropped")
-                    console.log(grid.indexAt(dragArea.mouseX, dragArea.mouseY))
-                }
-                onEntered: {
-                    console.log("entered")
-                    //grid.indexAt(dragArea.mouseX, dragArea.mouseY)
-                    //console.log("entered " + grid.indexAt(dragArea.mouseX, dragArea.mouseY))
-                    //console.log("dragItem.index = " + index)
-                }
-            }
-
-        //}
-
+        }
     }
-
-
-
 } //Component
 

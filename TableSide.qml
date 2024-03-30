@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Controls 1.4
 
 Rectangle {
+    id: rect
     width: parent.width - 20
     height: parent.height - 20
 
@@ -13,8 +14,10 @@ Rectangle {
     property bool isSeparate: false //false - совместное, true - раздельное перемещение слайдеров
     property bool buttonLeft: false //false - была нажата правая кнопка, true - левая кнопка
 
-    property int previewY: 22
-    property int previewYNext: heightRows + 22
+    property int countRemovedRows: 0
+
+    property int previewY: 0
+    property int previewYNext: heightRows
 
     signal sliderYChanged(int y)
     signal sliderYChangedNext(int y)
@@ -33,17 +36,17 @@ Rectangle {
 
     onSliderReleased: {
         if(slider === 0){   //если верхний слайдер двигали
-            if(((sldNext.y - 22) % heightRows) < heightRows / 2){
-                sldNext.y = sldNext.y - (sldNext.y - 22) % heightRows
+            if((sldNext.y % heightRows) < heightRows / 2){
+                sldNext.y = sldNext.y - sldNext.y % heightRows
             }else{
-                sldNext.y = sldNext.y - (sldNext.y - 22) % heightRows + heightRows
+                sldNext.y = sldNext.y - sldNext.y % heightRows + heightRows
             }
             sldNext.txtYpos = 0
         }else{
-            if(((sld.y - 22) % heightRows) < heightRows / 2){
-                sld.y = sld.y - (sld.y - 22) % heightRows
+            if((sld.y % heightRows) < heightRows / 2){
+                sld.y = sld.y - sld.y % heightRows
             }else{
-                sld.y = sld.y - (sld.y - 22) % heightRows + heightRows
+                sld.y = sld.y - sld.y % heightRows + heightRows
             }
             sld.txtYpos = 0
         }
@@ -51,10 +54,12 @@ Rectangle {
 
     onSliderYChanged: {
         let _y, i, ypos;
-        _y = y - 7;
+        _y = y + 15 + grid.contentY - countRemovedRows * heightRows;
         i = (_y - _y % heightRows) / heightRows
-        ypos = (y - 22) % heightRows
+        ypos = y % heightRows
         sld.txtYpos = ypos < heightRows / 2 ? -ypos : heightRows - ypos
+        console.log("i = ", i, ' ', "y", ' ', y,  ' ', "grid.contentY", grid.contentY, ' ', "grid.originX",' ',  grid.originX)
+        console.log("rect.height = ", rect.height, "grid.height = ", grid.height, ' ',  "grid.contentHeight = ", grid.contentHeight)
         if(i < sideModel.rowCount() * 2){
             sld.textRed = sideModel.getNameRegion(i * 2)
             sld.textBlue = sideModel.getNameRegion(i * 2 + 1)
@@ -63,9 +68,9 @@ Rectangle {
             sld.textRed = ""
             sld.textBlue = ""
         }
-        _y = y + heightRows - 7;
+        _y = y + heightRows  + 15 + grid.contentY - countRemovedRows * heightRows
         i = (_y - _y % heightRows) / heightRows
-        ypos = (y - 22) % heightRows
+        ypos = y % heightRows
         if(!isSeparate){
             sldNext.y = y + heightRows
             sldNext.txtYpos = ypos < heightRows / 2 ? -ypos : heightRows - ypos
@@ -102,9 +107,9 @@ Rectangle {
 
     onSliderYChangedNext: {
         let _y, i, ypos;
-        _y = y - 7;
+        _y = y + 15 + grid.contentY - countRemovedRows * heightRows;
         i = (_y - _y % heightRows) / heightRows
-        ypos = (y - 22) % heightRows
+        ypos = y % heightRows
         sldNext.txtYpos = ypos < heightRows / 2 ? -ypos : heightRows - ypos
         if(i < sideModel.rowCount() * 2){
             sldNext.textRed = sideModel.getNameRegion(i * 2)
@@ -114,18 +119,15 @@ Rectangle {
             sldNext.textRed = ""
             sldNext.textBlue = ""
         }
-        _y = y - heightRows - 7;
+        _y = y - heightRows + 15 + grid.contentY -  countRemovedRows * heightRows
         i = (_y - _y % heightRows) / heightRows
-        ypos = (y - 22) % heightRows
+        ypos = y % heightRows
         if(!isSeparate){
             sld.y = y - heightRows
             sld.txtYpos = ypos < heightRows / 2 ? -ypos : heightRows - ypos
-            //console.log("getNameRegion " + sideModel.getNameRegion(i))
             if(i < sideModel.rowCount() * 2){
-                //console.log("sideModel.countRows() " + sideModel.countRows())
                 sld.textRed = sideModel.getNameRegion(i * 2)
                 sld.textBlue = sideModel.getNameRegion(i * 2 + 1)
-                //console.log("sideModel.get(i) " + sideModel.get())
             }
             else{
                 sld.textRed = ""
@@ -153,21 +155,59 @@ Rectangle {
         previewYNext = y
     }
 
+    Timer {
+        id: timer
+    }
+
+    function delay(delayTime, cb) {
+        timer.interval = delayTime;
+        timer.repeat = false;
+        timer.triggered.connect(cb);
+        timer.start();
+    }
+
+    function delUpper(){
+        let ind = grid.indexAt(0, sld.y + grid.contentY)
+        //console.log(grid.indexAt(0, sld.y + grid.contentY))
+        if(ind > 0){
+            for(let i = 0; i < ind; i++){
+                console.log("moveItem " + i)
+                grid.moveItem(0)
+
+            }
+             countRemovedRows += ind / 2
+        }
+    }
+
     GridView {
         id: grid
         objectName: "gridSide"
-        property int draggedItemIndex: -1
+        property int currentYSldider: 0
+        property int currentYSldiderNext: 0
+
+        signal swapItems(int i1, int i2)
+        signal moveItem(int i)
+        //signal moveItems(int i)
+
+
+        function updateSlider(){
+            console.log("update")
+            let _y, i;
+            _y = sld.y;
+            i = (_y - _y % heightRows) / heightRows
+            sld.textRed = sideModel.getNameRegion(i * 2)
+            sld.textBlue = sideModel.getNameRegion(i * 2 + 1)
+            _y = sldNext.y;
+            i = (_y - _y % heightRows) / heightRows
+            sldNext.textRed = sideModel.getNameRegion(i * 2)
+            sldNext.textBlue = sideModel.getNameRegion(i * 2 + 1)
+        }
+
         anchors.fill: parent
         model: sideModel
-        //model: mod
         cellWidth: parent.width / 2
         cellHeight: heightRows
         clip: true
-
-        Drag.active:  dragArea.drag.active
-        //Drag.active: visible
-
-        //Drag.hotSpot.x: 15
 
         Item {
             id: dndConteiner
@@ -180,114 +220,73 @@ Rectangle {
                 context.beginPath();
                 context.moveTo(parent.width * 0.5, 0);
                 context.lineTo(parent.width * 0.5, parent.height);
-                context.moveTo(0, 21);
-                context.lineTo(parent.width, 21);
+                //context.moveTo(0, 21);
+                //context.lineTo(parent.width, 21);
                 context.closePath();
                 context.stroke();
             }
         }
 
-        header: Rectangle {
-            width:  parent.width
-            height:  22
+        delegate: DelegateSide{}
 
-            Rectangle{
-                width: parent.width / 2
-                height: 22
-                Text {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    color: "red"
-                    text: qsTr("Спортсмен с красным поясом")
-                }
+        MouseArea {
+            id: dragArea
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.fill: parent
+            //acceptedButtons: Qt.LeftButton | Qt.RightButton
+            onPressed: {
+                //                if (mouse.button === Qt.RightButton) { // 'mouse' is a MouseEvent argument passed into the onClicked signal handler
+                //                    //grid.moveItem(index)
+                //                    console.log(grid.currentIndex)
+
+                //                }
+                mouse.accepted = false
             }
-            Rectangle{
-                width: parent.width / 2
-                height: 22
-                x: parent.width / 2
-                Text {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    color: "blue"
-                    text: qsTr("Спортсмен с синим поясом")
-                }
-            }
+
         }
 
-        delegate: DelegateSide{id: del}
+        onFlickStarted: {
+            currentYSldider = sld.y + contentY
+            currentYSldiderNext = sldNext.y + contentY
+        }
 
-//        MouseArea {
-//            id: dragArea
+        onFlickingChanged: {
+            //updateSlider()
+            console.log("onFlickingChanged")
+        }
 
-//            anchors.horizontalCenter: parent.horizontalCenter
-//            anchors.fill: parent
-//            //onReleased: dragItem.Drag.drop()
+        onContentYChanged: {
+            //if(contentY)
+            //    contentY = 0
+            console.log("onContentYChanged = ", contentY, " currentYSldider = ", currentYSldider)
+            sld.y = 0; //currentYSldider - contentY
+            sldNext.y = heightRows; //currentYSldiderNext - contentY
+            //updateSlider()
+            sliderYChanged(0)
+            sliderYChangedNext(heightRows)
+        }
 
-
-
-//            onReleased: {
-//                grid.Drag.drop()
-//                console.log("indexR = " + grid.indexAt(mouseX, mouseY - 22))
-//            }
-//            drag.target: dragItem
-
-//            drag.axis: Drag.XAndYAxis
-//            hoverEnabled: true
-//            onPressed: {
-//                console.log("indexP = " + grid.indexAt(mouseX, mouseY - 22))
-//            }
-
-//            states: [
-//                State {
-//                    when: dragItem.Drag.active
-//                    ParentChange {
-//                        target: dragItem
-//                        parent: grid
-//                    }
-//                    StateChangeScript {
-//                        name: "firstScript"
-//                        script: console.log("entering first state")
-//                    }
-//                    AnchorChanges {
-//                        target: dragItem
-//                        anchors.horizontalCenter: undefined
-//                        anchors.verticalCenter: undefined
-//                    }
-//                }
-//            ]
-       // }
-
-
-
-        highlightFollowsCurrentItem: true
-        focus: true
-
+        onFlickEnded: {
+            let remains = contentY % heightRows
+            if(remains != 0){
+                if(remains < heightRows / 2){
+                    contentY = contentY - remains
+                }else{
+                    contentY = contentY - remains + heightRows
+                }
+            }
+            console.log("end", ' ', contentY, ' ', remains)
+        }
         SliderNames{
             id: sld
+            objectName: "sld"
             heightRow: heightRows
         }
 
         SliderNamesNext{
             id: sldNext
+            objectName: "sldNext"
             heightRow: heightRows
         }
-
-
-//                    DropArea {
-//                        id: dr
-//                        anchors.fill: parent
-
-//                        onDropped: console.log("dropped")
-//                        onEntered: {
-//                            //grid.indexAt(dragArea.mouseX, dragArea.mouseY)
-//                            console.log("entered " + grid.indexAt(dragArea.mouseX, dragArea.mouseY))
-//                            console.log("dragItem.index = " + index)
-//                        }
-//                    }
-
-
     }
-
-
-
 }

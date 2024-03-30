@@ -50,6 +50,8 @@ public:
 
     void setList(QStringList);
 
+    void insertData(QString);
+
 public slots:
     void moveItem(int);
 

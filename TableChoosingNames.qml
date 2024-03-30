@@ -230,12 +230,13 @@ Rectangle {
             MouseArea{
                 anchors.fill: parent
 
+
                 onClicked: {
                     console.log(" rowDelegate clicked" + modelRow);
                     //lmodel.remove(index);
                 }
 
-                propagateComposedEvents: true
+
 
             }
 

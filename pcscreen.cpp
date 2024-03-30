@@ -17,8 +17,6 @@
 
 #include <math.h>
 
-
-
 #include "category.h"
 
 //#include <QHostAddress>
@@ -258,6 +256,8 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     choosingNames->setAge(lf->lAge);
     choosingNames->setWeight(lf->lWeight);
 
+    connect(choosingNames, SIGNAL(close(QString, QString, QString, QString, QString, QString)), this, SLOT(closeWinName(QString, QString, QString, QString, QString, QString)));
+
 	formView = new QWidget;
     ui.setupUi(formView);
     WidgetFilter* wf = new WidgetFilter(formView);
@@ -267,12 +267,14 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 
     //connect(formView, SIGNAL())
 
-    connect(ui.btnNameDown,     SIGNAL(clicked()), this, SLOT(changeSize()));
-    connect(ui.btnNameUp,       SIGNAL(clicked()), this, SLOT(changeSize()));
-    connect(ui.btnNextNameDown, SIGNAL(clicked()), this, SLOT(changeSize()));
-    connect(ui.btnNextNameUp,   SIGNAL(clicked()), this, SLOT(changeSize()));
-    connect(ui.btnRegDown,      SIGNAL(clicked()), this, SLOT(changeSize()));
-    connect(ui.btnRegUp,        SIGNAL(clicked()), this, SLOT(changeSize()));
+    connect(ui.btnNameDown,     SIGNAL(clicked()),      this, SLOT(changeSize()));
+    connect(ui.btnNameUp,       SIGNAL(clicked()),      this, SLOT(changeSize()));
+    connect(ui.btnNextNameDown, SIGNAL(clicked()),      this, SLOT(changeSize()));
+    connect(ui.btnNextNameUp,   SIGNAL(clicked()),      this, SLOT(changeSize()));
+    connect(ui.btnRegDown,      SIGNAL(clicked()),      this, SLOT(changeSize()));
+    connect(ui.btnRegUp,        SIGNAL(clicked()),      this, SLOT(changeSize()));
+
+    connect(ui.cbFullScreen,    SIGNAL(toggled(bool)),  this, SLOT(tvFullScreen(bool)));
 
     ui.cmbFont->addItems({"10", "12", "14", "16", "18", "20", "23", "26", "29", "34", "39", "45", "50", "55", "60",
                           "65", "70", "75", "80", "85", "90", "100", "110", "120", "130", "140", "150", "170", "180", "190", "200", "210", "220", "230"});
@@ -540,6 +542,8 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
         connect(reg_red,       SIGNAL(sigText(QString)), tvScreen->reg_red,       SLOT(Text(QString)));
         connect(reg_blue,      SIGNAL(sigText(QString)), tvScreen->reg_blue,      SLOT(Text(QString)));
         connect(fam_next_red,  SIGNAL(sigText(QString)), tvScreen->fam_next_red,  SLOT(Text(QString)));
+        connect(fam_next_blue, SIGNAL(sigText(QString)), tvScreen->fam_next_blue, SLOT(Text(QString)));
+
         connect(fam_next_blue, SIGNAL(sigText(QString)), tvScreen->fam_next_blue, SLOT(Text(QString)));
 
         //connect(cat,  SIGNAL(sigText(QString)), tvScreen->cat, SLOT(setText(QString)));
@@ -1072,6 +1076,22 @@ void PCScreen::resetTablo(){
     //tvScreen->grid->removeWidget(tvScreen->logo);
     QKeyEvent *key_press = new QKeyEvent(QKeyEvent::KeyPress, Qt::Key_Backspace, Qt::NoModifier);
     QApplication::sendEvent(this, key_press);
+}
+
+void PCScreen::closeWinName(QString redName, QString redRegion, QString blueName, QString blueRegion, QString redNameNext, QString blueNameNext){
+    fam_red->Text(redName);
+    reg_red->Text(redRegion);
+    fam_blue->Text(blueName);
+    reg_blue->Text(blueRegion);
+    fam_next_red->Text(redNameNext);
+    fam_next_blue->Text(blueNameNext);
+}
+
+void PCScreen::tvFullScreen(bool b){
+    if(b)
+        tvScreen->showFullScreen();
+    else
+        tvScreen->showNormal();
 }
 
 void PCScreen::resizeEvent(QResizeEvent *){

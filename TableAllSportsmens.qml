@@ -1,14 +1,38 @@
-import QtQuick 2.0
+import QtQuick 2.12
 
 Rectangle {
-
+    id: main
     width: parent.width - 20
     height: parent.height - 20
-
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.verticalCenter: parent.verticalCenter
-
     clip: true
+
+    Component  {
+        id: _highlight
+
+        Rectangle {
+            id: rec
+
+            width: grid.cellWidth; height: grid.cellHeight
+            opacity: 1
+            color: "lightsteelblue"; radius: 5
+            x: {
+                if(grid.currentItem != null)
+                    return grid.currentItem.x
+                else
+                    return -1000
+            }
+            y: {
+                if(grid.currentItem != null)
+                    return grid.currentItem.y
+                else
+                    return -1000
+            }
+            Behavior on x { SpringAnimation { spring: 5; damping: 0.3; mass: 0.8 } }
+            Behavior on y { SpringAnimation { spring: 5; damping: 0.3; mass: 0.8 } }
+        }
+    }
 
     GridView {
         id: grid
@@ -17,82 +41,50 @@ Rectangle {
         model: myModel
         cellWidth: parent.width / 6
 
-        //highlight: Component { Rectangle { color: "lightsteelblue"; radius: 5 }}
-        //highlightRangeMode: grid.ApplyRange
         signal moveItem(int i)
-        delegate: Rectangle{
-            id: rectDel
 
+        highlight: _highlight
+        delegate: Item {
+            id: rectDel
             width: grid.cellWidth
             height: grid .cellHeight
-            color: mousearea.containsMouse ? "lightgray" : "white"
+
+            GridView.onRemove: SequentialAnimation {
+                PropertyAction {
+                    target: rectDel
+                    property: "GridView.delayRemove"
+                    value: true
+                }
+                NumberAnimation { target: rectDel; property: "scale"; to: 0; duration: 250; easing.type: Easing.InOutQuad }
+                PropertyAction { target: rectDel; property: "GridView.delayRemove"; value: false }
+            }
 
             Text {
+                id: txt
+                padding: 5
                 text: name + "\n" + region + "\n" + index + "\n" + age + weight
-                //text: index
-
-
             }
             MouseArea{
                 id: mousearea
-                //objectName: "delegate"
-
                 hoverEnabled: true
-                anchors.fill: parent
-                onClicked: {
-                    //contactModel.append({"number": "5.95", "name":"Pizza"})
-                    grid.moveItem(index)
-
-                    console.log("hello" + index + name + objectName)
+                onHoveredChanged: {
+                    grid.currentIndex = index;
                 }
-                //                    onEntered: {
-
-
-                //                        console.debug("Will print on pressed event")
-                //                    }
-
-                //                    onExited: {
-
-                //                        console.debug("Will print on released event")
-                //                    }
+                anchors.fill: parent
+                onPressed: {
+                    if(index != -1){
+                        txt.text = txt.text
+                        grid.moveItem(index)
+                    }
+                }
             }
-
         }
-
-
-
-        highlightFollowsCurrentItem: true
-        focus: true
-
-        //                MouseArea{
-        //                    hoverEnabled: false
-        //                    anchors.fill: parent
-        //                    onClicked: {
-        //                        //contactModel.append({"number": "5.95", "name":"Pizza"})
-
-        //                        console.log(grid.currentIndex)
-        //        //                var obj = grid.childAt(mouse.x, mouse.y)
-        //        //                           if ( !obj )
-        //        //                               return;
-        //        //                           console.log(obj.parent)
-        //                        mouse.accepted = false
-
-        //                }
-        //                  propagateComposedEvents: true
-        //               }
-
-
+        MouseArea{
+            id: gridarea
+            anchors.fill: parent
+            propagateComposedEvents: true
+            onPressed: {mouse.accepted = false}
+            onReleased: {mouse.accepted = false}
+        }
     }
-
-    //    GridView {
-    //        id: gridv
-
-    //        anchors.fill: parent
-
-
-
-    //        model: modelAll
-    //        delegate: Text {text: modelData}
-    //    }
-
 }

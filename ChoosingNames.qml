@@ -10,7 +10,6 @@ Item {
         anchors.fill: parent
         anchors.margins: 10
 
-
         Rectangle {
             color: "antiquewhite"
             Layout.fillHeight: true
@@ -24,6 +23,8 @@ Item {
 
             Layout.column: 1
             Layout.row: 1
+
+
 
             RowLayout {
                 height:  parent.height
@@ -60,6 +61,7 @@ Item {
 
                     ComboBox {
                         id: cmbWeight
+
                         focus: false
                         objectName: "cmbWeight"
                         signal weightClicked(string str)
@@ -77,16 +79,29 @@ Item {
                         text: "Фильтр по фамилии:"
                     }
 
-
+                Rectangle {
+                    width: 150
+                    height: 30
+                    color: "white"
+                    border.color: "gray"
 
                     TextInput {
                         id: ti
+                        objectName: "tiName"
+                        signal filterName(string str)
+                        anchors.fill: parent
+                        anchors.margins: 2
                         width: 20
                         font.pointSize: 15
                         focus: true
-                        text: "Text"
+
+                        //text: "Text"
+                        onTextEdited: filterName(text)
+
                         cursorVisible: true
+
                     }
+                }
                 }
             }
 
@@ -108,8 +123,8 @@ Item {
 
             TableAllSportsmens {
                 objectName: "tableAll"
-            }
 
+            }
         }
 
         Rectangle {
@@ -118,18 +133,41 @@ Item {
             Layout.fillWidth: true
 
             Layout.preferredWidth: 3
-            Layout.preferredHeight: 19
+            Layout.preferredHeight: 18
 
             Layout.columnSpan: 3
-            Layout.rowSpan: 19
+            Layout.rowSpan: 18
 
             Layout.column: 8
             Layout.row: 2
-//            TableChoosingNames {
-//                objectName: "tableSide"
-//            }
             TableSide {
+                id: tableSide
                 objectName: "tableSide"
+            }
+        }
+
+        Rectangle {
+            color: "antiquewhite"
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+
+            Layout.preferredWidth: 3
+            Layout.preferredHeight: 1
+
+            Layout.columnSpan: 3
+            Layout.rowSpan: 1
+
+            Layout.column: 8
+            Layout.row: 20
+
+            Button {
+                id: btnDel
+                objectName: "button"
+                text: "Удалить отработанные фамилии"
+                anchors.centerIn: parent
+                onClicked: {
+                    tableSide.delUpper()
+                }
             }
         }
 

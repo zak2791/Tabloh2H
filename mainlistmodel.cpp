@@ -32,23 +32,7 @@ QVariant MainListModel::data(const QModelIndex& index, int nRole) const {
         return m_list.at(index.row()).split("\n")[3];
 
     }
-
-    //    return (nRole == Qt::DisplayRole || nRole == Qt::EditRole)
-    //            ? m_list.at(index.row())
-    //            :QVariant();
 }
-
-//bool MainListModel::setData(const QModelIndex& index,
-//                            const QVariant& value,
-//                            int   nRole) {
-
-//    if (index.isValid() && nRole == Qt::EditRole) {
-//        m_list.replace(index.row(), value.value<QString>());
-//        emit dataChanged(index, index);
-//        return true;
-//    }
-//    return false;
-//}
 
 int MainListModel::rowCount(const QModelIndex& parent/*=QModelindex()*/ ) const {
     if (parent.isValid())
@@ -66,8 +50,6 @@ bool MainListModel::insertRows(int nRow, int nCount, const QModelIndex& parent/*
     if (parent.isValid())
         return false;
     beginInsertRows(QModelIndex(), nRow, nRow + nCount - 1);
-    //for (int i = 0; i < nCount; ++i)
-    //    m_list.insert(nRow, QJsonObject());
     endInsertRows();
     return true;
 }
@@ -93,4 +75,10 @@ void MainListModel::setList(QStringList l){
 
 void MainListModel::moveItem(int item){
     removeRows(item, 1);
+}
+
+void MainListModel::insertData(QString list){
+    m_list.append(list);
+    insertRows(m_list.count() - 1, 1);
+
 }

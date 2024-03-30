@@ -12,9 +12,9 @@ Item {
     width: parent.width
     height: heightRow + 1
     x: 0
-    y : heightRow + 22
+    y : heightRow
     Drag.active: dragArea.drag.active
-    Drag.hotSpot.y: 22
+    Drag.hotSpot.y: 0
     property point beginDrag
 
     Rectangle {
@@ -82,7 +82,7 @@ Item {
         drag.target: parent
         drag.minimumX: 0
         drag.maximumX: 0
-        drag.minimumY: heightRow + 22
+        drag.minimumY: heightRow
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         onPressed: {
             sliderPressed(pressedButtons)
@@ -90,10 +90,10 @@ Item {
         }
         propagateComposedEvents: true
         onReleased: {
-            if(((dragItem.y - 22) % heightRow) < heightRow / 2){
-                dragItem.y = dragItem.y - (dragItem.y - 22) % heightRow
+            if((dragItem.y % heightRow) < heightRow / 2){
+                dragItem.y = dragItem.y - dragItem.y % heightRow
             }else{
-                dragItem.y = dragItem.y - (dragItem.y - 22) % heightRow + heightRow
+                dragItem.y = dragItem.y - dragItem.y % heightRow + heightRow
             }
             txtYpos = 0
             sliderReleased(1)

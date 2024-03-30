@@ -27,6 +27,8 @@ public:
 //                 int                nRole
 //                 )  override;
 
+
+
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
 
     //    QVariant headerData(int             nsection,
@@ -48,11 +50,15 @@ public:
 
     void setList(QStringList);
 
-//public slots:
-    void removeData(int);
+    //virtual bool setData(const QModelIndex&, const QVariant&, int) override;
+
+
+    void removeData(int, int count = 1);
     void insertData(QString);
     Q_INVOKABLE QString getNameRegion(int);
     //Q_INVOKABLE int get(int);
+public slots:
+    void swapData(int, int);
 
 
 };

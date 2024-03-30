@@ -25,14 +25,24 @@ private:
     SideListModel* slmodel;
     QSortFilterProxyModel* proxyAge;
     QSortFilterProxyModel* proxyWeight;
+    QSortFilterProxyModel* proxyName;
     QObject* objAge;
     QObject* objWeight;
+    QObject* objFilterNames;
     QObject* objDelegate;
+    QObject* objGridSide;
+    virtual void closeEvent(QCloseEvent*);
 
 private slots:
     void choiceAge(QString);
     void choiceWeight(QString);
-    void removeItem(int);
+    void filterName(QString);
+    void fromAllToSide(int);
+    void fromSideToAll(int);
+    //void fromSideToAllManyItems(int);
+
+signals:
+    void close(QString, QString, QString, QString, QString, QString);
 
 };
 

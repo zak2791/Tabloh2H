@@ -32,8 +32,15 @@ ChoosingNames::ChoosingNames(QWidget *parent) : QWidget(parent)
     slmodel = new SideListModel;
     pcon->setContextProperty("sideModel", slmodel);
 
+    fAdd = new addForm;
+
     QQuickItem* qItem = quickWidget->rootObject();
     if(qItem){
+
+        auto mainGrid = qItem->findChild<QObject*>("mainGrid");
+        if(mainGrid)
+            connect(mainGrid, SIGNAL(addSportsman()), fAdd, SLOT(show()));
+
         objAge = qItem->findChild<QObject*>("cmbAge");
         if(objAge)
             connect(objAge, SIGNAL(ageClicked(QString)), this, SLOT(choiceAge(QString)));
@@ -53,6 +60,7 @@ ChoosingNames::ChoosingNames(QWidget *parent) : QWidget(parent)
                 connect(objGrid, SIGNAL(moveItem(int)), this, SLOT(fromAllToSide(int)));
             }
         }
+
         objGridSide = qItem->findChild<QObject*>("gridSide");
         if(objGridSide){
             connect(objGridSide, SIGNAL(swapItems(int, int)), slmodel, SLOT(swapData(int, int)));
@@ -60,6 +68,8 @@ ChoosingNames::ChoosingNames(QWidget *parent) : QWidget(parent)
             //connect(objGridSide, SIGNAL(moveItems(int)), this, SLOT(fromSideToAllManyItems(int)));
         }
     }
+    connect(fAdd, SIGNAL(selSportsman(QString)), this, SLOT(addSportsman(QString)));
+    //setWindowFlags(Qt::Widget | Qt::WindowCloseButtonHint);
 }
 
 void ChoosingNames::setNames(QStringList list){
@@ -140,7 +150,6 @@ void ChoosingNames::fromAllToSide(int item){
     model->moveItem(modIndexAge.row());
     slmodel->insertData(str);
     QVariant varRet;
-    qDebug()<<"fromAllToSide";
     QMetaObject::invokeMethod(objGridSide, "updateSlider");
 }
 
@@ -150,11 +159,26 @@ void ChoosingNames::fromSideToAll(int item){
             slmodel->data(mod, model->RegionRole).toString() + "\n" +
             slmodel->data(mod, model->AgeRole).toString()    + "\n" +
             slmodel->data(mod, model->WeightRole).toString();
+
+    if(slmodel->data(mod, model->AgeRole).toString() != "")
+        model->insertData(str);
     slmodel->removeData(item);
-    model->insertData(str);
+
     proxyName->sort(0);
-    qDebug()<<"fromSideToAll";
     QMetaObject::invokeMethod(objGridSide, "updateSlider");
+}
+
+void ChoosingNames::addSportsman(QString sportsman){
+    QStringList lStr = sportsman.split(";");
+    if(lStr.length() != 2)
+        return;
+    QString str = lStr[0] + "\n" + lStr[1]  + "\n" +  + "\n";
+    slmodel->insertData(str);
+    QMetaObject::invokeMethod(objGridSide, "updateSlider");
+}
+
+void ChoosingNames::removeSportsman(int){
+
 }
 
 //void ChoosingNames::fromSideToAllManyItems(int count){

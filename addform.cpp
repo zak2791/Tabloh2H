@@ -59,7 +59,7 @@ addForm::addForm(QWidget *parent) :
 
     listView->setModel(model);
 
-    connect(listView, SIGNAL(mouse_button(int)), this, SLOT(mouse(int)));
+    connect(listView, SIGNAL(mouse_button(int)), this, SLOT(mouse()));
     connect(listView->selectionModel(), SIGNAL(selectionChanged(QItemSelection, QItemSelection)), this, SLOT(sel(QItemSelection, QItemSelection)));
     connect(ui->btnClear, SIGNAL(clicked()), this, SLOT(clearList()));
 }
@@ -87,8 +87,8 @@ void addForm::addSportsman(){
 
 }
 
-void addForm::mouse(int val){
-    emit selSportsman(selectedSportsmen, val);
+void addForm::mouse(){
+    emit selSportsman(selectedSportsmen);
 }
 
 void addForm::sel(QItemSelection s, QItemSelection){

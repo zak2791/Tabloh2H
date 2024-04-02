@@ -8,6 +8,8 @@
 #include "mainlistmodel.h"
 #include "sidelistmodel.h"
 
+#include "addform.h"
+
 class ChoosingNames : public QWidget
 {
     Q_OBJECT
@@ -32,6 +34,7 @@ private:
     QObject* objDelegate;
     QObject* objGridSide;
     virtual void closeEvent(QCloseEvent*);
+    addForm* fAdd;
 
 private slots:
     void choiceAge(QString);
@@ -39,6 +42,8 @@ private slots:
     void filterName(QString);
     void fromAllToSide(int);
     void fromSideToAll(int);
+    void addSportsman(QString);
+    void removeSportsman(int);
     //void fromSideToAllManyItems(int);
 
 signals:

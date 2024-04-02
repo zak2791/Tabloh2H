@@ -4,10 +4,12 @@ import QtQuick.Layouts 1.12
 
 Item {
     id: dragItem
-    property string textRed: "red"
-    property string textBlue: "blue"
+    property string textRed: ""
+    property string textBlue: ""
     property real txtYpos
     property real heightRow
+
+    property real maxY: 0
 
     width: parent.width
     height: heightRow + 1
@@ -21,6 +23,7 @@ Item {
         width: parent.width
         height: parent.height
         color: "orange"
+        radius: 10
         Rectangle {
             id: textArea
             width: parent.width - 10
@@ -81,8 +84,9 @@ Item {
         anchors.fill: parent
         drag.target: parent
         drag.minimumX: 0
-        drag.maximumX: 0
         drag.minimumY: heightRow
+        drag.maximumX: 0
+        drag.maximumY: maxY
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         onPressed: {
             sliderPressed(pressedButtons)

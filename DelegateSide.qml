@@ -18,6 +18,7 @@ Item {
 
     Rectangle {
         id: dragItem
+        radius: 10
         width: grid.cellWidth
         height: grid.cellHeight
         color: (index % 4 > 0 && (index - 1) % 4 > 0) ? "lightgray" : "transparent"
@@ -51,6 +52,7 @@ Item {
                 if (mouse.button === Qt.RightButton) { // 'mouse' is a MouseEvent argument passed into the onClicked signal handler
                     grid.moveItem(index)
                     mouse.accepted = false
+                    //console.log(model)
                 }
                 itemPress = index
             }

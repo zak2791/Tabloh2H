@@ -5,10 +5,13 @@ import QtQuick.Layouts 1.12
 Item {
     GridLayout{
         id: grid
+        objectName: "mainGrid"
         columns: 10
         rows: 20
         anchors.fill: parent
         anchors.margins: 10
+
+        signal addSportsman();
 
         Rectangle {
             color: "antiquewhite"
@@ -79,29 +82,29 @@ Item {
                         text: "Фильтр по фамилии:"
                     }
 
-                Rectangle {
-                    width: 150
-                    height: 30
-                    color: "white"
-                    border.color: "gray"
+                    Rectangle {
+                        width: 150
+                        height: 30
+                        color: "white"
+                        border.color: "gray"
 
-                    TextInput {
-                        id: ti
-                        objectName: "tiName"
-                        signal filterName(string str)
-                        anchors.fill: parent
-                        anchors.margins: 2
-                        width: 20
-                        font.pointSize: 15
-                        focus: true
+                        TextInput {
+                            id: ti
+                            objectName: "tiName"
+                            signal filterName(string str)
+                            anchors.fill: parent
+                            anchors.margins: 2
+                            width: 20
+                            font.pointSize: 15
+                            focus: true
 
-                        //text: "Text"
-                        onTextEdited: filterName(text)
+                            //text: "Text"
+                            onTextEdited: filterName(text)
 
-                        cursorVisible: true
+                            cursorVisible: true
 
+                        }
                     }
-                }
                 }
             }
 
@@ -160,15 +163,35 @@ Item {
             Layout.column: 8
             Layout.row: 20
 
-            Button {
-                id: btnDel
-                objectName: "button"
-                text: "Удалить отработанные фамилии"
-                anchors.centerIn: parent
-                onClicked: {
-                    tableSide.delUpper()
+
+
+            //RowLayout {
+                height:  parent.height
+                Button {
+                    id: btnDel
+                    objectName: "button"
+                    text: "Удалить отработанные фамилии"
+
+                    x: 10
+                    anchors.verticalCenter: parent.verticalCenter
+
+
+                    onClicked: {
+                        tableSide.delUpper()
+                    }
                 }
-            }
+                Button {
+                    id: btnAdd
+
+                    text: "Добавить спортсмена"
+                    x: parent.width - width - 10
+                    anchors.verticalCenter: parent.verticalCenter
+
+                    onClicked: {
+                        grid.addSportsman()
+                    }
+                }
+            //}
         }
 
     }

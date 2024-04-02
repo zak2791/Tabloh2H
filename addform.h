@@ -36,12 +36,12 @@ private:
 
 private slots:
     void addSportsman(void);
-    void mouse(int);
+    void mouse();
     void sel(QItemSelection s, QItemSelection);
     void clearList(void);
 
 signals:
-    void selSportsman(QString, int);
+    void selSportsman(QString);
 
 };
 

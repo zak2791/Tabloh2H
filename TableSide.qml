@@ -5,6 +5,7 @@ Rectangle {
     id: rect
     width: parent.width - 20
     height: parent.height - 20
+    radius: 10
 
     property int heightRows: 30     //высота строк
 
@@ -58,30 +59,50 @@ Rectangle {
         i = (_y - _y % heightRows) / heightRows
         ypos = y % heightRows
         sld.txtYpos = ypos < heightRows / 2 ? -ypos : heightRows - ypos
-        console.log("i = ", i, ' ', "y", ' ', y,  ' ', "grid.contentY", grid.contentY, ' ', "grid.originX",' ',  grid.originX)
-        console.log("rect.height = ", rect.height, "grid.height = ", grid.height, ' ',  "grid.contentHeight = ", grid.contentHeight)
-        if(i < sideModel.rowCount() * 2){
+        console.log("i = ", i, "sideModel.rowCount() = ", sideModel.rowCount())
+        //console.log("rect.height = ", rect.height, "grid.height = ", grid.height, ' ',  "grid.contentHeight = ", grid.contentHeight)
+
+        if(i < sideModel.rowCount() / 2)
             sld.textRed = sideModel.getNameRegion(i * 2)
-            sld.textBlue = sideModel.getNameRegion(i * 2 + 1)
-        }
-        else{
+        else
             sld.textRed = ""
+        if(i <= sideModel.rowCount() / 2 - 1)
+            sld.textBlue = sideModel.getNameRegion(i * 2 + 1)
+        else
             sld.textBlue = ""
-        }
+
+//        if(i < sideModel.rowCount() / 2){
+//            sld.textRed = sideModel.getNameRegion(i * 2)
+//            sld.textBlue = sideModel.getNameRegion(i * 2 + 1)
+//        }
+//        else{
+//            sld.textRed = ""
+//            sld.textBlue = ""
+//        }
         _y = y + heightRows  + 15 + grid.contentY - countRemovedRows * heightRows
         i = (_y - _y % heightRows) / heightRows
         ypos = y % heightRows
         if(!isSeparate){
             sldNext.y = y + heightRows
             sldNext.txtYpos = ypos < heightRows / 2 ? -ypos : heightRows - ypos
-            if(i < sideModel.rowCount() * 2){
+
+            if(i < sideModel.rowCount() / 2)
                 sldNext.textRed = sideModel.getNameRegion(i * 2)
-                sldNext.textBlue = sideModel.getNameRegion(i * 2 + 1)
-            }
-            else{
+            else
                 sldNext.textRed = ""
+            if(i <= sideModel.rowCount() / 2 - 1)
+                sldNext.textBlue = sideModel.getNameRegion(i * 2 + 1)
+            else
                 sldNext.textBlue = ""
-            }
+
+//            if(i < sideModel.rowCount() / 2){
+//                sldNext.textRed = sideModel.getNameRegion(i * 2)
+//                sldNext.textBlue = sideModel.getNameRegion(i * 2 + 1)
+//            }
+//            else{
+//                sldNext.textRed = ""
+//                sldNext.textBlue = ""
+//            }
 
         }
         else{
@@ -89,14 +110,24 @@ Rectangle {
                 if(sldNext.y < y + heightRows){
                     sldNext.y = y + heightRows
                     sldNext.txtYpos = ypos < heightRows / 2 ? -ypos : heightRows - ypos
-                    if(i < sideModel.rowCount() * 2){
+
+                    if(i < sideModel.rowCount() / 2)
                         sldNext.textRed = sideModel.getNameRegion(i * 2)
-                        sldNext.textBlue = sideModel.getNameRegion(i * 2 + 1)
-                    }
-                    else{
+                    else
                         sldNext.textRed = ""
+                    if(i <= sideModel.rowCount() / 2 - 1)
+                        sldNext.textBlue = sideModel.getNameRegion(i * 2 + 1)
+                    else
                         sldNext.textBlue = ""
-                    }
+
+//                    if(i < sideModel.rowCount() / 2){
+//                        sldNext.textRed = sideModel.getNameRegion(i * 2)
+//                        sldNext.textBlue = sideModel.getNameRegion(i * 2 + 1)
+//                    }
+//                    else{
+//                        sldNext.textRed = ""
+//                        sldNext.textBlue = ""
+//                    }
                     if(buttonLeft)
                         isSeparate = false
                 }
@@ -111,42 +142,72 @@ Rectangle {
         i = (_y - _y % heightRows) / heightRows
         ypos = y % heightRows
         sldNext.txtYpos = ypos < heightRows / 2 ? -ypos : heightRows - ypos
-        if(i < sideModel.rowCount() * 2){
+
+        if(i < sideModel.rowCount() / 2)
             sldNext.textRed = sideModel.getNameRegion(i * 2)
-            sldNext.textBlue = sideModel.getNameRegion(i * 2 + 1)
-        }
-        else{
+        else
             sldNext.textRed = ""
+        if(i <= sideModel.rowCount() / 2 - 1)
+            sldNext.textBlue = sideModel.getNameRegion(i * 2 + 1)
+        else
             sldNext.textBlue = ""
-        }
+
+//        if(i < sideModel.rowCount() / 2){
+//            sldNext.textRed = sideModel.getNameRegion(i * 2)
+//            sldNext.textBlue = sideModel.getNameRegion(i * 2 + 1)
+//        }
+//        else{
+//            sldNext.textRed = ""
+//            sldNext.textBlue = ""
+//        }
         _y = y - heightRows + 15 + grid.contentY -  countRemovedRows * heightRows
         i = (_y - _y % heightRows) / heightRows
         ypos = y % heightRows
         if(!isSeparate){
             sld.y = y - heightRows
             sld.txtYpos = ypos < heightRows / 2 ? -ypos : heightRows - ypos
-            if(i < sideModel.rowCount() * 2){
+
+            if(i < sideModel.rowCount() / 2)
                 sld.textRed = sideModel.getNameRegion(i * 2)
-                sld.textBlue = sideModel.getNameRegion(i * 2 + 1)
-            }
-            else{
+            else
                 sld.textRed = ""
+            if(i <= sideModel.rowCount() / 2 - 1)
+                sld.textBlue = sideModel.getNameRegion(i * 2 + 1)
+            else
                 sld.textBlue = ""
-            }
+
+//            if(i < sideModel.rowCount() / 2){
+//                sld.textRed = sideModel.getNameRegion(i * 2)
+//                sld.textBlue = sideModel.getNameRegion(i * 2 + 1)
+//            }
+//            else{
+//                sld.textRed = ""
+//                sld.textBlue = ""
+//            }
         }
         else{
             if(previewYNext > y){   //движение вверх
                 if(sld.y > y - heightRows){
                     sld.y = y - heightRows
                     sld.txtYpos = ypos < heightRows / 2 ? -ypos : heightRows - ypos
-                    if(i < sideModel.rowCount() * 2){
+
+                    if(i < sideModel.rowCount() / 2)
                         sld.textRed = sideModel.getNameRegion(i * 2)
-                        sld.textBlue = sideModel.getNameRegion(i * 2 + 1)
-                    }
-                    else{
+                    else
                         sld.textRed = ""
+                    if(i <= sideModel.rowCount() / 2 - 1)
+                        sld.textBlue = sideModel.getNameRegion(i * 2 + 1)
+                    else
                         sld.textBlue = ""
-                    }
+
+//                    if(i < sideModel.rowCount() / 2){
+//                        sld.textRed = sideModel.getNameRegion(i * 2)
+//                        sld.textBlue = sideModel.getNameRegion(i * 2 + 1)
+//                    }
+//                    else{
+//                        sld.textRed = ""
+//                        sld.textBlue = ""
+//                    }
                     if(buttonLeft)
                         isSeparate = false
                 }
@@ -191,16 +252,30 @@ Rectangle {
 
 
         function updateSlider(){
-            console.log("update")
             let _y, i;
+
             _y = sld.y;
             i = (_y - _y % heightRows) / heightRows
-            sld.textRed = sideModel.getNameRegion(i * 2)
-            sld.textBlue = sideModel.getNameRegion(i * 2 + 1)
+            //console.log("update", i, sideModel.rowCount() / 2)
+            if(i < sideModel.rowCount() / 2)
+                sld.textRed = sideModel.getNameRegion(i * 2)
+            else
+                sld.textRed = ""
+            if(i <= sideModel.rowCount() / 2 - 1)
+                sld.textBlue = sideModel.getNameRegion(i * 2 + 1)
+            else
+                sld.textBlue = ""
+
             _y = sldNext.y;
             i = (_y - _y % heightRows) / heightRows
-            sldNext.textRed = sideModel.getNameRegion(i * 2)
-            sldNext.textBlue = sideModel.getNameRegion(i * 2 + 1)
+            if(i < sideModel.rowCount() / 2)
+                sldNext.textRed = sideModel.getNameRegion(i * 2)
+            else
+                sldNext.textRed = ""
+            if(i <= sideModel.rowCount() / 2 - 1)
+                sldNext.textBlue = sideModel.getNameRegion(i * 2 + 1)
+            else
+                sldNext.textBlue = ""
         }
 
         anchors.fill: parent
@@ -252,13 +327,13 @@ Rectangle {
 
         onFlickingChanged: {
             //updateSlider()
-            console.log("onFlickingChanged")
+            //console.log("onFlickingChanged")
         }
 
         onContentYChanged: {
             //if(contentY)
             //    contentY = 0
-            console.log("onContentYChanged = ", contentY, " currentYSldider = ", currentYSldider)
+            //console.log("onContentYChanged = ", contentY, " currentYSldider = ", currentYSldider)
             sld.y = 0; //currentYSldider - contentY
             sldNext.y = heightRows; //currentYSldiderNext - contentY
             //updateSlider()
@@ -275,8 +350,16 @@ Rectangle {
                     contentY = contentY - remains + heightRows
                 }
             }
-            console.log("end", ' ', contentY, ' ', remains)
+            //console.log("end", ' ', contentY, ' ', remains)
         }
+
+        onHeightChanged: {
+            sld.maxY = height - heightRows * 2
+            sldNext.maxY = height - heightRows
+            sliderYChanged(0)
+            sliderYChangedNext(heightRows)
+        }
+
         SliderNames{
             id: sld
             objectName: "sld"

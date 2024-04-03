@@ -201,7 +201,7 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 
     choosingNames = new ChoosingNames;
 
-      = new ListFamily(this);
+    lf = new ListFamily(this);
     lf->setObjectName("lf");
 
     choosingNames->setNames(lf->getSportsmens());

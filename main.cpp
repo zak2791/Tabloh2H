@@ -62,7 +62,7 @@ int main(int argc, char** argv){
 	}else {
 		QMessageBox::critical(0,
 							  "File open error",
-							  "Can not open the script file",
+                              " Can not open the script file",
 							  QMessageBox::Yes);
 	}
     //qDebug()<<333;

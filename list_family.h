@@ -22,10 +22,15 @@ public:
     QStringList lAge;
     QStringList lWeight;
 
-    Document* doc;
+    //Document* doc;
 	
-	QList<QString> l;
+    //QList<QString> l;
 
     QList<QString> sportsmens;
+
+private:
+    void readFileSportsmens(void);
+
+    QWidget* p;
 
 };

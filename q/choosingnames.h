@@ -47,7 +47,7 @@ private slots:
     //void fromSideToAllManyItems(int);
 
 signals:
-    void close(QString, QString, QString, QString, QString, QString, QString, QString);
+    void close(QString, QString, QString, QString, QString, QString);
 
 };
 

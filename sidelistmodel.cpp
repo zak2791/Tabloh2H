@@ -95,3 +95,20 @@ Q_INVOKABLE QString SideListModel::getNameRegion (int i) {
 
 }
 
+Q_INVOKABLE QString SideListModel::getAge (int i) {
+    QModelIndex mIndex = index(i, 0, QModelIndex());
+
+    return data(QModelIndex(mIndex), AgeRole).toString();
+}
+
+Q_INVOKABLE QString SideListModel::getWeight (int i) {
+    QModelIndex mIndex = index(i, 0, QModelIndex());
+
+    return data(QModelIndex(mIndex), WeightRole).toString();
+}
+
+void SideListModel::clearModel(){
+    removeRows(0, rowCount());
+    m_list.clear();
+}
+

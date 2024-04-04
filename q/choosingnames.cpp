@@ -73,12 +73,7 @@ ChoosingNames::ChoosingNames(QWidget *parent) : QWidget(parent)
 }
 
 void ChoosingNames::setNames(QStringList list){
-    model->clearModel();
     model->setList(list);
-    slmodel->clearModel();
-    QMetaObject::invokeMethod(objGridSide, "updateSlider");
-    proxyAge->setFilterRegExp("");
-    proxyWeight->setFilterRegExp("");
 }
 
 void ChoosingNames::setAge(QStringList list){
@@ -127,14 +122,7 @@ void ChoosingNames::closeEvent(QCloseEvent *){
         NameBlueNext = strBlueNext[0].toUpper();
     }
 
-    QString age = slider->property("ageRed").toString();
-    if(age == "")
-        age = slider->property("ageBlue").toString();
-
-    QString weight = slider->property("weightRed").toString();
-    if(weight == "")
-        weight = slider->property("weightBlue").toString();
-    emit close(NameRed, RegionRed, NameBlue, RegionBlue, NameRedNext, NameBlueNext, age, weight);
+    emit close(NameRed, RegionRed, NameBlue, RegionBlue, NameRedNext, NameBlueNext);
 }
 
 void ChoosingNames::choiceAge(QString age){
@@ -192,3 +180,19 @@ void ChoosingNames::addSportsman(QString sportsman){
 void ChoosingNames::removeSportsman(int){
 
 }
+
+//void ChoosingNames::fromSideToAllManyItems(int count){
+//    QModelIndex mod;
+//    for(int i = 0; i < count; i++){
+//        mod = slmodel->index(i, 0, QModelIndex());
+//        QString str = slmodel->data(mod, model->NameRole).toString()   + "\n" +
+//                slmodel->data(mod, model->RegionRole).toString() + "\n" +
+//                slmodel->data(mod, model->AgeRole).toString()    + "\n" +
+//                slmodel->data(mod, model->WeightRole).toString();
+//        model->insertData(str);
+//    }
+//    slmodel->removeData(0, count);
+//    proxyName->sort(0);
+//    qDebug()<<"fromSideToAllManyItems";
+//    QMetaObject::invokeMethod(objGridSide, "updateSlider");
+//}

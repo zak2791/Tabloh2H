@@ -77,6 +77,11 @@ void MainListModel::moveItem(int item){
     removeRows(item, 1);
 }
 
+void MainListModel::clearModel(){
+    removeRows(0, rowCount());
+    m_list.clear();
+}
+
 void MainListModel::insertData(QString list){
     m_list.append(list);
     insertRows(m_list.count() - 1, 1);

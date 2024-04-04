@@ -9,6 +9,12 @@ Item {
     property real txtYpos
     property real heightRow
 
+    property string ageRed: ""
+    property string ageBlue: ""
+
+    property string weightRed: ""
+    property string weightBlue: ""
+
     property real maxY: 0
 
     function setText(txtR, txtB){

@@ -208,7 +208,8 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     choosingNames->setAge(lf->lAge);
     choosingNames->setWeight(lf->lWeight);
 
-    connect(choosingNames, SIGNAL(close(QString, QString, QString, QString, QString, QString)), this, SLOT(closeWinName(QString, QString, QString, QString, QString, QString)));
+    connect(choosingNames, SIGNAL(close(QString, QString, QString, QString, QString, QString, QString, QString)),
+                this, SLOT(closeWinName(QString, QString, QString, QString, QString, QString, QString, QString)));
 
 	formView = new QWidget;
     ui.setupUi(formView);
@@ -845,13 +846,19 @@ void PCScreen::resetTablo(){
     QApplication::sendEvent(this, key_press);
 }
 
-void PCScreen::closeWinName(QString redName, QString redRegion, QString blueName, QString blueRegion, QString redNameNext, QString blueNameNext){
+void PCScreen::closeWinName(QString redName, QString redRegion, QString blueName,
+                            QString blueRegion, QString redNameNext, QString blueNameNext,
+                            QString Age, QString Weight){
     fam_red->Text(redName);
     reg_red->Text(redRegion);
     fam_blue->Text(blueName);
     reg_blue->Text(blueRegion);
     fam_next_red->Text(redNameNext);
     fam_next_blue->Text(blueNameNext);
+    age->setText(Age);
+    cat->setText(Weight);
+    tvScreen->age->setText(Age);
+    tvScreen->cat->setText(Weight);
 }
 
 void PCScreen::tvFullScreen(bool b){
@@ -1027,6 +1034,9 @@ void PCScreen::HIDE(QString s1, QString s2, QString s3, QString s4){
 }
 
 void PCScreen::newListSportsmens(){
+    choosingNames->setNames(lf->getSportsmens());
+    choosingNames->setAge(lf->lAge);
+    choosingNames->setWeight(lf->lWeight);
 }
 
 void PCScreen::showListSportsmens(){

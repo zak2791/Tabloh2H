@@ -138,7 +138,7 @@ private slots:
     void closeTablo(void);
     void resetTablo(void);
 
-    void closeWinName(QString, QString, QString, QString, QString, QString);
+    void closeWinName(QString, QString, QString, QString, QString, QString, QString, QString);
 
     void tvFullScreen(bool);
 

@@ -52,6 +52,8 @@ public:
 
     void insertData(QString);
 
+    void clearModel(void);
+
 public slots:
     void moveItem(int);
 

@@ -56,6 +56,11 @@ public:
     void removeData(int, int count = 1);
     void insertData(QString);
     Q_INVOKABLE QString getNameRegion(int);
+    Q_INVOKABLE QString getAge(int);
+    Q_INVOKABLE QString getWeight(int);
+
+    void clearModel(void);
+
     //Q_INVOKABLE int get(int);
 public slots:
     void swapData(int, int);

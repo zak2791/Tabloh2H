@@ -46,7 +46,6 @@ int main(int argc, char** argv){
 		foreach(QObject* pobj, lst) {
 			sw = se.newQObject(pobj);
 			se.globalObject().setProperty(pobj->objectName(), sw);
-            //qDebug()<<pobj->objectName();
 		}
 		JSTools* pjt = new JSTools;
 		sw = se.newQObject(pjt);

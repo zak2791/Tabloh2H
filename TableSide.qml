@@ -62,23 +62,25 @@ Rectangle {
         console.log("i = ", i, "sideModel.rowCount() = ", sideModel.rowCount())
         //console.log("rect.height = ", rect.height, "grid.height = ", grid.height, ' ',  "grid.contentHeight = ", grid.contentHeight)
 
-        if(i < sideModel.rowCount() / 2)
+        if(i < sideModel.rowCount() / 2){
             sld.textRed = sideModel.getNameRegion(i * 2)
-        else
+            sld.ageRed = sideModel.getAge(i * 2)
+            sld.weightRed = sideModel.getWeight(i * 2)
+        }else{
             sld.textRed = ""
-        if(i <= sideModel.rowCount() / 2 - 1)
+            sld.ageRed = ""
+            sld.weightRed = ""
+        }
+        if(i <= sideModel.rowCount() / 2 - 1){
             sld.textBlue = sideModel.getNameRegion(i * 2 + 1)
-        else
+            sld.ageBlue = sideModel.getAge(i * 2 + 1)
+            sld.weightBlue = sideModel.getWeight(i * 2 + 1)
+        }else{
             sld.textBlue = ""
+            sld.ageBlue = ""
+            sld.weightBlue = ""
+        }
 
-//        if(i < sideModel.rowCount() / 2){
-//            sld.textRed = sideModel.getNameRegion(i * 2)
-//            sld.textBlue = sideModel.getNameRegion(i * 2 + 1)
-//        }
-//        else{
-//            sld.textRed = ""
-//            sld.textBlue = ""
-//        }
         _y = y + heightRows  + 15 + grid.contentY - countRemovedRows * heightRows
         i = (_y - _y % heightRows) / heightRows
         ypos = y % heightRows
@@ -94,15 +96,6 @@ Rectangle {
                 sldNext.textBlue = sideModel.getNameRegion(i * 2 + 1)
             else
                 sldNext.textBlue = ""
-
-//            if(i < sideModel.rowCount() / 2){
-//                sldNext.textRed = sideModel.getNameRegion(i * 2)
-//                sldNext.textBlue = sideModel.getNameRegion(i * 2 + 1)
-//            }
-//            else{
-//                sldNext.textRed = ""
-//                sldNext.textBlue = ""
-//            }
 
         }
         else{
@@ -120,14 +113,6 @@ Rectangle {
                     else
                         sldNext.textBlue = ""
 
-//                    if(i < sideModel.rowCount() / 2){
-//                        sldNext.textRed = sideModel.getNameRegion(i * 2)
-//                        sldNext.textBlue = sideModel.getNameRegion(i * 2 + 1)
-//                    }
-//                    else{
-//                        sldNext.textRed = ""
-//                        sldNext.textBlue = ""
-//                    }
                     if(buttonLeft)
                         isSeparate = false
                 }
@@ -152,14 +137,6 @@ Rectangle {
         else
             sldNext.textBlue = ""
 
-//        if(i < sideModel.rowCount() / 2){
-//            sldNext.textRed = sideModel.getNameRegion(i * 2)
-//            sldNext.textBlue = sideModel.getNameRegion(i * 2 + 1)
-//        }
-//        else{
-//            sldNext.textRed = ""
-//            sldNext.textBlue = ""
-//        }
         _y = y - heightRows + 15 + grid.contentY -  countRemovedRows * heightRows
         i = (_y - _y % heightRows) / heightRows
         ypos = y % heightRows
@@ -167,23 +144,25 @@ Rectangle {
             sld.y = y - heightRows
             sld.txtYpos = ypos < heightRows / 2 ? -ypos : heightRows - ypos
 
-            if(i < sideModel.rowCount() / 2)
+            if(i < sideModel.rowCount() / 2){
                 sld.textRed = sideModel.getNameRegion(i * 2)
-            else
+                sld.ageRed = sideModel.getAge(i * 2)
+                sld.weightRed = sideModel.getWeight(i * 2)
+            }else{
                 sld.textRed = ""
-            if(i <= sideModel.rowCount() / 2 - 1)
+                sld.ageRed = ""
+                sld.weightRed = ""
+            }
+            if(i <= sideModel.rowCount() / 2 - 1){
                 sld.textBlue = sideModel.getNameRegion(i * 2 + 1)
-            else
+                sld.ageBlue = sideModel.getAge(i * 2 + 1)
+                sld.weightBlue = sideModel.getWeight(i * 2 + 1)
+            }else{
                 sld.textBlue = ""
+                sld.ageBlue = ""
+                sld.weightBlue = ""
+            }
 
-//            if(i < sideModel.rowCount() / 2){
-//                sld.textRed = sideModel.getNameRegion(i * 2)
-//                sld.textBlue = sideModel.getNameRegion(i * 2 + 1)
-//            }
-//            else{
-//                sld.textRed = ""
-//                sld.textBlue = ""
-//            }
         }
         else{
             if(previewYNext > y){   //движение вверх
@@ -191,23 +170,25 @@ Rectangle {
                     sld.y = y - heightRows
                     sld.txtYpos = ypos < heightRows / 2 ? -ypos : heightRows - ypos
 
-                    if(i < sideModel.rowCount() / 2)
+                    if(i < sideModel.rowCount() / 2){
                         sld.textRed = sideModel.getNameRegion(i * 2)
-                    else
+                        sld.ageRed = sideModel.getAge(i * 2)
+                        sld.weightRed = sideModel.getWeight(i * 2)
+                    }else{
                         sld.textRed = ""
-                    if(i <= sideModel.rowCount() / 2 - 1)
+                        sld.ageRed = ""
+                        sld.weightRed = ""
+                    }
+                    if(i <= sideModel.rowCount() / 2 - 1){
                         sld.textBlue = sideModel.getNameRegion(i * 2 + 1)
-                    else
+                        sld.ageBlue = sideModel.getAge(i * 2 + 1)
+                        sld.weightBlue = sideModel.getWeight(i * 2 + 1)
+                    }else{
                         sld.textBlue = ""
+                        sld.ageBlue = ""
+                        sld.weightBlue = ""
+                    }
 
-//                    if(i < sideModel.rowCount() / 2){
-//                        sld.textRed = sideModel.getNameRegion(i * 2)
-//                        sld.textBlue = sideModel.getNameRegion(i * 2 + 1)
-//                    }
-//                    else{
-//                        sld.textRed = ""
-//                        sld.textBlue = ""
-//                    }
                     if(buttonLeft)
                         isSeparate = false
                 }
@@ -257,14 +238,24 @@ Rectangle {
             _y = sld.y;
             i = (_y - _y % heightRows) / heightRows
             //console.log("update", i, sideModel.rowCount() / 2)
-            if(i < sideModel.rowCount() / 2)
+            if(i < sideModel.rowCount() / 2){
                 sld.textRed = sideModel.getNameRegion(i * 2)
-            else
+                sld.ageRed = sideModel.getAge(i * 2)
+                sld.weightRed = sideModel.getWeight(i * 2)
+            }else{
                 sld.textRed = ""
-            if(i <= sideModel.rowCount() / 2 - 1)
+                sld.ageRed = ""
+                sld.weightRed = ""
+            }
+            if(i <= sideModel.rowCount() / 2 - 1){
                 sld.textBlue = sideModel.getNameRegion(i * 2 + 1)
-            else
+                sld.ageBlue = sideModel.getAge(i * 2 + 1)
+                sld.weightBlue = sideModel.getWeight(i * 2 + 1)
+            }else{
                 sld.textBlue = ""
+                sld.ageBlue = ""
+                sld.weightBlue = ""
+            }
 
             _y = sldNext.y;
             i = (_y - _y % heightRows) / heightRows

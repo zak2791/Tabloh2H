@@ -30,6 +30,7 @@ HEADERS += \
     pcscreen.h \
     player.h \
     playerviewer.h \
+    playerviewertv.h \
     plus.h \
     rate.h \
     sidelistmodel.h \
@@ -61,6 +62,7 @@ SOURCES += \
     pcscreen.cpp \
     player.cpp \
     playerviewer.cpp \
+    playerviewertv.cpp \
     plus.cpp \
     rate.cpp \
     sidelistmodel.cpp \
@@ -111,5 +113,5 @@ include(./QXlsx.pri)
 RESOURCES += \
     res.qrc
 
-DEFINES += APP_LAUNCH_FROM_IDE
+#DEFINES += APP_LAUNCH_FROM_IDE
 

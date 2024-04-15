@@ -143,7 +143,7 @@
    <property name="geometry">
     <rect>
      <x>17</x>
-     <y>220</y>
+     <y>230</y>
      <width>361</width>
      <height>20</height>
     </rect>
@@ -237,7 +237,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>240</y>
+     <y>250</y>
      <width>361</width>
      <height>20</height>
     </rect>
@@ -253,7 +253,7 @@
    <property name="geometry">
     <rect>
      <x>19</x>
-     <y>270</y>
+     <y>280</y>
      <width>361</width>
      <height>91</height>
     </rect>
@@ -434,15 +434,30 @@
     <rect>
      <x>20</x>
      <y>200</y>
-     <width>361</width>
-     <height>20</height>
+     <width>171</width>
+     <height>31</height>
     </rect>
    </property>
    <property name="text">
-    <string>Табло на телевизоре во весь экран</string>
+    <string>Табло на телевизоре 
+во весь экран</string>
    </property>
    <property name="checked">
     <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="cbShowOnTv">
+   <property name="geometry">
+    <rect>
+     <x>210</x>
+     <y>196</y>
+     <width>171</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Показывать видеоповторы
+на телевизоре</string>
    </property>
   </widget>
  </widget>

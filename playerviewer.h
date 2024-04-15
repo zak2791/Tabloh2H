@@ -56,6 +56,7 @@ private slots:
 
 signals:
     void sigClose(void);
+    void sigImage(QImage);
 
 };
 

@@ -15,6 +15,8 @@
 #include "endtime.h"
 #include "logofrb.h"
 
+#include "playerviewertv.h"
+
 #include <QSvgRenderer>
 #include <QPainter>
 
@@ -54,6 +56,8 @@ public:
 	NP * np_red;
 	NP * np_blue;
 
+    PlayerViewerTV* player;
+
     FirstLastName * fam_red;
     FirstLastName * fam_blue;
     Fam * fam_next_red;
@@ -88,6 +92,12 @@ public:
 												//			 1-чёрный фон с рамками,
 												//			 2-чёрный фон без рамок
 
+    void showPlayer(void);
+
+public slots:
+    void hidePlayer(void);
+    void setPlayerEnabled(bool);
+
 private:
 	
 	virtual void paintEvent(QPaintEvent *);
@@ -99,7 +109,6 @@ private:
 	QEvent * ev_R;
 	int minimum_height_family;
 	int minimum_height_region;
-
-
+    bool flagReplayOnTV = false;    //флаг показа видеоповторов на телевизоре
 
 };

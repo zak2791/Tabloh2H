@@ -514,6 +514,8 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     setSec(settings->value("height", 3).toInt());
     settings->endGroup();
 
+    connect(ui.cbShowOnTv, SIGNAL(toggled(bool)), tvScreen, SLOT(setPlayerEnabled(bool)));
+
     setSize();
     Variant(0);
 
@@ -687,6 +689,9 @@ void PCScreen::PlaySlowMotion(){
                 return;
             slowMotionPlayer = new PlayerViewer("camera1/" + dirList.at(0));
             connect(slowMotionPlayer, SIGNAL(sigClose()), this, SLOT(closePlayer()));
+            connect(slowMotionPlayer, SIGNAL(sigClose()), tvScreen, SLOT(hidePlayer()));
+            connect(slowMotionPlayer, SIGNAL(sigImage(QImage)), tvScreen->player, SLOT(draw_image(QImage)));
+            tvScreen->showPlayer();
             btnPlayLastWithSound1->setEnabled(false);
             btnPlayLastSlowMotion1->setEnabled(false);
             btnPlayLastWithSound2->setEnabled(false);
@@ -699,6 +704,9 @@ void PCScreen::PlaySlowMotion(){
                 return;
             slowMotionPlayer = new PlayerViewer("camera2/" + dirList.at(0));
             connect(slowMotionPlayer, SIGNAL(sigClose()), this, SLOT(closePlayer()));
+            connect(slowMotionPlayer, SIGNAL(sigClose()), tvScreen, SLOT(hidePlayer()));
+            connect(slowMotionPlayer, SIGNAL(sigImage(QImage)), tvScreen->player, SLOT(draw_image(QImage)));
+            tvScreen->showPlayer();
             btnPlayLastWithSound1->setEnabled(false);
             btnPlayLastSlowMotion1->setEnabled(false);
             btnPlayLastWithSound2->setEnabled(false);
@@ -714,6 +722,9 @@ void PCScreen::PlaySelectedFile(){
         return;
     slowMotionPlayer = new PlayerViewer(file);
     connect(slowMotionPlayer, SIGNAL(sigClose()), this, SLOT(closePlayer()));
+    connect(slowMotionPlayer, SIGNAL(sigClose()), tvScreen, SLOT(hidePlayer()));
+    connect(slowMotionPlayer, SIGNAL(sigImage(QImage)), tvScreen->player, SLOT(draw_image(QImage)));
+    tvScreen->showPlayer();
 }
 
 void PCScreen::closePlayer(){

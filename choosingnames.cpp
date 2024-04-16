@@ -10,6 +10,8 @@ ChoosingNames::ChoosingNames(QWidget *parent) : QWidget(parent)
 {
     quickWidget = new QQuickWidget(this) ;
     quickWidget->setSource(QUrl("qrc:/ChoosingNames.qml"));
+    quickWidget->setResizeMode(QQuickWidget::SizeRootObjectToView);
+
     model = new MainListModel;
     QQmlContext* pcon = quickWidget->rootContext();
 
@@ -98,8 +100,7 @@ void ChoosingNames::setWeight(QStringList list){
 
 
 void ChoosingNames::resizeEvent(QResizeEvent* e){
-    quickWidget->rootObject()->setWidth(e->size().width());
-    quickWidget->rootObject()->setHeight(e->size().height());
+    quickWidget->resize(e->size());
 }
 
 void ChoosingNames::closeEvent(QCloseEvent *){

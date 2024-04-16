@@ -13,7 +13,7 @@ int main(int argc, char** argv){
 
     //QCoreApplication::setOrganizationName("zak2791");
     //QCoreApplication::setApplicationName("Tablo H2H");
-
+    qDebug()<<"main";
     MainWindow* mWin = new MainWindow;
 
     PCScreen * pwgt = new PCScreen(mWin);

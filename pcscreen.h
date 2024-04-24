@@ -8,6 +8,7 @@
 #include "rate.h"
 #include "ui_frmTime.h"
 #include "ui_FormView.h"
+#include "ui_frmTv.h"
 #include "fam_reg.h"
 #include "plus.h"
 #include "tvscreen.h"
@@ -90,6 +91,7 @@ public slots:
     void newListSportsmens(void);
     void sbrosLogo(void);
     void Variant(int);
+    void setTvScreenGeometry(void);
 
 private slots:
     void setCam(void);
@@ -139,8 +141,12 @@ private slots:
     void resetTablo(void);
 
     void closeWinName(QString, QString, QString, QString, QString, QString, QString, QString);
-
-    void tvFullScreen(bool);
+    void tvXchange(int);
+    void tvYchange(int);
+    void tvWchange(int);
+    void tvHchange(int);
+    void tvReset(void);
+    //void tvFullScreen(bool);
 
 private:
     //QLabel* lblCpuUsage;
@@ -150,11 +156,18 @@ private:
 	QWidget * formView;
     QWidget * frmTime;
     LCDStopwatch * sec_doctor;
+    QWidget* frmTvSettings;
+    Ui::frmTV uiTV;
 
 	virtual void paintEvent(QPaintEvent *);
     virtual void closeEvent(QCloseEvent*);
     virtual void keyPressEvent(QKeyEvent *);
     virtual void resizeEvent(QResizeEvent *);
+
+    int screenTop=0;
+    int screenLeft=0;
+    int screenWidth=0;
+    int screenHeight=0;
 
     void setSize(void);
 

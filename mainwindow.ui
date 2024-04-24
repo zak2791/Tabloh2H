@@ -42,6 +42,7 @@
     </widget>
     <addaction name="select"/>
     <addaction name="winSettings"/>
+    <addaction name="tvSettings"/>
    </widget>
    <widget class="QMenu" name="time">
     <property name="title">
@@ -117,6 +118,11 @@
   <action name="about">
    <property name="text">
     <string>О программе</string>
+   </property>
+  </action>
+  <action name="tvSettings">
+   <property name="text">
+    <string>Настройка ТВ</string>
    </property>
   </action>
  </widget>

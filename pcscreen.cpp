@@ -224,7 +224,7 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     connect(ui.btnRegDown,      SIGNAL(clicked()),      this, SLOT(changeSize()));
     connect(ui.btnRegUp,        SIGNAL(clicked()),      this, SLOT(changeSize()));
 
-    connect(ui.cbFullScreen,    SIGNAL(toggled(bool)),  this, SLOT(tvFullScreen(bool)));
+    //connect(ui.cbFullScreen,    SIGNAL(toggled(bool)),  this, SLOT(tvFullScreen(bool)));
 
     ui.cmbFont->addItems({"10", "12", "14", "16", "18", "20", "23", "26", "29", "34", "39", "45", "50", "55", "60",
                           "65", "70", "75", "80", "85", "90", "100", "110", "120", "130", "140", "150", "170", "180", "190", "200", "210", "220", "230"});
@@ -393,16 +393,18 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 		QMessageBox::Ok);
 	}
 
+        frmTvSettings = new QWidget;
+        uiTV.setupUi(frmTvSettings);
+        connect(mainwin->tvSettings, SIGNAL(triggered()), frmTvSettings, SLOT(show()));
+        connect(uiTV.sbX, SIGNAL(valueChanged(int)), this, SLOT(tvXchange(int)));
+        connect(uiTV.sbY, SIGNAL(valueChanged(int)), this, SLOT(tvYchange(int)));
+        connect(uiTV.sbW, SIGNAL(valueChanged(int)), this, SLOT(tvWchange(int)));
+        connect(uiTV.sbH, SIGNAL(valueChanged(int)), this, SLOT(tvHchange(int)));
+        connect(uiTV.btnReset, SIGNAL(clicked()), this, SLOT(tvReset()));
+
         tvScreen = new TVScreen;
 
-    if(QGuiApplication::screens().count() == 1)
-        tvScreen->setGeometry(0, 0, QApplication::desktop()->availableGeometry(this).width() / 2, QApplication::desktop()->availableGeometry(this).height() / 2);
-    else{
-        tvScreen->setGeometry(width(), 0, 100, height());
-        tvScreen->setGeometry(QApplication::desktop()->availableGeometry(this).right(),
-                        0, QApplication::desktop()->availableGeometry(tvScreen).width(),
-                        QApplication::desktop()->availableGeometry(tvScreen).height());
-    }
+        setTvScreenGeometry();
 
         tvScreen->show();
 
@@ -872,12 +874,12 @@ void PCScreen::closeWinName(QString redName, QString redRegion, QString blueName
     tvScreen->cat->setText(Weight);
 }
 
-void PCScreen::tvFullScreen(bool b){
-    if(b)
-        tvScreen->showFullScreen();
-    else
-        tvScreen->showNormal();
-}
+//void PCScreen::tvFullScreen(bool b){
+//    if(b)
+//        tvScreen->showFullScreen();
+//    else
+//        tvScreen->showNormal();
+//}
 
 void PCScreen::resizeEvent(QResizeEvent *){
     minimum_height = (height() - 12) / 42;
@@ -1233,4 +1235,49 @@ void PCScreen::Variant(int variant){
         lbl->setVisible(true);
         cbAddDisp->setVisible(true);
     }
+}
+
+void PCScreen::setTvScreenGeometry(){
+
+    if(QGuiApplication::screens().count() == 1)
+        tvScreen->setGeometry(screenLeft, screenTop, QApplication::desktop()->availableGeometry(this).width() / 2 + screenWidth,
+                                                     QApplication::desktop()->availableGeometry(this).height() / 2 + screenHeight);
+    else{
+        tvScreen->setGeometry(width(), 0, 100, height());
+        tvScreen->setGeometry(QApplication::desktop()->availableGeometry(this).right() + screenLeft, screenTop,
+                              QApplication::desktop()->availableGeometry(tvScreen).width() + screenWidth,
+                              QApplication::desktop()->availableGeometry(tvScreen).height() + screenHeight);
+    }
+}
+
+void PCScreen::tvXchange(int x){
+    screenLeft = x;
+    setTvScreenGeometry();
+}
+
+void PCScreen::tvYchange(int y){
+    screenTop = y;
+    setTvScreenGeometry();
+}
+
+void PCScreen::tvWchange(int w){
+    screenWidth = w;
+    setTvScreenGeometry();
+}
+
+void PCScreen::tvHchange(int h){
+    screenHeight = h;
+    setTvScreenGeometry();
+}
+
+void PCScreen::tvReset(){
+    screenLeft = 0;
+    screenTop = 0;
+    screenWidth = 0;
+    screenHeight = 0;
+    uiTV.sbX->setValue(0);
+    uiTV.sbY->setValue(0);
+    uiTV.sbW->setValue(0);
+    uiTV.sbH->setValue(0);
+    setTvScreenGeometry();
 }

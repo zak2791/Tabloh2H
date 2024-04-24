@@ -429,35 +429,17 @@
     <enum>Qt::Vertical</enum>
    </property>
   </widget>
-  <widget class="QCheckBox" name="cbFullScreen">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>200</y>
-     <width>171</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Табло на телевизоре 
-во весь экран</string>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-  </widget>
   <widget class="QCheckBox" name="cbShowOnTv">
    <property name="geometry">
     <rect>
-     <x>210</x>
+     <x>20</x>
      <y>196</y>
-     <width>171</width>
+     <width>361</width>
      <height>41</height>
     </rect>
    </property>
    <property name="text">
-    <string>Показывать видеоповторы
-на телевизоре</string>
+    <string>Показывать видеоповторы на телевизоре</string>
    </property>
   </widget>
  </widget>

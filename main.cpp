@@ -11,9 +11,6 @@
 int main(int argc, char** argv){
     QApplication app(argc, argv);
 
-    //QCoreApplication::setOrganizationName("zak2791");
-    //QCoreApplication::setApplicationName("Tablo H2H");
-    qDebug()<<"main";
     MainWindow* mWin = new MainWindow;
 
     PCScreen * pwgt = new PCScreen(mWin);
@@ -25,6 +22,8 @@ int main(int argc, char** argv){
     QObject::connect(mWin, SIGNAL(newFile()), pwgt, SLOT(newListSportsmens()));
     QObject::connect(mWin, SIGNAL(variant(int)), pwgt, SLOT(Variant(int)));
 
+
+
 	QJSEngine se;
 
 #ifdef APP_LAUNCH_FROM_IDE
@@ -32,8 +31,6 @@ int main(int argc, char** argv){
 #else
     QFile  file("bin/script.js");
 #endif
-	
-
 
     if (file.open(QFile::ReadOnly)) {
 
@@ -64,7 +61,7 @@ int main(int argc, char** argv){
                               " Can not open the script file",
 							  QMessageBox::Yes);
 	}
-    //qDebug()<<333;
+
 	return app.exec();
 }
 

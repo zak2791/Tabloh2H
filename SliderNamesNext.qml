@@ -11,6 +11,13 @@ Item {
 
     property real maxY: 0
 
+    property real textOffset // heightRow - 42
+    property int szFont
+
+    function setTextOffset(){
+        textOffset = heightRow / 2 - txtRed.contentHeight / 2 - 5
+    }
+
     width: parent.width
     height: heightRow + 1
     x: 0
@@ -34,19 +41,27 @@ Item {
             radius: 10
             clip: true
             Rectangle{
+                x: parent.width / 4
+                y: 0
+                width: parent.width / 2
+                height: parent.height
+                color: "khaki"
+            }
+            Rectangle{
                 x: 0
                 y: 0
                 width: parent.width / 2
                 height: parent.height
                 radius: 10
+                color: "khaki"
                 Text {
                     id: txtRed
                     width: parent.width
                     color: "red"
                     text: textRed
-                    font.pixelSize: 12
+                    font.pixelSize: szFont
                     horizontalAlignment: Text.AlignHCenter
-                    y: txtYpos + 2
+                    y: txtYpos + textOffset
                 }
             }
             Rectangle{
@@ -55,15 +70,15 @@ Item {
                 width: parent.width / 2
                 height: parent.height
                 radius: 10
+                color: "khaki"
                 Text {
                     id: txtBlue
-                    x: 15
                     width: parent.width
                     color: "blue"
                     text: textBlue
-                    font.pixelSize: 14
+                    font.pixelSize: szFont
                     horizontalAlignment: Text.AlignHCenter
-                    y: txtYpos + 2
+                    y: txtYpos + textOffset
                 }
             }
             Canvas {

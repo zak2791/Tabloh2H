@@ -7,7 +7,8 @@ Rectangle {
     height: parent.height - 20
     radius: 10
 
-    property int heightRows: 30     //высота строк
+    property int heightRows: 60     //высота строк
+    property int sizeFont: 14       //размер шрифта
 
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.verticalCenter: parent.verticalCenter
@@ -25,6 +26,18 @@ Rectangle {
 
     signal sliderReleased(int slider)
     signal sliderPressed(int button)
+
+    onHeightRowsChanged: {
+        grid.updateSlider()
+        sld.y = 0
+        sldNext.y = heightRows
+    }
+
+    onSizeFontChanged: {
+        sld.szFont = sizeFont
+        sldNext.szFont = sizeFont
+        grid.updateSlider()
+    }
 
     onSliderPressed: {
         if(button === Qt.RightButton){
@@ -55,11 +68,12 @@ Rectangle {
 
     onSliderYChanged: {
         let _y, i, ypos;
-        _y = y + 15 + grid.contentY - countRemovedRows * heightRows;
+        _y = y + heightRows / 2 + grid.contentY - countRemovedRows * heightRows;
         i = (_y - _y % heightRows) / heightRows
         ypos = y % heightRows
         sld.txtYpos = ypos < heightRows / 2 ? -ypos : heightRows - ypos
-        console.log("i = ", i, "sideModel.rowCount() = ", sideModel.rowCount())
+        //sld.textRed = ypos < heightRows / 2 ? sideModel.getNameRegion(i * 2) : sideModel.getNameRegion((i + 1) * 2)
+        //console.log("i = ", i, "sideModel.rowCount() = ", sideModel.rowCount())
         //console.log("rect.height = ", rect.height, "grid.height = ", grid.height, ' ',  "grid.contentHeight = ", grid.contentHeight)
 
         if(i < sideModel.rowCount() / 2){
@@ -81,7 +95,7 @@ Rectangle {
             sld.weightBlue = ""
         }
 
-        _y = y + heightRows  + 15 + grid.contentY - countRemovedRows * heightRows
+        _y = y + heightRows  + heightRows / 2 + grid.contentY - countRemovedRows * heightRows
         i = (_y - _y % heightRows) / heightRows
         ypos = y % heightRows
         if(!isSeparate){
@@ -123,7 +137,7 @@ Rectangle {
 
     onSliderYChangedNext: {
         let _y, i, ypos;
-        _y = y + 15 + grid.contentY - countRemovedRows * heightRows;
+        _y = y + heightRows / 2 + grid.contentY - countRemovedRows * heightRows;
         i = (_y - _y % heightRows) / heightRows
         ypos = y % heightRows
         sldNext.txtYpos = ypos < heightRows / 2 ? -ypos : heightRows - ypos
@@ -137,7 +151,7 @@ Rectangle {
         else
             sldNext.textBlue = ""
 
-        _y = y - heightRows + 15 + grid.contentY -  countRemovedRows * heightRows
+        _y = y - heightRows + heightRows / 2 + grid.contentY -  countRemovedRows * heightRows
         i = (_y - _y % heightRows) / heightRows
         ypos = y % heightRows
         if(!isSeparate){
@@ -267,6 +281,8 @@ Rectangle {
                 sldNext.textBlue = sideModel.getNameRegion(i * 2 + 1)
             else
                 sldNext.textBlue = ""
+            sld.setTextOffset()
+            sldNext.setTextOffset()
         }
 
         anchors.fill: parent
@@ -355,12 +371,14 @@ Rectangle {
             id: sld
             objectName: "sld"
             heightRow: heightRows
+            szFont: sizeFont
         }
 
         SliderNamesNext{
             id: sldNext
             objectName: "sldNext"
             heightRow: heightRows
+            szFont: sizeFont
         }
     }
 }

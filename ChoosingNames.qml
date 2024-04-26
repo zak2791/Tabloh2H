@@ -13,6 +13,8 @@ Item {
 
         signal addSportsman();
 
+
+
         Rectangle {
             color: "antiquewhite"
             Layout.fillHeight: true
@@ -106,6 +108,43 @@ Item {
                         }
                     }
                 }
+                RowLayout {
+                    spacing: 6
+                    Text{
+                        text: "Высота строки выбранных спортсменов:"
+                    }
+
+                    SpinBox {
+                        value: 60
+                        from: 30
+                        to: 120
+                        stepSize: 5
+                        wheelEnabled: true
+
+                        onValueModified: {
+                            tableSide.heightRows = value
+                        }
+                    }
+
+                }
+                RowLayout {
+                    spacing: 6
+                    Text{
+                        text: "Размер шрифта выбранных спортсменов:"
+                    }
+
+                    SpinBox {
+                        value: 14
+                        from: 10
+                        to: 50
+                        wheelEnabled: true
+
+                        onValueModified: {
+                            tableSide.sizeFont = value
+                        }
+                    }
+
+                }
             }
 
         }
@@ -115,10 +154,10 @@ Item {
             Layout.fillHeight: true
             Layout.fillWidth: true
 
-            Layout.preferredWidth: 7
+            Layout.preferredWidth: 6
             Layout.preferredHeight: 19
 
-            Layout.columnSpan: 7
+            Layout.columnSpan: 6
             Layout.rowSpan: 19
 
             Layout.column: 1
@@ -126,7 +165,6 @@ Item {
 
             TableAllSportsmens {
                 objectName: "tableAll"
-
             }
         }
 
@@ -135,13 +173,13 @@ Item {
             Layout.fillHeight: true
             Layout.fillWidth: true
 
-            Layout.preferredWidth: 3
+            Layout.preferredWidth: 4
             Layout.preferredHeight: 18
 
-            Layout.columnSpan: 3
+            Layout.columnSpan: 4
             Layout.rowSpan: 18
 
-            Layout.column: 8
+            Layout.column: 7
             Layout.row: 2
             TableSide {
                 id: tableSide
@@ -154,13 +192,13 @@ Item {
             Layout.fillHeight: true
             Layout.fillWidth: true
 
-            Layout.preferredWidth: 3
+            Layout.preferredWidth: 4
             Layout.preferredHeight: 1
 
-            Layout.columnSpan: 3
+            Layout.columnSpan: 4
             Layout.rowSpan: 1
 
-            Layout.column: 8
+            Layout.column: 7
             Layout.row: 20
 
 

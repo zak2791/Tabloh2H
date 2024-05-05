@@ -43,7 +43,7 @@ void SideListModel::swapData(int item1, int item2){
     emit dataChanged( topLeft, bottomRight );
 }
 
-int SideListModel::rowCount(const QModelIndex& parent/*=QModelindex()*/ ) const {
+Q_INVOKABLE int SideListModel::rowCount(const QModelIndex& parent/*=QModelindex()*/ ) const {
     if (parent.isValid())
         return 0;
     return m_list.size();
@@ -75,11 +75,15 @@ bool SideListModel::removeRows(int nRow, int nCount, const QModelIndex& parent/*
 
 void SideListModel::setList(QStringList l){
     m_list = l;
-    insertRows(0, l.count());
+    if(m_list.length())
+        insertRows(0, l.count());
 }
 
 void SideListModel::removeData(int item, int count){
     removeRows(item, count);
+//    QModelIndex topLeft = createIndex(0,0);
+//    QModelIndex bottomRight = createIndex( m_list.count() ,0);
+//    emit dataChanged( topLeft, bottomRight );
 }
 
 void SideListModel::insertData(QString list){
@@ -108,7 +112,10 @@ Q_INVOKABLE QString SideListModel::getWeight (int i) {
 }
 
 void SideListModel::clearModel(){
-    removeRows(0, rowCount());
-    m_list.clear();
+    int countRows = rowCount();
+    if(countRows){
+        removeRows(0, rowCount());
+        m_list.clear();
+    }
 }
 

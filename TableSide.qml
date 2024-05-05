@@ -8,7 +8,8 @@ Rectangle {
     radius: 10
 
     property int heightRows: 60     //высота строк
-    property int sizeFont: 14       //размер шрифта
+    property int sizeFont: 14       //размер шрифта слайдера
+    property int sizeFontTable: 10  //размер шрифта таблицы
 
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.verticalCenter: parent.verticalCenter
@@ -28,9 +29,9 @@ Rectangle {
     signal sliderPressed(int button)
 
     onHeightRowsChanged: {
-        grid.updateSlider()
         sld.y = 0
         sldNext.y = heightRows
+        grid.updateSlider()
     }
 
     onSizeFontChanged: {
@@ -69,7 +70,9 @@ Rectangle {
     onSliderYChanged: {
         let _y, i, ypos;
         _y = y + heightRows / 2 + grid.contentY - countRemovedRows * heightRows;
+        //_y = y + heightRows / 2;
         i = (_y - _y % heightRows) / heightRows
+        console.log("onSliderYChanged i = ", i)
         ypos = y % heightRows
         sld.txtYpos = ypos < heightRows / 2 ? -ypos : heightRows - ypos
         //sld.textRed = ypos < heightRows / 2 ? sideModel.getNameRegion(i * 2) : sideModel.getNameRegion((i + 1) * 2)
@@ -95,35 +98,36 @@ Rectangle {
             sld.weightBlue = ""
         }
 
-        _y = y + heightRows  + heightRows / 2 + grid.contentY - countRemovedRows * heightRows
-        i = (_y - _y % heightRows) / heightRows
-        ypos = y % heightRows
+        //_y = y + heightRows  + heightRows / 2 + grid.contentY - countRemovedRows * heightRows
+//        _y = y + heightRows / 2;
+//        i = (_y - _y % heightRows) / heightRows
+//        console.log("i = ", i)
+//        ypos = y % heightRows
         if(!isSeparate){
             sldNext.y = y + heightRows
             sldNext.txtYpos = ypos < heightRows / 2 ? -ypos : heightRows - ypos
 
-            if(i < sideModel.rowCount() / 2)
-                sldNext.textRed = sideModel.getNameRegion(i * 2)
+            if(i + 1 < sideModel.rowCount() / 2)
+                sldNext.textRed = sideModel.getNameRegion((i + 1) * 2)
             else
                 sldNext.textRed = ""
-            if(i <= sideModel.rowCount() / 2 - 1)
-                sldNext.textBlue = sideModel.getNameRegion(i * 2 + 1)
+            if(i + 1 <= sideModel.rowCount() / 2 - 1)
+                sldNext.textBlue = sideModel.getNameRegion((i + 1) * 2 + 1)
             else
                 sldNext.textBlue = ""
 
-        }
-        else{
+        }else{
             if(previewY < y){   //движение вниз
                 if(sldNext.y < y + heightRows){
                     sldNext.y = y + heightRows
                     sldNext.txtYpos = ypos < heightRows / 2 ? -ypos : heightRows - ypos
 
-                    if(i < sideModel.rowCount() / 2)
-                        sldNext.textRed = sideModel.getNameRegion(i * 2)
+                    if(i + 1 < sideModel.rowCount() / 2)
+                        sldNext.textRed = sideModel.getNameRegion((i + 1) * 2)
                     else
                         sldNext.textRed = ""
-                    if(i <= sideModel.rowCount() / 2 - 1)
-                        sldNext.textBlue = sideModel.getNameRegion(i * 2 + 1)
+                    if(i + 1 <= sideModel.rowCount() / 2 - 1)
+                        sldNext.textBlue = sideModel.getNameRegion((i + 1) * 2 + 1)
                     else
                         sldNext.textBlue = ""
 
@@ -133,12 +137,16 @@ Rectangle {
             }
         }
         previewY = y
+
     }
 
     onSliderYChangedNext: {
         let _y, i, ypos;
         _y = y + heightRows / 2 + grid.contentY - countRemovedRows * heightRows;
+        //_y = y + heightRows / 2;
+
         i = (_y - _y % heightRows) / heightRows
+        console.log("onSliderYChangedNext i = ", i)
         ypos = y % heightRows
         sldNext.txtYpos = ypos < heightRows / 2 ? -ypos : heightRows - ypos
 
@@ -151,26 +159,27 @@ Rectangle {
         else
             sldNext.textBlue = ""
 
-        _y = y - heightRows + heightRows / 2 + grid.contentY -  countRemovedRows * heightRows
-        i = (_y - _y % heightRows) / heightRows
-        ypos = y % heightRows
+        //_y = y - heightRows + heightRows / 2 + grid.contentY -  countRemovedRows * heightRows
+//        _y = y + heightRows / 2;
+//        i = (_y - _y % heightRows) / heightRows
+//        ypos = y % heightRows
         if(!isSeparate){
             sld.y = y - heightRows
             sld.txtYpos = ypos < heightRows / 2 ? -ypos : heightRows - ypos
 
-            if(i < sideModel.rowCount() / 2){
-                sld.textRed = sideModel.getNameRegion(i * 2)
-                sld.ageRed = sideModel.getAge(i * 2)
-                sld.weightRed = sideModel.getWeight(i * 2)
+            if(i - 1 < sideModel.rowCount() / 2){
+                sld.textRed = sideModel.getNameRegion((i - 1) * 2)
+                sld.ageRed = sideModel.getAge((i - 1) * 2)
+                sld.weightRed = sideModel.getWeight((i - 1) * 2)
             }else{
                 sld.textRed = ""
                 sld.ageRed = ""
                 sld.weightRed = ""
             }
-            if(i <= sideModel.rowCount() / 2 - 1){
-                sld.textBlue = sideModel.getNameRegion(i * 2 + 1)
-                sld.ageBlue = sideModel.getAge(i * 2 + 1)
-                sld.weightBlue = sideModel.getWeight(i * 2 + 1)
+            if(i - 1 <= sideModel.rowCount() / 2 - 1){
+                sld.textBlue = sideModel.getNameRegion((i - 1) * 2 + 1)
+                sld.ageBlue = sideModel.getAge((i - 1) * 2 + 1)
+                sld.weightBlue = sideModel.getWeight((i - 1) * 2 + 1)
             }else{
                 sld.textBlue = ""
                 sld.ageBlue = ""
@@ -224,14 +233,17 @@ Rectangle {
 
     function delUpper(){
         let ind = grid.indexAt(0, sld.y + grid.contentY)
-        //console.log(grid.indexAt(0, sld.y + grid.contentY))
+        //console.log("contentY = ", grid.contentY)
         if(ind > 0){
-            for(let i = 0; i < ind; i++){
-                console.log("moveItem " + i)
-                grid.moveItem(0)
+//            for(let i = 0; i < ind; i++){
+//                //console.log("moveItem " + i)
+//                grid.moveItem(0)
 
-            }
-             countRemovedRows += ind / 2
+//            }
+            grid.moveItems(ind)
+            countRemovedRows += ind / 2
+            parent.parent.adjustableRowHeight = false
+            //console.log(parent.parent.objectName)
         }
     }
 
@@ -243,15 +255,16 @@ Rectangle {
 
         signal swapItems(int i1, int i2)
         signal moveItem(int i)
-        //signal moveItems(int i)
+        signal moveItems(int i)
 
 
         function updateSlider(){
             let _y, i;
 
             _y = sld.y;
+            //_y = sld.y + heightRows / 2 + grid.contentY - countRemovedRows * heightRows;
             i = (_y - _y % heightRows) / heightRows
-            //console.log("update", i, sideModel.rowCount() / 2)
+            console.log("update", i, _y)
             if(i < sideModel.rowCount() / 2){
                 sld.textRed = sideModel.getNameRegion(i * 2)
                 sld.ageRed = sideModel.getAge(i * 2)
@@ -283,6 +296,7 @@ Rectangle {
                 sldNext.textBlue = ""
             sld.setTextOffset()
             sldNext.setTextOffset()
+            console.log("updateSlider")
         }
 
         anchors.fill: parent
@@ -334,18 +348,21 @@ Rectangle {
 
         onFlickingChanged: {
             //updateSlider()
-            //console.log("onFlickingChanged")
+            console.log("onFlickingChanged")
         }
 
         onContentYChanged: {
             //if(contentY)
             //    contentY = 0
-            //console.log("onContentYChanged = ", contentY, " currentYSldider = ", currentYSldider)
+            console.log("onContentYChanged = ", contentY, " currentYSldider = ", currentYSldider)
             sld.y = 0; //currentYSldider - contentY
             sldNext.y = heightRows; //currentYSldiderNext - contentY
             //updateSlider()
+//            if(contentY == 0)
+//                countRemovedRows = 0;
             sliderYChanged(0)
             sliderYChangedNext(heightRows)
+            updateSlider()
         }
 
         onFlickEnded: {
@@ -357,7 +374,8 @@ Rectangle {
                     contentY = contentY - remains + heightRows
                 }
             }
-            //console.log("end", ' ', contentY, ' ', remains)
+            console.log("end", ' ', contentY, ' ', remains)
+            //updateSlider()
         }
 
         onHeightChanged: {

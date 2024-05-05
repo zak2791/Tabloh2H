@@ -67,7 +67,7 @@ ChoosingNames::ChoosingNames(QWidget *parent) : QWidget(parent)
         if(objGridSide){
             connect(objGridSide, SIGNAL(swapItems(int, int)), slmodel, SLOT(swapData(int, int)));
             connect(objGridSide, SIGNAL(moveItem(int)), this, SLOT(fromSideToAll(int)));
-            //connect(objGridSide, SIGNAL(moveItems(int)), this, SLOT(fromSideToAllManyItems(int)));
+            connect(objGridSide, SIGNAL(moveItems(int)), this, SLOT(fromSideToAllManyItems(int)));
         }
     }
     connect(fAdd, SIGNAL(selSportsman(QString)), this, SLOT(addSportsman(QString)));
@@ -192,4 +192,20 @@ void ChoosingNames::addSportsman(QString sportsman){
 
 void ChoosingNames::removeSportsman(int){
 
+}
+
+void ChoosingNames::fromSideToAllManyItems(int count){
+    for (int i = 0; i < count; ++i){
+        auto mod = slmodel->index(i, 0, QModelIndex());
+        QString str = slmodel->data(mod, model->NameRole).toString()   + "\n" +
+                slmodel->data(mod, model->RegionRole).toString() + "\n" +
+                slmodel->data(mod, model->AgeRole).toString()    + "\n" +
+                slmodel->data(mod, model->WeightRole).toString();
+
+        if(slmodel->data(mod, model->AgeRole).toString() != "")
+            model->insertData(str);
+    }
+    slmodel->removeData(0, count);
+    proxyName->sort(0);
+    QMetaObject::invokeMethod(objGridSide, "updateSlider");
 }

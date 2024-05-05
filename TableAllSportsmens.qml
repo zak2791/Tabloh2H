@@ -8,6 +8,8 @@ Rectangle {
     anchors.verticalCenter: parent.verticalCenter
     clip: true
 
+    property int sizeFont: 10       //размер шрифта
+
     Component  {
         id: _highlight
 
@@ -63,6 +65,7 @@ Rectangle {
                 id: txt
                 padding: 5
                 text: name + "\n" + region + "\n" + index + "\n" + age + weight
+                font.pixelSize: sizeFont
             }
             MouseArea{
                 id: mousearea

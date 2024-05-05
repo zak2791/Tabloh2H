@@ -25,6 +25,8 @@ QStringList ListFamily::getSportsmens(){
         list.append(s);
     }
     list.sort();
+//    if(list.length() == 0)
+//        list.append("\n\n\n\n");
     return list;
 }
 

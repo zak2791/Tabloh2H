@@ -13,7 +13,11 @@ Item {
 
         signal addSportsman();
 
+        property bool adjustableRowHeight: true
 
+        onAdjustableRowHeightChanged: {
+            sbHeightSlider.enabled = adjustableRowHeight
+        }
 
         Rectangle {
             color: "antiquewhite"
@@ -115,6 +119,7 @@ Item {
                     }
 
                     SpinBox {
+                        id: sbHeightSlider
                         value: 60
                         from: 30
                         to: 120
@@ -130,7 +135,7 @@ Item {
                 RowLayout {
                     spacing: 6
                     Text{
-                        text: "Размер шрифта выбранных спортсменов:"
+                        text: "Размер шрифта списка выбранных спортсменов:"
                     }
 
                     SpinBox {
@@ -141,6 +146,25 @@ Item {
 
                         onValueModified: {
                             tableSide.sizeFont = value
+                        }
+                    }
+
+                }
+                RowLayout {
+                    spacing: 6
+                    Text{
+                        text: "Размер шрифта списка всех спортсменов:"
+                    }
+
+                    SpinBox {
+                        value: 10
+                        from: 8
+                        to: 20
+                        wheelEnabled: true
+
+                        onValueModified: {
+                            tableAll.sizeFont = value
+                            tableSide.sizeFontTable = value
                         }
                     }
 
@@ -164,6 +188,7 @@ Item {
             Layout.row: 2
 
             TableAllSportsmens {
+                id: tableAll
                 objectName: "tableAll"
             }
         }

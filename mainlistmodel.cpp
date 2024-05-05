@@ -1,4 +1,4 @@
-#include "mainlistmodel.h"
+ #include "mainlistmodel.h"
 
 #include <QDebug>
 
@@ -66,10 +66,12 @@ bool MainListModel::removeRows(int nRow, int nCount, const QModelIndex& parent/*
 
 void MainListModel::setList(QStringList l){
     m_list = l;
-    if(insertRows(0, l.count()))
-        qDebug() << "ok insert";
-    else
-        qDebug() << "no insert";
+    if(m_list.length())
+        insertRows(0, l.count());
+//    if(insertRows(0, l.count()))
+//        qDebug() << "ok insert";
+//    else
+//        qDebug() << "no insert";
 
 }
 
@@ -78,8 +80,11 @@ void MainListModel::moveItem(int item){
 }
 
 void MainListModel::clearModel(){
-    removeRows(0, rowCount());
-    m_list.clear();
+    int countRows = rowCount();
+    if(countRows){
+        removeRows(0, countRows);
+        m_list.clear();
+    }
 }
 
 void MainListModel::insertData(QString list){

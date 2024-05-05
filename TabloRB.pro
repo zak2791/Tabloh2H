@@ -114,5 +114,5 @@ include(./QXlsx.pri)
 RESOURCES += \
     res.qrc
 
-DEFINES += APP_LAUNCH_FROM_IDE
+#DEFINES += APP_LAUNCH_FROM_IDE
 

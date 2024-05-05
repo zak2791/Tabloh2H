@@ -6,6 +6,8 @@ Item {
     width: grid.cellWidth
     height: grid.cellHeight
 
+    property int sizeFont: 10       //размер шрифта
+
     GridView.onRemove: SequentialAnimation {
         PropertyAction {
             target: itemDelegateSide
@@ -32,6 +34,7 @@ Item {
             color: {
                 index % 2 > 0 ? "blue" : "red"
             }
+            font.pixelSize: sizeFontTable
         }
         MouseArea {
             id: dragArea
@@ -42,17 +45,15 @@ Item {
             onReleased: {
                 let p = mapToItem(grid, mouseX, mouseY)
                 itemRelease = grid.indexAt(p.x, p.y + grid.contentY)
-                if(itemRelease!= -1 && itemPress != itemRelease){
-                    console.log("move ", itemPress, itemRelease)
+                if(itemRelease!= -1 && itemPress != itemRelease)
                     grid.swapItems(itemPress, itemRelease)
-                }
             }
             acceptedButtons: Qt.LeftButton | Qt.RightButton
             onPressed: {
                 if (mouse.button === Qt.RightButton) { // 'mouse' is a MouseEvent argument passed into the onClicked signal handler
-                    grid.moveItem(index)
+                    if(sideModel.rowCount() > 1)
+                        grid.moveItem(index)
                     mouse.accepted = false
-                    //console.log(model)
                 }
                 itemPress = index
             }

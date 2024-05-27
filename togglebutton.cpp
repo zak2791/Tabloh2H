@@ -1,5 +1,6 @@
 #include "togglebutton.h"
 #include <QPainter>
+#include <QPainterPath>
 
 ///<summary>
 /// Toggle button has 2 different design. In the first design, if the ball (thumb) radius is

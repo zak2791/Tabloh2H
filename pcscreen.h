@@ -8,7 +8,7 @@
 #include "rate.h"
 #include "ui_frmTime.h"
 #include "ui_FormView.h"
-#include "ui_frmTv.h"
+//#include "ui_frmTv.h"
 #include "fam_reg.h"
 #include "plus.h"
 #include "tvscreen.h"
@@ -92,6 +92,7 @@ public slots:
     void sbrosLogo(void);
     void Variant(int);
     void setTvScreenGeometry(void);
+    void initListNames(void);   //инициализация списков спортсменов
 
 private slots:
     void setCam(void);
@@ -141,12 +142,13 @@ private slots:
     void resetTablo(void);
 
     void closeWinName(QString, QString, QString, QString, QString, QString, QString, QString);
-    void tvXchange(int);
-    void tvYchange(int);
-    void tvWchange(int);
-    void tvHchange(int);
-    void tvReset(void);
+    //void tvXchange(int);
+    //void tvYchange(int);
+    //void tvWchange(int);
+    //void tvHchange(int);
+    //void tvReset(void);
     //void tvFullScreen(bool);
+    void delListNames(void);
 
 private:
     //QLabel* lblCpuUsage;
@@ -157,7 +159,8 @@ private:
     QWidget * frmTime;
     LCDStopwatch * sec_doctor;
     QWidget* frmTvSettings;
-    Ui::frmTV uiTV;
+    //Ui::frmTV uiTV;
+
 
 	virtual void paintEvent(QPaintEvent *);
     virtual void closeEvent(QCloseEvent*);
@@ -173,9 +176,9 @@ private:
 
     //NewSportsman* newSportsman;
 
-    ListFamily * lf;
+    ListFamily * lf = nullptr;
 
-    ChoosingNames* choosingNames;
+    ChoosingNames* choosingNames = nullptr;
 
     //void process_line(int, QString);
 

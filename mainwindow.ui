@@ -42,7 +42,6 @@
     </widget>
     <addaction name="select"/>
     <addaction name="winSettings"/>
-    <addaction name="tvSettings"/>
    </widget>
    <widget class="QMenu" name="time">
     <property name="title">

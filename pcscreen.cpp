@@ -14,7 +14,6 @@
 #include <QTime>
 #include "pcscreen.h"
 #include "QAction"
-
 #include <math.h>
 
 #include "category.h"
@@ -199,17 +198,21 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     age->setStyleSheet("background-color: black; color: white; text-align: center");
     age->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
-    choosingNames = new ChoosingNames;
+    initListNames();
 
-    lf = new ListFamily(this);
-    lf->setObjectName("lf");
+//    //
+//    choosingNames = new ChoosingNames;
 
-    choosingNames->setNames(lf->getSportsmens());
-    choosingNames->setAge(lf->lAge);
-    choosingNames->setWeight(lf->lWeight);
+//    lf = new ListFamily(this);
+//    lf->setObjectName("lf");
 
-    connect(choosingNames, SIGNAL(close(QString, QString, QString, QString, QString, QString, QString, QString)),
-                this, SLOT(closeWinName(QString, QString, QString, QString, QString, QString, QString, QString)));
+//    choosingNames->setNames(lf->getSportsmens());
+//    choosingNames->setAge(lf->lAge);
+//    choosingNames->setWeight(lf->lWeight);
+
+//    connect(choosingNames, SIGNAL(close(QString, QString, QString, QString, QString, QString, QString, QString)),
+//                this, SLOT(closeWinName(QString, QString, QString, QString, QString, QString, QString, QString)));
+//    //
 
 	formView = new QWidget;
     ui.setupUi(formView);
@@ -393,14 +396,14 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 		QMessageBox::Ok);
 	}
 
-        frmTvSettings = new QWidget;
-        uiTV.setupUi(frmTvSettings);
-        connect(mainwin->tvSettings, SIGNAL(triggered()), frmTvSettings, SLOT(show()));
-        connect(uiTV.sbX, SIGNAL(valueChanged(int)), this, SLOT(tvXchange(int)));
-        connect(uiTV.sbY, SIGNAL(valueChanged(int)), this, SLOT(tvYchange(int)));
-        connect(uiTV.sbW, SIGNAL(valueChanged(int)), this, SLOT(tvWchange(int)));
-        connect(uiTV.sbH, SIGNAL(valueChanged(int)), this, SLOT(tvHchange(int)));
-        connect(uiTV.btnReset, SIGNAL(clicked()), this, SLOT(tvReset()));
+        //frmTvSettings = new QWidget;
+        //uiTV.setupUi(frmTvSettings);
+        //connect(mainwin->tvSettings, SIGNAL(triggered()), frmTvSettings, SLOT(show()));
+        //connect(uiTV.sbX, SIGNAL(valueChanged(int)), this, SLOT(tvXchange(int)));
+        //connect(uiTV.sbY, SIGNAL(valueChanged(int)), this, SLOT(tvYchange(int)));
+        //connect(uiTV.sbW, SIGNAL(valueChanged(int)), this, SLOT(tvWchange(int)));
+        //connect(uiTV.sbH, SIGNAL(valueChanged(int)), this, SLOT(tvHchange(int)));
+        //connect(uiTV.btnReset, SIGNAL(clicked()), this, SLOT(tvReset()));
 
         tvScreen = new TVScreen;
 
@@ -553,6 +556,21 @@ void PCScreen::CpuUsage(){
 
     mainwin->lblStatus->setText("Нагрузка ЦПУ: " + QString::number(t) +
                                 " %\tСвободное место на диске: " + memory + " %");
+}
+
+void PCScreen::initListNames()
+{
+
+    choosingNames = new ChoosingNames;
+    lf = new ListFamily(this);
+    lf->setObjectName("lf");
+    choosingNames->setNames(lf->getSportsmens());
+    choosingNames->setAge(lf->lAge);
+    choosingNames->setWeight(lf->lWeight);
+
+    connect(choosingNames, SIGNAL(close(QString, QString, QString, QString, QString, QString, QString, QString)),
+                this, SLOT(closeWinName(QString, QString, QString, QString, QString, QString, QString, QString)));
+    connect(choosingNames, SIGNAL(del()), this, SLOT(delListNames()));
 }
 
 void PCScreen::setCat(QString s){
@@ -838,7 +856,7 @@ void PCScreen::keyPressEvent(QKeyEvent * pe){
             frmTime->show();
     }
     else if(pe->key() == Qt::Key_F2){
-        qDebug()<<"F2";
+        //qDebug()<<"F2";
         choosingNames->showMaximized();
     }else
         emit sendKey(pe->key());
@@ -872,6 +890,16 @@ void PCScreen::closeWinName(QString redName, QString redRegion, QString blueName
     cat->setText(Weight);
     tvScreen->age->setText(Age);
     tvScreen->cat->setText(Weight);
+}
+
+void PCScreen::delListNames()
+{
+    if(choosingNames != nullptr)
+        choosingNames->deleteLater();
+    if(lf != nullptr)
+        lf->deleteLater();
+    initListNames();
+    choosingNames->showMaximized();
 }
 
 //void PCScreen::tvFullScreen(bool b){
@@ -1250,34 +1278,34 @@ void PCScreen::setTvScreenGeometry(){
     }
 }
 
-void PCScreen::tvXchange(int x){
-    screenLeft = x;
-    setTvScreenGeometry();
-}
+//void PCScreen::tvXchange(int x){
+//    screenLeft = x;
+//    setTvScreenGeometry();
+//}
 
-void PCScreen::tvYchange(int y){
-    screenTop = y;
-    setTvScreenGeometry();
-}
+//void PCScreen::tvYchange(int y){
+//    screenTop = y;
+//    setTvScreenGeometry();
+//}
 
-void PCScreen::tvWchange(int w){
-    screenWidth = w;
-    setTvScreenGeometry();
-}
+//void PCScreen::tvWchange(int w){
+//    screenWidth = w;
+//    setTvScreenGeometry();
+//}
 
-void PCScreen::tvHchange(int h){
-    screenHeight = h;
-    setTvScreenGeometry();
-}
+//void PCScreen::tvHchange(int h){
+//    screenHeight = h;
+//    setTvScreenGeometry();
+//}
 
-void PCScreen::tvReset(){
-    screenLeft = 0;
-    screenTop = 0;
-    screenWidth = 0;
-    screenHeight = 0;
-    uiTV.sbX->setValue(0);
-    uiTV.sbY->setValue(0);
-    uiTV.sbW->setValue(0);
-    uiTV.sbH->setValue(0);
-    setTvScreenGeometry();
-}
+//void PCScreen::tvReset(){
+//    screenLeft = 0;
+//    screenTop = 0;
+//    screenWidth = 0;
+//    screenHeight = 0;
+//    uiTV.sbX->setValue(0);
+//    uiTV.sbY->setValue(0);
+//    uiTV.sbW->setValue(0);
+//    uiTV.sbH->setValue(0);
+//    setTvScreenGeometry();
+//}

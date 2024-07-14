@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
     lblStatus = new QLabel();
     statusBar()->addWidget(lblStatus);
     winSettings = ui->winSettings;
-    tvSettings = ui->tvSettings;
+    //tvSettings = ui->tvSettings;
     time = ui->setTime;
     actSbros = ui->actSbros;
     video = ui->video;

@@ -45,9 +45,11 @@ private slots:
     void addSportsman(QString);
     void removeSportsman(int);
     void fromSideToAllManyItems(int);
+    void delAll(void);
 
 signals:
     void close(QString, QString, QString, QString, QString, QString, QString, QString);
+    void del(void);
 
 };
 

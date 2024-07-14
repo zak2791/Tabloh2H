@@ -77,7 +77,7 @@ Rectangle {
         sld.txtYpos = ypos < heightRows / 2 ? -ypos : heightRows - ypos
         //sld.textRed = ypos < heightRows / 2 ? sideModel.getNameRegion(i * 2) : sideModel.getNameRegion((i + 1) * 2)
         //console.log("i = ", i, "sideModel.rowCount() = ", sideModel.rowCount())
-        //console.log("rect.height = ", rect.height, "grid.height = ", grid.height, ' ',  "grid.contentHeight = ", grid.contentHeight)
+        //console.log("grid.contentY = ", grid.contentY, " grid.originY = ", grid.originY, " grid.contentHeight = ", grid.contentHeight)
 
         if(i < sideModel.rowCount() / 2){
             sld.textRed = sideModel.getNameRegion(i * 2)
@@ -243,6 +243,7 @@ Rectangle {
             grid.moveItems(ind)
             countRemovedRows += ind / 2
             parent.parent.adjustableRowHeight = false
+            //grid.contentY = 0
             //console.log(parent.parent.objectName)
         }
     }
@@ -296,6 +297,8 @@ Rectangle {
                 sldNext.textBlue = ""
             sld.setTextOffset()
             sldNext.setTextOffset()
+            //grid.contentY = 0
+            //grid.originY = 0
             console.log("updateSlider")
         }
 

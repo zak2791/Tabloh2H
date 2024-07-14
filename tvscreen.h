@@ -109,6 +109,6 @@ private:
 	QEvent * ev_R;
 	int minimum_height_family;
 	int minimum_height_region;
-    bool flagReplayOnTV = false;    //флаг показа видеоповторов на телевизоре
+    bool flagReplayOnTV = true;    //флаг показа видеоповторов на телевизоре
 
 };

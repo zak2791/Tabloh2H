@@ -244,6 +244,19 @@ Item {
                     }
                 }
                 Button {
+                    id: btnDelAll
+                    objectName: "buttonDelAll"
+                    text: "Удалить всех"
+
+                    x: 10
+                    anchors.left: btnDel.right
+                    anchors.verticalCenter: btnDel.verticalCenter
+                    anchors.leftMargin: 10
+                    //onClicked: {
+                        //tableSide.delAll()
+                    //}
+                }
+                Button {
                     id: btnAdd
 
                     text: "Добавить спортсмена"

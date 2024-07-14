@@ -441,6 +441,9 @@
    <property name="text">
     <string>Показывать видеоповторы на телевизоре</string>
    </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
   </widget>
  </widget>
  <resources>

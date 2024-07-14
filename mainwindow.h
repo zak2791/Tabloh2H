@@ -25,7 +25,7 @@ public:
     QAction* actSbros;
     QAction* video;
     QAction* no_video;
-    QAction* tvSettings;
+    //QAction* tvSettings;
     QString getFileSportsmens(void);
 
 private:

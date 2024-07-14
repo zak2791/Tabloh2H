@@ -39,6 +39,10 @@ ChoosingNames::ChoosingNames(QWidget *parent) : QWidget(parent)
     QQuickItem* qItem = quickWidget->rootObject();
     if(qItem){
 
+        auto btnItem = qItem->findChild<QObject*>("buttonDelAll");
+        if(btnItem)
+            connect(btnItem, SIGNAL(clicked()), this, SLOT(delAll()));
+
         auto mainGrid = qItem->findChild<QObject*>("mainGrid");
         if(mainGrid)
             connect(mainGrid, SIGNAL(addSportsman()), fAdd, SLOT(show()));
@@ -96,8 +100,6 @@ void ChoosingNames::setWeight(QStringList list){
                               Q_RETURN_ARG(QVariant, varRet),
                               Q_ARG(QVariant, list));
 }
-
-
 
 void ChoosingNames::resizeEvent(QResizeEvent* e){
     quickWidget->resize(e->size());
@@ -208,4 +210,9 @@ void ChoosingNames::fromSideToAllManyItems(int count){
     slmodel->removeData(0, count);
     proxyName->sort(0);
     QMetaObject::invokeMethod(objGridSide, "updateSlider");
+}
+
+void ChoosingNames::delAll()
+{
+    emit del();
 }

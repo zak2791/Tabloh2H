@@ -29,6 +29,9 @@ void Camera::TurnOnCamera(){
     flag_record = 0;
     process = true;
     ofmt_ctx = NULL;
+
+    //avformat_network_init();
+
     ofmt = NULL;
     AVFormatContext *ifmt_ctx = NULL;
 
@@ -48,11 +51,21 @@ void Camera::TurnOnCamera(){
     QByteArray bain = url.toLocal8Bit();
     in_filename = bain.data();
 
+    AVFormatContext* octx = NULL;////
+    AVDictionary *options = NULL; ////
 
     pkt = av_packet_alloc();
     if (!pkt) {
         goto end;
     }
+
+
+    //ret = avformat_alloc_output_context2(&octx, NULL, "srt", "srt://192.168.0.198:5000?mode=listener");/////
+    //qDebug()<<"err = "<<ret;
+
+    //av_dict_set(&options, "live", "1", 0);/////
+    //ret = avformat_write_header(octx, &options);//////
+    //qDebug()<<"avformat_write_header = "<<ret;
 
     if ((ret = avformat_open_input(&ifmt_ctx, in_filename, 0, 0)) < 0) {;
         goto end;
@@ -73,11 +86,13 @@ void Camera::TurnOnCamera(){
         goto end;
     }
     pCodecCtx = avcodec_alloc_context3(dec);
+
     if (!pCodecCtx) {
         goto end;
     }
 
     avcodec_parameters_to_context(pCodecCtx, ifmt_ctx->streams[best_video]->codecpar);
+    //avcodec_parameters_to_context(octx, ifmt_ctx->streams[best_video]->codecpar);
 
     if (avcodec_open2(pCodecCtx, dec, NULL) < 0){
         goto end;
@@ -152,6 +167,8 @@ void Camera::TurnOnCamera(){
             pkt->pos = -1;
 
             ret = av_interleaved_write_frame(ofmt_ctx, pkt);
+            //ret = av_write_frame(octx, pkt); //////
+            qDebug()<<"av_write_frame = "<<ret;
 
             if (ret < 0)
                 break;

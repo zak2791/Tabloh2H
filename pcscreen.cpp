@@ -430,6 +430,8 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
         connect(fam_next_blue, SIGNAL(sigText(QString)), tvScreen->fam_next_blue, SLOT(Text(QString)));
 
         connect(mainTimer, SIGNAL(sigTime(QString, QPalette)), tvScreen->sec, SLOT(showTime(QString, QPalette)));
+        connect(mainTimer, SIGNAL(sigIntTime(int)), this, SLOT(saveTime(int)));
+
 
         connect(mainTimer, SIGNAL(sigStarted(bool)), tvScreen->logo, SLOT(off_logo()));
 
@@ -518,6 +520,14 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     settings->beginGroup("timer");
     setSec(settings->value("height", 3).toInt());
     settings->endGroup();
+
+    settings->beginGroup("time");
+    int iTime = settings->value("initTime", 180).toInt();
+    int cTime = settings->value("current time", 180).toInt();
+    qDebug()<<iTime<<cTime;
+    mainTimer->setTime(cTime, iTime);
+    settings->endGroup();
+
 
     connect(ui.cbShowOnTv, SIGNAL(toggled(bool)), tvScreen, SLOT(setPlayerEnabled(bool)));
 
@@ -825,7 +835,14 @@ void PCScreen::setTime(){
     int sec2 = uiTime.dSec2->value();
     if(min == 0 && sec1 == 0 && sec2 == 0)
         return;
-    mainTimer->setTime(min * 60 + sec1 * 10 + sec2);
+    int iTime = min * 60 + sec1 * 10 + sec2;
+    if(mainTimer->isInitTime()){
+        settings->beginGroup("time");
+        settings->setValue("initTime", iTime);
+        settings->endGroup();
+    }
+    mainTimer->setTime(iTime);
+
 }
 
 void PCScreen::showView(){
@@ -900,6 +917,15 @@ void PCScreen::delListNames()
         lf->deleteLater();
     initListNames();
     choosingNames->showMaximized();
+}
+
+void PCScreen::saveTime(int iTime)
+{
+    qDebug()<<QString::number(iTime);
+    //settings = new QSettings(fileSettings, QSettings::IniFormat);
+    settings->beginGroup("time");
+    settings->setValue("current time", iTime);
+    settings->endGroup();
 }
 
 //void PCScreen::tvFullScreen(bool b){

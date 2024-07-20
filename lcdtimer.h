@@ -28,6 +28,8 @@ public:
     int getStatus(void);
     int getITime(void);
     void setTime(int);
+    void setTime(int, int);
+    bool isInitTime(void){return time == intInitTime;}
     QString getTime();
     virtual void showEvent(QShowEvent*);
     virtual void hideEvent(QHideEvent*);
@@ -70,6 +72,7 @@ protected slots:
 
 signals:
     void sigTime(QString, QPalette);
+    void sigIntTime(int);
     void sigStarted(bool);
     void sigReset(void);
     void sigVisible(bool);

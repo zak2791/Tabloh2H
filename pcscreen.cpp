@@ -528,6 +528,23 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     mainTimer->setTime(cTime, iTime);
     settings->endGroup();
 
+    settings->beginGroup("rates");
+    int rRed = settings->value("rateRed", 0).toInt();
+    int rBlue = settings->value("rateBlue", 0).toInt();
+    //qDebug()<<iTime<<cTime;
+    rateRed->setRate(rRed);
+    rateBlue->setRate(rBlue);
+    QString npR = settings->value("npRed", "").toString();
+    QString npB = settings->value("npBlue", "").toString();
+    np_red->setValue(npR);
+    np_blue->setValue(npB);
+    settings->endGroup();
+
+    connect(rateRed,	SIGNAL(sigRate(int)), this,	  SLOT(saveConditionRate(int)));
+    connect(rateBlue,	SIGNAL(sigRate(int)), this,	  SLOT(saveConditionRate(int)));
+
+    connect(np_red,	 SIGNAL(ball(QString)), this,  SLOT(saveConditionRules(QString)));
+    connect(np_blue, SIGNAL(ball(QString)), this,  SLOT(saveConditionRules(QString)));
 
     connect(ui.cbShowOnTv, SIGNAL(toggled(bool)), tvScreen, SLOT(setPlayerEnabled(bool)));
 
@@ -925,6 +942,31 @@ void PCScreen::saveTime(int iTime)
     //settings = new QSettings(fileSettings, QSettings::IniFormat);
     settings->beginGroup("time");
     settings->setValue("current time", iTime);
+    settings->endGroup();
+}
+
+void PCScreen::saveConditionRate(int rate)
+{
+    settings->beginGroup("rates");
+    if(sender()->objectName() == "ball_red"){
+        settings->setValue("rateRed", rate);
+        qDebug()<<"red";
+    }
+    else{
+        settings->setValue("rateBlue", rate);
+        qDebug()<<"blue";
+    }
+    settings->endGroup();
+}
+
+void PCScreen::saveConditionRules(QString np)
+{
+    qDebug()<<np;
+    settings->beginGroup("rates");
+    if(sender()->objectName() == "np_red")
+        settings->setValue("npRed", np);
+    else
+        settings->setValue("npBlue", np);
     settings->endGroup();
 }
 

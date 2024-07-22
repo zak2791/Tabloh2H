@@ -28,6 +28,7 @@ void Plus::resizeEvent(QResizeEvent * ) {
 
 void Plus::setData(QString s){
     Text = s;
+    qDebug()<<"Text = "<<s;
     if(s == "+"){
         QPixmap pix = pix_plus->scaled(width(), height(), Qt::KeepAspectRatio);
         setPixmap(pix);

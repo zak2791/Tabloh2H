@@ -538,6 +538,11 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     QString npB = settings->value("npBlue", "").toString();
     np_red->setValue(npR);
     np_blue->setValue(npB);
+    QString plus = settings->value("plus", "").toString();
+    if(plus == "red")
+        plus_red->setData("+");
+    if(plus == "blue")
+        plus_blue->setData("+");
     settings->endGroup();
 
     settings->beginGroup("names");
@@ -567,6 +572,9 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     connect(fam_next_blue, SIGNAL(sigText(QString)), this, SLOT(saveConditionNames(QString)));
     connect(reg_red,       SIGNAL(sigText(QString)), this, SLOT(saveConditionNames(QString)));
     connect(reg_blue,      SIGNAL(sigText(QString)), this, SLOT(saveConditionNames(QString)));
+
+    connect(plus_red,  SIGNAL(textChange(QString)), this, SLOT(saveConditionPlus(QString)));
+    connect(plus_blue, SIGNAL(textChange(QString)), this, SLOT(saveConditionPlus(QString)));
 
     connect(ui.cbShowOnTv, SIGNAL(toggled(bool)), tvScreen, SLOT(setPlayerEnabled(bool)));
 
@@ -1001,6 +1009,25 @@ void PCScreen::saveConditionNames(QString str)
         settings->setValue("regionRed", str);
     if(objName == "reg_blue")
         settings->setValue("regionBlue", str);
+    settings->endGroup();
+}
+
+void PCScreen::saveConditionPlus(QString str)
+{
+    QString objName = sender()->objectName();
+    settings->beginGroup("rates");
+    if(objName == "plus_red"){
+        if(str == "+")
+            settings->setValue("plus", "red");
+        else
+            settings->setValue("plus", "");
+    }
+    else{
+        if(str == "+")
+            settings->setValue("plus", "blue");
+        else
+            settings->setValue("plus", "");
+    }
     settings->endGroup();
 }
 

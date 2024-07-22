@@ -540,11 +540,33 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     np_blue->setValue(npB);
     settings->endGroup();
 
+    settings->beginGroup("names");
+    QString nRed =      settings->value("nameRed", "").toString();
+    QString nBlue =     settings->value("nameBlue", "").toString();
+    QString nNextRed =  settings->value("nameNextRed", "").toString();
+    QString nNextBlue = settings->value("nameNextBlue", "").toString();
+    QString regRed =    settings->value("regionRed", "").toString();
+    QString regBlue =   settings->value("regionBlue", "").toString();
+    fam_red->Text(nRed);
+    fam_blue->Text(nBlue);
+    fam_next_red->Text(nNextRed);
+    fam_next_blue->Text(nNextBlue);
+    reg_red->Text(regRed);
+    reg_blue->Text(regBlue);
+    settings->endGroup();
+
     connect(rateRed,	SIGNAL(sigRate(int)), this,	  SLOT(saveConditionRate(int)));
     connect(rateBlue,	SIGNAL(sigRate(int)), this,	  SLOT(saveConditionRate(int)));
 
     connect(np_red,	 SIGNAL(ball(QString)), this,  SLOT(saveConditionRules(QString)));
     connect(np_blue, SIGNAL(ball(QString)), this,  SLOT(saveConditionRules(QString)));
+
+    connect(fam_red,       SIGNAL(sigText(QString)), this, SLOT(saveConditionNames(QString)));
+    connect(fam_blue,      SIGNAL(sigText(QString)), this, SLOT(saveConditionNames(QString)));
+    connect(fam_next_red,  SIGNAL(sigText(QString)), this, SLOT(saveConditionNames(QString)));
+    connect(fam_next_blue, SIGNAL(sigText(QString)), this, SLOT(saveConditionNames(QString)));
+    connect(reg_red,       SIGNAL(sigText(QString)), this, SLOT(saveConditionNames(QString)));
+    connect(reg_blue,      SIGNAL(sigText(QString)), this, SLOT(saveConditionNames(QString)));
 
     connect(ui.cbShowOnTv, SIGNAL(toggled(bool)), tvScreen, SLOT(setPlayerEnabled(bool)));
 
@@ -914,7 +936,7 @@ void PCScreen::resetTablo(){
 void PCScreen::closeWinName(QString redName, QString redRegion, QString blueName,
                             QString blueRegion, QString redNameNext, QString blueNameNext,
                             QString Age, QString Weight){
-    fam_red->Text(redName);
+    fam_red-> Text(redName);
     reg_red->Text(redRegion);
     fam_blue->Text(blueName);
     reg_blue->Text(blueRegion);
@@ -938,8 +960,6 @@ void PCScreen::delListNames()
 
 void PCScreen::saveTime(int iTime)
 {
-    qDebug()<<QString::number(iTime);
-    //settings = new QSettings(fileSettings, QSettings::IniFormat);
     settings->beginGroup("time");
     settings->setValue("current time", iTime);
     settings->endGroup();
@@ -948,25 +968,39 @@ void PCScreen::saveTime(int iTime)
 void PCScreen::saveConditionRate(int rate)
 {
     settings->beginGroup("rates");
-    if(sender()->objectName() == "ball_red"){
+    if(sender()->objectName() == "ball_red")
         settings->setValue("rateRed", rate);
-        qDebug()<<"red";
-    }
-    else{
+    else
         settings->setValue("rateBlue", rate);
-        qDebug()<<"blue";
-    }
     settings->endGroup();
 }
 
 void PCScreen::saveConditionRules(QString np)
 {
-    qDebug()<<np;
     settings->beginGroup("rates");
     if(sender()->objectName() == "np_red")
         settings->setValue("npRed", np);
     else
         settings->setValue("npBlue", np);
+    settings->endGroup();
+}
+
+void PCScreen::saveConditionNames(QString str)
+{
+    QString objName = sender()->objectName();
+    settings->beginGroup("names");
+    if(objName == "fam_red")
+        settings->setValue("nameRed", str);
+    if(objName == "fam_blue")
+        settings->setValue("nameBlue", str);
+    if(objName == "fam_next_red")
+        settings->setValue("nameNextRed", str);
+    if(objName == "fam_next_blue")
+        settings->setValue("nameNextBlue", str);
+    if(objName == "reg_red")
+        settings->setValue("regionRed", str);
+    if(objName == "reg_blue")
+        settings->setValue("regionBlue", str);
     settings->endGroup();
 }
 

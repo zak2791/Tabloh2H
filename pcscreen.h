@@ -152,6 +152,7 @@ private slots:
     void saveTime(int);
     void saveConditionRate(int);
     void saveConditionRules(QString);
+    void saveConditionNames(QString);
 
 private:
     //QLabel* lblCpuUsage;

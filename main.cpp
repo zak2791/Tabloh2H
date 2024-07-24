@@ -11,6 +11,10 @@
 int main(int argc, char** argv){
     QApplication app(argc, argv);
 
+    app.setOrganizationName("rffrb");
+    app.setOrganizationDomain("rffrb.ru");
+    app.setApplicationName("Tablo H2H");
+
     MainWindow* mWin = new MainWindow;
 
     PCScreen * pwgt = new PCScreen(mWin);

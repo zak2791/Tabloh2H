@@ -44,8 +44,11 @@ ChoosingNames::ChoosingNames(QWidget *parent) : QWidget(parent)
             connect(btnItem, SIGNAL(clicked()), this, SLOT(delAll()));
 
         auto mainGrid = qItem->findChild<QObject*>("mainGrid");
-        if(mainGrid)
+        if(mainGrid){
             connect(mainGrid, SIGNAL(addSportsman()), fAdd, SLOT(show()));
+            //mainGrid->setProperty ( "sizeFontListAll", 20) ;
+            //mainGrid->setProperty ( "color", "red") ;
+        }
 
         objAge = qItem->findChild<QObject*>("cmbAge");
         if(objAge)

@@ -61,15 +61,29 @@ void LCDTimer::StartStop(){
         }    
     }
     emit sigTime(intTimeToStr(time), palette());
+
 }
 
 void LCDTimer::setTime(int t){
     status = 0;
+    if(time == intInitTime)
+        intInitTime = t;
     time = t;
     QString sTime = intTimeToStr(t);
     display(sTime);
     emit sigTime(sTime, palette());
-    intInitTime = t;
+    //intInitTime = t;
+}
+
+void LCDTimer::setTime(int t, int init){
+    status = 0;
+    //if(time == intInitTime)
+    intInitTime = init;
+    time = t;
+    QString sTime = intTimeToStr(t);
+    display(sTime);
+    emit sigTime(sTime, palette());
+    //intInitTime = t;
 }
 
 QString LCDTimer::getTime(){
@@ -88,6 +102,7 @@ void LCDTimer::Reset(){
         display(sTime);
         emit sigTime(sTime, palette());
         emit sigReset();
+        emit sigIntTime(time);
     }
 }
 
@@ -108,6 +123,7 @@ void LCDTimer::showTime(){
     QString sTime = intTimeToStr(time);
     display(sTime);
     emit sigTime(sTime, palette());
+    emit sigIntTime(time);
 }
 
 void LCDTimer::showTime(QString sTime, QPalette pal){

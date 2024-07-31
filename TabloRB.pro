@@ -18,6 +18,7 @@ HEADERS += \
     fam_reg.h \
     firstlastname.h \
     helpform.h \
+    infoserver.h \
     lcdstopwatch.h \
     lcdtimer.h \
     list_family.h \
@@ -50,6 +51,7 @@ SOURCES += \
     fam_reg.cpp \
     firstlastname.cpp \
     helpform.cpp \
+    infoserver.cpp \
     lcdstopwatch.cpp \
     lcdtimer.cpp \
     list_family.cpp \

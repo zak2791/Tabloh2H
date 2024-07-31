@@ -18,6 +18,9 @@ HelpForm::HelpForm(QWidget *parent) :
     help = ui->textBrowser;
     help->setSource(QUrl::fromLocalFile(fileHelp));
     setWindowFlags(Qt::WindowStaysOnTopHint);
+    //help->setOpenExternalLinks(false);
+    //connect(help, SIGNAL(anchorClicked(QUrl)), this, SLOT(anchors_clicked(QUrl)));
+
 }
 
 HelpForm::~HelpForm()
@@ -29,4 +32,9 @@ void HelpForm::on_btnClose_clicked()
 {
     close();
 }
+
+// void HelpForm::anchors_clicked(QUrl url)
+// {
+//     qDebug()<<url;
+// }
 

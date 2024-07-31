@@ -18,6 +18,7 @@ public:
 
 private slots:
     void on_btnClose_clicked();
+    //void anchors_clicked(QUrl);
 
 private:
     Ui::HelpForm *ui;

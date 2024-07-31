@@ -430,6 +430,8 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
         connect(fam_next_blue, SIGNAL(sigText(QString)), tvScreen->fam_next_blue, SLOT(Text(QString)));
 
         connect(mainTimer, SIGNAL(sigTime(QString, QPalette)), tvScreen->sec, SLOT(showTime(QString, QPalette)));
+        connect(mainTimer, SIGNAL(sigIntTime(int)), this, SLOT(saveTime(int)));
+
 
         connect(mainTimer, SIGNAL(sigStarted(bool)), tvScreen->logo, SLOT(off_logo()));
 
@@ -518,6 +520,61 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     settings->beginGroup("timer");
     setSec(settings->value("height", 3).toInt());
     settings->endGroup();
+
+    settings->beginGroup("time");
+    int iTime = settings->value("initTime", 180).toInt();
+    int cTime = settings->value("current time", 180).toInt();
+    qDebug()<<iTime<<cTime;
+    mainTimer->setTime(cTime, iTime);
+    settings->endGroup();
+
+    settings->beginGroup("rates");
+    int rRed = settings->value("rateRed", 0).toInt();
+    int rBlue = settings->value("rateBlue", 0).toInt();
+    //qDebug()<<iTime<<cTime;
+    rateRed->setRate(rRed);
+    rateBlue->setRate(rBlue);
+    QString npR = settings->value("npRed", "").toString();
+    QString npB = settings->value("npBlue", "").toString();
+    np_red->setValue(npR);
+    np_blue->setValue(npB);
+    QString plus = settings->value("plus", "").toString();
+    if(plus == "red")
+        plus_red->setData("+");
+    if(plus == "blue")
+        plus_blue->setData("+");
+    settings->endGroup();
+
+    settings->beginGroup("names");
+    QString nRed =      settings->value("nameRed", "").toString();
+    QString nBlue =     settings->value("nameBlue", "").toString();
+    QString nNextRed =  settings->value("nameNextRed", "").toString();
+    QString nNextBlue = settings->value("nameNextBlue", "").toString();
+    QString regRed =    settings->value("regionRed", "").toString();
+    QString regBlue =   settings->value("regionBlue", "").toString();
+    fam_red->Text(nRed);
+    fam_blue->Text(nBlue);
+    fam_next_red->Text(nNextRed);
+    fam_next_blue->Text(nNextBlue);
+    reg_red->Text(regRed);
+    reg_blue->Text(regBlue);
+    settings->endGroup();
+
+    connect(rateRed,	SIGNAL(sigRate(int)), this,	  SLOT(saveConditionRate(int)));
+    connect(rateBlue,	SIGNAL(sigRate(int)), this,	  SLOT(saveConditionRate(int)));
+
+    connect(np_red,	 SIGNAL(ball(QString)), this,  SLOT(saveConditionRules(QString)));
+    connect(np_blue, SIGNAL(ball(QString)), this,  SLOT(saveConditionRules(QString)));
+
+    connect(fam_red,       SIGNAL(sigText(QString)), this, SLOT(saveConditionNames(QString)));
+    connect(fam_blue,      SIGNAL(sigText(QString)), this, SLOT(saveConditionNames(QString)));
+    connect(fam_next_red,  SIGNAL(sigText(QString)), this, SLOT(saveConditionNames(QString)));
+    connect(fam_next_blue, SIGNAL(sigText(QString)), this, SLOT(saveConditionNames(QString)));
+    connect(reg_red,       SIGNAL(sigText(QString)), this, SLOT(saveConditionNames(QString)));
+    connect(reg_blue,      SIGNAL(sigText(QString)), this, SLOT(saveConditionNames(QString)));
+
+    connect(plus_red,  SIGNAL(textChange(QString)), this, SLOT(saveConditionPlus(QString)));
+    connect(plus_blue, SIGNAL(textChange(QString)), this, SLOT(saveConditionPlus(QString)));
 
     connect(ui.cbShowOnTv, SIGNAL(toggled(bool)), tvScreen, SLOT(setPlayerEnabled(bool)));
 
@@ -825,7 +882,14 @@ void PCScreen::setTime(){
     int sec2 = uiTime.dSec2->value();
     if(min == 0 && sec1 == 0 && sec2 == 0)
         return;
-    mainTimer->setTime(min * 60 + sec1 * 10 + sec2);
+    int iTime = min * 60 + sec1 * 10 + sec2;
+    if(mainTimer->isInitTime()){
+        settings->beginGroup("time");
+        settings->setValue("initTime", iTime);
+        settings->endGroup();
+    }
+    mainTimer->setTime(iTime);
+
 }
 
 void PCScreen::showView(){
@@ -880,7 +944,7 @@ void PCScreen::resetTablo(){
 void PCScreen::closeWinName(QString redName, QString redRegion, QString blueName,
                             QString blueRegion, QString redNameNext, QString blueNameNext,
                             QString Age, QString Weight){
-    fam_red->Text(redName);
+    fam_red-> Text(redName);
     reg_red->Text(redRegion);
     fam_blue->Text(blueName);
     reg_blue->Text(blueRegion);
@@ -900,6 +964,71 @@ void PCScreen::delListNames()
         lf->deleteLater();
     initListNames();
     choosingNames->showMaximized();
+}
+
+void PCScreen::saveTime(int iTime)
+{
+    settings->beginGroup("time");
+    settings->setValue("current time", iTime);
+    settings->endGroup();
+}
+
+void PCScreen::saveConditionRate(int rate)
+{
+    settings->beginGroup("rates");
+    if(sender()->objectName() == "ball_red")
+        settings->setValue("rateRed", rate);
+    else
+        settings->setValue("rateBlue", rate);
+    settings->endGroup();
+}
+
+void PCScreen::saveConditionRules(QString np)
+{
+    settings->beginGroup("rates");
+    if(sender()->objectName() == "np_red")
+        settings->setValue("npRed", np);
+    else
+        settings->setValue("npBlue", np);
+    settings->endGroup();
+}
+
+void PCScreen::saveConditionNames(QString str)
+{
+    QString objName = sender()->objectName();
+    settings->beginGroup("names");
+    if(objName == "fam_red")
+        settings->setValue("nameRed", str);
+    if(objName == "fam_blue")
+        settings->setValue("nameBlue", str);
+    if(objName == "fam_next_red")
+        settings->setValue("nameNextRed", str);
+    if(objName == "fam_next_blue")
+        settings->setValue("nameNextBlue", str);
+    if(objName == "reg_red")
+        settings->setValue("regionRed", str);
+    if(objName == "reg_blue")
+        settings->setValue("regionBlue", str);
+    settings->endGroup();
+}
+
+void PCScreen::saveConditionPlus(QString str)
+{
+    QString objName = sender()->objectName();
+    settings->beginGroup("rates");
+    if(objName == "plus_red"){
+        if(str == "+")
+            settings->setValue("plus", "red");
+        else
+            settings->setValue("plus", "");
+    }
+    else{
+        if(str == "+")
+            settings->setValue("plus", "blue");
+        else
+            settings->setValue("plus", "");
+    }
+    settings->endGroup();
 }
 
 //void PCScreen::tvFullScreen(bool b){

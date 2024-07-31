@@ -1,8 +1,24 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
+import Qt.labs.settings 1.0
 
 Item {
+
+    Settings {
+        id: settings
+        property int valuechoise: 14
+        property int valueslider: 60
+        property int valueall: 10
+    }
+
+    Component.onCompleted: {
+        tableAll.sizeFont = settings.valueall
+        tableSide.sizeFontTable = settings.valueall
+        tableSide.sizeFont = settings.valuechoise
+        tableSide.heightRows = settings.valueslider
+    }
+
     GridLayout{
         id: grid
         objectName: "mainGrid"
@@ -14,10 +30,21 @@ Item {
         signal addSportsman();
 
         property bool adjustableRowHeight: true
+        property int sizeFontListAll: 10
 
         onAdjustableRowHeightChanged: {
             sbHeightSlider.enabled = adjustableRowHeight
         }
+
+        onSizeFontListAllChanged: {
+            listAll.value = sizeFontListAll
+            tableAll.sizeFont = sizeFontListAll
+            tableSide.sizeFontTable = sizeFontListAll
+
+            //console.log("list.value = " + sizeFontListAll)
+        }
+
+
 
         Rectangle {
             color: "antiquewhite"
@@ -120,7 +147,7 @@ Item {
 
                     SpinBox {
                         id: sbHeightSlider
-                        value: 60
+                        value: settings.valueslider
                         from: 30
                         to: 120
                         stepSize: 5
@@ -128,7 +155,15 @@ Item {
 
                         onValueModified: {
                             tableSide.heightRows = value
+                            settings.valueslider = sbHeightSlider.value
                         }
+
+                        // Settings {
+                        //     id: settslider
+                        //     property int valu: 60
+
+                        // }
+
                     }
 
                 }
@@ -139,14 +174,17 @@ Item {
                     }
 
                     SpinBox {
-                        value: 14
+                        id: spinchoise
+                        value: settings.valuechoise
                         from: 10
                         to: 50
                         wheelEnabled: true
 
                         onValueModified: {
                             tableSide.sizeFont = value
+                            settings.valuechoise = spinchoise.value
                         }
+
                     }
 
                 }
@@ -157,7 +195,8 @@ Item {
                     }
 
                     SpinBox {
-                        value: 10
+                        id: listAll
+                        value: settings.valueall
                         from: 8
                         to: 20
                         wheelEnabled: true
@@ -165,6 +204,7 @@ Item {
                         onValueModified: {
                             tableAll.sizeFont = value
                             tableSide.sizeFontTable = value
+                            settings.valueall = listAll.value
                         }
                     }
 
@@ -271,5 +311,8 @@ Item {
         }
 
     }
-
+    // function setFontSize(newSize){
+    //     listAll.value = newSize
+    //     return newSize
+    // }
 }

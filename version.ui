@@ -31,14 +31,13 @@
    <property name="font">
     <font>
      <pointsize>10</pointsize>
-     <weight>75</weight>
      <bold>true</bold>
     </font>
    </property>
    <property name="text">
     <string>Версия программы
-2.1
-03.05.2024</string>
+2.2
+01.08.2024</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>

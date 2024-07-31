@@ -149,6 +149,11 @@ private slots:
     //void tvReset(void);
     //void tvFullScreen(bool);
     void delListNames(void);
+    void saveTime(int);
+    void saveConditionRate(int);
+    void saveConditionRules(QString);
+    void saveConditionNames(QString);
+    void saveConditionPlus(QString);
 
 private:
     //QLabel* lblCpuUsage;

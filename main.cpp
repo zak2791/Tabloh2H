@@ -11,6 +11,10 @@
 int main(int argc, char** argv){
     QApplication app(argc, argv);
 
+    app.setOrganizationName("rffrb");
+    app.setOrganizationDomain("rffrb.ru");
+    app.setApplicationName("Tablo H2H");
+
     MainWindow* mWin = new MainWindow;
 
     PCScreen * pwgt = new PCScreen(mWin);
@@ -28,9 +32,21 @@ int main(int argc, char** argv){
 
 #ifdef APP_LAUNCH_FROM_IDE
     QFile  file("script.js");
+    QFile jFile("data.json");
 #else
     QFile  file("bin/script.js");
+    QFile jFile("bin/data.json");
 #endif
+
+    QString val;
+    jFile.open(QIODevice::ReadOnly | QIODevice::Text);
+    val = jFile.readAll();
+    jFile.close();
+
+    QJsonDocument doc = QJsonDocument::fromJson(val.toUtf8());
+    QJsonObject jObj = doc.object();
+    qDebug()<<"time = "<<jObj["blue_name"].toString()<<jObj["time"].toString()<<jObj["red_name"].toString()<<jObj["red_region"].toString()<<jObj["red_rate"].toString();
+    qDebug()<<jObj;
 
     if (file.open(QFile::ReadOnly)) {
 

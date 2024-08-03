@@ -82,6 +82,7 @@ signals:
     //void signalReplay(void);
     //void changeViewName(int);
     void sig_hide(QString, QString, QString, QString);
+    void sigLogo(bool);
 
 public slots:
     //void setFrameWidth(int);

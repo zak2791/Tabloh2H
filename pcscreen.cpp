@@ -581,6 +581,8 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     setSize();
     Variant(0);
 
+    connect(this, SIGNAL(sigLogo(bool)), tvScreen, SIGNAL(sigLogo(bool)));
+
 }
 
 void PCScreen::CpuUsage(){

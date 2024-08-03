@@ -20,7 +20,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="mFile">
@@ -62,11 +62,19 @@
     </property>
     <addaction name="actSbros"/>
    </widget>
+   <widget class="QMenu" name="mLogo">
+    <property name="title">
+     <string>Логотип</string>
+    </property>
+    <addaction name="logoRus"/>
+    <addaction name="logoEng"/>
+   </widget>
    <addaction name="mFile"/>
    <addaction name="settings"/>
    <addaction name="time"/>
    <addaction name="mSbros"/>
    <addaction name="help"/>
+   <addaction name="mLogo"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="openFile">
@@ -124,7 +132,36 @@
     <string>Настройка ТВ</string>
    </property>
   </action>
+  <action name="logoRus">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/images/frb.png</normaloff>:/images/frb.png</iconset>
+   </property>
+   <property name="text">
+    <string>Российский</string>
+   </property>
+  </action>
+  <action name="logoEng">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/images/ihca.png</normaloff>:/images/ihca.png</iconset>
+   </property>
+   <property name="text">
+    <string>Международный</string>
+   </property>
+  </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="res.qrc"/>
+ </resources>
  <connections/>
 </ui>

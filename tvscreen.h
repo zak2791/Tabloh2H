@@ -111,4 +111,7 @@ private:
 	int minimum_height_region;
     bool flagReplayOnTV = true;    //флаг показа видеоповторов на телевизоре
 
+signals:
+    void sigLogo(bool);
+
 };

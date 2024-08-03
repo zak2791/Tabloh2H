@@ -1,4 +1,4 @@
-#include "lcdtimer.h"
+ #include "lcdtimer.h"
 #include <QDebug>
 #include <QMediaPlayer>
 #include <QDir>

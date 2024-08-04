@@ -51,6 +51,7 @@ signals:
     void newFile(void);
     void variant(int);  //0-без видео, 1-с видео
     void sigLogo(bool);
+    void sigExit(void);
 
 };
 

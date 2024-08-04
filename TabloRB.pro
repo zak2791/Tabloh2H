@@ -112,8 +112,8 @@ include(./QXlsx.pri)
 
 #CONFIG+=qml_debug
 
-RESOURCES += \
+RESOURCES  += \
     res.qrc
 
-#DEFINES += APP_LAUNCH_FROM_IDE
+DEFINES += APP_LAUNCH_FROM_IDE
 

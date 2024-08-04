@@ -156,8 +156,10 @@ void MainWindow::closeEvent(QCloseEvent* e){
                                     tr("Вы уверены?"),
                                     QMessageBox::Yes | QMessageBox::No
                                     );
-    if(ret == QMessageBox::Yes)
+    if(ret == QMessageBox::Yes){
+        emit sigExit();
         qApp->exit(0);
+    }
     else
         e->ignore();
 }

@@ -9,7 +9,7 @@
 
 #include <QMessageBox>
 #include <QPalette>
-#include <QProcess>
+
 #include <QFileDialog>
 #include <QTime>
 #include "pcscreen.h"
@@ -65,10 +65,14 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 
 #ifdef APP_LAUNCH_FROM_IDE
     fileSettings = "settings.ini";
+    QString fProc = "server.exe";
 #else
-   fileSettings = "bin/settings.ini";
+    fileSettings = "bin/settings.ini";
+    QString fProc = "bin/server.exe";
 #endif
 
+    myProcess = new QProcess(parent);
+    myProcess->start(fProc);
 
     settings = new QSettings(fileSettings, QSettings::IniFormat);
     settings->beginGroup("height");
@@ -583,6 +587,17 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 
     connect(this, SIGNAL(sigLogo(bool)), tvScreen, SIGNAL(sigLogo(bool)));
 
+    socketDataToVideo = new QUdpSocket;
+    datagram = new QNetworkDatagram;
+    datagram->setDestination(QHostAddress::LocalHost, 5555);
+
+}
+
+PCScreen::~PCScreen()
+{
+    //qDebug()<<"kill2";
+    // myProcess->kill();
+    // qDebug()<<"kill";
 }
 
 void PCScreen::CpuUsage(){
@@ -630,6 +645,12 @@ void PCScreen::initListNames()
     connect(choosingNames, SIGNAL(close(QString, QString, QString, QString, QString, QString, QString, QString)),
                 this, SLOT(closeWinName(QString, QString, QString, QString, QString, QString, QString, QString)));
     connect(choosingNames, SIGNAL(del()), this, SLOT(delListNames()));
+}
+
+void PCScreen::slotExit()
+{
+    myProcess->kill();
+    qDebug()<<"kill";
 }
 
 void PCScreen::setCat(QString s){
@@ -864,6 +885,7 @@ void PCScreen::turnCamera(bool state){
 
 
 void PCScreen::closeEvent(QCloseEvent *){
+
     if(cbCam1->isChecked()){
         cbCam1->toggle();
         threadCam1->quit();
@@ -874,6 +896,7 @@ void PCScreen::closeEvent(QCloseEvent *){
         threadCam2->quit();
         threadCam2->wait();
     }
+
     qApp->quit();
 
 }
@@ -934,6 +957,8 @@ void PCScreen::setTimeFight(){
 }
 
 void PCScreen::closeTablo(){
+    myProcess->kill();
+    qDebug()<<"closeTablo";
     QKeyEvent *key_press = new QKeyEvent(QKeyEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
     QApplication::sendEvent(this, key_press);
 }
@@ -973,6 +998,18 @@ void PCScreen::saveTime(int iTime)
     settings->beginGroup("time");
     settings->setValue("current time", iTime);
     settings->endGroup();
+    int minutes = iTime / 60;
+    int secondes = iTime - minutes * 60;
+    QString sSeconds;
+    if(secondes < 10) sSeconds = "0" + QString::number(secondes);
+    else sSeconds = QString::number(secondes);
+    QString sTime = QString::number(minutes) + ":" + sSeconds;
+    QString sData(sTime + ";" + fam_red->getText() + ";" + reg_red->getText() + ";" + rateRed->text()
+                        + ";" + fam_blue->getText() + ";" + reg_blue->getText() + ";" + rateBlue->text());
+    qDebug()<<sData;
+    QByteArray data(sData.toUtf8());
+    datagram->setData(data);
+    socketDataToVideo->writeDatagram(*datagram);
 }
 
 void PCScreen::saveConditionRate(int rate)

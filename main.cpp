@@ -28,6 +28,8 @@ int main(int argc, char** argv){
 
     QObject::connect(mWin, SIGNAL(sigLogo(bool)), pwgt, SIGNAL(sigLogo(bool)));
 
+    QObject::connect(mWin, SIGNAL(sigExit(void)), pwgt, SLOT(slotExit(void)));
+
 	QJSEngine se;
 
 #ifdef APP_LAUNCH_FROM_IDE

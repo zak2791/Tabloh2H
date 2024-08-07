@@ -5,8 +5,8 @@
 #include <QKeyEvent>
 #include <QApplication>
 #include <QDebug>
-#include <QDesktopWidget>
-
+#include <QGuiApplication>
+#include <QScreen>
 #include <QMessageBox>
 #include <QPalette>
 
@@ -15,6 +15,7 @@
 #include "pcscreen.h"
 #include "QAction"
 #include <math.h>
+#include <QHttpServer>
 
 #include "category.h"
 
@@ -71,8 +72,8 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     QString fProc = "bin/server.exe";
 #endif
 
-    myProcess = new QProcess(parent);
-    myProcess->start(fProc);
+    //myProcess = new QProcess(parent);
+    //myProcess->start(fProc);
 
     settings = new QSettings(fileSettings, QSettings::IniFormat);
     settings->beginGroup("height");
@@ -328,7 +329,7 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 	//margin = 6;
     //сетка 68х42
     grid->setSpacing(6);
-	grid->setMargin(6);
+    //grid->setMargin(6);
     grid->addWidget(fam_red,                0,  0,  4,  34);
     grid->addWidget(fam_blue,               0,  34, 4,  34);
     grid->addWidget(reg_red,                4, 0,  4,  34);
@@ -587,9 +588,43 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 
     connect(this, SIGNAL(sigLogo(bool)), tvScreen, SIGNAL(sigLogo(bool)));
 
-    socketDataToVideo = new QUdpSocket;
-    datagram = new QNetworkDatagram;
-    datagram->setDestination(QHostAddress::LocalHost, 5555);
+    // socketDataToVideo = new QUdpSocket;
+    // datagram = new QNetworkDatagram;
+    // datagram->setDestination(QHostAddress::LocalHost, 5555);
+
+    html =  "<!DOCTYPE html>"
+                "<html>"
+                    "<head>"
+                        "<meta http-equiv='Refresh' content='1' charset='utf-8'/>"
+                        "<style>"
+                            "td {font-family: 'Times New Roman', Georgia, Serif; text-align: center;}"
+                            ".red {color: white; background-color: rgba(255,0,0,0.6);}"
+                            ".name {width: 30%;}"
+                            ".blue {color: white; background-color: rgba(0,0,255,0.6);}"
+                            ".time {color: white; background-color: rgba(0,255,0,0.6); font-size: 30px;}"
+                            ".rate {font-size: 30px; width: 10%;}"
+                        "</style>"
+                    "</head>"
+                    "<table width='1000px'>"
+                        "<tr>"
+                            "<td class='red name'> %1 </td>"
+                            "<td rowspan='2' class='rate red'> %2 </td>"
+                            "<td rowspan='2' class='time'> %3 </td>"
+                            "<td rowspan='2' class='blue rate'> %4 </td>"
+                            "<td class='blue name'> %5 </td>"
+                        "</tr>"
+                        "<tr>"
+                            "<td class='red'> %6 </td>"
+                            "<td class='blue'> %7 </td>"
+                        "</tr>"
+                    "</table>"
+                "</html>";
+    sHtml = html.arg("", "", "", "", "", "", "");
+    QHttpServer* server = new QHttpServer;
+    server->listen(QHostAddress::Any, 3333);
+    server->route("/", [this]() {
+        return sHtml.toUtf8();
+    });
 
 }
 
@@ -647,11 +682,11 @@ void PCScreen::initListNames()
     connect(choosingNames, SIGNAL(del()), this, SLOT(delListNames()));
 }
 
-void PCScreen::slotExit()
-{
-    myProcess->kill();
-    qDebug()<<"kill";
-}
+// void PCScreen::slotExit()
+// {
+//     //myProcess->kill();
+//     //qDebug()<<"kill";
+// }
 
 void PCScreen::setCat(QString s){
     cat->setText(s);
@@ -957,7 +992,7 @@ void PCScreen::setTimeFight(){
 }
 
 void PCScreen::closeTablo(){
-    myProcess->kill();
+    //myProcess->kill();
     qDebug()<<"closeTablo";
     QKeyEvent *key_press = new QKeyEvent(QKeyEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
     QApplication::sendEvent(this, key_press);
@@ -1004,12 +1039,17 @@ void PCScreen::saveTime(int iTime)
     if(secondes < 10) sSeconds = "0" + QString::number(secondes);
     else sSeconds = QString::number(secondes);
     QString sTime = QString::number(minutes) + ":" + sSeconds;
-    QString sData(sTime + ";" + fam_red->getText() + ";" + reg_red->getText() + ";" + rateRed->text()
-                        + ";" + fam_blue->getText() + ";" + reg_blue->getText() + ";" + rateBlue->text());
-    qDebug()<<sData;
-    QByteArray data(sData.toUtf8());
-    datagram->setData(data);
-    socketDataToVideo->writeDatagram(*datagram);
+    sHtml = html.arg(fam_red->getText(),
+                             rateRed->text(),
+                             sTime,
+                             rateBlue->text(),
+                             fam_blue->getText(),
+                             reg_red->getText(),
+                             reg_blue->getText());
+    //qDebug()<<sData;
+    //QByteArray data(sData.toUtf8());
+    //datagram->setData(data);
+    //socketDataToVideo->writeDatagram(*datagram);
 }
 
 void PCScreen::saveConditionRate(int rate)
@@ -1379,7 +1419,7 @@ void PCScreen::udpSend(){
         else
             data.append("0");
 
-        baDatagram.append(data);
+        baDatagram.append(data.toUtf8());
         s_udp->writeDatagram(baDatagram, *remoteAddress, 2424);
     }
 }
@@ -1434,46 +1474,16 @@ void PCScreen::Variant(int variant){
 }
 
 void PCScreen::setTvScreenGeometry(){
-
+    QScreen* screen = QGuiApplication::primaryScreen();
     if(QGuiApplication::screens().count() == 1)
-        tvScreen->setGeometry(screenLeft, screenTop, QApplication::desktop()->availableGeometry(this).width() / 2 + screenWidth,
-                                                     QApplication::desktop()->availableGeometry(this).height() / 2 + screenHeight);
+        tvScreen->setGeometry(0, 0, screen->availableGeometry().width() / 2,
+                                                     screen->availableGeometry().height() / 2);
     else{
+        QRect rec = QRect(QGuiApplication::screens().at(0)->availableGeometry());
         tvScreen->setGeometry(width(), 0, 100, height());
-        tvScreen->setGeometry(QApplication::desktop()->availableGeometry(this).right() + screenLeft, screenTop,
-                              QApplication::desktop()->availableGeometry(tvScreen).width() + screenWidth,
-                              QApplication::desktop()->availableGeometry(tvScreen).height() + screenHeight);
+        tvScreen->setGeometry(screen->availableGeometry().right(),
+                              0,
+                              rec.width(),
+                              rec.height());
     }
 }
-
-//void PCScreen::tvXchange(int x){
-//    screenLeft = x;
-//    setTvScreenGeometry();
-//}
-
-//void PCScreen::tvYchange(int y){
-//    screenTop = y;
-//    setTvScreenGeometry();
-//}
-
-//void PCScreen::tvWchange(int w){
-//    screenWidth = w;
-//    setTvScreenGeometry();
-//}
-
-//void PCScreen::tvHchange(int h){
-//    screenHeight = h;
-//    setTvScreenGeometry();
-//}
-
-//void PCScreen::tvReset(){
-//    screenLeft = 0;
-//    screenTop = 0;
-//    screenWidth = 0;
-//    screenHeight = 0;
-//    uiTV.sbX->setValue(0);
-//    uiTV.sbY->setValue(0);
-//    uiTV.sbW->setValue(0);
-//    uiTV.sbH->setValue(0);
-//    setTvScreenGeometry();
-//}

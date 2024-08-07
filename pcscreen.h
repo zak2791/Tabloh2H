@@ -24,7 +24,7 @@
 #include "list_family.h"
 #include <mainwindow.h>
 #include <QSettings>
-#include <QNetworkDatagram>
+//#include <QNetworkDatagram>
 
 #include <QSvgRenderer>
 #include <QProcess>
@@ -95,7 +95,7 @@ public slots:
     void Variant(int);
     void setTvScreenGeometry(void);
     void initListNames(void);   //инициализация списков спортсменов
-    void slotExit(void);
+    //void slotExit(void);
 
 private slots:
     void setCam(void);
@@ -168,7 +168,7 @@ private:
     LCDStopwatch * sec_doctor;
     QWidget* frmTvSettings;
     //Ui::frmTV uiTV;
-    QProcess* myProcess;
+    //QProcess* myProcess;
 
 	virtual void paintEvent(QPaintEvent *);
     virtual void closeEvent(QCloseEvent*);
@@ -221,7 +221,7 @@ private:
 
 	Ui::frmView ui;
     Ui::Form uiTime;
-	QDesktopWidget* desk;
+    //QDesktopWidget* desk;
 	int HEIGHT_REGION;
 	int HEIGHT_FAMILY;
     int HEIGHT_NEXT_FAMILY;
@@ -272,7 +272,10 @@ private:
     int flagUdp;    //0 - запрос адреса удаленного компьютера
                     //1 - отправка данных
 
-    QUdpSocket* socketDataToVideo;
-    QNetworkDatagram* datagram;
+    //QUdpSocket* socketDataToVideo;
+    //QNetworkDatagram* datagram;
+
+    QString html;
+    QString sHtml;
 
 };

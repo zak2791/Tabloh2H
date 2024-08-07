@@ -14,7 +14,7 @@ FirstLastName::FirstLastName(QString _cl,
 
 void FirstLastName::paintEvent(QPaintEvent * ){
     fm.setPixelSize(height() / 1.8);
-    fm.setWeight(wt); //63
+    fm.setWeight(QFont::Weight::DemiBold); //63
     setFont(fm);
 
     QPainter pn;
@@ -30,25 +30,25 @@ void FirstLastName::paintEvent(QPaintEvent * ){
     else
         FirstName = "";
 
-    if(p.width(LastName) >= width())
+    if(p.horizontalAdvance(LastName) >= width())
         pn.drawText(0, height() * 0.45, LastName);
     else
         if(align == 0)
-            pn.drawText((width() - p.width(LastName)) / 2, height() * 0.45, LastName);
+            pn.drawText((width() - p.horizontalAdvance(LastName)) / 2, height() * 0.45, LastName);
         else if(align == 1)
             pn.drawText(0, height() * 0.45, LastName);
         else
-            pn.drawText(width() - p.width(LastName), height() * 0.45, LastName);
+            pn.drawText(width() - p.horizontalAdvance(LastName), height() * 0.45, LastName);
 
-    if(p.width(FirstName) >= width())
+    if(p.horizontalAdvance(FirstName) >= width())
         pn.drawText(0, height() * 0.9, FirstName);
     else
         if(align == 0)
-            pn.drawText((width() - p.width(FirstName)) / 2, height() * 0.9, FirstName);
+            pn.drawText((width() - p.horizontalAdvance(FirstName)) / 2, height() * 0.9, FirstName);
         else if(align == 1)
             pn.drawText(0, height() * 0.9, FirstName);
         else
-            pn.drawText(width() - p.width(FirstName), height() * 0.9, FirstName);
+            pn.drawText(width() - p.horizontalAdvance(FirstName), height() * 0.9, FirstName);
 
     //if (align == 0 || align == 1 || p.width(tx) >= width()) {
         QLinearGradient gr(width() * 0.85, 0, width(), 0);

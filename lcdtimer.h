@@ -6,6 +6,9 @@
 #include <QPalette>
 #include <QTimer>
 #include "qt_windows.h"
+//#include <QMediaPlayer>
+//#include <QAudioSink>
+//#include <QFile>
 
 class LCDTimer : public QLCDNumber
 {
@@ -43,7 +46,9 @@ private:
     int strTimeToInt(QString);
     bool getVisible(void);
     QString pathToSound;
-
+    //QMediaPlayer * pPlayer;
+    //QAudioSink* audio;
+    //QFile sourceFile;
 
 protected:
     int status;     //0 - stopped

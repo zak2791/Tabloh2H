@@ -38,7 +38,8 @@ CameraConnection::~CameraConnection(){
 void CameraConnection::timerEvent(QTimerEvent*){
     QUdpSocket* m_pudp = new QUdpSocket(this);
     QByteArray baDatagram;
-    baDatagram.append("Camera" + QString::number(camera) + "\0");
+    QString s("Camera" + QString::number(camera) + "\0");
+    baDatagram.append(s.toUtf8());
     for(int i = 0; i < ip.length(); i++){
         QList<QString> _ip = ip[i].split(".");
         if(_ip.length() == 4){

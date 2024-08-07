@@ -25,5 +25,6 @@
         <file>TableSide.qml</file>
         <file>DelegateSide.qml</file>
         <file>images/ihca.png</file>
+        <file>gong.wav</file>
     </qresource>
 </RCC>

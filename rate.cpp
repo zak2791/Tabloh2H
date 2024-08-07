@@ -70,10 +70,10 @@ void Rate::setRate(int r) {
 }
 
 void Rate::resizeEvent(QResizeEvent * ){
-    largeFont.setWeight(50);
+    largeFont.setWeight(QFont::Weight::DemiBold);
     largeFont.setPixelSize(height() * 2);
     QFontMetrics fm = QFontMetrics(largeFont);
-    smallFont.setWeight(50);
+    smallFont.setWeight(QFont::Weight::DemiBold);
     smallFont.setPixelSize(height() * 2);
     int fontSize = height();
 

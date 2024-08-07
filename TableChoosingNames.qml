@@ -30,21 +30,23 @@ Rectangle {
     }
 
     onSliderReleased: {
-        if(slider === 0){   //если верхний слайдер двигали
-            if(((sldNext.y - 22) % 30) < 15){
-                sldNext.y = sldNext.y - (sldNext.y - 22) % 30
+        //(slider)=>{
+            if(slider === 0){   //если верхний слайдер двигали
+                if(((sldNext.y - 22) % 30) < 15){
+                    sldNext.y = sldNext.y - (sldNext.y - 22) % 30
+                }else{
+                    sldNext.y = sldNext.y - (sldNext.y - 22) % 30 + 30
+                }
+                sldNext.txtYpos = 0
             }else{
-                sldNext.y = sldNext.y - (sldNext.y - 22) % 30 + 30
+                if(((sld.y - 22) % 30) < 15){
+                    sld.y = sld.y - (sld.y - 22) % 30
+                }else{
+                    sld.y = sld.y - (sld.y - 22) % 30 + 30
+                }
+                sld.txtYpos = 0
             }
-            sldNext.txtYpos = 0
-        }else{
-            if(((sld.y - 22) % 30) < 15){
-                sld.y = sld.y - (sld.y - 22) % 30
-            }else{
-                sld.y = sld.y - (sld.y - 22) % 30 + 30
-            }
-            sld.txtYpos = 0
-        }
+        //}
     }
 
     onSliderYChanged: {
@@ -65,7 +67,7 @@ Rectangle {
         i = (_y - _y % 30) / 30
         ypos = (y - 22) % 30
         if(!isSeparate){
-            sldNext.y = y + 30       
+            sldNext.y = y + 30
             sldNext.txtYpos = ypos < 15 ? -ypos : 30 - ypos
             if(i < dataModel.count){
                 sldNext.textRed = dataModel.get(i).red
@@ -116,7 +118,7 @@ Rectangle {
         i = (_y - _y % 30) / 30
         ypos = (y - 22) % 30
         if(!isSeparate){
-            sld.y = y - 30      
+            sld.y = y - 30
             sld.txtYpos = ypos < 15 ? -ypos : 30 - ypos
             if(i < dataModel.count){
                 sld.textRed = dataModel.get(i).red

@@ -50,12 +50,14 @@ Item {
             }
             acceptedButtons: Qt.LeftButton | Qt.RightButton
             onPressed: {
+                (mouse)=>{
                 if (mouse.button === Qt.RightButton) { // 'mouse' is a MouseEvent argument passed into the onClicked signal handler
                     if(sideModel.rowCount() > 1)
                         grid.moveItem(index)
                     mouse.accepted = false
                 }
                 itemPress = index
+                }
             }
             drag.target: dragItem
             drag.axis: Drag.XAndYAxis

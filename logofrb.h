@@ -2,6 +2,7 @@
 #define LOGOFRB_H
 
 #include <QWidget>
+#include <QSettings>
 
 class logofrb : public QWidget
 {
@@ -12,9 +13,12 @@ public:
 public slots:
     void on_logo(void);
     void off_logo(void);
+    void setLogo(bool);
 
 private:
     virtual void paintEvent(QPaintEvent*);
+    QString pathLogo;
+    QSettings* settings;
 
 };
 

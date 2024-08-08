@@ -24,5 +24,6 @@
         <file>TableAllSportsmens.qml</file>
         <file>TableSide.qml</file>
         <file>DelegateSide.qml</file>
+        <file>images/ihca.png</file>
     </qresource>
 </RCC>

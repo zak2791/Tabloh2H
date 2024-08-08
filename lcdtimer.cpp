@@ -1,4 +1,4 @@
-#include "lcdtimer.h"
+ #include "lcdtimer.h"
 #include <QDebug>
 #include <QMediaPlayer>
 #include <QDir>
@@ -149,7 +149,7 @@ int LCDTimer::strTimeToInt(QString sTime){
     return minutes * 60 + seconds;
 }
 
-QString LCDTimer::intTimeToStr(int iTime){
+ QString LCDTimer::intTimeToStr(int iTime){
     int minutes = iTime / 60;
     int secondes = iTime - minutes * 60;
     QString sSeconds;

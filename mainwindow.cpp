@@ -88,6 +88,20 @@ MainWindow::MainWindow(QWidget *parent) :
     uiVersion.setupUi(frmVersion);
     connect(ui->about, SIGNAL(triggered()), frmVersion, SLOT(show()));
 
+    connect(ui->logoRus, SIGNAL(triggered(bool)), this, SLOT(selectLogo(bool)));
+    connect(ui->logoEng, SIGNAL(triggered(bool)), this, SLOT(selectLogo(bool)));
+
+    settings.beginGroup("logo");
+    if(settings.value("logo", 1).toInt()){
+        ui->logoRus->setChecked(true);
+        ui->logoEng->setChecked(false);
+    }
+    else{
+        ui->logoRus->setChecked(false);
+        ui->logoEng->setChecked(true);
+    }
+    settings.endGroup();
+
 }
 
 MainWindow::~MainWindow()
@@ -115,13 +129,37 @@ void MainWindow::Variant(){
 
 }
 
+void MainWindow::selectLogo(bool checked)
+{
+    if(sender()->objectName() == "logoRus"){
+        if(ui->logoEng->isChecked() == false){
+            ui->logoRus->setChecked(true);
+            return;
+        }
+        ui->logoEng->setChecked(false);
+        emit sigLogo(true);
+    }
+    else{
+        if(ui->logoRus->isChecked() == false){
+            ui->logoEng->setChecked(true);
+            return;
+        }
+        ui->logoRus->setChecked(false);
+        emit sigLogo(false);
+    }
+
+    qDebug()<<sender()->objectName();
+}
+
 void MainWindow::closeEvent(QCloseEvent* e){
     int ret = QMessageBox::question(this, tr("Выход"),
                                     tr("Вы уверены?"),
                                     QMessageBox::Yes | QMessageBox::No
                                     );
-    if(ret == QMessageBox::Yes)
+    if(ret == QMessageBox::Yes){
+        emit sigExit();
         qApp->exit(0);
+    }
     else
         e->ignore();
 }

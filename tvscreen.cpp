@@ -212,6 +212,7 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
     //rV->setFrameStyle(QFrame::Box);
     setWindowTitle("TabloOnTV");
 
+    connect(this, SIGNAL(sigLogo(bool)), logo, SLOT(setLogo(bool)));
 
 }
 

@@ -24,9 +24,10 @@
 #include "list_family.h"
 #include <mainwindow.h>
 #include <QSettings>
+#include <QNetworkDatagram>
 
 #include <QSvgRenderer>
-
+#include <QProcess>
 #include "choosingnames.h"
 
 class IconButton : public QPushButton{
@@ -71,7 +72,7 @@ public:
     explicit PCScreen(MainWindow*, QWidget *parent = 0);
     MainWindow* mainwin;
 
-    //~PCScreen();
+    ~PCScreen();
 
     EndTime * lblEndTimer;         //красный фон по окончании времени
 
@@ -82,6 +83,7 @@ signals:
     //void signalReplay(void);
     //void changeViewName(int);
     void sig_hide(QString, QString, QString, QString);
+    void sigLogo(bool);
 
 public slots:
     //void setFrameWidth(int);
@@ -93,6 +95,7 @@ public slots:
     void Variant(int);
     void setTvScreenGeometry(void);
     void initListNames(void);   //инициализация списков спортсменов
+    void slotExit(void);
 
 private slots:
     void setCam(void);
@@ -165,7 +168,7 @@ private:
     LCDStopwatch * sec_doctor;
     QWidget* frmTvSettings;
     //Ui::frmTV uiTV;
-
+    QProcess* myProcess;
 
 	virtual void paintEvent(QPaintEvent *);
     virtual void closeEvent(QCloseEvent*);
@@ -268,5 +271,8 @@ private:
     QTimer* udpTimer;
     int flagUdp;    //0 - запрос адреса удаленного компьютера
                     //1 - отправка данных
+
+    QUdpSocket* socketDataToVideo;
+    QNetworkDatagram* datagram;
 
 };

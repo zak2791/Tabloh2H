@@ -5,6 +5,7 @@
 //#include <QJsonDocument>
 #include <QQmlContext>
 #include <QStringListModel>
+#include <QRegExp>
 
 ChoosingNames::ChoosingNames(QWidget *parent) : QWidget(parent)
 {
@@ -86,8 +87,10 @@ void ChoosingNames::setNames(QStringList list){
     model->setList(list);
     slmodel->clearModel();
     QMetaObject::invokeMethod(objGridSide, "updateSlider");
-    proxyAge->setFilterRegExp("");
-    proxyWeight->setFilterRegExp("");
+    //proxyAge->filterRegularExpression() = QRegularExpression("");//setFilterRegExp("");
+    proxyAge->setFilterRegularExpression("");
+    //proxyWeight->filterRegularExpression() = QRegularExpression("");//setFilterRegExp("");
+    proxyWeight->setFilterRegularExpression("");
 }
 
 void ChoosingNames::setAge(QStringList list){
@@ -144,17 +147,20 @@ void ChoosingNames::closeEvent(QCloseEvent *){
 }
 
 void ChoosingNames::choiceAge(QString age){
-    proxyAge->setFilterRegExp(age);
+    //proxyAge->filterRegularExpression() = QRegularExpression(age);//setFilterRegExp(age);
+    proxyAge->setFilterRegularExpression(age);
 }
 
 void ChoosingNames::choiceWeight(QString weight){
-    proxyWeight->setFilterRegExp(weight);
-
+    //proxyWeight->filterRegularExpression() = QRegularExpression(weight);//setFilterRegExp(weight);
+    proxyWeight->setFilterRegularExpression(weight);// = QRegularExpression(weight);//setFilterRegExp(weight);
 }
 
 void ChoosingNames::filterName(QString name){
-    QRegExp regExp( "^" + name, Qt::CaseInsensitive );
-    proxyName->setFilterRegExp(regExp);
+    //QRegExp regExp( "^" + name, Qt::CaseInsensitive );
+    QRegularExpression regExp( "^" + name, QRegularExpression::CaseInsensitiveOption);
+    //proxyName->filterRegularExpression() = QRegularExpression( "^" + name);// setFilterRegExp(regExp);
+    proxyName->setFilterRegularExpression(regExp);
 }
 
 void ChoosingNames::fromAllToSide(int item){

@@ -86,7 +86,7 @@ Rectangle {
             id: gridarea
             anchors.fill: parent
             propagateComposedEvents: true
-            onPressed: {mouse.accepted = false}
+            onPressed: (mouse)=> {mouse.accepted = false}
             onReleased: {mouse.accepted = false}
         }
     }

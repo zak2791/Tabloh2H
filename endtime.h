@@ -18,7 +18,7 @@ public:
     EndTime(QWidget *parent = 0);
 
     virtual void timerEvent(QTimerEvent*);
-    virtual void mousePressEvent(QMouseEvent*);
+    //virtual void mousePressEvent(QMouseEvent*);
     void sbros(void);
 
 public slots:

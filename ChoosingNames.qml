@@ -1,7 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
-import Qt.labs.settings 1.0
+import QtCore
 
 Item {
 
@@ -142,7 +142,7 @@ Item {
                 RowLayout {
                     spacing: 6
                     Text{
-                        text: "Высота строки выбранных спортсменов:"
+                        text: "Высота строки\nвыбранных спортсменов:"
                     }
 
                     SpinBox {
@@ -170,7 +170,7 @@ Item {
                 RowLayout {
                     spacing: 6
                     Text{
-                        text: "Размер шрифта списка выбранных спортсменов:"
+                        text: "Размер шрифта списка\nвыбранных спортсменов:"
                     }
 
                     SpinBox {

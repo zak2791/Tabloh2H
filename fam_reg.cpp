@@ -57,7 +57,7 @@ QString Fam::getText(){
 
 void Fam::paintEvent(QPaintEvent * ){
 	fm.setPixelSize(height() / 0.9);
-	fm.setWeight(wt); //63
+    fm.setWeight(QFont::Weight::DemiBold); //63
 	setFont(fm);
 
 	QPainter pn;
@@ -65,16 +65,16 @@ void Fam::paintEvent(QPaintEvent * ){
 
 	QFontMetrics p(font()); // .width(tx);
 
-	if(p.width(tx) >= width())
+    if(p.horizontalAdvance(tx) >= width())
 		pn.drawText(0, height() * 0.9, tx);
 	else
 		if(align == 0)
-			pn.drawText((width() - p.width(tx)) / 2, height() * 0.9, tx);
+            pn.drawText((width() - p.horizontalAdvance(tx)) / 2, height() * 0.9, tx);
 		else if(align == 1)
 			pn.drawText(0, height() * 0.9, tx);
 		else
-			pn.drawText(width() - p.width(tx), height() * 0.9, tx);
-	if (align == 0 || align == 1 || p.width(tx) >= width()) {
+            pn.drawText(width() - p.horizontalAdvance(tx), height() * 0.9, tx);
+    if (align == 0 || align == 1 || p.horizontalAdvance(tx) >= width()) {
 		QLinearGradient gr(width() * 0.85, 0, width(), 0);
 		gr.setColorAt(0, QColor(0, 0, 0, 0));
 		gr.setColorAt(1, QColor(0, 0, 0, 255));

@@ -16,7 +16,7 @@ Category::~Category()
 
 void Category::resizeEvent(QResizeEvent * ) {
 	QFont fnt;
-	fnt.setWeight(60);
+    fnt.setWeight(QFont::Weight::DemiBold);
 	fnt.setPixelSize(height() * 0.8);
 	setFont(fnt);
 }

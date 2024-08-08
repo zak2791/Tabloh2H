@@ -1,5 +1,5 @@
 import QtQuick 2.12
-import QtQuick.Controls 1.4
+import QtQuick.Controls
 
 Rectangle {
     id: rect
@@ -41,12 +41,14 @@ Rectangle {
     }
 
     onSliderPressed: {
-        if(button === Qt.RightButton){
-            isSeparate = true
-            buttonLeft = false
-        }
-        else
+        //(button)=>{
+            if(button === Qt.RightButton){
+                isSeparate = true
+                buttonLeft = false
+            }
+            else
             buttonLeft = true
+        //}
     }
 
     onSliderReleased: {
@@ -68,156 +70,154 @@ Rectangle {
     }
 
     onSliderYChanged: {
-        let _y, i, ypos;
-        _y = y + heightRows / 2 + grid.contentY - countRemovedRows * heightRows;
-        //_y = y + heightRows / 2;
-        i = (_y - _y % heightRows) / heightRows
-        console.log("onSliderYChanged i = ", i)
-        ypos = y % heightRows
-        sld.txtYpos = ypos < heightRows / 2 ? -ypos : heightRows - ypos
-        //sld.textRed = ypos < heightRows / 2 ? sideModel.getNameRegion(i * 2) : sideModel.getNameRegion((i + 1) * 2)
-        //console.log("i = ", i, "sideModel.rowCount() = ", sideModel.rowCount())
-        //console.log("grid.contentY = ", grid.contentY, " grid.originY = ", grid.originY, " grid.contentHeight = ", grid.contentHeight)
-
-        if(i < sideModel.rowCount() / 2){
-            sld.textRed = sideModel.getNameRegion(i * 2)
-            sld.ageRed = sideModel.getAge(i * 2)
-            sld.weightRed = sideModel.getWeight(i * 2)
-        }else{
-            sld.textRed = ""
-            sld.ageRed = ""
-            sld.weightRed = ""
-        }
-        if(i <= sideModel.rowCount() / 2 - 1){
-            sld.textBlue = sideModel.getNameRegion(i * 2 + 1)
-            sld.ageBlue = sideModel.getAge(i * 2 + 1)
-            sld.weightBlue = sideModel.getWeight(i * 2 + 1)
-        }else{
-            sld.textBlue = ""
-            sld.ageBlue = ""
-            sld.weightBlue = ""
-        }
-
-        //_y = y + heightRows  + heightRows / 2 + grid.contentY - countRemovedRows * heightRows
-//        _y = y + heightRows / 2;
-//        i = (_y - _y % heightRows) / heightRows
-//        console.log("i = ", i)
-//        ypos = y % heightRows
-        if(!isSeparate){
-            sldNext.y = y + heightRows
-            sldNext.txtYpos = ypos < heightRows / 2 ? -ypos : heightRows - ypos
-
-            if(i + 1 < sideModel.rowCount() / 2)
-                sldNext.textRed = sideModel.getNameRegion((i + 1) * 2)
-            else
-                sldNext.textRed = ""
-            if(i + 1 <= sideModel.rowCount() / 2 - 1)
-                sldNext.textBlue = sideModel.getNameRegion((i + 1) * 2 + 1)
-            else
-                sldNext.textBlue = ""
-
-        }else{
-            if(previewY < y){   //движение вниз
-                if(sldNext.y < y + heightRows){
-                    sldNext.y = y + heightRows
-                    sldNext.txtYpos = ypos < heightRows / 2 ? -ypos : heightRows - ypos
-
-                    if(i + 1 < sideModel.rowCount() / 2)
-                        sldNext.textRed = sideModel.getNameRegion((i + 1) * 2)
-                    else
-                        sldNext.textRed = ""
-                    if(i + 1 <= sideModel.rowCount() / 2 - 1)
-                        sldNext.textBlue = sideModel.getNameRegion((i + 1) * 2 + 1)
-                    else
-                        sldNext.textBlue = ""
-
-                    if(buttonLeft)
-                        isSeparate = false
-                }
-            }
-        }
-        previewY = y
-
-    }
-
-    onSliderYChangedNext: {
-        let _y, i, ypos;
-        _y = y + heightRows / 2 + grid.contentY - countRemovedRows * heightRows;
-        //_y = y + heightRows / 2;
-
-        i = (_y - _y % heightRows) / heightRows
-        console.log("onSliderYChangedNext i = ", i)
-        ypos = y % heightRows
-        sldNext.txtYpos = ypos < heightRows / 2 ? -ypos : heightRows - ypos
-
-        if(i < sideModel.rowCount() / 2)
-            sldNext.textRed = sideModel.getNameRegion(i * 2)
-        else
-            sldNext.textRed = ""
-        if(i <= sideModel.rowCount() / 2 - 1)
-            sldNext.textBlue = sideModel.getNameRegion(i * 2 + 1)
-        else
-            sldNext.textBlue = ""
-
-        //_y = y - heightRows + heightRows / 2 + grid.contentY -  countRemovedRows * heightRows
-//        _y = y + heightRows / 2;
-//        i = (_y - _y % heightRows) / heightRows
-//        ypos = y % heightRows
-        if(!isSeparate){
-            sld.y = y - heightRows
+        //(y)=>{
+            let _y, i, ypos;
+            _y = y + heightRows / 2 + grid.contentY - countRemovedRows * heightRows;
+            //_y = y + heightRows / 2;
+            i = (_y - _y % heightRows) / heightRows
+            //console.log("onSliderYChanged i = ", i)
+            ypos = y % heightRows
             sld.txtYpos = ypos < heightRows / 2 ? -ypos : heightRows - ypos
+            //sld.textRed = ypos < heightRows / 2 ? sideModel.getNameRegion(i * 2) : sideModel.getNameRegion((i + 1) * 2)
+            //console.log("i = ", i, "sideModel.rowCount() = ", sideModel.rowCount())
+            //console.log("grid.contentY = ", grid.contentY, " grid.originY = ", grid.originY, " grid.contentHeight = ", grid.contentHeight)
 
-            if(i - 1 < sideModel.rowCount() / 2){
-                sld.textRed = sideModel.getNameRegion((i - 1) * 2)
-                sld.ageRed = sideModel.getAge((i - 1) * 2)
-                sld.weightRed = sideModel.getWeight((i - 1) * 2)
+            if(i < sideModel.rowCount() / 2){
+                sld.textRed = sideModel.getNameRegion(i * 2)
+                sld.ageRed = sideModel.getAge(i * 2)
+                sld.weightRed = sideModel.getWeight(i * 2)
             }else{
                 sld.textRed = ""
                 sld.ageRed = ""
                 sld.weightRed = ""
             }
-            if(i - 1 <= sideModel.rowCount() / 2 - 1){
-                sld.textBlue = sideModel.getNameRegion((i - 1) * 2 + 1)
-                sld.ageBlue = sideModel.getAge((i - 1) * 2 + 1)
-                sld.weightBlue = sideModel.getWeight((i - 1) * 2 + 1)
+            if(i <= sideModel.rowCount() / 2 - 1){
+                sld.textBlue = sideModel.getNameRegion(i * 2 + 1)
+                sld.ageBlue = sideModel.getAge(i * 2 + 1)
+                sld.weightBlue = sideModel.getWeight(i * 2 + 1)
             }else{
                 sld.textBlue = ""
                 sld.ageBlue = ""
                 sld.weightBlue = ""
             }
 
-        }
-        else{
-            if(previewYNext > y){   //движение вверх
-                if(sld.y > y - heightRows){
-                    sld.y = y - heightRows
-                    sld.txtYpos = ypos < heightRows / 2 ? -ypos : heightRows - ypos
+            if(!isSeparate){
+                sldNext.y = y + heightRows
+                sldNext.txtYpos = ypos < heightRows / 2 ? -ypos : heightRows - ypos
 
-                    if(i < sideModel.rowCount() / 2){
-                        sld.textRed = sideModel.getNameRegion(i * 2)
-                        sld.ageRed = sideModel.getAge(i * 2)
-                        sld.weightRed = sideModel.getWeight(i * 2)
-                    }else{
-                        sld.textRed = ""
-                        sld.ageRed = ""
-                        sld.weightRed = ""
-                    }
-                    if(i <= sideModel.rowCount() / 2 - 1){
-                        sld.textBlue = sideModel.getNameRegion(i * 2 + 1)
-                        sld.ageBlue = sideModel.getAge(i * 2 + 1)
-                        sld.weightBlue = sideModel.getWeight(i * 2 + 1)
-                    }else{
-                        sld.textBlue = ""
-                        sld.ageBlue = ""
-                        sld.weightBlue = ""
-                    }
+                if(i + 1 < sideModel.rowCount() / 2)
+                sldNext.textRed = sideModel.getNameRegion((i + 1) * 2)
+                else
+                sldNext.textRed = ""
+                if(i + 1 <= sideModel.rowCount() / 2 - 1)
+                sldNext.textBlue = sideModel.getNameRegion((i + 1) * 2 + 1)
+                else
+                sldNext.textBlue = ""
 
-                    if(buttonLeft)
+            }else{
+                if(previewY < y){   //движение вниз
+                    if(sldNext.y < y + heightRows){
+                        sldNext.y = y + heightRows
+                        sldNext.txtYpos = ypos < heightRows / 2 ? -ypos : heightRows - ypos
+
+                        if(i + 1 < sideModel.rowCount() / 2)
+                        sldNext.textRed = sideModel.getNameRegion((i + 1) * 2)
+                        else
+                        sldNext.textRed = ""
+                        if(i + 1 <= sideModel.rowCount() / 2 - 1)
+                        sldNext.textBlue = sideModel.getNameRegion((i + 1) * 2 + 1)
+                        else
+                        sldNext.textBlue = ""
+
+                        if(buttonLeft)
                         isSeparate = false
+                    }
                 }
             }
-        }
-        previewYNext = y
+            previewY = y
+        //}
+    }
+
+    onSliderYChangedNext: {
+        //(y)=>{
+            let _y, i, ypos;
+            _y = y + heightRows / 2 + grid.contentY - countRemovedRows * heightRows;
+            //_y = y + heightRows / 2;
+
+            i = (_y - _y % heightRows) / heightRows
+            //console.log("onSliderYChangedNext i = ", i)
+            ypos = y % heightRows
+            sldNext.txtYpos = ypos < heightRows / 2 ? -ypos : heightRows - ypos
+
+            if(i < sideModel.rowCount() / 2)
+            sldNext.textRed = sideModel.getNameRegion(i * 2)
+            else
+            sldNext.textRed = ""
+            if(i <= sideModel.rowCount() / 2 - 1)
+            sldNext.textBlue = sideModel.getNameRegion(i * 2 + 1)
+            else
+            sldNext.textBlue = ""
+
+            //_y = y - heightRows + heightRows / 2 + grid.contentY -  countRemovedRows * heightRows
+            //        _y = y + heightRows / 2;
+            //        i = (_y - _y % heightRows) / heightRows
+            //        ypos = y % heightRows
+            if(!isSeparate){
+                sld.y = y - heightRows
+                sld.txtYpos = ypos < heightRows / 2 ? -ypos : heightRows - ypos
+
+                if(i - 1 < sideModel.rowCount() / 2){
+                    sld.textRed = sideModel.getNameRegion((i - 1) * 2)
+                    sld.ageRed = sideModel.getAge((i - 1) * 2)
+                    sld.weightRed = sideModel.getWeight((i - 1) * 2)
+                }else{
+                    sld.textRed = ""
+                    sld.ageRed = ""
+                    sld.weightRed = ""
+                }
+                if(i - 1 <= sideModel.rowCount() / 2 - 1){
+                    sld.textBlue = sideModel.getNameRegion((i - 1) * 2 + 1)
+                    sld.ageBlue = sideModel.getAge((i - 1) * 2 + 1)
+                    sld.weightBlue = sideModel.getWeight((i - 1) * 2 + 1)
+                }else{
+                    sld.textBlue = ""
+                    sld.ageBlue = ""
+                    sld.weightBlue = ""
+                }
+
+            }
+            else{
+                if(previewYNext > y){   //движение вверх
+                    if(sld.y > y - heightRows){
+                        sld.y = y - heightRows
+                        sld.txtYpos = ypos < heightRows / 2 ? -ypos : heightRows - ypos
+
+                        if(i < sideModel.rowCount() / 2){
+                            sld.textRed = sideModel.getNameRegion(i * 2)
+                            sld.ageRed = sideModel.getAge(i * 2)
+                            sld.weightRed = sideModel.getWeight(i * 2)
+                        }else{
+                            sld.textRed = ""
+                            sld.ageRed = ""
+                            sld.weightRed = ""
+                        }
+                        if(i <= sideModel.rowCount() / 2 - 1){
+                            sld.textBlue = sideModel.getNameRegion(i * 2 + 1)
+                            sld.ageBlue = sideModel.getAge(i * 2 + 1)
+                            sld.weightBlue = sideModel.getWeight(i * 2 + 1)
+                        }else{
+                            sld.textBlue = ""
+                            sld.ageBlue = ""
+                            sld.weightBlue = ""
+                        }
+
+                        if(buttonLeft)
+                        isSeparate = false
+                    }
+                }
+            }
+            previewYNext = y
+        //}
     }
 
     Timer {
@@ -235,11 +235,11 @@ Rectangle {
         let ind = grid.indexAt(0, sld.y + grid.contentY)
         //console.log("contentY = ", grid.contentY)
         if(ind > 0){
-//            for(let i = 0; i < ind; i++){
-//                //console.log("moveItem " + i)
-//                grid.moveItem(0)
+            //            for(let i = 0; i < ind; i++){
+            //                //console.log("moveItem " + i)
+            //                grid.moveItem(0)
 
-//            }
+            //            }
             grid.moveItems(ind)
             countRemovedRows += ind / 2
             parent.parent.adjustableRowHeight = false
@@ -265,7 +265,7 @@ Rectangle {
             _y = sld.y;
             //_y = sld.y + heightRows / 2 + grid.contentY - countRemovedRows * heightRows;
             i = (_y - _y % heightRows) / heightRows
-            console.log("update", i, _y)
+            //console.log("update", i, _y)
             if(i < sideModel.rowCount() / 2){
                 sld.textRed = sideModel.getNameRegion(i * 2)
                 sld.ageRed = sideModel.getAge(i * 2)
@@ -299,7 +299,7 @@ Rectangle {
             sldNext.setTextOffset()
             //grid.contentY = 0
             //grid.originY = 0
-            console.log("updateSlider")
+            //console.log("updateSlider")
         }
 
         anchors.fill: parent
@@ -357,12 +357,12 @@ Rectangle {
         onContentYChanged: {
             //if(contentY)
             //    contentY = 0
-            console.log("onContentYChanged = ", contentY, " currentYSldider = ", currentYSldider)
+            //console.log("onContentYChanged = ", contentY, " currentYSldider = ", currentYSldider)
             sld.y = 0; //currentYSldider - contentY
             sldNext.y = heightRows; //currentYSldiderNext - contentY
             //updateSlider()
-//            if(contentY == 0)
-//                countRemovedRows = 0;
+            //            if(contentY == 0)
+            //                countRemovedRows = 0;
             sliderYChanged(0)
             sliderYChangedNext(heightRows)
             updateSlider()
@@ -377,7 +377,7 @@ Rectangle {
                     contentY = contentY - remains + heightRows
                 }
             }
-            console.log("end", ' ', contentY, ' ', remains)
+            //console.log("end", ' ', contentY, ' ', remains)
             //updateSlider()
         }
 

@@ -1,7 +1,9 @@
  #include "lcdtimer.h"
 #include <QDebug>
-#include <QMediaPlayer>
+
 #include <QDir>
+#include <QMediaPlayer>
+#include <QSoundEffect>
 
 LCDTimer::LCDTimer(QWidget *parent,
                    QString strInitTime,
@@ -42,6 +44,11 @@ LCDTimer::LCDTimer(QWidget *parent,
 #else
     pathToSound = "bin/gong.mp3";
 #endif
+
+    //pPlayer = new QMediaPlayer(this);
+    //QAudioOutput* audioOutput = new QAudioOutput(this);
+    //pPlayer->setAudioOutput(audioOutput);
+    //pPlayer->setSource(QUrl::fromLocalFile(pathToSound));
 
 }
 
@@ -113,10 +120,10 @@ void LCDTimer::showTime(){
         setPalette(palStopped);
         emit sigStarted(false);
         if(_sound){
-            QMediaPlayer * pPlayer = new QMediaPlayer;
-            pPlayer->setMedia(QUrl::fromLocalFile(pathToSound));
+            QSoundEffect* effect = new QSoundEffect;
+            effect->setSource(QUrl::fromLocalFile(":/gong.wav"));
             emit sigEndTime();
-            pPlayer->play() ;
+            effect->play();
         }
     }
 
@@ -149,7 +156,7 @@ int LCDTimer::strTimeToInt(QString sTime){
     return minutes * 60 + seconds;
 }
 
- QString LCDTimer::intTimeToStr(int iTime){
+QString LCDTimer::intTimeToStr(int iTime){
     int minutes = iTime / 60;
     int secondes = iTime - minutes * 60;
     QString sSeconds;

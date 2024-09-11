@@ -158,6 +158,8 @@ private slots:
     void saveConditionNames(QString);
     void saveConditionPlus(QString);
 
+    void turnTranslationToVk(bool);
+
 private:
     //QLabel* lblCpuUsage;
     QCheckBox* cbAddDisp;
@@ -277,5 +279,7 @@ private:
 
     QString html;
     QString sHtml;
+
+    QProcess* proc;
 
 };

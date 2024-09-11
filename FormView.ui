@@ -13,7 +13,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>570</height>
+    <height>620</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -25,13 +25,13 @@
   <property name="minimumSize">
    <size>
     <width>400</width>
-    <height>570</height>
+    <height>620</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>400</width>
-    <height>570</height>
+    <height>620</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -224,7 +224,7 @@
    <property name="geometry">
     <rect>
      <x>26</x>
-     <y>380</y>
+     <y>430</y>
      <width>351</width>
      <height>176</height>
     </rect>
@@ -255,7 +255,7 @@
      <x>19</x>
      <y>280</y>
      <width>361</width>
-     <height>91</height>
+     <height>131</height>
     </rect>
    </property>
    <property name="title">
@@ -304,6 +304,29 @@
       <y>50</y>
       <width>161</width>
       <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cbTurnVK">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>100</y>
+      <width>121</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Трансляция в ВК</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="leKeyVK">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>100</y>
+      <width>211</width>
+      <height>22</height>
      </rect>
     </property>
    </widget>

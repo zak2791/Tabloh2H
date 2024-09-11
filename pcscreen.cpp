@@ -626,6 +626,7 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
         return sHtml.toUtf8();
     });
 
+    connect(ui.cbTurnVK, SIGNAL(toggled(bool)), this, SLOT(turnTranslationToVk(bool)));
 }
 
 PCScreen::~PCScreen()
@@ -902,7 +903,10 @@ void PCScreen::setCam(){
 void PCScreen::turnCamera(bool state){
     if(state){
         if(sender()->objectName() == "cbCam1"){
-            camera1->setUrl(cam1Url);
+            if(ui.cbTurnVK->isChecked())
+                camera1->setUrl("udp://127.0.0.1:3333");
+            else
+                camera1->setUrl(cam1Url);
             threadCam1->start();
         }else{
             camera2->setUrl(cam2Url);
@@ -1108,6 +1112,23 @@ void PCScreen::saveConditionPlus(QString str)
             settings->setValue("plus", "");
     }
     settings->endGroup();
+}
+
+void PCScreen::turnTranslationToVk(bool check)
+{
+    if(check){
+        qDebug()<<ui.leKeyVK->text();
+        QStringList arguments;
+        //arguments<<"C:/Users/Colorfull/Desktop/CANON/1.MOV"<<"-vf"<<"scale=400:-1";
+        arguments<<"-i"<<ui.leCam1->text()<<"-c:v"<<"h264"<<"-c:a"<<"aac"<<"-f"<<"tee"<<"-map"<<"0:v"<<"-map"<<"0:a";
+        arguments<<"[f=mpegts]udp://127.0.0.1:3333|[f=flv]rtmp://ovsu.mycdn.me/input/" + ui.leKeyVK->text();
+
+        proc = new QProcess(this);
+        proc->start("ffmpeg", arguments);
+    }
+    else{
+        proc->terminate();
+    }
 }
 
 //void PCScreen::tvFullScreen(bool b){

@@ -33,16 +33,18 @@ void Camera::TurnOnCamera(){
     //avformat_network_init();
 
     ofmt = NULL;
-    AVFormatContext *ifmt_ctx = NULL;
+    ifmt_ctx = NULL;
 
-    AVPacket *pkt = NULL;
+    AVPacket* pkt = NULL;
+    //AVPacket* pkt_stream = NULL;
+
     const char *in_filename;
 
     int best_video;
 
     int ret;
 
-    int *stream_mapping = NULL;
+    stream_mapping = NULL;
     int stream_mapping_size = 0;
     AVCodecContext *pCodecCtx = NULL;
     AVStream *stream;
@@ -51,8 +53,8 @@ void Camera::TurnOnCamera(){
     QByteArray bain = url.toLocal8Bit();
     in_filename = bain.data();
 
-    AVFormatContext* octx = NULL;////
-    AVDictionary *options = NULL; ////
+    //AVFormatContext* octx = NULL;////
+    //AVDictionary *options = NULL; ////
 
     pkt = av_packet_alloc();
     if (!pkt) {
@@ -60,7 +62,7 @@ void Camera::TurnOnCamera(){
     }
 
 
-    //ret = avformat_alloc_output_context2(&octx, NULL, "srt", "srt://192.168.0.198:5000?mode=listener");/////
+    //ret = avformat_alloc_output_context2(&ofmt_ctx_stream, NULL, "flv", "rtmp://192.168.1.100");/////
     //qDebug()<<"err = "<<ret;
 
     //av_dict_set(&options, "live", "1", 0);/////
@@ -156,6 +158,30 @@ void Camera::TurnOnCamera(){
             _dts = pkt->dts;
             _pts = pkt->pts;
         }
+        if(flag_stream){
+            AVPacket pkt_ref = { 0 };
+            //qDebug()<<"flag_stream = "<<flag_stream;
+            ret = av_packet_ref(&pkt_ref, pkt);
+            //qDebug()<<"ret = "<<ret;
+            if(ret < 0)
+                qDebug()<<"error av_packet_ref = "<<ret;
+            else{
+            pkt_ref.stream_index = stream_mapping[pkt_ref.stream_index];
+            out_stream = ofmt_ctx_stream->streams[pkt_ref.stream_index];
+
+            //pkt->dts = pkt->dts - _dts;
+            //pkt->pts = pkt->pts - _pts;
+
+            av_packet_rescale_ts(&pkt_ref, in_stream->time_base, out_stream->time_base);
+            pkt_ref.pos = -1;
+
+            ret = av_interleaved_write_frame(ofmt_ctx_stream, &pkt_ref);
+
+            if (ret < 0)
+                qDebug()<<"av_interleaved_write_frame stream= "<<ret;
+            }
+        }
+
         if(flag_record == 3){
             pkt->stream_index = stream_mapping[pkt->stream_index];
             out_stream = ofmt_ctx->streams[pkt->stream_index];
@@ -168,11 +194,12 @@ void Camera::TurnOnCamera(){
 
             ret = av_interleaved_write_frame(ofmt_ctx, pkt);
             //ret = av_write_frame(octx, pkt); //////
-            qDebug()<<"av_write_frame = "<<ret;
+            //qDebug()<<"av_write_frame = "<<ret;
 
             if (ret < 0)
                 break;
         }
+
 
         if(flag_record == 4){
             av_write_trailer(ofmt_ctx);
@@ -238,6 +265,8 @@ int Camera::prepareRecord(AVFormatContext * ifmt, int *stream_mapp, QString file
     int ret;
     int stream_index = 0;
     avformat_alloc_output_context2(&ofmt_ctx, NULL, NULL, out_file);
+    //avformat_alloc_output_context2(&ofmt_ctx, NULL, "flv", "rtmp://192.168.1.100");
+    qDebug()<<out_file;
     if (!ofmt_ctx)
         goto err;
 
@@ -279,4 +308,87 @@ int Camera::prepareRecord(AVFormatContext * ifmt, int *stream_mapp, QString file
         goto err;
     return 0;
 err: return -1;
+}
+
+void Camera::startStream(QString url){
+    if(ifmt_ctx == NULL)
+        return;
+    qDebug()<<"startStream -1";
+    int ret;
+    int stream_index = 0;
+    const char* out_filename = url.toUtf8().constData();    //"rtmp://192.168.1.100/live/stream";
+    qDebug()<<"startStream 0";
+    avformat_alloc_output_context2(&ofmt_ctx_stream, NULL, "flv", out_filename);
+    if (!ofmt_ctx_stream){
+        qDebug()<<"!ofmt_ctx_stream";
+        goto err;
+    }
+    qDebug()<<"startStream 1";
+    ofmt_stream = ofmt_ctx_stream->oformat;
+
+    for (uint i = 0; i < ifmt_ctx->nb_streams; i++) {
+        AVStream *out_stream;
+        AVStream *in_stream = ifmt_ctx->streams[i];
+        AVCodecParameters *in_codecpar = in_stream->codecpar;
+
+        if (in_codecpar->codec_type != AVMEDIA_TYPE_AUDIO &&
+            in_codecpar->codec_type != AVMEDIA_TYPE_VIDEO &&
+            in_codecpar->codec_type != AVMEDIA_TYPE_SUBTITLE) {
+            stream_mapping[i] = -1;
+            continue;
+        }
+
+        stream_mapping[i] = stream_index++;
+
+        out_stream = avformat_new_stream(ofmt_ctx_stream, NULL);
+        if (!out_stream){
+            qDebug()<<"out_stream"<<out_stream;
+            goto err;
+        }
+
+        ret = avcodec_parameters_copy(out_stream->codecpar, in_codecpar);
+        if (ret < 0){
+            qDebug()<<"avcodec_parameters_copy"<<ret;
+            goto err;
+        }
+        out_stream->codecpar->codec_tag = 0;
+    }
+    qDebug()<<"startStream 2";
+    av_dump_format(ofmt_ctx_stream, 0, out_filename, 1);
+
+    if (!(ofmt_stream->flags & AVFMT_NOFILE)) {
+        ret = avio_open(&ofmt_ctx_stream->pb, out_filename, AVIO_FLAG_WRITE);
+        if (ret < 0){
+            qDebug()<<"avio_open"<<ret;
+            goto err;
+        }
+    }
+    qDebug()<<"startStream 3";
+    ret = avformat_write_header(ofmt_ctx_stream, NULL);
+    if (ret < 0){
+        qDebug()<<"avformat_write_header"<<ret;
+        goto err;
+    }
+    qDebug()<<"startStream 4";
+    //return 0;
+    flag_stream = true;
+    qDebug()<<"ok turn stream";
+    return;
+err:
+    qDebug()<<"err stream turn";   //return -1;
+    emit errStream();
+}
+
+void Camera::stopStream(){
+    //av_write_trailer(ofmt_ctx_stream);
+    qDebug()<<"stop stream0";
+    // if(ofmt_ctx_stream == NULL)
+    //     return;
+    if (ofmt_ctx_stream && !(ofmt_stream->flags & AVFMT_NOFILE)){
+        avio_closep(&ofmt_ctx_stream->pb);
+        qDebug()<<"avio_closep ofmt_ctx_stream";
+    }
+    avformat_free_context(ofmt_ctx_stream);
+    flag_stream = false;
+    qDebug()<<"stop stream";
 }

@@ -26,16 +26,20 @@ public:
     void StopRecord(void);
     void TurnOffCamera(void);
     void setUrl(QString);
+    void startStream(QString);
 
 public slots:
         void TurnOnCamera(void);
         void onlyKeyFrame(bool);
+        void stopStream(void);
 
 private:
     QImage avFrame2QImage(AVFrame*);
 
     AVFormatContext *ofmt_ctx;
     const AVOutputFormat *ofmt;
+    AVFormatContext *ofmt_ctx_stream;
+    const AVOutputFormat *ofmt_stream;
     int flag_record;
     int64_t _pts;
     int64_t _dts;
@@ -44,10 +48,15 @@ private:
     QString file;
     int prepareRecord(AVFormatContext*, int*, QString);
     bool only_key_frame;
+    AVFormatContext *ifmt_ctx;
+    int* stream_mapping;
+    bool flag_stream = false;
 
 signals:
     void sigImage(QImage);
     void finished(void);
+    void errStream(void);
+
 };
 
 #endif // WORKWITHVIDEO_H

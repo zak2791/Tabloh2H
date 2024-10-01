@@ -27,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent) :
     video = ui->video;
     no_video = ui->no_video;
     winHelp = ui->winHelp;
+    //ActStream = ui->actStream;
 
 #ifdef APP_LAUNCH_FROM_IDE
     fileSettings = "settings.ini";

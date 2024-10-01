@@ -26,5 +26,7 @@
         <file>DelegateSide.qml</file>
         <file>images/ihca.png</file>
         <file>gong.wav</file>
+        <file>images/rtmpviewer.qml</file>
+        <file>rtmpviewer.qml</file>
     </qresource>
 </RCC>

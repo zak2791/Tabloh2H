@@ -17,6 +17,8 @@
 #include <math.h>
 #include <QHttpServer>
 
+//#include <QQuickWidget>
+
 #include "category.h"
 
 //#include <QHostAddress>
@@ -328,6 +330,17 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 	//spacing = 6;
 	//margin = 6;
     //сетка 68х42
+
+    // QQuickWidget *view = new QQuickWidget;
+    // view->setResizeMode(QQuickWidget::SizeRootObjectToView);
+    // view->setSource(QUrl("qrc:/rtmpviewer.qml"));
+    cbTurnStream = new QCheckBox("Трансляция ВК");
+    cbTurnStream->setStyleSheet("color: white");
+    connect(cbTurnStream, SIGNAL(toggled(bool)), this, SLOT(turnTranslationToVk(bool)));
+
+    cbTurnStream->setEnabled(false);
+
+
     grid->setSpacing(6);
     //grid->setMargin(6);
     grid->addWidget(fam_red,                0,  0,  4,  34);
@@ -388,7 +401,8 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 
     grid->addWidget(doctor,                 29,  45, 2,   6);
 
-    grid->addWidget(cbAddDisp,              28,  4, 4,   20);
+    grid->addWidget(cbAddDisp,              28,  4,  4,  10);
+    grid->addWidget(cbTurnStream,           28, 14,  4,  10);
 
     btnTime->setStyleSheet("color: green; font: bold " + QString::number(round(btnTime->height() / 2)) + "px;");
 
@@ -626,7 +640,9 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
         return sHtml.toUtf8();
     });
 
-    connect(ui.cbTurnVK, SIGNAL(toggled(bool)), this, SLOT(turnTranslationToVk(bool)));
+    //connect(ui.cbTurnVK, SIGNAL(toggled(bool)), this,       SLOT(turnTranslationToVk(bool)));
+    connect(camera1, SIGNAL(finished()),  camera1, SLOT(stopStream()));
+    connect(camera1, SIGNAL(errStream()), this,    SLOT(errorStream()));
 }
 
 PCScreen::~PCScreen()
@@ -876,8 +892,12 @@ void PCScreen::finishedCamera(){
     if(sender()->objectName() == "camera1"){
         threadCam1->quit();
         threadCam1->wait();
-        if(cbCam1->isChecked())
+        if(cbCam1->isChecked()){
             cbCam1->toggle();
+            if(cbTurnStream->isChecked())
+                cbTurnStream->toggle();
+            cbTurnStream->setEnabled(false);
+        }
     }else{
         threadCam2->quit();
         threadCam2->wait();
@@ -903,10 +923,11 @@ void PCScreen::setCam(){
 void PCScreen::turnCamera(bool state){
     if(state){
         if(sender()->objectName() == "cbCam1"){
-            if(ui.cbTurnVK->isChecked())
-                camera1->setUrl("udp://127.0.0.1:3333");
-            else
-                camera1->setUrl(cam1Url);
+            // if(ui.cbTurnVK->isChecked())
+            //     camera1->setUrl("udp://127.0.0.1:3333");
+            // else
+            cbTurnStream->setEnabled(true);
+            camera1->setUrl(cam1Url);
             threadCam1->start();
         }else{
             camera2->setUrl(cam2Url);
@@ -1116,19 +1137,31 @@ void PCScreen::saveConditionPlus(QString str)
 
 void PCScreen::turnTranslationToVk(bool check)
 {
+    qDebug()<<"turn = "<<check;
+    //camera1->startStream("rtmp://ovsu.mycdn.me/input/" + ui.leKeyVK->text());
+    //camera1->startStream("rtmp://192.168.1.100/live/stream");
     if(check){
-        qDebug()<<ui.leKeyVK->text();
-        QStringList arguments;
-        //arguments<<"C:/Users/Colorfull/Desktop/CANON/1.MOV"<<"-vf"<<"scale=400:-1";
-        arguments<<"-i"<<ui.leCam1->text()<<"-c:v"<<"h264"<<"-c:a"<<"aac"<<"-f"<<"tee"<<"-map"<<"0:v"<<"-map"<<"0:a";
-        arguments<<"[f=mpegts]udp://127.0.0.1:3333|[f=flv]rtmp://ovsu.mycdn.me/input/" + ui.leKeyVK->text();
-
-        proc = new QProcess(this);
-        proc->start("ffmpeg", arguments);
+        camera1->startStream("rtmp://ovsu.mycdn.me/input/" + ui.leKeyVK->text());
     }
     else{
-        proc->terminate();
+        camera1->stopStream();
     }
+}
+
+void PCScreen::errorStream(){
+    cbTurnStream->toggle();
+}
+
+void PCScreen::processDataOutput(){
+    qDebug()<<"data = "<<proc->readAllStandardOutput();
+}
+
+void PCScreen::processErrorOutput(){
+    qDebug()<<"error = "<<proc->readAllStandardError();
+}
+
+void PCScreen::procFinished(int exitCode, QProcess::ExitStatus stat){
+    qDebug()<<"exitCode = "<<exitCode<<"QProcess::ExitStatus = "<<stat;
 }
 
 //void PCScreen::tvFullScreen(bool b){
@@ -1477,6 +1510,7 @@ void PCScreen::Variant(int variant){
         cbCam2->setVisible(false);
         lbl->setVisible(false);
         cbAddDisp->setVisible(false);
+        cbTurnStream->setVisible(false);
     }
     else{
         viewCam1->setVisible(true);
@@ -1491,6 +1525,7 @@ void PCScreen::Variant(int variant){
         cbCam2->setVisible(true);
         lbl->setVisible(true);
         cbAddDisp->setVisible(true);
+        cbTurnStream->setVisible(true );
     }
 }
 

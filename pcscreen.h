@@ -159,10 +159,15 @@ private slots:
     void saveConditionPlus(QString);
 
     void turnTranslationToVk(bool);
+    void processDataOutput(void);
+    void processErrorOutput(void);
+    void procFinished(int exitCode, QProcess::ExitStatus);
+    void errorStream(void);
 
 private:
     //QLabel* lblCpuUsage;
     QCheckBox* cbAddDisp;
+    QCheckBox* cbTurnStream;
     QSettings* settings;
     QString fileSettings;
 	QWidget * formView;

@@ -28,6 +28,8 @@ void Player::Play(){
     AVStream *stream;
     const AVCodec *dec;
 
+    int dur;
+
     QByteArray bain = videoFile.toLocal8Bit();
     in_filename = bain.data();
 
@@ -73,10 +75,14 @@ void Player::Play(){
 
     AVStream *in_stream;
     in_stream = ifmt_ctx->streams[best_stream];
-    numberFrames = in_stream->nb_frames;
+    //numberFrames = in_stream->nb_frames;
+    //dur = ifmt_ctx->duration;
     durationMedia = in_stream->duration;
     avgFps = in_stream->avg_frame_rate.num / in_stream->avg_frame_rate.den;
-    oneFrameDuration = durationMedia / numberFrames;
+    //oneFrameDuration = durationMedia / numberFrames;
+    //durationMediaInSecunds = numberFrames / avgFps;
+    oneFrameDuration = durationMedia / avgFps;
+    numberFrames = durationMedia / oneFrameDuration;
     durationMediaInSecunds = numberFrames / avgFps;
 
     emit sigParam(numberFrames, avgFps, durationMediaInSecunds);

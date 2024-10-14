@@ -66,6 +66,7 @@ signals:
 
 };
 
+
 class PCScreen : public QWidget {
 	Q_OBJECT
 public:

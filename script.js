@@ -141,6 +141,15 @@ function keyEvent(key){
 				wgt.close();
 			}
             break;
+        case 90:  //z
+            parter_red()
+            break;
+        case 88:  //x
+            fightTime()
+            break;
+        case 67:  //c
+            parter_blue()
+            break;
 		default:
             break;
 	}

@@ -10,8 +10,6 @@
 
 //#include "version.ui"
 
-
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)

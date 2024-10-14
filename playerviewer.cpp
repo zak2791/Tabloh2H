@@ -28,6 +28,24 @@ PlayerViewer::PlayerViewer(QString file, QWidget* parent) : QGraphicsView(parent
     slider->setTickInterval(60);
     connect(slider, SIGNAL(sliderMoved(int)), this, SLOT(setSeek(int)));
 
+    QString style = ".QSlider {min-height: 30px;"
+                              "max-height: 30px;"
+                              "}"
+
+                    ".QSlider::groove:horizontal {border: 1px solid #000000;"
+                                                 "height: 5px;"
+
+                                                 "margin: 0 10px;}"
+
+                    ".QSlider::handle:horizontal {background: rgba(100, 100, 100, 200);"
+                                                 "border: 2px solid #000000;"
+                                                 "border-radius: 5px;"
+                                                 "width: 20px;"
+
+                                                 "margin: -10px 0;}";
+
+    slider->setStyleSheet(style);
+
     btnPlay = new QPushButton("Play/Stop", this);
     btnPlay->setFocusPolicy(Qt::NoFocus);
     connect(btnPlay,         SIGNAL(clicked()), this, SLOT(turnPlay()));
@@ -50,10 +68,10 @@ PlayerViewer::PlayerViewer(QString file, QWidget* parent) : QGraphicsView(parent
 
     connect(thread, SIGNAL(started()), player, SLOT(Play()));
 
-    connect(player, SIGNAL(sigImage(QImage)), this, SLOT(draw_image (QImage)));
-    connect(player, SIGNAL(sigParam(int, int, int)), this, SLOT(parametersMedia(int, int, int)));
+    connect(player, SIGNAL(sigImage(QImage)), this, SLOT(draw_image(QImage)));
+    connect(player, SIGNAL(sigParam(int,int,int)), this, SLOT(parametersMedia(int,int,int)));
     connect(player, SIGNAL(sigFrame(int)), slider, SLOT(setValue(int)));
-    connect(player, SIGNAL(sigBuffer(int, int)), this, SLOT(drawBuffer(int, int)));
+    connect(player, SIGNAL(sigBuffer(int,int)), this, SLOT(drawBuffer(int,int)));
     connect(player, SIGNAL(sigStartStopPlay(bool)), this, SLOT(playEnable(bool)));
 
 
@@ -66,9 +84,9 @@ PlayerViewer::PlayerViewer(QString file, QWidget* parent) : QGraphicsView(parent
     showFullScreen();
     //show();
 
-    player->turnPlay();
+    //player->turnPlay();
 
-
+    player->nextFrame();
 
 }
 

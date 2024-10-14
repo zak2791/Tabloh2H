@@ -76,7 +76,10 @@ void Player::Play(){
     numberFrames = in_stream->nb_frames;
     durationMedia = in_stream->duration;
     avgFps = in_stream->avg_frame_rate.num / in_stream->avg_frame_rate.den;
-    oneFrameDuration = durationMedia / numberFrames;
+    if(numberFrames != 0)
+        oneFrameDuration = durationMedia / numberFrames;
+    else
+        process = false;
     durationMediaInSecunds = numberFrames / avgFps;
 
     emit sigParam(numberFrames, avgFps, durationMediaInSecunds);
@@ -227,7 +230,6 @@ void Player::nextFrame(){
 }
 
 void Player::previewFrame(){
-    //qDebug()<<"currentImage"<<currentImage<<"bufImage->length()"<<bufImage->length();
     if(currentImage > 0 && !flag_play){
         emit sigImage(bufImage->at(--currentImage));
         emit sigBuffer(bufImage->length(), currentImage);

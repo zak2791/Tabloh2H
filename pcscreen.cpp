@@ -591,6 +591,7 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     datagram = new QNetworkDatagram;
     datagram->setDestination(QHostAddress::LocalHost, 5555);
 
+    connect(mainTimer, SIGNAL(sigClicked()), btnTime, SLOT(click()));
 }
 
 PCScreen::~PCScreen()
@@ -1226,6 +1227,7 @@ void PCScreen::changeSize() {
     }
     settings->endGroup();
     qDebug()<<"i = "<<i;
+
 }
 
 void PCScreen::drawTvScreenshot(){

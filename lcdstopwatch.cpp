@@ -12,7 +12,10 @@ LCDStopwatch::LCDStopwatch(QWidget* parent,
                            bool transparency
                            ) : LCDTimer(parent, strInitTime, color_stopped, color_works, sound, transparency){
 
+    tmrHide = new QTimer(this);
+    connect(tmrHide, &QTimer::timeout, this, &LCDStopwatch::slotTimer);
     Reset();
+
 
 //#ifdef APP_LAUNCH_FROM_IDE
 //    pathToSound = "gong.mp3";
@@ -28,8 +31,10 @@ void LCDStopwatch::StartStop(){
         status = 0;
         setPalette(palStopped);
         emit sigStarted(false);
+        tmrHide->start(3000);
     }
     else {
+        tmrHide->stop();
         if (status != 2) {
             timer->start(1000);
             status = 1;
@@ -37,7 +42,6 @@ void LCDStopwatch::StartStop(){
             emit sigStarted(true);
         }
     }
-
     emit sigTime(intTimeToStr(time), palette());
 }
 
@@ -54,6 +58,13 @@ void LCDStopwatch::showTime(){
     QString sTime = intTimeToStr(time);
     display(sTime);
     emit sigTime(sTime, palette());
+}
+
+void LCDStopwatch::slotTimer()
+{
+    tmrHide->stop();
+    Reset();
+    hide();
 }
 
 void LCDStopwatch::Reset(){

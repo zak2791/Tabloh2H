@@ -5,7 +5,6 @@
 #include <QWidget>
 #include <QPalette>
 #include <QTimer>
-#include "qt_windows.h"
 
 class LCDTimer : public QLCDNumber
 {
@@ -64,6 +63,8 @@ public slots:
 
     virtual void Reset();
 
+private slots:
+    virtual void mousePressEvent(QMouseEvent*);
     //bool isVisible(void);
     //virtual void setVisible(bool);
 
@@ -77,6 +78,7 @@ signals:
     void sigReset(void);
     void sigVisible(bool);
     void sigEndTime(void);
+    void sigClicked(void);
 
 };
 

@@ -106,6 +106,11 @@ void LCDTimer::Reset(){
     }
 }
 
+void LCDTimer::mousePressEvent(QMouseEvent *)
+{
+    emit sigClicked();
+}
+
 void LCDTimer::showTime(){
     if(--time == 0){
         status = 2;
@@ -114,7 +119,7 @@ void LCDTimer::showTime(){
         emit sigStarted(false);
         if(_sound){
             QMediaPlayer * pPlayer = new QMediaPlayer;
-            pPlayer->setMedia(QUrl::fromLocalFile(pathToSound));
+            pPlayer->setMedia(QUrl("qrc:/sound/gong.mp3"));
             emit sigEndTime();
             pPlayer->play() ;
         }

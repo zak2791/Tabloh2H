@@ -6,6 +6,8 @@
 class LCDStopwatch : public LCDTimer
 {
 
+    QTimer* tmrHide;
+
 public:
     LCDStopwatch(QWidget *parent = 0,
                  QString initTime = "2:00",
@@ -18,6 +20,7 @@ public:
 private slots:
     void showTime(void);
     QString pathToSound;
+    void slotTimer(void);
 
 public slots:
     void StartStop();

@@ -36,8 +36,8 @@
    </property>
    <property name="text">
     <string>Версия программы
-2.2
-01.08.2024</string>
+2.3
+19.10.2024</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>

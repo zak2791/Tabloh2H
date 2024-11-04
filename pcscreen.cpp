@@ -22,7 +22,7 @@
 #include <QNetworkInterface>
 //#include <QHostInfo>
 #include <QRadioButton>
-#include "htmlserver.h"
+//#include "htmlserver.h"
 
 WidgetFilter::WidgetFilter(QObject* pobj) : QObject(pobj){
 }
@@ -594,7 +594,72 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 
     connect(mainTimer, SIGNAL(sigClicked()), btnTime, SLOT(click()));
 
-    HtmlServer server(this);
+    html = "HTTP/1.1 200 OK\n"
+           "Keep-Alive: timeout=5, max=75\n"
+           "Server: d\n"
+           "Connection: Keep-Alive\n"
+           "Content-Type: text/html\n\n"
+           "<!DOCTYPE html>"
+           "<html>"
+           "<head>"
+           "<meta http-equiv='Refresh' content='1' charset='utf-8'/>"
+           "<style>"
+           "td {font-family: 'Times New Roman', Georgia, Serif; text-align: center;}"
+           ".red {color: white; background-color: rgba(255,0,0,0.6);}"
+           ".name {width: 30%;}"
+           ".blue {color: white; background-color: rgba(0,0,255,0.6);}"
+           ".time {color: white; background-color: rgba(0,255,0,0.6); font-size: 30px;}"
+           ".rate {font-size: 30px; width: 10%;}"
+           "</style>"
+           "</head>"
+           "<table width='1000px'>"
+           "<tr>"
+           "<td class='red name'> %1 </td>"
+           "<td rowspan='2' class='rate red'> %2 </td>"
+           "<td rowspan='2' class='time'> %3 </td>"
+           "<td rowspan='2' class='blue rate'> %4 </td>"
+           "<td class='blue name'> %5 </td>"
+           "</tr>"
+           "<tr>"
+           "<td class='red'> %6 </td>"
+           "<td class='blue'> %7 </td>"
+           "</tr>"
+           "</table>"
+           "</html>";
+
+    server = new QTcpServer;
+    if(!server->listen(QHostAddress::Any, 50000)){
+        qDebug() << "server is not started";
+    } else {
+        qDebug() << "server is started";
+    }
+
+    connect(server,SIGNAL(newConnection()), this, SLOT(slotNewConnection()));
+
+}
+
+void PCScreen::slotNewConnection()
+{
+    socket = server->nextPendingConnection();
+    connect(socket, &QTcpSocket::readyRead, this, [=](){
+        while(socket->bytesAvailable()>0)
+        {
+            QByteArray array = socket->readAll();
+            QString sHtml = html.arg(fam_red->getText(),
+                                     rateRed->text(),
+                                     mainTimer->getTime(),
+                                     rateBlue->text(),
+                                     fam_blue->getText(),
+                                     reg_red->getText(),
+                                     reg_blue->getText());
+            socket->write(sHtml.toUtf8());
+        }
+        socket->disconnectFromHost();
+    });
+    connect(socket, &QTcpSocket::disconnected, this, [=](){
+        qDebug()<<"close";
+        socket->close();
+    });
 }
 
 PCScreen::~PCScreen()

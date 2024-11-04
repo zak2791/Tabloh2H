@@ -29,6 +29,8 @@
 #include <QSvgRenderer>
 #include <QProcess>
 #include "choosingnames.h"
+#include <QTcpServer>
+#include <QTcpSocket>
 
 class IconButton : public QPushButton{
 
@@ -159,6 +161,8 @@ private slots:
     void saveConditionNames(QString);
     void saveConditionPlus(QString);
 
+    void slotNewConnection(void);
+
 private:
     //QLabel* lblCpuUsage;
     QCheckBox* cbAddDisp;
@@ -275,5 +279,9 @@ private:
 
     QUdpSocket* socketDataToVideo;
     QNetworkDatagram* datagram;
+
+    QTcpServer* server;
+    QTcpSocket* socket;
+    QString html;
 
 };

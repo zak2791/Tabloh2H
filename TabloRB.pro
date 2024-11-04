@@ -18,7 +18,6 @@ HEADERS += \
     fam_reg.h \
     firstlastname.h \
     helpform.h \
-    htmlserver.h \
     infoserver.h \
     lcdstopwatch.h \
     lcdtimer.h \
@@ -52,7 +51,6 @@ SOURCES += \
     fam_reg.cpp \
     firstlastname.cpp \
     helpform.cpp \
-    htmlserver.cpp \
     infoserver.cpp \
     lcdstopwatch.cpp \
     lcdtimer.cpp \
@@ -117,5 +115,5 @@ include(./QXlsx.pri)
 RESOURCES  += \
     res.qrc
 
-DEFINES += APP_LAUNCH_FROM_IDE
+#DEFINES += APP_LAUNCH_FROM_IDE
 

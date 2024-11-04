@@ -14,8 +14,12 @@ public:
                  QColor color_stopped = QColor(0, 150, 0),
                  QColor color_works = QColor(0, 255, 0),
                  bool sound = true,
-                 bool transparency = false
+                 bool transparency = false,
+                 bool autoHide = false
                  );
+
+private:
+    bool auto_hide;
 
 private slots:
     void showTime(void);

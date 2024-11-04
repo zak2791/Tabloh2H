@@ -9,11 +9,15 @@ LCDStopwatch::LCDStopwatch(QWidget* parent,
                            QColor color_stopped,
                            QColor color_works,
                            bool sound,
-                           bool transparency
+                           bool transparency,
+                           bool autoHide
                            ) : LCDTimer(parent, strInitTime, color_stopped, color_works, sound, transparency){
 
-    tmrHide = new QTimer(this);
-    connect(tmrHide, &QTimer::timeout, this, &LCDStopwatch::slotTimer);
+    auto_hide = autoHide;
+    if(auto_hide){
+        tmrHide = new QTimer(this);
+        connect(tmrHide, &QTimer::timeout, this, &LCDStopwatch::slotTimer);
+    }
     Reset();
 
 
@@ -31,10 +35,13 @@ void LCDStopwatch::StartStop(){
         status = 0;
         setPalette(palStopped);
         emit sigStarted(false);
-        tmrHide->start(3000);
+        if(auto_hide)
+            tmrHide->start(3000);
     }
     else {
-        tmrHide->stop();
+        if(auto_hide)
+            tmrHide->stop();
+        show();
         if (status != 2) {
             timer->start(1000);
             status = 1;

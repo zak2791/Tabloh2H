@@ -77,7 +77,7 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
     sec = new LCDTimer(this);
 	//sec->setObjectName("sec");
 
-    sec_doctor = new LCDStopwatch(this, "2:00", QColor(255, 255, 0), QColor(255, 255, 0), false, true);
+    sec_doctor = new LCDStopwatch(this, "2:01", QColor(255, 255, 0), QColor(255, 255, 0), false, true);
     //sec_red->setObjectName("sd_sec_red");
     sec_doctor->hide();
 
@@ -89,10 +89,10 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
 	//sec_blue->setObjectName("sec_blue");
 	sec_blue->hide();
 
-    sec_red_t = new LCDStopwatch(this, "2:00", QColor(255, 0, 0), QColor(255, 102, 102), false, true);
+    sec_red_t = new LCDStopwatch(this, "2:01", QColor(255, 0, 0), QColor(255, 102, 102), false, true);
     sec_red_t->hide();
 
-    sec_blue_t = new LCDStopwatch(this, "2:00", QColor(0, 0, 255), QColor(102, 102, 255), false, true);
+    sec_blue_t = new LCDStopwatch(this, "2:01", QColor(0, 0, 255), QColor(102, 102, 255), false, true);
     sec_blue_t->hide();
 
 	np_red = new NP();

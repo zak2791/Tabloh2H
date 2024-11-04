@@ -22,6 +22,7 @@
 #include <QNetworkInterface>
 //#include <QHostInfo>
 #include <QRadioButton>
+#include "htmlserver.h"
 
 WidgetFilter::WidgetFilter(QObject* pobj) : QObject(pobj){
 }
@@ -166,22 +167,22 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     mainTimer = new LCDTimer(this);
     mainTimer->setObjectName("mainTimer");
 
-    sec_doctor = new LCDStopwatch(this, "2:00", QColor(255, 255, 0), QColor(255, 255, 0), true, true);
+    sec_doctor = new LCDStopwatch(this, "2:01", QColor(255, 255, 0), QColor(255, 255, 0), true, true);
     sec_doctor->hide();
 
-    sec_red = new LCDStopwatch(this, "0:20", QColor(255, 0, 0), QColor(255, 102, 102), true, true);
+    sec_red = new LCDStopwatch(this, "0:20", QColor(255, 0, 0), QColor(255, 102, 102), true, true, true);
     sec_red->setObjectName("sec_red");
     sec_red->hide();
 
-    sec_blue = new LCDStopwatch(this, "0:20", QColor(0, 0, 255), QColor(102, 102, 255), true, true);
+    sec_blue = new LCDStopwatch(this, "0:20", QColor(0, 0, 255), QColor(102, 102, 255), true, true, true);
     sec_blue->setObjectName("sec_blue");
     sec_blue->hide();
 
-    sec_red_t = new LCDStopwatch(this, "2:00", QColor(255, 0, 0), QColor(255, 102, 102), true, true);
+    sec_red_t = new LCDStopwatch(this, "2:01", QColor(255, 0, 0), QColor(255, 102, 102), true, true);
     sec_red_t->setObjectName("sec_red_t");
     sec_red_t->hide();
 
-    sec_blue_t = new LCDStopwatch(this, "2:00", QColor(0, 0, 255), QColor(102, 102, 255), true, true);
+    sec_blue_t = new LCDStopwatch(this, "2:01", QColor(0, 0, 255), QColor(102, 102, 255), true, true);
     sec_blue_t->setObjectName("sec_blue_t");
     sec_blue_t->hide();
 
@@ -592,6 +593,8 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     datagram->setDestination(QHostAddress::LocalHost, 5555);
 
     connect(mainTimer, SIGNAL(sigClicked()), btnTime, SLOT(click()));
+
+    HtmlServer server(this);
 }
 
 PCScreen::~PCScreen()
@@ -941,6 +944,7 @@ void PCScreen::paintEvent(QPaintEvent * ) {
 }
 
 void PCScreen::keyPressEvent(QKeyEvent * pe){
+    //qDebug()<<pe->key();
     if(pe->key() == Qt::Key_F1){
         if(mainTimer->getStatus() != 1)
             frmTime->show();

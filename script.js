@@ -142,12 +142,15 @@ function keyEvent(key){
 			}
             break;
         case 90:  //z
+        case 1071:
             parter_red()
             break;
         case 88:  //x
+        case 1063:
             fightTime()
             break;
         case 67:  //c
+        case 1057:
             parter_blue()
             break;
 		default:

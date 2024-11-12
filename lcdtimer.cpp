@@ -58,6 +58,8 @@ void LCDTimer::StartStop(){
             status = 1;
             setPalette(palWorks);
             emit sigStarted(true);
+            if(time == intInitTime)
+                emit sigStartedInit();
         }    
     }
     emit sigTime(intTimeToStr(time), palette());

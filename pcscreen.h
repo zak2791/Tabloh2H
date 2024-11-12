@@ -31,6 +31,7 @@
 #include "choosingnames.h"
 #include <QTcpServer>
 #include <QTcpSocket>
+#include <QLibrary>
 
 class IconButton : public QPushButton{
 
@@ -163,6 +164,8 @@ private slots:
 
     void slotNewConnection(void);
 
+    void slotStartRecordOBS(void);
+
 private:
     //QLabel* lblCpuUsage;
     QCheckBox* cbAddDisp;
@@ -283,5 +286,6 @@ private:
     QTcpServer* server;
     QTcpSocket* socket;
     QString html;
+    //QLibrary* a_Lib;
 
 };

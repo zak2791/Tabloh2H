@@ -79,6 +79,7 @@ FORMS += \
     helpform.ui \
     mainwindow.ui \
     new_sportsman.ui \
+    settingsOBS.ui \
     version.ui
 
 DISTFILES += \

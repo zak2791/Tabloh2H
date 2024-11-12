@@ -5,6 +5,8 @@
 #include <QLabel>
 #include "helpform.h"
 #include "ui_version.h"
+#include "ui_settingsOBS.h"
+#include <QSettings>
 
 namespace Ui {
 class MainWindow;
@@ -27,6 +29,7 @@ public:
     QAction* no_video;
     //QAction* tvSettings;
     QString getFileSportsmens(void);
+    Ui::dlgObs* uiObs;
 
 private:
     Ui::MainWindow *ui;
@@ -40,12 +43,17 @@ private:
     QAction* winHelp;
 
     Ui::dlgVersion uiVersion;
+    QDialog* dlg;
+    QSettings* settings;
+
 
 private slots:
     void openFile(void);
     void choiceFile(void);
     void Variant(void);
     void selectLogo(bool);
+    void slotAcceptSettingsObs(void);
+    void slotRejectSettingsObs(void);
 
 signals:
     void newFile(void);

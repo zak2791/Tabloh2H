@@ -636,6 +636,50 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 
     connect(server,SIGNAL(newConnection()), this, SLOT(slotNewConnection()));
 
+    // a_Lib = new QLibrary(qApp->applicationDirPath() + "\\libConnectOBS\\libConnectOBS.dll");
+    // //QLibrary a_Lib("libConnectOBS.dll");
+    // if( !a_Lib->load() ) {
+    //     QString e_Error = "Ошибка при загрузке библиотеки интеграции с OBS Studio: " + a_Lib->errorString();
+    //     //throw std::runtime_error(e_Error.toStdString());
+    // }
+    connect(mainTimer, SIGNAL(sigStartedInit()), this, SLOT(slotStartRecordOBS()));
+
+}
+
+void PCScreen::slotStartRecordOBS(){
+    try
+    {
+        QLibrary a_Lib(qApp->applicationDirPath() + "\\libConnectOBS\\libConnectOBS.dll");
+        //QLibrary a_Lib("libConnectOBS.dll");
+        if( !a_Lib.load() ) {
+            QString e_Error = "Ошибка при загрузке библиотеки интеграции с OBS Studio: " + a_Lib.errorString();
+            throw std::runtime_error(e_Error.toStdString());
+        }
+
+        typedef const wchar_t* (*StartRecordingFight)(const wchar_t* p_Host, unsigned int p_Port, const wchar_t* p_Password);
+        StartRecordingFight a_StartRecordingFight = (StartRecordingFight)a_Lib.resolve("StartRecordingFight");
+        if( !a_StartRecordingFight ) {
+            QString e_Error = "Ошибка при поиске метода StartRecordingFight в библиотеке интеграции с OBS Studio: " + a_Lib.errorString();
+            throw std::runtime_error(e_Error.toStdString());
+        }
+
+        const wchar_t* a_Result = a_StartRecordingFight(mainwin->uiObs->IpAddress->text().toStdWString().c_str(),
+                                                        mainwin->uiObs->Port->value(),
+                                                        mainwin->uiObs->Password->text().toStdWString().c_str());
+        QString str(QString::fromWCharArray(a_Result));
+
+        if(!str.isEmpty())
+        {
+            throw std::runtime_error(str.toStdString());
+        }
+    }
+    catch(const std::exception &e)
+    {
+        QMessageBox msgBox(QMessageBox::Icon::Critical,
+                           "Ошибка видеоповтора",
+                           QString("Видеоповтор не работает из за возникновения ошибки:\r\n") + e.what());
+        msgBox.exec();
+    }
 }
 
 void PCScreen::slotNewConnection()

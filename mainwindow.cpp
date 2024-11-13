@@ -98,8 +98,8 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     settings->endGroup();
 
-    dlg = new QDialog(this);
-    uiObs->setupUi(dlg);
+    dlg = new QDialog;
+    uiObs.setupUi(dlg);
 
     connect(ui->setOBS, SIGNAL(triggered()), dlg, SLOT(show()));
 
@@ -109,12 +109,12 @@ MainWindow::MainWindow(QWidget *parent) :
     QString obsPassword = settings->value("password", "").toString();
     settings->endGroup();
 
-    uiObs->IpAddress->setText(obsIpAddr);
-    uiObs->Password->setText(obsPassword);
-    uiObs->Port->setValue(obsPort);
+    uiObs.IpAddress->setText(obsIpAddr);
+    uiObs.Password->setText(obsPassword);
+    uiObs.Port->setValue(obsPort);
 
-    connect(dlg, SIGNAL(accepted()), this, SLOT(slotAcceptSettingsObs()));
-    connect(dlg, SIGNAL(rejected()), this, SLOT(slotRejectSettingsObs()));
+    //connect(dlg, SIGNAL(accepted()), this, SLOT(slotAcceptSettingsObs()));
+    //connect(dlg, SIGNAL(rejected()), this, SLOT(slotRejectSettingsObs()));
 
 }
 
@@ -125,17 +125,17 @@ MainWindow::~MainWindow()
 
 void MainWindow::slotAcceptSettingsObs(){
     settings->beginGroup("obs");
-    settings->setValue("port", uiObs->Port->value());
-    settings->setValue("ipAddr", uiObs->IpAddress->text());
-    settings->setValue("password", uiObs->Password->text());
+    settings->setValue("port", uiObs.Port->value());
+    settings->setValue("ipAddr", uiObs.IpAddress->text());
+    settings->setValue("password", uiObs.Password->text());
     settings->endGroup();
 }
 
 void MainWindow::slotRejectSettingsObs(){
     settings->beginGroup("obs");
-    uiObs->Port->setValue(settings->value("port", 4455).toInt());
-    uiObs->IpAddress->setText(settings->value("ipAddr", "localhost").toString());
-    uiObs->Password->setText(settings->value("password", "").toString());
+    uiObs.Port->setValue(settings->value("port", 4455).toInt());
+    uiObs.IpAddress->setText(settings->value("ipAddr", "localhost").toString());
+    uiObs.Password->setText(settings->value("password", "").toString());
     settings->endGroup();
 }
 

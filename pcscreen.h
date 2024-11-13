@@ -31,7 +31,7 @@
 #include "choosingnames.h"
 #include <QTcpServer>
 #include <QTcpSocket>
-#include <QLibrary>
+//#include <QLibrary>
 
 class IconButton : public QPushButton{
 

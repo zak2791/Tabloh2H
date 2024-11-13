@@ -29,7 +29,7 @@ public:
     QAction* no_video;
     //QAction* tvSettings;
     QString getFileSportsmens(void);
-    Ui::dlgObs* uiObs;
+    Ui::dlgObs uiObs;
 
 private:
     Ui::MainWindow *ui;

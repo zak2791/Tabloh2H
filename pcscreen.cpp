@@ -17,6 +17,7 @@
 #include <math.h>
 
 #include "category.h"
+#include "qlibrary.h"
 
 //#include <QHostAddress>
 #include <QNetworkInterface>
@@ -663,9 +664,9 @@ void PCScreen::slotStartRecordOBS(){
             throw std::runtime_error(e_Error.toStdString());
         }
 
-        const wchar_t* a_Result = a_StartRecordingFight(mainwin->uiObs->IpAddress->text().toStdWString().c_str(),
-                                                        mainwin->uiObs->Port->value(),
-                                                        mainwin->uiObs->Password->text().toStdWString().c_str());
+        const wchar_t* a_Result = a_StartRecordingFight(mainwin->uiObs.IpAddress->text().toStdWString().c_str(),
+                                                        mainwin->uiObs.Port->value(),
+                                                        mainwin->uiObs.Password->text().toStdWString().c_str());
         QString str(QString::fromWCharArray(a_Result));
 
         if(!str.isEmpty())

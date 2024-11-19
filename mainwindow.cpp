@@ -107,14 +107,16 @@ MainWindow::MainWindow(QWidget *parent) :
     int obsPort = settings->value("port", 4455).toInt();
     QString obsIpAddr = settings->value("ipAddr", "localhost").toString();
     QString obsPassword = settings->value("password", "").toString();
+    bool turnObs = settings->value("turnObs", false).toBool();
     settings->endGroup();
 
     uiObs.IpAddress->setText(obsIpAddr);
     uiObs.Password->setText(obsPassword);
     uiObs.Port->setValue(obsPort);
+    uiObs.cbConnectToOBS->setChecked(turnObs);
 
-    //connect(dlg, SIGNAL(accepted()), this, SLOT(slotAcceptSettingsObs()));
-    //connect(dlg, SIGNAL(rejected()), this, SLOT(slotRejectSettingsObs()));
+    connect(dlg, SIGNAL(accepted()), this, SLOT(slotAcceptSettingsObs()));
+    connect(dlg, SIGNAL(rejected()), this, SLOT(slotRejectSettingsObs()));
 
 }
 
@@ -128,6 +130,7 @@ void MainWindow::slotAcceptSettingsObs(){
     settings->setValue("port", uiObs.Port->value());
     settings->setValue("ipAddr", uiObs.IpAddress->text());
     settings->setValue("password", uiObs.Password->text());
+    settings->setValue("turnObs", uiObs.cbConnectToOBS->isChecked());
     settings->endGroup();
 }
 

@@ -109,6 +109,8 @@ void ChoosingNames::resizeEvent(QResizeEvent* e){
 }
 
 void ChoosingNames::closeEvent(QCloseEvent *){
+    //QCursor cur(cursor());
+    setCursor(Qt::WaitCursor);
     auto slider = objGridSide->findChild<QObject*>("sld");
     QStringList strRed = slider->property("textRed").toString().split(";");
     QString NameRed(""), NameBlue(""), RegionRed(""), RegionBlue("");
@@ -141,6 +143,8 @@ void ChoosingNames::closeEvent(QCloseEvent *){
     if(weight == "")
         weight = slider->property("weightBlue").toString();
     emit close(NameRed, RegionRed, NameBlue, RegionBlue, NameRedNext, NameBlueNext, age, weight);
+    emit startRecordObs();
+    //setCursor(cur);
 }
 
 void ChoosingNames::choiceAge(QString age){

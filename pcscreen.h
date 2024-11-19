@@ -5,6 +5,7 @@
 #include <QGridLayout>
 #include <QLabel>
 #include "narusheniya_pravil.h"
+#include "qlibrary.h"
 #include "rate.h"
 #include "ui_frmTime.h"
 #include "ui_FormView.h"
@@ -31,7 +32,7 @@
 #include "choosingnames.h"
 #include <QTcpServer>
 #include <QTcpSocket>
-//#include <QLibrary>
+#include <QLibrary>
 
 class IconButton : public QPushButton{
 
@@ -99,7 +100,7 @@ public slots:
     void Variant(int);
     void setTvScreenGeometry(void);
     void initListNames(void);   //инициализация списков спортсменов
-    void slotExit(void);
+    //void slotExit(void);
 
 private slots:
     void setCam(void);
@@ -162,7 +163,7 @@ private slots:
     void saveConditionNames(QString);
     void saveConditionPlus(QString);
 
-    void slotNewConnection(void);
+    //void slotNewConnection(void);
 
     void slotStartRecordOBS(void);
 
@@ -176,7 +177,7 @@ private:
     LCDStopwatch * sec_doctor;
     QWidget* frmTvSettings;
     //Ui::frmTV uiTV;
-    QProcess* myProcess;
+    //QProcess* myProcess;
 
 	virtual void paintEvent(QPaintEvent *);
     virtual void closeEvent(QCloseEvent*);
@@ -280,12 +281,12 @@ private:
     int flagUdp;    //0 - запрос адреса удаленного компьютера
                     //1 - отправка данных
 
-    QUdpSocket* socketDataToVideo;
-    QNetworkDatagram* datagram;
+    //QUdpSocket* socketDataToVideo;
+    //QNetworkDatagram* datagram;
 
     QTcpServer* server;
     QTcpSocket* socket;
-    QString html;
-    //QLibrary* a_Lib;
+    //QString html;
+    QLibrary* f_Lib;
 
 };

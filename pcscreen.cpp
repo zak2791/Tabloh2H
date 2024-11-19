@@ -16,8 +16,8 @@
 #include "QAction"
 #include <math.h>
 
-#include "category.h"
-#include "qlibrary.h"
+//#include "category.h"
+
 
 //#include <QHostAddress>
 #include <QNetworkInterface>
@@ -67,14 +67,14 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 
 #ifdef APP_LAUNCH_FROM_IDE
     fileSettings = "settings.ini";
-    QString fProc = "server.exe";
+    //QString fProc = "server.exe";
 #else
     fileSettings = "bin/settings.ini";
-    QString fProc = "bin/server.exe";
+    //QString fProc = "bin/server.exe";
 #endif
 
-    myProcess = new QProcess(parent);
-    myProcess->start(fProc);
+    //myProcess = new QProcess(parent);
+    //myProcess->start(fProc);
 
     settings = new QSettings(fileSettings, QSettings::IniFormat);
     settings->beginGroup("height");
@@ -589,78 +589,92 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 
     connect(this, SIGNAL(sigLogo(bool)), tvScreen, SIGNAL(sigLogo(bool)));
 
-    socketDataToVideo = new QUdpSocket;
-    datagram = new QNetworkDatagram;
-    datagram->setDestination(QHostAddress::LocalHost, 5555);
+    //socketDataToVideo = new QUdpSocket;
+    //datagram = new QNetworkDatagram;
+    //datagram->setDestination(QHostAddress::LocalHost, 5555);
 
     connect(mainTimer, SIGNAL(sigClicked()), btnTime, SLOT(click()));
 
-    html = "HTTP/1.1 200 OK\n"
-           "Keep-Alive: timeout=5, max=75\n"
-           "Server: d\n"
-           "Connection: Keep-Alive\n"
-           "Content-Type: text/html\n\n"
-           "<!DOCTYPE html>"
-           "<html>"
-           "<head>"
-           "<meta http-equiv='Refresh' content='1' charset='utf-8'/>"
-           "<style>"
-           "td {font-family: 'Times New Roman', Georgia, Serif; text-align: center;}"
-           ".red {color: white; background-color: rgba(255,0,0,0.6);}"
-           ".name {width: 30%;}"
-           ".blue {color: white; background-color: rgba(0,0,255,0.6);}"
-           ".time {color: white; background-color: rgba(0,255,0,0.6); font-size: 30px;}"
-           ".rate {font-size: 30px; width: 10%;}"
-           "</style>"
-           "</head>"
-           "<table width='1000px'>"
-           "<tr>"
-           "<td class='red name'> %1 </td>"
-           "<td rowspan='2' class='rate red'> %2 </td>"
-           "<td rowspan='2' class='time'> %3 </td>"
-           "<td rowspan='2' class='blue rate'> %4 </td>"
-           "<td class='blue name'> %5 </td>"
-           "</tr>"
-           "<tr>"
-           "<td class='red'> %6 </td>"
-           "<td class='blue'> %7 </td>"
-           "</tr>"
-           "</table>"
-           "</html>";
+    // html = "HTTP/1.1 200 OK\n"
+    //        "Keep-Alive: timeout=5, max=75\n"
+    //        "Server: d\n"
+    //        "Connection: Keep-Alive\n"
+    //        "Content-Type: text/html\n\n"
+    //        "<!DOCTYPE html>"
+    //        "<html>"
+    //        "<head>"
+    //        "<meta http-equiv='Refresh' content='1' charset='utf-8'/>"
+    //        "<style>"
+    //        "td {font-family: 'Times New Roman', Georgia, Serif; text-align: center;}"
+    //        ".red {color: white; background-color: rgba(255,0,0,0.6);}"
+    //        ".name {width: 30%;}"
+    //        ".blue {color: white; background-color: rgba(0,0,255,0.6);}"
+    //        ".time {color: white; background-color: rgba(0,255,0,0.6); font-size: 30px;}"
+    //        ".rate {font-size: 30px; width: 10%;}"
+    //        "</style>"
+    //        "</head>"
+    //        "<table width='1000px'>"
+    //        "<tr>"
+    //        "<td class='red name'> %1 </td>"
+    //        "<td rowspan='2' class='rate red'> %2 </td>"
+    //        "<td rowspan='2' class='time'> %3 </td>"
+    //        "<td rowspan='2' class='blue rate'> %4 </td>"
+    //        "<td class='blue name'> %5 </td>"
+    //        "</tr>"
+    //        "<tr>"
+    //        "<td class='red'> %6 </td>"
+    //        "<td class='blue'> %7 </td>"
+    //        "</tr>"
+    //        "</table>"
+    //        "</html>";
 
-    server = new QTcpServer;
-    if(!server->listen(QHostAddress::Any, 50000)){
-        qDebug() << "server is not started";
-    } else {
-        qDebug() << "server is started";
-    }
-
-    connect(server,SIGNAL(newConnection()), this, SLOT(slotNewConnection()));
-
-    // a_Lib = new QLibrary(qApp->applicationDirPath() + "\\libConnectOBS\\libConnectOBS.dll");
-    // //QLibrary a_Lib("libConnectOBS.dll");
-    // if( !a_Lib->load() ) {
-    //     QString e_Error = "Ошибка при загрузке библиотеки интеграции с OBS Studio: " + a_Lib->errorString();
-    //     //throw std::runtime_error(e_Error.toStdString());
+    // server = new QTcpServer;
+    // if(!server->listen(QHostAddress::Any, 50000)){
+    //     qDebug() << "server is not started";
+    // } else {
+    //     qDebug() << "server is started";
     // }
-    connect(mainTimer, SIGNAL(sigStartedInit()), this, SLOT(slotStartRecordOBS()));
+
+    // connect(server,SIGNAL(newConnection()), this, SLOT(slotNewConnection()));
+    //connect(mainTimer, SIGNAL(sigStartedInit()), this, SLOT(slotStartRecordOBS()));
+    f_Lib = new QLibrary;
+    // QLibrary* lServer = new QLibrary;
+    // try{
+    // if( !lServer->isLoaded() ) {
+    //     lServer->setFileName(qApp->applicationDirPath() + "\\libServer\\libServer.dll");
+    //     if( !lServer->load() ) {
+    //         QString e_Error = "Ошибка при загрузке библиотеки интеграции с OBS Studio: " + lServer->errorString();
+    //         throw std::runtime_error(e_Error.toStdString());
+    //     }
+    // }
+    // }
+    // catch(const std::exception &e)
+    // {
+    //     QMessageBox msgBox(QMessageBox::Icon::Critical,
+    //                        "Ошибка сервера",
+    //                        QString("Сервер не работает из за возникновения ошибки:\r\n") + e.what());
+    //     msgBox.exec();
+    // }
 
 }
 
 void PCScreen::slotStartRecordOBS(){
+    qDebug()<<mainwin->uiObs.cbConnectToOBS->isChecked();
+    if(!mainwin->uiObs.cbConnectToOBS->isChecked())
+        return;
     try
     {
-        QLibrary a_Lib(qApp->applicationDirPath() + "\\libConnectOBS\\libConnectOBS.dll");
-        //QLibrary a_Lib("libConnectOBS.dll");
-        if( !a_Lib.load() ) {
-            QString e_Error = "Ошибка при загрузке библиотеки интеграции с OBS Studio: " + a_Lib.errorString();
-            throw std::runtime_error(e_Error.toStdString());
+        if( !f_Lib->isLoaded() ) {
+            f_Lib->setFileName(qApp->applicationDirPath() + "\\libConnectOBS\\libConnectOBS.dll");
+            if( !f_Lib->load() ) {
+                QString e_Error = "Ошибка при загрузке библиотеки интеграции с OBS Studio: " + f_Lib->errorString();
+                throw std::runtime_error(e_Error.toStdString());
+            }
         }
-
         typedef const wchar_t* (*StartRecordingFight)(const wchar_t* p_Host, unsigned int p_Port, const wchar_t* p_Password);
-        StartRecordingFight a_StartRecordingFight = (StartRecordingFight)a_Lib.resolve("StartRecordingFight");
+        StartRecordingFight a_StartRecordingFight = (StartRecordingFight)f_Lib->resolve("StartRecordingFight");
         if( !a_StartRecordingFight ) {
-            QString e_Error = "Ошибка при поиске метода StartRecordingFight в библиотеке интеграции с OBS Studio: " + a_Lib.errorString();
+            QString e_Error = "Ошибка при поиске метода StartRecordingFight в библиотеке интеграции с OBS Studio: " + f_Lib->errorString();
             throw std::runtime_error(e_Error.toStdString());
         }
 
@@ -683,29 +697,29 @@ void PCScreen::slotStartRecordOBS(){
     }
 }
 
-void PCScreen::slotNewConnection()
-{
-    socket = server->nextPendingConnection();
-    connect(socket, &QTcpSocket::readyRead, this, [=](){
-        while(socket->bytesAvailable()>0)
-        {
-            QByteArray array = socket->readAll();
-            QString sHtml = html.arg(fam_red->getText(),
-                                     rateRed->text(),
-                                     mainTimer->getTime(),
-                                     rateBlue->text(),
-                                     fam_blue->getText(),
-                                     reg_red->getText(),
-                                     reg_blue->getText());
-            socket->write(sHtml.toUtf8());
-        }
-        socket->disconnectFromHost();
-    });
-    connect(socket, &QTcpSocket::disconnected, this, [=](){
-        qDebug()<<"close";
-        socket->close();
-    });
-}
+// void PCScreen::slotNewConnection()
+// {
+//     socket = server->nextPendingConnection();
+//     connect(socket, &QTcpSocket::readyRead, this, [=](){
+//         while(socket->bytesAvailable()>0)
+//         {
+//             QByteArray array = socket->readAll();
+//             QString sHtml = html.arg(fam_red->getText(),
+//                                      rateRed->text(),
+//                                      mainTimer->getTime(),
+//                                      rateBlue->text(),
+//                                      fam_blue->getText(),
+//                                      reg_red->getText(),
+//                                      reg_blue->getText());
+//             socket->write(sHtml.toUtf8());
+//         }
+//         socket->disconnectFromHost();
+//     });
+//     connect(socket, &QTcpSocket::disconnected, this, [=](){
+//         qDebug()<<"close";
+//         socket->close();
+//     });
+// }
 
 PCScreen::~PCScreen()
 {
@@ -759,13 +773,13 @@ void PCScreen::initListNames()
     connect(choosingNames, SIGNAL(close(QString, QString, QString, QString, QString, QString, QString, QString)),
             this, SLOT(closeWinName(QString, QString, QString, QString, QString, QString, QString, QString)));
     connect(choosingNames, SIGNAL(del()), this, SLOT(delListNames()));
+    connect(choosingNames, SIGNAL(startRecordObs()), this, SLOT(slotStartRecordOBS()));
 }
 
-void PCScreen::slotExit()
-{
-    myProcess->kill();
-    qDebug()<<"kill";
-}
+// void PCScreen::slotExit()
+// {
+//     //myProcess->kill();
+// }
 
 void PCScreen::setCat(QString s){
     cat->setText(s);
@@ -1072,7 +1086,7 @@ void PCScreen::setTimeFight(){
 }
 
 void PCScreen::closeTablo(){
-    myProcess->kill();
+    //myProcess->kill();
     QKeyEvent *key_press = new QKeyEvent(QKeyEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
     QApplication::sendEvent(this, key_press);
 }
@@ -1121,8 +1135,8 @@ void PCScreen::saveTime(int iTime)
     QString sData(sTime + ";" + fam_red->getText() + ";" + reg_red->getText() + ";" + rateRed->text()
                   + ";" + fam_blue->getText() + ";" + reg_blue->getText() + ";" + rateBlue->text());
     QByteArray data(sData.toUtf8());
-    datagram->setData(data);
-    socketDataToVideo->writeDatagram(*datagram);
+    //datagram->setData(data);
+    //socketDataToVideo->writeDatagram(*datagram);
 }
 
 void PCScreen::saveConditionRate(int rate)
@@ -1340,8 +1354,6 @@ void PCScreen::changeSize() {
         }
     }
     settings->endGroup();
-    qDebug()<<"i = "<<i;
-
 }
 
 void PCScreen::drawTvScreenshot(){

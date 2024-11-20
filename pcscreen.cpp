@@ -14,6 +14,8 @@
 #include <QTime>
 #include "pcscreen.h"
 #include "QAction"
+#include "qfuture.h"
+#include "qfuturewatcher.h"
 #include <math.h>
 
 //#include "category.h"
@@ -24,6 +26,9 @@
 //#include <QHostInfo>
 #include <QRadioButton>
 //#include "htmlserver.h"
+#include <QtConcurrent>
+#include <QFuture>
+#include <QFutureWatcher>
 
 WidgetFilter::WidgetFilter(QObject* pobj) : QObject(pobj){
 }
@@ -656,45 +661,81 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     //     msgBox.exec();
     // }
 
+    obs = new ControlObs(mainwin->uiObs.IpAddress->text(),
+                         mainwin->uiObs.Port->value(),
+                         mainwin->uiObs.Password->text());
+
+    obs->moveToThread(&obsThread);
+    connect(&obsThread, &QThread::finished, obs, &QObject::deleteLater);
+    connect(this, &PCScreen::operate, obs, &ControlObs::doWork);
+    connect(obs, &ControlObs::resultReady, this, &PCScreen::handleResultsObs);
+    obsThread.start();
+
+}
+
+void PCScreen::handleResultsObs(QString result){
+    qDebug()<<result;
+}
+
+QString PCScreen::startRecordOBS(){
+    // qDebug()<<mainwin->uiObs.cbConnectToOBS->isChecked();
+    // if(!mainwin->uiObs.cbConnectToOBS->isChecked())
+    //     return "";
+    // try
+    // {
+    //     if( !f_Lib->isLoaded() ) {
+    //         f_Lib->setFileName(qApp->applicationDirPath() + "\\libConnectOBS\\libConnectOBS.dll");
+    //         if( !f_Lib->load() ) {
+    //             QString e_Error = "Ошибка при загрузке библиотеки интеграции с OBS Studio: " + f_Lib->errorString();
+    //             throw std::runtime_error(e_Error.toStdString());
+    //         }
+    //     }
+    //     typedef const wchar_t* (*StartRecordingFight)(const wchar_t* p_Host, unsigned int p_Port, const wchar_t* p_Password);
+    //     StartRecordingFight a_StartRecordingFight = (StartRecordingFight)f_Lib->resolve("StartRecordingFight");
+    //     if( !a_StartRecordingFight ) {
+    //         QString e_Error = "Ошибка при поиске метода StartRecordingFight в библиотеке интеграции с OBS Studio: " + f_Lib->errorString();
+    //         throw std::runtime_error(e_Error.toStdString());
+    //     }
+
+    //     const wchar_t* a_Result = a_StartRecordingFight(mainwin->uiObs.IpAddress->text().toStdWString().c_str(),
+    //                                                     mainwin->uiObs.Port->value(),
+    //                                                     mainwin->uiObs.Password->text().toStdWString().c_str());
+    //     QString str(QString::fromWCharArray(a_Result));
+
+    //     if(!str.isEmpty())
+    //     {
+    //         throw std::runtime_error(str.toStdString());
+    //     }
+    // }
+    // catch(const std::exception &e)
+    // {
+    //     QMessageBox msgBox(QMessageBox::Icon::Critical,
+    //                        "Ошибка видеоповтора",
+    //                        QString("Видеоповтор не работает из за возникновения ошибки:\r\n") + e.what());
+    //     msgBox.exec();
+    // }
+    // return "ok";
 }
 
 void PCScreen::slotStartRecordOBS(){
-    qDebug()<<mainwin->uiObs.cbConnectToOBS->isChecked();
-    if(!mainwin->uiObs.cbConnectToOBS->isChecked())
-        return;
-    try
-    {
-        if( !f_Lib->isLoaded() ) {
-            f_Lib->setFileName(qApp->applicationDirPath() + "\\libConnectOBS\\libConnectOBS.dll");
-            if( !f_Lib->load() ) {
-                QString e_Error = "Ошибка при загрузке библиотеки интеграции с OBS Studio: " + f_Lib->errorString();
-                throw std::runtime_error(e_Error.toStdString());
-            }
-        }
-        typedef const wchar_t* (*StartRecordingFight)(const wchar_t* p_Host, unsigned int p_Port, const wchar_t* p_Password);
-        StartRecordingFight a_StartRecordingFight = (StartRecordingFight)f_Lib->resolve("StartRecordingFight");
-        if( !a_StartRecordingFight ) {
-            QString e_Error = "Ошибка при поиске метода StartRecordingFight в библиотеке интеграции с OBS Studio: " + f_Lib->errorString();
-            throw std::runtime_error(e_Error.toStdString());
-        }
 
-        const wchar_t* a_Result = a_StartRecordingFight(mainwin->uiObs.IpAddress->text().toStdWString().c_str(),
-                                                        mainwin->uiObs.Port->value(),
-                                                        mainwin->uiObs.Password->text().toStdWString().c_str());
-        QString str(QString::fromWCharArray(a_Result));
+    // //QString result = f.result();
+    // //f.waitForFinished();
 
-        if(!str.isEmpty())
-        {
-            throw std::runtime_error(str.toStdString());
-        }
-    }
-    catch(const std::exception &e)
-    {
-        QMessageBox msgBox(QMessageBox::Icon::Critical,
-                           "Ошибка видеоповтора",
-                           QString("Видеоповтор не работает из за возникновения ошибки:\r\n") + e.what());
-        msgBox.exec();
-    }
+    // //MyClass myObject;
+    // QFutureWatcher<QString> watcher;
+    // connect(&watcher, &QFutureWatcher<QString>::finished, this, &PCScreen::resultStartRecordOBS);
+
+    // // Start the computation.
+    // //QFuture<int> future = QtConcurrent::run(...);
+    // future = QtConcurrent::run(this, &PCScreen::startRecordOBS);
+    // watcher.setFuture(future);
+    emit operate("");
+}
+
+void PCScreen::resultStartRecordOBS(){
+    // qDebug()<<"result";
+    // qDebug()<<future.result();
 }
 
 // void PCScreen::slotNewConnection()
@@ -726,6 +767,8 @@ PCScreen::~PCScreen()
     //qDebug()<<"kill2";
     // myProcess->kill();
     // qDebug()<<"kill";
+    obsThread.quit();
+    obsThread.wait();
 }
 
 void PCScreen::CpuUsage(){

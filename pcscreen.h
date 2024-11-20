@@ -5,6 +5,7 @@
 #include <QGridLayout>
 #include <QLabel>
 #include "narusheniya_pravil.h"
+#include "qfuture.h"
 #include "qlibrary.h"
 #include "rate.h"
 #include "ui_frmTime.h"
@@ -33,6 +34,7 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QLibrary>
+#include "controlobs.h"
 
 class IconButton : public QPushButton{
 
@@ -166,6 +168,7 @@ private slots:
     //void slotNewConnection(void);
 
     void slotStartRecordOBS(void);
+    void handleResultsObs(QString);
 
 private:
     //QLabel* lblCpuUsage;
@@ -288,5 +291,14 @@ private:
     QTcpSocket* socket;
     //QString html;
     QLibrary* f_Lib;
+    QString startRecordOBS(void);
+    void resultStartRecordOBS(void);
+    QFuture<QString> future;
+
+    ControlObs* obs;
+    QThread obsThread;
+
+signals:
+    void operate(const QString &);
 
 };

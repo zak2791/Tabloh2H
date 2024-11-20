@@ -5,7 +5,7 @@ QMAKE_CXXFLAGS_RELEASE -= -O0
 
 RC_ICONS = appico.ico
 
-QT += core gui widgets qml multimedia svg quickwidgets network
+QT += core gui widgets qml multimedia svg quickwidgets network concurrent
 HEADERS += \
     JSTools.h \
     addform.h \
@@ -14,6 +14,7 @@ HEADERS += \
     cameraviewer.h \
     category.h \
     choosingnames.h \
+    controlobs.h \
     endtime.h \
     fam_reg.h \
     firstlastname.h \
@@ -47,6 +48,7 @@ SOURCES += \
     cameraviewer.cpp \
     category.cpp \
     choosingnames.cpp \
+    controlobs.cpp \
     endtime.cpp \
     fam_reg.cpp \
     firstlastname.cpp \
@@ -116,5 +118,5 @@ include(./QXlsx.pri)
 RESOURCES  += \
     res.qrc
 
-#DEFINES += APP_LAUNCH_FROM_IDE
+DEFINES += APP_LAUNCH_FROM_IDE
 

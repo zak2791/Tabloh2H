@@ -14,8 +14,8 @@
 #include <QTime>
 #include "pcscreen.h"
 #include "QAction"
-#include "qfuture.h"
-#include "qfuturewatcher.h"
+//#include "qfuture.h"
+//#include "qfuturewatcher.h"
 #include <math.h>
 
 //#include "category.h"
@@ -26,9 +26,9 @@
 //#include <QHostInfo>
 #include <QRadioButton>
 //#include "htmlserver.h"
-#include <QtConcurrent>
-#include <QFuture>
-#include <QFutureWatcher>
+//#include <QtConcurrent>
+//#include <QFuture>
+//#include <QFutureWatcher>
 
 WidgetFilter::WidgetFilter(QObject* pobj) : QObject(pobj){
 }
@@ -643,23 +643,6 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     // connect(server,SIGNAL(newConnection()), this, SLOT(slotNewConnection()));
     //connect(mainTimer, SIGNAL(sigStartedInit()), this, SLOT(slotStartRecordOBS()));
     f_Lib = new QLibrary;
-    // QLibrary* lServer = new QLibrary;
-    // try{
-    // if( !lServer->isLoaded() ) {
-    //     lServer->setFileName(qApp->applicationDirPath() + "\\libServer\\libServer.dll");
-    //     if( !lServer->load() ) {
-    //         QString e_Error = "Ошибка при загрузке библиотеки интеграции с OBS Studio: " + lServer->errorString();
-    //         throw std::runtime_error(e_Error.toStdString());
-    //     }
-    // }
-    // }
-    // catch(const std::exception &e)
-    // {
-    //     QMessageBox msgBox(QMessageBox::Icon::Critical,
-    //                        "Ошибка сервера",
-    //                        QString("Сервер не работает из за возникновения ошибки:\r\n") + e.what());
-    //     msgBox.exec();
-    // }
 
     obs = new ControlObs(mainwin->uiObs.IpAddress->text(),
                          mainwin->uiObs.Port->value(),
@@ -674,7 +657,10 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 }
 
 void PCScreen::handleResultsObs(QString result){
-    qDebug()<<result;
+    QMessageBox msgBox(QMessageBox::Icon::Critical,
+                       "Ошибка сервера",
+                       QString("Сервер не работает из за возникновения ошибки:\r\n") + result);
+    msgBox.exec();
 }
 
 QString PCScreen::startRecordOBS(){

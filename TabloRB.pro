@@ -5,7 +5,7 @@ QMAKE_CXXFLAGS_RELEASE -= -O0
 
 RC_ICONS = appico.ico
 
-QT += core gui widgets qml multimedia svg quickwidgets network concurrent
+QT += core gui widgets qml multimedia svg quickwidgets network
 HEADERS += \
     JSTools.h \
     addform.h \

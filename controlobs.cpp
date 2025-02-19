@@ -1,35 +1,27 @@
  #include "controlobs.h"
 #include <QApplication>
-//#include <QDebug>
 
-ControlObs::ControlObs(QString ipAddr, int p , QString passwd)
+ControlObs::ControlObs()
 {
     f_Lib = new QLibrary;
-
-    port = p;
-    //QString lh("127.0.0.1");
-    //wIp = {new wchar_t[ipAddr.length() + 2]};
-    wIp = {new wchar_t[ipAddr.length() + 1]};
-    wIp[ipAddr.length()] = 0;
-    //wIp[ipAddr.length() + 2] = '\n';
-    wPassw = {new wchar_t[passwd.length() + 1]};
-
-    ipAddr.toWCharArray(wIp);
-    passwd.toWCharArray(wPassw);
-    //qDebug()<<wIp<<wPassw;
-
 }
 
 ControlObs::~ControlObs()
 {
     delete f_Lib;
-    delete wIp;
-    delete wPassw;
 }
 
-void ControlObs::doWork(const QString &parameter) {
+void ControlObs::doWork(QString addr, int port, QString passw) {
     QString result = "ok";
-    /* ... here is the expensive or blocking operation ... */
+
+    wchar_t wIp[addr.length() + 1]; // = {wchar_t[addr.length() + 1]};
+    wIp[addr.length()] = 0;
+
+    wchar_t wPassw[passw.length() + 1]; // = {wchar_t[passw.length() + 1]};
+    wPassw[passw.length()] = 0;
+
+    addr.toWCharArray(wIp);
+    passw.toWCharArray(wPassw);
 
     try
     {
@@ -46,7 +38,6 @@ void ControlObs::doWork(const QString &parameter) {
             QString e_Error = "Ошибка при поиске метода StartRecordingFight в библиотеке интеграции с OBS Studio: " + f_Lib->errorString();
             throw std::runtime_error(e_Error.toStdString());
         }
-        //emit resultReady(QString::fromWCharArray(wIp));
         const wchar_t* a_Result = a_StartRecordingFight(wIp,
                                                         port,
                                                         wPassw);
@@ -61,8 +52,6 @@ void ControlObs::doWork(const QString &parameter) {
     {
         result = QString("Видеоповтор не работает из за возникновения ошибки:\r\n") + e.what();
     }
-    //return result;
-
     emit resultReady(result);
 }
 

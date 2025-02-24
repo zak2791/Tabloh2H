@@ -97,6 +97,8 @@ void Camera::TurnOnCamera(){
 
     while (process) {
         AVStream *in_stream, *out_stream;
+
+        //qDebug()<<"1";
         ret = av_read_frame(ifmt_ctx, pkt);
         if (ret < 0)
             break;
@@ -146,16 +148,29 @@ void Camera::TurnOnCamera(){
             // _pts = pkt->pts;
         }
         if(flag_record == 3){
+
+
             pkt->stream_index = stream_mapping[pkt->stream_index];
             out_stream = ofmt_ctx->streams[pkt->stream_index];
 
+<<<<<<< HEAD
             av_packet_rescale_ts(pkt, in_stream->time_base, out_stream->time_base);
+=======
+
+
+            av_packet_rescale_ts(pkt, in_stream->time_base, out_stream->time_base);
+            pkt->dts = pkt->dts - _dts;
+            pkt->pts = pkt->pts - _pts;
+
+            qDebug()<<pkt->dts<<pkt->pts;
+>>>>>>> 33296b04006423e2389ffd37c80092d5e1774cc4
             pkt->pos = -1;
 
             ret = av_interleaved_write_frame(ofmt_ctx, pkt);
 
             if (ret < 0)
-                break;
+                //break;
+                qDebug()<<"Error while writing output packet: %s\n";//<<av_err2str(ret);
         }
 
         if(flag_record == 4){

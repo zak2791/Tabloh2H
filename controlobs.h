@@ -8,18 +8,14 @@ class ControlObs : public QObject
 {
     Q_OBJECT
 public:
-    ControlObs(QString, int, QString);
+    ControlObs();
     ~ControlObs();
 
 private:
     QLibrary* f_Lib;
 
-    int port;
-    wchar_t* wIp;
-    wchar_t* wPassw;
-
 public slots:
-    void doWork(const QString &parameter);
+    void doWork(QString, int, QString);
 
 signals:
     void resultReady(const QString &result);

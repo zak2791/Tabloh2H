@@ -291,14 +291,14 @@ private:
     QTcpSocket* socket;
     //QString html;
     QLibrary* f_Lib;
-    QString startRecordOBS(void);
-    void resultStartRecordOBS(void);
+    //QString startRecordOBS(void);
+    //void resultStartRecordOBS(void);
     QFuture<QString> future;
 
     ControlObs* obs;
     QThread obsThread;
 
 signals:
-    void operate(const QString &);
+    void operate(QString, int, QString);
 
 };

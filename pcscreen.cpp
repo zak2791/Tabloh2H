@@ -891,7 +891,9 @@ void PCScreen::StartRecord(bool b){
     }
     QString currentTime = QTime::currentTime().toString().replace(":", "_");
     if(threadCam1->isRunning()){
+        finishedCamera();
         camera1->StartRecord("camera1/" + currentTime + ".mp4");
+        cbCam1->setChecked(true);;
     }
     if(threadCam2->isRunning()){
         camera2->StartRecord("camera2/" + currentTime + ".mp4");

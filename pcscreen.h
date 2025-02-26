@@ -39,20 +39,37 @@
 class IconButton : public QPushButton{
 
 public:
-        IconButton(const QString& iconPath){
+        IconButton(const QString& iconPath, const QString& iconPath2 = "", int as = 1){
             path = iconPath;
+            path2 = iconPath2;
+            if(path2 != ""){
+                flag = true;
+                aspectRatio = as;
+            }
         }
 
     void paintEvent(QPaintEvent* ev){
         QPushButton::paintEvent(ev);
         QPainter painter(this);
         QSvgRenderer renderer(path);
-        renderer.render(&painter);
-
+        if(flag){
+            QRect rect(width() / 2 - height() * aspectRatio / 2, 0, height() * aspectRatio, height());
+            if(isEnabled())
+                renderer.render(&painter, rect);
+            else{
+                QSvgRenderer renderer2(path2);
+                renderer2.render(&painter, rect);
+            }
+        }
+        else
+            renderer.render(&painter);
     }
 
 private:
     QString path;
+    QString path2;
+    bool flag;
+    int aspectRatio;
 
 };
 
@@ -254,12 +271,13 @@ private:
     QCheckBox* cbCam2;
     QPointer<PlayerViewer> slowMotionPlayer;
 
-    QPushButton* btnStopRecord;
-    QPushButton* btnPlayLastWithSound1;
-    QPushButton* btnPlayLastSlowMotion1;
-    QPushButton* btnPlayLastWithSound2;
-    QPushButton* btnPlayLastSlowMotion2;
-    QPushButton* btnPlaySlowMotion;
+    IconButton* btnStopRecord;
+    //QPushButton* btnStopRecord;
+    IconButton* btnPlayLastWithSound1;
+    IconButton* btnPlayLastSlowMotion1;
+    IconButton* btnPlayLastWithSound2;
+    IconButton* btnPlayLastSlowMotion2;
+    IconButton* btnPlaySlowMotion;
     QLabel* lbl;
 
     QString cam1Url = "";

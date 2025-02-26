@@ -14,21 +14,13 @@
 #include <QTime>
 #include "pcscreen.h"
 #include "QAction"
-//#include "qfuture.h"
-//#include "qfuturewatcher.h"
+
 #include <math.h>
 
-//#include "category.h"
-
-
-//#include <QHostAddress>
 #include <QNetworkInterface>
-//#include <QHostInfo>
+
 #include <QRadioButton>
-//#include "htmlserver.h"
-//#include <QtConcurrent>
-//#include <QFuture>
-//#include <QFutureWatcher>
+
 
 WidgetFilter::WidgetFilter(QObject* pobj) : QObject(pobj){
 }
@@ -256,37 +248,39 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     viewCam2 = new CameraViewer;
     viewCam2->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
-    btnPlayLastWithSound1 = new QPushButton("Просмотр\nсо звуком");
+    btnPlayLastWithSound1 = new IconButton(":/images/MotionSoundEnabled.svg", ":/images/MotionSoundDisabled.svg", 2);
     btnPlayLastWithSound1->setObjectName("btnPlayLastWithSound1");
     btnPlayLastWithSound1->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     btnPlayLastWithSound1->setStyleSheet("font-size: 8pt");
     connect(btnPlayLastWithSound1, SIGNAL(clicked()), SLOT(PlayFile()));
 
-    btnPlayLastWithSound2 = new QPushButton("Просмотр\nсо звуком");
+    btnPlayLastWithSound2 = new IconButton(":/images/MotionSoundEnabled.svg", ":/images/MotionSoundDisabled.svg", 2);
     btnPlayLastWithSound2->setObjectName("btnPlayLastWithSound2");
     btnPlayLastWithSound2->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     btnPlayLastWithSound2->setStyleSheet("font-size: 8pt");
     connect(btnPlayLastWithSound2, SIGNAL(clicked()), SLOT(PlayFile()));
 
-    btnPlayLastSlowMotion1 = new QPushButton("Просмотр\nзамедленный");
+    btnPlayLastSlowMotion1 = new IconButton(":/images/SlowMotionEnabled.svg", ":/images/SlowMotionDisabled.svg", 2);
     btnPlayLastSlowMotion1->setObjectName("btnPlayLastSlowMotion1");
     btnPlayLastSlowMotion1->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     btnPlayLastSlowMotion1->setStyleSheet("font-size: 8pt");
     connect(btnPlayLastSlowMotion1, SIGNAL(clicked()), SLOT(PlaySlowMotion()));
 
-    btnPlayLastSlowMotion2 = new QPushButton("Просмотр\nзамедленный");
+    btnPlayLastSlowMotion2 = new IconButton(":/images/SlowMotionEnabled.svg", ":/images/SlowMotionDisabled.svg", 2);
     btnPlayLastSlowMotion2->setObjectName("btnPlayLastSlowMotion2");
     btnPlayLastSlowMotion2->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     btnPlayLastSlowMotion2->setStyleSheet("font-size: 8pt");
     connect(btnPlayLastSlowMotion2, SIGNAL(clicked()), SLOT(PlaySlowMotion()));
 
-    btnPlaySlowMotion = new QPushButton("Просмотр с выбором файла");
+    btnPlaySlowMotion = new IconButton(":/images/MotionFileEnabled.svg", ":/images/MotionFileDisabled.svg", 2);
     btnPlaySlowMotion->setObjectName("btnPlaySlowMotion");
     btnPlaySlowMotion->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     btnPlaySlowMotion->setStyleSheet("font-size: 8pt");
     connect(btnPlaySlowMotion, SIGNAL(clicked()), SLOT(PlaySelectedFile()));
 
-    btnStopRecord = new QPushButton("Стоп запись");
+    btnStopRecord = new IconButton(":/images/RecStopEnabled.svg", ":/images/RecStopDisabled.svg");
+    //btnStopRecord = new QPushButton("Стоп запись");
+    //btnStopRecord->setIcon(QIcon("C:/Users/Colorfull/Documents/Stop record.png"));
     btnStopRecord->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     btnStopRecord->setStyleSheet("font-size: 8pt");
     connect(btnStopRecord, SIGNAL(clicked()), SLOT(StopRecord()));
@@ -294,12 +288,20 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 
     cbCam1 = new QCheckBox("Включить камеру 1");
     cbCam1->setObjectName("cbCam1");
-    cbCam1->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    //cbCam1->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    cbCam1->setStyleSheet("QCheckBox::indicator:unchecked{image: url(:/images/CheckBoxVideoUnchecked.png)}"
+                          "QCheckBox::indicator:checked{image: url(:/images/CheckBoxVideoChecked.png)}"
+                          "QCheckBox::indicator {width: 25px; height: 25px;}");
+
     connect(cbCam1, SIGNAL(toggled(bool)), this, SLOT(turnCamera(bool)));
 
     cbCam2 = new QCheckBox("Включить камеру 2");
     cbCam2->setObjectName("cbCam2");
-    cbCam2->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    //cbCam2->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    cbCam2->setStyleSheet("QCheckBox::indicator:unchecked{image: url(:/images/CheckBoxVideoUnchecked.png)}"
+                          "QCheckBox::indicator:checked{image: url(:/images/CheckBoxVideoChecked.png)}"
+                          "QCheckBox::indicator {width: 25px; height: 25px;}");
+
     connect(cbCam2, SIGNAL(toggled(bool)), this, SLOT(turnCamera(bool)));
 
     connect(ui.cbAutoCam1, SIGNAL(toggled(bool)), this, SLOT(autoCamera(bool)));
@@ -378,12 +380,12 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     grid->addWidget(btnPlayLastWithSound1,  20, 24,  2,  5);
     grid->addWidget(btnPlayLastSlowMotion1, 20, 29,  2,  5);
     grid->addWidget(btnPlaySlowMotion,      24, 24,  2, 10);
-    grid->addWidget(cbCam1,                 19, 25,  1,  8);
+    grid->addWidget(cbCam1,                 17, 25,  3,  9);
     grid->addWidget(viewCam2,               14, 34,  6, 10);
     grid->addWidget(btnPlayLastWithSound2,  20, 34,  2,  5);
     grid->addWidget(btnPlayLastSlowMotion2, 20, 39,  2,  5);
     grid->addWidget(btnStopRecord,          24, 34,  2, 10);
-    grid->addWidget(cbCam2,                 19 , 35,  1, 8);
+    grid->addWidget(cbCam2,                 17, 35,  3,  9);
 
 
     grid->addWidget(lbl,                    22, 24,  2, 20);

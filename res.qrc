@@ -26,5 +26,16 @@
         <file>DelegateSide.qml</file>
         <file>images/ihca.png</file>
         <file>sound/gong.mp3</file>
+        <file>images/RecStopDisabled.svg</file>
+        <file>images/RecStopEnabled.svg</file>
+        <file>images/MotionSoundDisabled.svg</file>
+        <file>images/MotionSoundEnabled.svg</file>
+        <file>images/SlowMotionEnabled.svg</file>
+        <file>images/SlowMotionDisabled.svg</file>
+        <file>images/MotionFileDisabled.svg</file>
+        <file>images/MotionFileEnabled.svg</file>
+        <file>images/CheckBoxVideoUnchecked.svg</file>
+        <file>images/CheckBoxVideoUnchecked.png</file>
+        <file>images/CheckBoxVideoChecked.png</file>
     </qresource>
 </RCC>

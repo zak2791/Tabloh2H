@@ -105,18 +105,21 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
     //ListFamily * lf = new ListFamily(this);
     //lf->setObjectName("lf");
 
-    cat = new QPushButton(this);//("yellow", this);
+    cat = new QLabel(this);//("yellow", this);
 	cat->setObjectName("cat");
 	//cat->setText("55");
-	cat->setAutoFillBackground(true);
-    cat->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    cat->setStyleSheet("background-color: black; color: white; text-align: center; border-radius: 20px");
+    //cat->setAutoFillBackground(true);
+    cat->setAlignment(Qt::AlignCenter);
+    //cat->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    cat->setStyleSheet("color: blue;");
 
-    age = new QPushButton(this);//("yellow", this);
+    age = new QLabel(this);//("yellow", this);
     age->setObjectName("age");
-    age->setAutoFillBackground(true);
-    age->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    age->setStyleSheet("background-color: black; color: white; text-align: center; border-radius: 20px");
+    //age->setAutoFillBackground(true);
+    age->setAlignment(Qt::AlignCenter);
+    //age->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    //age->setStyleSheet("background-color: black; color: white; text-align: center; border-radius: 20px");
+    age->setStyleSheet("color: red;");
 
 	flag_blue = new QLabel(this);
 	flag_blue->setScaledContents(true);
@@ -152,16 +155,17 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
     //grid->addWidget(akt_blue,  29, 5, 12, 14);
     //grid->addWidget(akt_red,  29, 49, 12, 14);
 
-    grid->addLayout(hbb, 34,  5, 7, 17);
+    grid->addLayout(hbb, 34,  5, 7, 13);
     //grid->addWidget(np_blue,    34,  7, 7, 8);
-    grid->addLayout(hbr, 34, 46, 7, 17);
+    grid->addLayout(hbr, 34, 50, 7, 13);
     //grid->addWidget(np_red,     34, 51, 7, 8);
 
     grid->addWidget(plus_blue,   22,  1, 6, 6);
     grid->addWidget(plus_red,    22, 45, 6, 6);
 
-    grid->addWidget(age,        35, 22, 5, 12);
-    grid->addWidget(cat,        35, 34, 5, 12);
+    //grid->addWidget(age,        35, 22, 5, 12);
+    grid->addWidget(age,        34, 18, 7, 16);
+    grid->addWidget(cat,        34, 34, 7, 16);
 
     grid->addWidget(sec,        18, 25, 14, 18);
     grid->addWidget(sec_doctor, 18, 25, 14, 18);
@@ -204,6 +208,7 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
 
 
     showFullScreen();
+
     //lblEndTimer->startProcess();
 	minimum_height_family = (height() - 12) / 42;
 	minimum_height_region = minimum_height_family;
@@ -293,9 +298,12 @@ void TVScreen::resizeEvent(QResizeEvent *){
     grid->setRowMinimumHeight(42, minimum_height);
     grid->setRowMinimumHeight(43, minimum_height);
     grid->setRowMinimumHeight(44, minimum_height);
-    QFont f;
-    f.setPixelSize(cat->height() * 1.5);
-    //cat->setFont(f);
+    // QFont f;
+    // f.setBold(true);
+    // f.setPixelSize(age->height() * 0.75);
+    // age->setFont(f);
+    // cat->setFont(f);
+    // qDebug()<<"f.pixelSize() = "<<f.pixelSize();
     lblEndTimer->setGeometry(0, 0, width(), height());
 
     //logo->setGeometry(0, 0, width(), height());

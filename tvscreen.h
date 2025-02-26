@@ -74,8 +74,9 @@ public:
     LCDStopwatch * sec_doctor;
 
     //Category * cat;
-    QPushButton* cat;
-    QPushButton* age;
+    QLabel* cat;
+    //QPushButton* age;
+    QLabel* age;
 
 	QGridLayout * grid;
 

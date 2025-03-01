@@ -14,6 +14,7 @@ extern "C"
     #include <libavutil/timestamp.h>
     #include <libavformat/avformat.h>
     #include <libswscale/swscale.h>
+    #include <libavdevice/avdevice.h>
 }
 
 class Camera : public QObject
@@ -28,7 +29,7 @@ public:
     void setUrl(QString);
 
 public slots:
-        void TurnOnCamera(void);
+        void TurnOnCamera();
         void onlyKeyFrame(bool);
 
 private:
@@ -37,9 +38,11 @@ private:
     AVFormatContext *ofmt_ctx;
     const AVOutputFormat *ofmt;
     int flag_record;
+    bool flag_start_record;
     int64_t _pts;
     int64_t _dts;
     bool process;
+    bool main_process;
     QString url;
     QString file;
     int prepareRecord(AVFormatContext*, int*, QString);

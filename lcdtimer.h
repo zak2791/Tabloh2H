@@ -42,7 +42,8 @@ private:
     int strTimeToInt(QString);
     bool getVisible(void);
     QString pathToSound;
-
+    QString styleStopped;
+    QString styleWorks;
 
 protected:
     int status;     //0 - stopped
@@ -59,7 +60,8 @@ protected:
 
 public slots:
     virtual void StartStop();
-    void showTime(QString, QPalette);
+    //void showTime(QString, QPalette);
+    void showTime(QString, QString);
 
     virtual void Reset();
 
@@ -72,7 +74,8 @@ protected slots:
     virtual void showTime(void);
 
 signals:
-    void sigTime(QString, QPalette);
+    //void sigTime(QString, QPalette);
+    void sigTime(QString, QString);
     void sigIntTime(int);
     void sigStarted(bool);
     void sigReset(void);

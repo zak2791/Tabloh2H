@@ -442,7 +442,7 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 
     connect(fam_next_blue, SIGNAL(sigText(QString)), tvScreen->fam_next_blue, SLOT(Text(QString)));
 
-    connect(mainTimer, SIGNAL(sigTime(QString, QPalette)), tvScreen->sec, SLOT(showTime(QString, QPalette)));
+    connect(mainTimer, SIGNAL(sigTime(QString, QString)), tvScreen->sec, SLOT(showTime(QString, QString)));
     connect(mainTimer, SIGNAL(sigIntTime(int)), this, SLOT(saveTime(int)));
 
 
@@ -453,18 +453,18 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     connect(uiTime.dSec2, SIGNAL(valueChanged(int)), this, SLOT(setTime()));
 
     connect(sec_red, SIGNAL(sigVisible(bool)), tvScreen->sec_red, SLOT(setVisible(bool)));
-    connect(sec_red,  SIGNAL(sigTime(QString, QPalette)), tvScreen->sec_red, SLOT(showTime(QString, QPalette)));
+    connect(sec_red,  SIGNAL(sigTime(QString, QString)), tvScreen->sec_red, SLOT(showTime(QString, QString)));
 
     connect(sec_blue, SIGNAL(sigVisible(bool)), tvScreen->sec_blue, SLOT(setVisible(bool)));
-    connect(sec_blue,  SIGNAL(sigTime(QString, QPalette)), tvScreen->sec_blue, SLOT(showTime(QString, QPalette)));
+    connect(sec_blue,  SIGNAL(sigTime(QString, QString)), tvScreen->sec_blue, SLOT(showTime(QString, QString)));
 
     connect(sec_red_t, SIGNAL(sigVisible(bool)), tvScreen->sec_red_t, SLOT(setVisible(bool)));
-    connect(sec_red_t,  SIGNAL(sigTime(QString, QPalette)), tvScreen->sec_red_t, SLOT(showTime(QString, QPalette)));
+    connect(sec_red_t,  SIGNAL(sigTime(QString, QString)), tvScreen->sec_red_t, SLOT(showTime(QString, QString)));
 
     connect(sec_blue_t, SIGNAL(sigVisible(bool)), tvScreen->sec_blue_t, SLOT(setVisible(bool)));
-    connect(sec_blue_t,  SIGNAL(sigTime(QString, QPalette)), tvScreen->sec_blue_t, SLOT(showTime(QString, QPalette)));
+    connect(sec_blue_t,  SIGNAL(sigTime(QString, QString)), tvScreen->sec_blue_t, SLOT(showTime(QString, QString)));
 
-    connect(sec_doctor,  SIGNAL(sigTime(QString, QPalette)), tvScreen->sec_doctor, SLOT(showTime(QString, QPalette)));
+    connect(sec_doctor,  SIGNAL(sigTime(QString, QString)), tvScreen->sec_doctor, SLOT(showTime(QString, QString)));
 
     ui.leCam1->setObjectName("leCam1");
     ui.leCam2->setObjectName("leCam2");
@@ -847,9 +847,9 @@ void PCScreen::StartRecord(bool b){
     }
     QString currentTime = QTime::currentTime().toString().replace(":", "_");
     if(threadCam1->isRunning()){
-        finishedCamera();
+        //finishedCamera();
         camera1->StartRecord("camera1/" + currentTime + ".mp4");
-        cbCam1->setChecked(true);;
+        //cbCam1->setChecked(true);;
     }
     if(threadCam2->isRunning()){
         camera2->StartRecord("camera2/" + currentTime + ".mp4");

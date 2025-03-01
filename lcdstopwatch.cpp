@@ -49,7 +49,7 @@ void LCDStopwatch::StartStop(){
             emit sigStarted(true);
         }
     }
-    emit sigTime(intTimeToStr(time), palette());
+    emit sigTime(intTimeToStr(time), styleSheet());
 }
 
 void LCDStopwatch::showTime(){
@@ -64,7 +64,7 @@ void LCDStopwatch::showTime(){
 
     QString sTime = intTimeToStr(time);
     display(sTime);
-    emit sigTime(sTime, palette());
+    emit sigTime(sTime, styleSheet());
 }
 
 void LCDStopwatch::slotTimer()
@@ -80,7 +80,7 @@ void LCDStopwatch::Reset(){
         status = 0;
         QString sTime = intTimeToStr(0);
         display(sTime);
-        emit sigTime(sTime, palette());
+        emit sigTime(sTime, styleSheet());
         emit sigReset();
     }
 }

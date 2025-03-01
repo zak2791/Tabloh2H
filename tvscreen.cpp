@@ -169,10 +169,10 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
 
     grid->addWidget(sec,        18, 25, 14, 18);
     grid->addWidget(sec_doctor, 18, 25, 14, 18);
-    grid->addWidget(sec_blue,   18,  3, 14, 18);
-    grid->addWidget(sec_red,    18, 47, 14, 18);
-    grid->addWidget(sec_blue_t, 18,  3, 14, 18);
-    grid->addWidget(sec_red_t,  18, 47, 14, 18);
+    grid->addWidget(sec_blue,   20,  3, 10, 18);
+    grid->addWidget(sec_red,    20, 47, 10, 18);
+    grid->addWidget(sec_blue_t, 20,  3, 10, 18);
+    grid->addWidget(sec_red_t,  20, 47, 10, 18);
 
     grid->addWidget(lblNextBlue,   34,   0,  7, 5);
     grid->addWidget(lblNextRed,    34,  63,  7, 5);

@@ -61,27 +61,32 @@ void Camera::TurnOnCamera(){
         QByteArray bain = url.toLocal8Bit();
         in_filename = bain.data();
 
-        //AVFormatContext* octx = NULL;////
-        //AVDictionary *options = NULL; ////
+        avdevice_register_all();
 
+        const AVInputFormat* inFormat = NULL;
+        inFormat = av_find_input_format("dshow");
 
-        //av_register_all();
+        //AVFormatContext* inFormatContext = avformat_alloc_context();;
 
-        //avformat_network_init();
-        //avdevice_register_all();
-        //qDebug()<<avdevice_version();
-        //qDebug()<<avdevice_configuration();
+        // if (!inFormat || !inFormat->priv_class  || !AV_IS_INPUT_DEVICE(inFormat->priv_class->category))
+        // {
+        //     return -1;
+        // }
 
-        AVFormatContext *pFormatCtx = avformat_alloc_context();
-        AVDictionary* options = NULL;
-        av_dict_set(&options,"list_devices","true",0);
-        const AVInputFormat *iformat = av_find_input_format("dshow");
-        printf("========Device Info=============\n");
-        avformat_open_input(&pFormatCtx,"video=dummy",iformat,&options);
-        printf("================================\n");
-        qDebug()<<"iformat = "<<iformat;
-        //const AVInputFormat * inFrmt = av_find_input_format("dshow");
-        //qDebug()<<"inFrmt = "<<inFrmt;
+        AVDeviceInfoList* deviceList;
+        int deviceCount = avdevice_list_input_sources(inFormat, NULL, NULL, &deviceList);
+
+        for(int i = 0; i < deviceCount; i++){
+            qDebug()<<"count = "<<i;
+            AVDeviceInfo dInfo = *deviceList->devices[i];
+            //printf("%s %s", dInfo->device_name, dInfo->device_description);
+            qDebug()<<deviceCount<<dInfo.device_description;
+        }
+
+        //avdevice_free_list_devices(&deviceList);
+        //avformat_free_context(inFormatContext);
+
+        //printf("%i %i", inFormat, deviceCount);
 
         pkt = av_packet_alloc();
         if (!pkt) {

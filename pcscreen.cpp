@@ -223,6 +223,12 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     formView->installEventFilter(wf);
     connect(wf, SIGNAL(sigClose()), this, SLOT(closeView()));
 
+    formVideoSettings = new QWidget;
+    uiVideoSettings.setupUi(formVideoSettings);
+    WidgetFilter* fVideo = new WidgetFilter(formVideoSettings);
+    formVideoSettings->installEventFilter(fVideo);
+    connect(fVideo, SIGNAL(sigClose()), this, SLOT(closeVideoSettings()));
+
     connect(ui.btnNameDown,     SIGNAL(clicked()),      this, SLOT(changeSize()));
     connect(ui.btnNameUp,       SIGNAL(clicked()),      this, SLOT(changeSize()));
     connect(ui.btnNextNameDown, SIGNAL(clicked()),      this, SLOT(changeSize()));
@@ -240,6 +246,7 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     uiTime.setupUi(frmTime);
 
     connect(mainwin->winSettings, SIGNAL(triggered()), this, SLOT(showView()));
+    connect(mainwin->winVideoSettings, SIGNAL(triggered()), this, SLOT(showVideoSettings()));
 
     connect(ui.sbSec, SIGNAL(valueChanged(int)), this, SLOT(setSec(int)));
 
@@ -304,8 +311,11 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 
     connect(cbCam2, SIGNAL(toggled(bool)), this, SLOT(turnCamera(bool)));
 
-    connect(ui.cbAutoCam1, SIGNAL(toggled(bool)), this, SLOT(autoCamera(bool)));
-    connect(ui.cbAutoCam2, SIGNAL(toggled(bool)), this, SLOT(autoCamera(bool)));
+    // connect(ui.cbAutoCam1, SIGNAL(toggled(bool)), this, SLOT(autoCamera(bool)));
+    // connect(ui.cbAutoCam2, SIGNAL(toggled(bool)), this, SLOT(autoCamera(bool)));
+
+    connect(uiVideoSettings.cbAutoCam1, SIGNAL(toggled(bool)), this, SLOT(autoCamera(bool)));
+    connect(uiVideoSettings.cbAutoCam2, SIGNAL(toggled(bool)), this, SLOT(autoCamera(bool)));
 
     lbl = new QLabel("Последний записанный файл");
     lbl->setAlignment(Qt::AlignCenter);
@@ -466,10 +476,10 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 
     connect(sec_doctor,  SIGNAL(sigTime(QString, QString)), tvScreen->sec_doctor, SLOT(showTime(QString, QString)));
 
-    ui.leCam1->setObjectName("leCam1");
-    ui.leCam2->setObjectName("leCam2");
-    connect(ui.leCam1, SIGNAL(editingFinished()), this, SLOT(setCam()));
-    connect(ui.leCam2, SIGNAL(editingFinished()), this, SLOT(setCam()));
+    uiVideoSettings.leCam1->setObjectName("leCam1");
+    uiVideoSettings.leCam2->setObjectName("leCam2");
+    connect(uiVideoSettings.leCam1, SIGNAL(editingFinished()), this, SLOT(setCam()));
+    connect(uiVideoSettings.leCam2, SIGNAL(editingFinished()), this, SLOT(setCam()));
 
     settings->beginGroup("URL");
     cam1Url = settings->value("cam1", "").toString();
@@ -779,33 +789,33 @@ void PCScreen::setAge(QString s){
 void PCScreen::autoCamera(bool state){
     if(state){
         if(sender()->objectName() == "cbAutoCam1"){
-            ui.cbAutoCam2->setEnabled(false);
+            uiVideoSettings.cbAutoCam2->setEnabled(false);
             camConn = new CameraConnection(this);
-            ui.leCam1->setText("");
-            ui.leCam1->setStyleSheet("background-color: red");
+            uiVideoSettings.leCam1->setText("");
+            uiVideoSettings.leCam1->setStyleSheet("background-color: red");
         }
         else{
-            ui.cbAutoCam1->setEnabled(false);
+            uiVideoSettings.cbAutoCam1->setEnabled(false);
             camConn = new CameraConnection(this, 2);
-            ui.leCam2->setText("");
-            ui.leCam2->setStyleSheet("background-color: red");
+            uiVideoSettings.leCam2->setText("");
+            uiVideoSettings.leCam2->setStyleSheet("background-color: red");
         }
         connect(camConn, SIGNAL(sigCamera(QString)), this, SLOT(setCamera(QString)));
     }
     else{
         if(sender()->objectName() == "cbAutoCam1"){
-            ui.cbAutoCam2->setEnabled(true);
-            ui.leCam1->setStyleSheet("background-color: white");
+            uiVideoSettings.cbAutoCam2->setEnabled(true);
+            uiVideoSettings.leCam1->setStyleSheet("background-color: white");
             settings->beginGroup("URL");
-            ui.leCam1->setText(settings->value("cam1", "").toString());
+            uiVideoSettings.leCam1->setText(settings->value("cam1", "").toString());
             settings->endGroup();
             //f.close();
         }
         else{
-            ui.cbAutoCam1->setEnabled(true);
-            ui.leCam2->setStyleSheet("background-color: white");
+            uiVideoSettings.cbAutoCam1->setEnabled(true);
+            uiVideoSettings.leCam2->setStyleSheet("background-color: white");
             settings->beginGroup("URL");
-            ui.leCam2->setText(settings->value("cam2", "").toString());
+            uiVideoSettings.leCam2->setText(settings->value("cam2", "").toString());
             settings->endGroup();
             //f.close();
         }
@@ -817,19 +827,19 @@ void PCScreen::autoCamera(bool state){
 }
 
 void PCScreen::setCamera(QString ip){
-    if(ui.cbAutoCam1->isChecked()){
+    if(uiVideoSettings.cbAutoCam1->isChecked()){
         cam1Url = "srt://" + ip + ":1111";
         settings->beginGroup("URL");
         settings->setValue("cam1", cam1Url);
         settings->endGroup();
-        ui.cbAutoCam1->setChecked(false);
+        uiVideoSettings.cbAutoCam1->setChecked(false);
     }
-    if(ui.cbAutoCam2->isChecked()){
+    if(uiVideoSettings.cbAutoCam2->isChecked()){
         cam2Url = "srt://" + ip + ":2222";
         settings->beginGroup("URL");
         settings->setValue("cam2", cam2Url);
         settings->endGroup();
-        ui.cbAutoCam2->setChecked(false);
+        uiVideoSettings.cbAutoCam2->setChecked(false);
     }
 }
 
@@ -838,6 +848,14 @@ void PCScreen::closeView(){
         ui.cbAutoCam1->setChecked(false);
     if(ui.cbAutoCam2->isChecked())
         ui.cbAutoCam2->setChecked(false);
+}
+
+void PCScreen::closeVideoSettings()
+{
+    if(uiVideoSettings.cbAutoCam1->isChecked())
+        uiVideoSettings.cbAutoCam1->setChecked(false);
+    if(uiVideoSettings.cbAutoCam2->isChecked())
+        uiVideoSettings.cbAutoCam2->setChecked(false);
 }
 
 void PCScreen::StartRecord(bool b){
@@ -967,7 +985,7 @@ void PCScreen::finishedCamera(){
 
 void PCScreen::setCam(){
     if(sender()->objectName() == "leCam1"){
-        cam1Url = ui.leCam1->text();
+        cam1Url = uiVideoSettings.leCam1->text();
         settings->beginGroup("URL");
         settings->setValue("cam1", cam1Url);
         settings->endGroup();
@@ -975,7 +993,7 @@ void PCScreen::setCam(){
         settings->beginGroup("URL");
         settings->setValue("cam2", cam2Url);
         settings->endGroup();
-        cam2Url = ui.leCam2->text();
+        cam2Url = uiVideoSettings.leCam2->text();
     }
 }
 
@@ -1042,6 +1060,18 @@ void PCScreen::showView(){
     settings->endGroup();
 
     formView->show();
+}
+
+void PCScreen::showVideoSettings()
+{
+    settings->beginGroup("URL");
+    uiVideoSettings.leCam1->setText(settings->value("cam1", "").toString());
+    settings->endGroup();
+
+    settings->beginGroup("URL");
+    uiVideoSettings.leCam2->setText(settings->value("cam2", "").toString());
+    settings->endGroup();
+    formVideoSettings->show();
 }
 
 void PCScreen::paintEvent(QPaintEvent * ) {
@@ -1558,35 +1588,3 @@ void PCScreen::setTvScreenGeometry(){
                               QApplication::desktop()->availableGeometry(tvScreen).height() + screenHeight);
     }
 }
-
-//void PCScreen::tvXchange(int x){
-//    screenLeft = x;
-//    setTvScreenGeometry();
-//}
-
-//void PCScreen::tvYchange(int y){
-//    screenTop = y;
-//    setTvScreenGeometry();
-//}
-
-//void PCScreen::tvWchange(int w){
-//    screenWidth = w;
-//    setTvScreenGeometry();
-//}
-
-//void PCScreen::tvHchange(int h){
-//    screenHeight = h;
-//    setTvScreenGeometry();
-//}
-
-//void PCScreen::tvReset(){
-//    screenLeft = 0;
-//    screenTop = 0;
-//    screenWidth = 0;
-//    screenHeight = 0;
-//    uiTV.sbX->setValue(0);
-//    uiTV.sbY->setValue(0);
-//    uiTV.sbW->setValue(0);
-//    uiTV.sbH->setValue(0);
-//    setTvScreenGeometry();
-//}

@@ -18,7 +18,10 @@ void Camera::StartRecord(QString s){
         flag_start_record = true;
         process = false;
         qDebug()<<"start0";
-        while(flag_start_record){};
+        //int i = 0;
+        while(flag_start_record){
+            //qDebug()<<i++;
+        };
         qDebug()<<"start1";
         flag_record = true;
         process = true;
@@ -37,6 +40,7 @@ void Camera::setUrl(QString u){
 void Camera::TurnOnCamera(){
     qDebug()<<"turn"<<url;
     main_process = true;
+
     while(main_process){
         //flag_record = rec;
         process = true;
@@ -57,6 +61,7 @@ void Camera::TurnOnCamera(){
         AVCodecContext *pCodecCtx = NULL;
         AVStream *stream;
         const AVCodec *dec;
+        AVDictionary *options = NULL;
 
         QByteArray bain = url.toLocal8Bit();
         in_filename = bain.data();
@@ -77,10 +82,10 @@ void Camera::TurnOnCamera(){
         int deviceCount = avdevice_list_input_sources(inFormat, NULL, NULL, &deviceList);
 
         for(int i = 0; i < deviceCount; i++){
-            qDebug()<<"count = "<<i;
+            //qDebug()<<"count = "<<i;
             AVDeviceInfo dInfo = *deviceList->devices[i];
             //printf("%s %s", dInfo->device_name, dInfo->device_description);
-            qDebug()<<deviceCount<<dInfo.device_description;
+            //qDebug()<<deviceCount<<dInfo.device_description;
         }
 
         //avdevice_free_list_devices(&deviceList);
@@ -93,7 +98,10 @@ void Camera::TurnOnCamera(){
             goto end;
         }
 
-        if ((ret = avformat_open_input(&ifmt_ctx, in_filename, 0, 0)) < 0) {
+        if(url.left(4) == "rtsp")
+            av_dict_set(&options, "rtsp_transport", "tcp", 0);
+
+        if ((ret = avformat_open_input(&ifmt_ctx, in_filename, 0, &options)) < 0) {
             goto end;
         }
 
@@ -230,6 +238,7 @@ void Camera::TurnOnCamera(){
         }
         else{
             main_process = false;
+            qDebug()<<"finished ";
             emit finished();
         }
         qDebug()<<"end"<<flag_start_record;

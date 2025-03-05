@@ -27,6 +27,7 @@ public:
     QAction* actSbros;
     QAction* video;
     QAction* no_video;
+    QAction* winVideoSettings;
     //QAction* tvSettings;
     QString getFileSportsmens(void);
     Ui::dlgObs uiObs;

@@ -43,6 +43,7 @@
     <addaction name="select"/>
     <addaction name="winSettings"/>
     <addaction name="setOBS"/>
+    <addaction name="videoSettings"/>
    </widget>
    <widget class="QMenu" name="time">
     <property name="title">
@@ -163,6 +164,11 @@
   <action name="setOBS">
    <property name="text">
     <string>Настройки OBS</string>
+   </property>
+  </action>
+  <action name="videoSettings">
+   <property name="text">
+    <string>Настройки видеоповторов</string>
    </property>
   </action>
  </widget>

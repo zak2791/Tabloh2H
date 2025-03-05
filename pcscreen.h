@@ -8,6 +8,7 @@
 #include "qfuture.h"
 #include "qlibrary.h"
 #include "rate.h"
+#include "ui_FormSettingsVideoReplay.h"
 #include "ui_frmTime.h"
 #include "ui_FormView.h"
 //#include "ui_frmTv.h"
@@ -124,6 +125,7 @@ public slots:
 private slots:
     void setCam(void);
     void showView(void);
+    void showVideoSettings(void);
 
     void finishedCamera(void);
     void turnCamera(bool);
@@ -141,6 +143,7 @@ private slots:
 
     void autoCamera(bool);
     void closeView(void);
+    void closeVideoSettings(void);
     void setCamera(QString);
 
     void setCat(QString);
@@ -193,6 +196,7 @@ private:
     QSettings* settings;
     QString fileSettings;
 	QWidget * formView;
+    QWidget * formVideoSettings;
     QWidget * frmTime;
     LCDStopwatch * sec_doctor;
     QWidget* frmTvSettings;
@@ -249,6 +253,7 @@ private:
     LCDStopwatch * sec_blue_t;
 
 	Ui::frmView ui;
+    Ui::frmSettingsVideoReplay uiVideoSettings;
     Ui::Form uiTime;
 	QDesktopWidget* desk;
 	int HEIGHT_REGION;

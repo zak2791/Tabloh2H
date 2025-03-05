@@ -75,6 +75,7 @@ SOURCES += \
     tvscreen.cpp
 
 FORMS += \
+    FormSettingsVideoReplay.ui \
     FormView.ui \
     addform.ui \
     frmTime.ui \

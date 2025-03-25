@@ -21,12 +21,6 @@ LCDStopwatch::LCDStopwatch(QWidget* parent,
     Reset();
 
 
-//#ifdef APP_LAUNCH_FROM_IDE
-//    pathToSound = "gong.mp3";
-//#else
-//    pathToSound = "bin/gong.mp3";
-//#endif
-
 }
 
 void LCDStopwatch::StartStop(){

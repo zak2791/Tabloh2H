@@ -6,7 +6,6 @@
 
 #include "mainwindow.h"
 
-//#define APP_LAUNCH_FROM_IDE
 
 int main(int argc, char** argv){
     QApplication app(argc, argv);
@@ -14,6 +13,18 @@ int main(int argc, char** argv){
     app.setOrganizationName("rffrb");
     app.setOrganizationDomain("rffrb.ru");
     app.setApplicationName("Tablo H2H");
+
+    QLockFile lockFile(QDir::temp().absoluteFilePath("lurity.lock"));
+
+    if (!lockFile.tryLock(100))
+    {
+        QMessageBox msgBox;
+        msgBox.setIcon(QMessageBox::Warning);
+        msgBox.setText("Приложение уже запущено.\n"
+                       "Разрешено запускать только один экземпляр приложения.");
+        msgBox.exec();
+        return 1;
+    }
 
     MainWindow* mWin = new MainWindow;
 
@@ -32,13 +43,17 @@ int main(int argc, char** argv){
 
 	QJSEngine se;
 
-#ifdef APP_LAUNCH_FROM_IDE
+    QProcess proc;
+    QList<QString> args;
+    args<<"/c"<<"ffmpeg"<<"-codecs"<<"|"<<"findstr"<<"h264";
+    proc.start("cmd", args);
+    proc.waitForFinished();
+    qDebug()<<proc.readAllStandardOutput();
+
+
     QFile  file("script.js");
     QFile jFile("data.json");
-#else
-    QFile  file("bin/script.js");
-    QFile jFile("bin/data.json");
-#endif
+
 
     QString val;
     jFile.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -47,7 +62,6 @@ int main(int argc, char** argv){
 
     QJsonDocument doc = QJsonDocument::fromJson(val.toUtf8());
     QJsonObject jObj = doc.object();
-    qDebug()<<"time = "<<jObj["blue_name"].toString()<<jObj["time"].toString()<<jObj["red_name"].toString()<<jObj["red_region"].toString()<<jObj["red_rate"].toString();
     qDebug()<<jObj;
 
     if (file.open(QFile::ReadOnly)) {

@@ -25,11 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
     no_video = ui->no_video;
     winHelp = ui->winHelp;
 
-#ifdef APP_LAUNCH_FROM_IDE
     fileSettings = "settings.ini";
-#else
-    fileSettings = "bin/settings.ini";
-#endif
 
 
     fileSportsmens = "";

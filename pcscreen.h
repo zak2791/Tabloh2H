@@ -118,7 +118,7 @@ public slots:
     void newListSportsmens(void);
     void sbrosLogo(void);
     void Variant(int);
-    void setTvScreenGeometry(void);
+
     void initListNames(void);   //инициализация списков спортсменов
     //void slotExit(void);
 
@@ -189,6 +189,9 @@ private slots:
 
     void slotStartRecordOBS(void);
     void handleResultsObs(QString);
+    void selectWebCam(bool);
+
+    void setTvScreenGeometry(void);
 
 private:
     //QLabel* lblCpuUsage;
@@ -320,6 +323,8 @@ private:
 
     ControlObs* obs;
     QThread obsThread;
+
+    //bool flag2screens = false;
 
 signals:
     void operate(QString, int, QString);

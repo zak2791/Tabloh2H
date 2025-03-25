@@ -102,8 +102,8 @@ public slots:
 private:
 	
 	virtual void paintEvent(QPaintEvent *);
-	virtual void showEvent(QShowEvent *);
     virtual void resizeEvent(QResizeEvent *);
+    virtual void mouseDoubleClickEvent(QMouseEvent *e);
 	QString col_red;
 	QString col_blue;
 	QEvent * ev_L;

@@ -4,11 +4,9 @@
 #include <QDebug>
 
 logofrb::logofrb(QWidget *parent) : QWidget(parent){
-#ifdef APP_LAUNCH_FROM_IDE
+
     settings = new QSettings("settings.ini", QSettings::IniFormat);
-#else
-    settings = new QSettings("bin/settings.ini", QSettings::IniFormat);
-#endif
+
     settings->beginGroup("logo");
     if(settings->value("logo", 1).toInt())
         pathLogo = ":/images/frb.png";

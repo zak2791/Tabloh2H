@@ -62,16 +62,7 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     col_red = "white";
     col_blue = "white";
 
-#ifdef APP_LAUNCH_FROM_IDE
     fileSettings = "settings.ini";
-    //QString fProc = "server.exe";
-#else
-    fileSettings = "bin/settings.ini";
-    //QString fProc = "bin/server.exe";
-#endif
-
-    //myProcess = new QProcess(parent);
-    //myProcess->start(fProc);
 
     settings = new QSettings(fileSettings, QSettings::IniFormat);
     settings->beginGroup("height");
@@ -432,7 +423,7 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 
     setTvScreenGeometry();
 
-    tvScreen->show();
+    //tvScreen->show();
 
     connect(rateRed,	SIGNAL(sigRate(int)),		 tvScreen->ball_red,	  SLOT(setRate(int)));
     connect(rateBlue,	SIGNAL(sigRate(int)),		 tvScreen->ball_blue,     SLOT(setRate(int)));
@@ -493,7 +484,7 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     connect(threadCam1, SIGNAL(started()),        camera1,  SLOT(TurnOnCamera()));
     connect(camera1,    SIGNAL(sigImage(QImage)), viewCam1, SLOT(draw_image(QImage)));
     connect(camera1,    SIGNAL(finished()),       this,     SLOT(finishedCamera()));
-    connect(ui.cbKey,   SIGNAL(toggled(bool)),    camera1,  SLOT(onlyKeyFrame(bool)), Qt::DirectConnection);
+    connect(uiVideoSettings.cbKey,   SIGNAL(toggled(bool)),    camera1,  SLOT(onlyKeyFrame(bool)), Qt::DirectConnection);
 
     camera2 = new Camera;
     camera2->setObjectName("camera2");
@@ -502,7 +493,7 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     connect(threadCam2, SIGNAL(started()),        camera2,  SLOT(TurnOnCamera()));
     connect(camera2,    SIGNAL(sigImage(QImage)), viewCam2, SLOT(draw_image(QImage)));
     connect(camera2,    SIGNAL(finished()),       this,     SLOT(finishedCamera()));
-    connect(ui.cbKey,   SIGNAL(toggled(bool)),    camera2,  SLOT(onlyKeyFrame(bool)), Qt::DirectConnection);
+    connect(uiVideoSettings.cbKey,   SIGNAL(toggled(bool)),    camera2,  SLOT(onlyKeyFrame(bool)), Qt::DirectConnection);
 
     connect(mainTimer, SIGNAL(sigStarted(bool)), this, SLOT(StartRecord(bool)));
     connect(mainTimer, SIGNAL(sigReset()), this, SLOT(StopRecord()));
@@ -599,8 +590,18 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     connect(plus_red,  SIGNAL(textChange(QString)), this, SLOT(saveConditionPlus(QString)));
     connect(plus_blue, SIGNAL(textChange(QString)), this, SLOT(saveConditionPlus(QString)));
 
-    connect(ui.cbShowOnTv, SIGNAL(toggled(bool)), tvScreen, SLOT(setPlayerEnabled(bool)));
-
+    connect(uiVideoSettings.cbShowOnTv, SIGNAL(toggled(bool)), tvScreen, SLOT(setPlayerEnabled(bool)));
+    connect(uiVideoSettings.chbUseWebCam, SIGNAL(toggled(bool)), this, SLOT(selectWebCam(bool)));
+    connect(uiVideoSettings.cbWebCam, &QComboBox::currentTextChanged, [this](QString text){
+        QStringList param = camera1->getListParamWebCam(text);
+        uiVideoSettings.cbParamWebCam->clear();
+        foreach(auto each, param)
+            uiVideoSettings.cbParamWebCam->addItem(each);
+    });
+    connect(uiVideoSettings.cbParamWebCam, &QComboBox::currentTextChanged, [this](QString text){
+        qDebug()<<text;
+        cam1Url = uiVideoSettings.cbWebCam->currentText() + ";" + text;
+    });
     setSize();
     Variant(0);
 
@@ -664,6 +665,11 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     connect(obs, &ControlObs::resultReady, this, &PCScreen::handleResultsObs);
     obsThread.start();
 
+    //QTimer *timer = new QTimer(this);
+    //connect(timer, &QTimer::timeout, this, &PCScreen::setTvScreenGeometry);
+
+    //timer->start(1000);
+
 }
 
 void PCScreen::handleResultsObs(QString result){
@@ -680,6 +686,17 @@ void PCScreen::handleResultsObs(QString result){
         msgBox.exec();
     }
 
+}
+
+void PCScreen::selectWebCam(bool b)
+{
+    if(b){
+        uiVideoSettings.cbWebCam->addItems(camera1->getListWebCams());
+    }
+    else{
+        uiVideoSettings.cbWebCam->clear();
+        cam1Url = uiVideoSettings.leCam1->text();
+    }
 }
 
 void PCScreen::slotStartRecordOBS(){
@@ -721,6 +738,7 @@ PCScreen::~PCScreen()
     obsThread.quit();
     obsThread.wait();
     delete obs;
+    //delete tvScreen;
 }
 
 void PCScreen::CpuUsage(){
@@ -1071,6 +1089,7 @@ void PCScreen::showVideoSettings()
     settings->beginGroup("URL");
     uiVideoSettings.leCam2->setText(settings->value("cam2", "").toString());
     settings->endGroup();
+
     formVideoSettings->show();
 }
 
@@ -1577,14 +1596,19 @@ void PCScreen::Variant(int variant){
 }
 
 void PCScreen::setTvScreenGeometry(){
-
-    if(QGuiApplication::screens().count() == 1)
-        tvScreen->setGeometry(screenLeft, screenTop, QApplication::desktop()->availableGeometry(this).width() / 2 + screenWidth,
-                              QApplication::desktop()->availableGeometry(this).height() / 2 + screenHeight);
-    else{
-        tvScreen->setGeometry(width(), 0, 100, height());
-        tvScreen->setGeometry(QApplication::desktop()->availableGeometry(this).right() + screenLeft, screenTop,
-                              QApplication::desktop()->availableGeometry(tvScreen).width() + screenWidth,
-                              QApplication::desktop()->availableGeometry(tvScreen).height() + screenHeight);
+    if(QGuiApplication::screens().count() == 2){
+        tvScreen->setGeometry(QApplication::desktop()->availableGeometry(this).width() + 100,
+                              0,
+                              100,
+                              50);
+        tvScreen->show();
+        tvScreen->showFullScreen();
     }
+    else{
+        tvScreen->setGeometry(0, 0, QApplication::desktop()->availableGeometry(this).width() / 2,
+                              QApplication::desktop()->availableGeometry(this).height() / 2);
+        tvScreen->show();
+    }
+
+
 }

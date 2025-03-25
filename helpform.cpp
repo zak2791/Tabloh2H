@@ -9,11 +9,9 @@ HelpForm::HelpForm(QWidget *parent) :
 {
     ui->setupUi(this);
 
-#ifdef APP_LAUNCH_FROM_IDE
+
     QString fileHelp = "docs/help.html";
-#else
-    QString fileHelp = "bin/docs/help.html";
-#endif
+
 
     help = ui->textBrowser;
     help->setSource(QUrl::fromLocalFile(fileHelp));

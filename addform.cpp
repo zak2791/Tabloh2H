@@ -27,11 +27,7 @@ addForm::addForm(QWidget *parent) :
 {
     ui->setupUi(this);
 
-#ifdef APP_LAUNCH_FROM_IDE
     settings = new QSettings("settings.ini", QSettings::IniFormat);
-#else
-    settings = new QSettings("bin/settings.ini", QSettings::IniFormat);
-#endif
 
     settings->beginGroup("addedSportsmens");
     sportsmens = settings->value("sportsmens", "").toString();

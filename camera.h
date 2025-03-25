@@ -12,6 +12,7 @@ extern "C"
     #include <libavutil/avutil.h>
     #include <libavutil/imgutils.h>
     #include <libavutil/timestamp.h>
+    #include <libavutil/dict.h>
     #include <libavformat/avformat.h>
     #include <libswscale/swscale.h>
     #include <libavdevice/avdevice.h>
@@ -28,12 +29,19 @@ public:
     void TurnOffCamera(void);
     void setUrl(QString);
 
+    QStringList getListWebCams(void);
+    QStringList getListParamWebCam(QString);
+
 public slots:
         void TurnOnCamera();
         void onlyKeyFrame(bool);
 
 private:
     QImage avFrame2QImage(AVFrame*);
+
+    //AVInputFormat* inFormat;
+
+    void readProcess(void);
 
     AVFormatContext *ofmt_ctx;
     const AVOutputFormat *ofmt;

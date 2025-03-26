@@ -5,7 +5,7 @@ QMAKE_CXXFLAGS_RELEASE -= -O0
 
 RC_ICONS = appico.ico
 
-QT += core gui widgets qml multimedia svg quickwidgets network
+QT += core gui widgets qml multimedia svg quickwidgets network multimediawidgets
 HEADERS += \
     JSTools.h \
     addform.h \
@@ -19,6 +19,7 @@ HEADERS += \
     fam_reg.h \
     firstlastname.h \
     helpform.h \
+    histogramwidget.h \
     infoserver.h \
     lcdstopwatch.h \
     lcdtimer.h \
@@ -31,14 +32,18 @@ HEADERS += \
     newsportsman.h \
     pcscreen.h \
     player.h \
+    player2.h \
+    playercontrols.h \
     playerviewer.h \
     playerviewertv.h \
+    playlistmodel.h \
     plus.h \
     rate.h \
     sidelistmodel.h \
     sportsman.h \
     togglebutton.h \
-    tvscreen.h
+    tvscreen.h \
+    videowidget.h
 
 SOURCES += \
     JSTools.cpp \
@@ -53,6 +58,7 @@ SOURCES += \
     fam_reg.cpp \
     firstlastname.cpp \
     helpform.cpp \
+    histogramwidget.cpp \
     infoserver.cpp \
     lcdstopwatch.cpp \
     lcdtimer.cpp \
@@ -65,14 +71,18 @@ SOURCES += \
     newsportsman.cpp \
     pcscreen.cpp \
     player.cpp \
+    player2.cpp \
+    playercontrols.cpp \
     playerviewer.cpp \
     playerviewertv.cpp \
+    playlistmodel.cpp \
     plus.cpp \
     rate.cpp \
     sidelistmodel.cpp \
     sportsman.cpp \
     togglebutton.cpp \
-    tvscreen.cpp
+    tvscreen.cpp \
+    videowidget.cpp
 
 FORMS += \
     FormSettingsVideoReplay.ui \

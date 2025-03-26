@@ -26,6 +26,8 @@ int main(int argc, char** argv){
         return 1;
     }
 
+
+
     MainWindow* mWin = new MainWindow;
 
     PCScreen * pwgt = new PCScreen(mWin);

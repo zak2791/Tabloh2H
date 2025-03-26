@@ -5,6 +5,7 @@
 #include <QGridLayout>
 #include <QLabel>
 #include "narusheniya_pravil.h"
+#include "player2.h"
 #include "qfuture.h"
 #include "qlibrary.h"
 #include "rate.h"
@@ -323,6 +324,8 @@ private:
 
     ControlObs* obs;
     QThread obsThread;
+
+    Player2* player;
 
     //bool flag2screens = false;
 

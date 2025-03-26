@@ -85,14 +85,14 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
 
     cat->setAlignment(Qt::AlignCenter);
 
-    cat->setStyleSheet("color: blue;");
+    cat->setStyleSheet("font-weight: bold; color: white;");
 
     age = new QLabel(this);//("yellow", this);
     age->setObjectName("age");
 
     age->setAlignment(Qt::AlignCenter);
 
-    age->setStyleSheet("color: red;");
+    age->setStyleSheet("font-weight: bold; color: white;");
 
 	flag_blue = new QLabel(this);
 	flag_blue->setScaledContents(true);
@@ -107,6 +107,7 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
     hbr->addWidget(np_red);
 
     player = new PlayerViewerTV;
+    vWidget = new VideoWidget;
 
 	grid = new QGridLayout(this);
 	grid->setObjectName("grid");
@@ -167,6 +168,8 @@ void TVScreen::showPlayer(){
     if(flagReplayOnTV){
         grid->addWidget(player,    0, 0, 45, 68);
         player->show();
+        //grid->addWidget(vWidget,    0, 0, 45, 68);
+        //vWidget->show();
     }
 }
 
@@ -177,6 +180,8 @@ void TVScreen::setPlayerEnabled(bool b){
 void TVScreen::hidePlayer(){
     grid->removeWidget(player);
     player->hide();
+    //grid->removeWidget(vWidget);
+    //vWidget->hide();
 }
 
 void TVScreen::paintEvent(QPaintEvent * ) {

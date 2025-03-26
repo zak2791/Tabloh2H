@@ -14,6 +14,8 @@
 #include <QTime>
 #include "pcscreen.h"
 #include "QAction"
+#include "qcommandlineoption.h"
+#include "qcommandlineparser.h"
 
 #include <math.h>
 
@@ -670,6 +672,30 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 
     //timer->start(1000);
 
+    QCommandLineParser parser;
+    QCommandLineOption customAudioRoleOption("custom-audio-role",
+                                             "Set a custom audio role for the player.",
+                                             "role");
+    parser.setApplicationDescription("Qt MultiMedia Player Example");
+    parser.addHelpOption();
+    parser.addVersionOption();
+    parser.addOption(customAudioRoleOption);
+    parser.addPositionalArgument("url", "The URL(s) to open.");
+    QApplication *app = (QApplication *)(QApplication::instance());
+    parser.process(*app);
+
+    player = new Player2(tvScreen->vWidget);
+
+    if (parser.isSet(customAudioRoleOption))
+        player->setCustomAudioRole(parser.value(customAudioRoleOption));
+
+    if (!parser.positionalArguments().isEmpty() && player->isPlayerAvailable()) {
+        QList<QUrl> urls;
+        for (auto &a: parser.positionalArguments())
+            urls.append(QUrl::fromUserInput(a, QDir::currentPath(), QUrl::AssumeLocalFile));
+        player->addToPlaylist(urls);
+    }
+
 }
 
 void PCScreen::handleResultsObs(QString result){
@@ -971,11 +997,12 @@ void PCScreen::PlaySelectedFile(){
     QString file = QFileDialog::getOpenFileName();
     if(file == "" || !file.endsWith(".mp4"))
         return;
-    slowMotionPlayer = new PlayerViewer(file);
-    connect(slowMotionPlayer, SIGNAL(sigClose()), this, SLOT(closePlayer()));
-    connect(slowMotionPlayer, SIGNAL(sigClose()), tvScreen, SLOT(hidePlayer()));
-    connect(slowMotionPlayer, SIGNAL(sigImage(QImage)), tvScreen->player, SLOT(draw_image(QImage)));
-    tvScreen->showPlayer();
+    //slowMotionPlayer = new PlayerViewer(file);
+    //connect(slowMotionPlayer, SIGNAL(sigClose()), this, SLOT(closePlayer()));
+    //connect(slowMotionPlayer, SIGNAL(sigClose()), tvScreen, SLOT(hidePlayer()));
+    //connect(slowMotionPlayer, SIGNAL(sigImage(QImage)), tvScreen->player, SLOT(draw_image(QImage)));
+    //tvScreen->showPlayer();
+    player->showFullScreen();
 }
 
 void PCScreen::closePlayer(){

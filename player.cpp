@@ -57,8 +57,7 @@ void Player::Play(){
     if (!pCodecCtx)
         goto end;
 
-    if (avcodec_parameters_to_context(pCodecCtx, ifmt_ctx->streams[best_stream]->codecpar) < 0)
-        goto end;
+    avcodec_parameters_to_context(pCodecCtx, ifmt_ctx->streams[best_stream]->codecpar);
 
 
     if (avcodec_open2(pCodecCtx, dec, NULL) < 0)
@@ -76,39 +75,27 @@ void Player::Play(){
     numberFrames = in_stream->nb_frames;
     durationMedia = in_stream->duration;
     avgFps = in_stream->avg_frame_rate.num / in_stream->avg_frame_rate.den;
-    if(numberFrames != 0)
-        oneFrameDuration = durationMedia / numberFrames;
-    else
-        process = false;
+    oneFrameDuration = durationMedia / numberFrames;
     durationMediaInSecunds = numberFrames / avgFps;
-    qDebug()<<"durationMediaInSecunds = "<<durationMediaInSecunds;
-    qDebug()<<"numberFrames = "<<numberFrames;
-    qDebug()<<"durationMedia = "<<durationMedia;
-    qDebug()<<"avgFps = "<<avgFps;
 
     emit sigParam(numberFrames, avgFps, durationMediaInSecunds);
 
     while (process) {
         if(flag_seek || flag_play || flag_one_next_frame){
             if(flag_seek){
-                qDebug()<<"flag_sek = "<<flag_seek;
                 ret =av_seek_frame(ifmt_ctx, best_stream, flag_seek, AVSEEK_FLAG_FRAME);
-                if(ret < 0)
-                    qDebug()<<"seek error";
-                //qDebug()<<"flag_seek = "<<flag_seek;
                 flag_seek = 0;
                 //qDebug()<<"seek = 0";
                 bufImage->clear();
             }
             ret = av_read_frame(ifmt_ctx, pkt);
             if (ret < 0){
-                ret = av_seek_frame(ifmt_ctx, best_stream, 0, AVSEEK_FLAG_FRAME);
+                ret =av_seek_frame(ifmt_ctx, best_stream, 0, AVSEEK_FLAG_FRAME);
                 if (ret < 0 ) break;
                 continue;
             }
 
-            if (pkt->stream_index == 0){//best_stream){
-                qDebug()<<"pkt->pts = "<<pkt->pts;
+            if (pkt->stream_index == best_stream){
                 if(flag_play || flag_one_next_frame)
                     emit sigFrame(pkt->pts / oneFrameDuration);
                 int cel = (pkt->pts / oneFrameDuration) * 0.033;
@@ -182,7 +169,7 @@ end:
 void Player::seek(int s){
     flag_seek = s * oneFrameDuration;
     currentImage = -1;
-    qDebug()<<"flag_seek = "<<s<<oneFrameDuration<<flag_seek;
+    //qDebug()<<"flag_seek = "<<s<<oneFrameDuration<<flag_seek;
 }
 
 void Player::turnPlay(){
@@ -203,14 +190,13 @@ QImage Player::avFrame2QImage(AVFrame* frame){
                                     (AVPixelFormat)frame->format, frame->width, frame->height,
                                      AV_PIX_FMT_RGB24, SWS_BICUBIC, NULL, NULL, NULL);
 
-    if (img_convert_ctx == NULL){
+    if (img_convert_ctx == nullptr){
         return QImage();
     }
 
     QImage img(frame->width, frame->height, QImage::Format_RGB888);
     int outputLinesize[3];
-    if(av_image_fill_linesizes(outputLinesize, AV_PIX_FMT_RGB24, frame->width) < 0)
-        return QImage();
+    av_image_fill_linesizes(outputLinesize, AV_PIX_FMT_RGB24, frame->width);
     uint8_t *outputDst[] = {img.bits()};
     sws_scale(img_convert_ctx, frame->data, frame->linesize, 0, frame->height, outputDst, outputLinesize);
     sws_freeContext(img_convert_ctx);
@@ -236,6 +222,7 @@ void Player::nextFrame(){
 }
 
 void Player::previewFrame(){
+    //qDebug()<<"currentImage"<<currentImage<<"bufImage->length()"<<bufImage->length();
     if(currentImage > 0 && !flag_play){
         emit sigImage(bufImage->at(--currentImage));
         emit sigBuffer(bufImage->length(), currentImage);

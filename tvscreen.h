@@ -97,9 +97,11 @@ public:
 												//			 2-чёрный фон без рамок
 
     void showPlayer(void);
+    void showPlayer2(void);
 
 public slots:
     void hidePlayer(void);
+    void hidePlayer2(void);
     void setPlayerEnabled(bool);
 
 private:

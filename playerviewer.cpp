@@ -74,6 +74,12 @@ PlayerViewer::PlayerViewer(QString file, QWidget* parent) : QGraphicsView(parent
     connect(player, SIGNAL(sigBuffer(int,int)), this, SLOT(drawBuffer(int,int)));
     connect(player, SIGNAL(sigStartStopPlay(bool)), this, SLOT(playEnable(bool)));
 
+    btnStream1 = new QPushButton("Камера 1", this);
+    connect(btnStream1, &QPushButton::clicked, this, [this](){player->setCamera(0);});
+    btnStream2 = new QPushButton("Камера 2", this);
+    connect(btnStream2, &QPushButton::clicked, this, [this](){player->setCamera(1);});
+    btnStream3 = new QPushButton("Камера 3",  this);
+    connect(btnStream3, &QPushButton::clicked, this, [this](){player->setCamera(2);});
 
     thread->start();
 
@@ -102,11 +108,19 @@ void PlayerViewer::closeEvent(QCloseEvent*){
 }
 
 void PlayerViewer::resizeEvent(QResizeEvent*){
+    qDebug()<<"resize0";
     slider->setGeometry(0, height() - 100, width(), 30);
     btnPlay->setGeometry(10, height() - 55, 100, 40);
     btnNextFrame->setGeometry(230, height() - 55, 100, 40);
     btnPreviewFrame->setGeometry(120, height() - 55, 100, 40);
     btnClose->setGeometry(width() - 110, height() - 55, 100, 40);
+    qDebug()<<"resize1";
+    btnStream1->setGeometry(400, height() - 55, 100, 40);
+    qDebug()<<"resize2";
+    btnStream2->setGeometry(520, height() - 55, 100, 40);
+    qDebug()<<"resize3";
+    btnStream3->setGeometry(640, height() - 55, 100, 40);
+    qDebug()<<"resize4";
 }
 
 void PlayerViewer::setSeek(int s){

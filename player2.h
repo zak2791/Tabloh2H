@@ -55,6 +55,8 @@
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
 
+#include "videowidget.h"
+
 QT_BEGIN_NAMESPACE
 class QAbstractItemView;
 class QLabel;
@@ -86,6 +88,7 @@ public:
 
 signals:
     void fullScreenChanged(bool fullScreen);
+    void sigClose(void);
 
 private slots:
     void open();
@@ -118,7 +121,7 @@ private:
     QMediaPlayer *m_player = nullptr;
     QMediaPlaylist *m_playlist = nullptr;
     QVideoWidget *m_videoWidget = nullptr;
-    QVideoWidget *vWidget = nullptr;
+    VideoWidget *vWidget = nullptr;
 
     QLabel *m_coverLabel = nullptr;
     QSlider *m_slider = nullptr;
@@ -144,6 +147,8 @@ private:
     QPushButton *seekForward = nullptr;
     QPushButton *seekBackward = nullptr;
     QPushButton *btnClose = nullptr;
+
+    virtual void closeEvent(QCloseEvent*);
 };
 
 #endif // PLAYER2_H

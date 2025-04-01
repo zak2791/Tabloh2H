@@ -37,6 +37,7 @@
 #include <QTcpSocket>
 #include <QLibrary>
 #include "controlobs.h"
+#include "videoreplaycontrol.h"
 
 class IconButton : public QPushButton{
 
@@ -326,6 +327,7 @@ private:
     QThread obsThread;
 
     Player2* player;
+    VideoReplayControl* videoControl;
 
     //bool flag2screens = false;
 

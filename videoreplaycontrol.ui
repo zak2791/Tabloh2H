@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>VideoReplayControl</class>
+ <widget class="QWidget" name="VideoReplayControl">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>448</width>
+    <height>233</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="0">
+    <layout class="QGridLayout" name="gridLayout" rowstretch="0,2,1">
+     <item row="2" column="0">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QPushButton" name="btnPlay">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>45</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Смотреть с выбором</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnPlayLast">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>45</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Смотреть последний</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="1" column="0">
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <widget class="QLabel" name="lblCam1">
+         <property name="frameShape">
+          <enum>QFrame::Shape::Box</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Shadow::Raised</enum>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="scaledContents">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="lblCam2">
+         <property name="frameShape">
+          <enum>QFrame::Shape::Box</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Shadow::Raised</enum>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="scaledContents">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="lblCam3">
+         <property name="frameShape">
+          <enum>QFrame::Shape::Box</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Shadow::Raised</enum>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="scaledContents">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="0" column="0">
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QCheckBox" name="cbCam1">
+         <property name="styleSheet">
+          <string notr="true">QCheckBox::indicator:unchecked{image: url(:/images/CheckBoxVideoUnchecked.png)}
+QCheckBox::indicator:checked{image: url(:/images/CheckBoxVideoChecked.png)}
+QCheckBox::indicator {width: 45px; height: 45px;}
+QCheckBox{font-size: 20px}</string>
+         </property>
+         <property name="text">
+          <string>Камера 1</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="cbCam2">
+         <property name="styleSheet">
+          <string notr="true">QCheckBox::indicator:unchecked{image: url(:/images/CheckBoxVideoUnchecked.png)}
+QCheckBox::indicator:checked{image: url(:/images/CheckBoxVideoChecked.png)}
+QCheckBox::indicator {width: 45px; height: 45px;}
+QCheckBox{font-size: 20px}</string>
+         </property>
+         <property name="text">
+          <string>Камера 2</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="cbCam3">
+         <property name="styleSheet">
+          <string notr="true">QCheckBox::indicator:unchecked{image: url(:/images/CheckBoxVideoUnchecked.png)}
+QCheckBox::indicator:checked{image: url(:/images/CheckBoxVideoChecked.png)}
+QCheckBox::indicator {width: 45px; height: 45px;}
+QCheckBox{ font-size: 20px}</string>
+         </property>
+         <property name="text">
+          <string>Камера 3</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

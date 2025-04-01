@@ -33,6 +33,9 @@ private:
     QPushButton* btnPreviewFrame;
     QPushButton* btnClose;
     QLabel* lblTime;
+    QPushButton* btnStream1;
+    QPushButton* btnStream2;
+    QPushButton* btnStream3;
 
     Player* player;
     QThread* thread;

@@ -29,6 +29,7 @@ class Player : public QObject
     QList<QImage>* bufImage;
     int currentImage = 0;
     QString videoFile;
+    int currStream = 0;
 
 public:
     explicit Player(QString file = "", QObject *parent = nullptr);
@@ -40,6 +41,7 @@ public slots:
     void Play(void);
     void nextFrame(void);
     void previewFrame(void);
+    void setCamera(int);
 
 signals:
     void sigImage(QImage);
@@ -48,6 +50,7 @@ signals:
     void sigBuffer(int, int);
     void sigStartStopPlay(bool);
     void sigTime(QString);
+    void sigClose(void);
 
 };
 

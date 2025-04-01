@@ -31,6 +31,7 @@ public:
 
     QStringList getListWebCams(void);
     QStringList getListParamWebCam(QString);
+    QStringList getListSoundDevices(void);
 
 public slots:
         void TurnOnCamera();

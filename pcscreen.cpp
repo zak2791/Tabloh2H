@@ -78,8 +78,6 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     minimum_height = 0;
     percent_height = 0;
 
-
-
     rateRed = new Rate(this);
     rateRed->setFrameShape(QFrame::Box);
     rateRed->setObjectName("ball_red");
@@ -195,20 +193,6 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     age->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
     initListNames();
-
-    //    //
-    //    choosingNames = new ChoosingNames;
-
-    //    lf = new ListFamily(this);
-    //    lf->setObjectName("lf");
-
-    //    choosingNames->setNames(lf->getSportsmens());
-    //    choosingNames->setAge(lf->lAge);
-    //    choosingNames->setWeight(lf->lWeight);
-
-    //    connect(choosingNames, SIGNAL(close(QString, QString, QString, QString, QString, QString, QString, QString)),
-    //                this, SLOT(closeWinName(QString, QString, QString, QString, QString, QString, QString, QString)));
-    //    //
 
     formView = new QWidget;
     ui.setupUi(formView);
@@ -334,6 +318,14 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 
     connect(mainwin->actSbros, SIGNAL(triggered()), this, SLOT(resetTablo()));
 
+    QString styleTurnCamera(("QCheckBox::indicator:unchecked{image: url(:/images/CheckBoxVideoUnchecked.png)}"
+                             "QCheckBox::indicator:checked{image: url(:/images/CheckBoxVideoChecked.png)}"
+                             "QCheckBox::indicator {width: 45px; height: 45px;}"
+                             "QCheckBox{color: white; font-size: 20px}"));
+
+
+    videoControl = new VideoReplayControl;
+
     grid = new QGridLayout(this);
     grid->setObjectName("grid");
     //spacing = 6;
@@ -363,8 +355,11 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     grid->addWidget(plus_red,               9,   19, 4,  4);
     grid->addWidget(plus_blue,              9,   45, 4,  4);
 
-    grid->addWidget(age,                    12, 26, 2,  7);
-    grid->addWidget(cat,                    12, 35, 2,  7);
+    grid->addWidget(age,                    10, 26, 2,  7);
+    grid->addWidget(cat,                    10, 35, 2,  7);
+
+    grid->addWidget(videoControl,          13, 24, 12,  20);
+
 
     grid->addWidget(btnParter_red,          26, 24, 2,  6);
     grid->addWidget(btnTime,                26, 31, 2,  6);
@@ -411,15 +406,6 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
                                  "Подключите к компьютеру дисплей в режиме \"Расширенный рабочий стол!\"",
                                  QMessageBox::Ok);
     }
-
-    //frmTvSettings = new QWidget;
-    //uiTV.setupUi(frmTvSettings);
-    //connect(mainwin->tvSettings, SIGNAL(triggered()), frmTvSettings, SLOT(show()));
-    //connect(uiTV.sbX, SIGNAL(valueChanged(int)), this, SLOT(tvXchange(int)));
-    //connect(uiTV.sbY, SIGNAL(valueChanged(int)), this, SLOT(tvYchange(int)));
-    //connect(uiTV.sbW, SIGNAL(valueChanged(int)), this, SLOT(tvWchange(int)));
-    //connect(uiTV.sbH, SIGNAL(valueChanged(int)), this, SLOT(tvHchange(int)));
-    //connect(uiTV.btnReset, SIGNAL(clicked()), this, SLOT(tvReset()));
 
     tvScreen = new TVScreen;
 
@@ -595,68 +581,29 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     connect(uiVideoSettings.cbShowOnTv, SIGNAL(toggled(bool)), tvScreen, SLOT(setPlayerEnabled(bool)));
     connect(uiVideoSettings.chbUseWebCam, SIGNAL(toggled(bool)), this, SLOT(selectWebCam(bool)));
     connect(uiVideoSettings.cbWebCam, &QComboBox::currentTextChanged, [this](QString text){
-        QStringList param = camera1->getListParamWebCam(text);
-        uiVideoSettings.cbParamWebCam->clear();
-        foreach(auto each, param)
-            uiVideoSettings.cbParamWebCam->addItem(each);
+        if(uiVideoSettings.cbWebCam->count() > 0){
+            QStringList param = camera1->getListParamWebCam(text);
+            uiVideoSettings.cbParamWebCam->clear();
+            foreach(auto each, param)
+                uiVideoSettings.cbParamWebCam->addItem(each);
+        }
+        else{
+            uiVideoSettings.cbParamWebCam->clear();
+        }
     });
     connect(uiVideoSettings.cbParamWebCam, &QComboBox::currentTextChanged, [this](QString text){
-        qDebug()<<text;
-        cam1Url = uiVideoSettings.cbWebCam->currentText() + ";" + text;
+        videoControl->setWebCam(uiVideoSettings.cbWebCam->currentText() + ";" + text);
+    });
+    connect(uiVideoSettings.cbSound, &QComboBox::currentTextChanged, [this](QString text){
+        videoControl->setSound(text);
     });
     setSize();
     Variant(0);
 
     connect(this, SIGNAL(sigLogo(bool)), tvScreen, SIGNAL(sigLogo(bool)));
 
-    //socketDataToVideo = new QUdpSocket;
-    //datagram = new QNetworkDatagram;
-    //datagram->setDestination(QHostAddress::LocalHost, 5555);
-
     connect(mainTimer, SIGNAL(sigClicked()), btnTime, SLOT(click()));
 
-    // html = "HTTP/1.1 200 OK\n"
-    //        "Keep-Alive: timeout=5, max=75\n"
-    //        "Server: d\n"
-    //        "Connection: Keep-Alive\n"
-    //        "Content-Type: text/html\n\n"
-    //        "<!DOCTYPE html>"
-    //        "<html>"
-    //        "<head>"
-    //        "<meta http-equiv='Refresh' content='1' charset='utf-8'/>"
-    //        "<style>"
-    //        "td {font-family: 'Times New Roman', Georgia, Serif; text-align: center;}"
-    //        ".red {color: white; background-color: rgba(255,0,0,0.6);}"
-    //        ".name {width: 30%;}"
-    //        ".blue {color: white; background-color: rgba(0,0,255,0.6);}"
-    //        ".time {color: white; background-color: rgba(0,255,0,0.6); font-size: 30px;}"
-    //        ".rate {font-size: 30px; width: 10%;}"
-    //        "</style>"
-    //        "</head>"
-    //        "<table width='1000px'>"
-    //        "<tr>"
-    //        "<td class='red name'> %1 </td>"
-    //        "<td rowspan='2' class='rate red'> %2 </td>"
-    //        "<td rowspan='2' class='time'> %3 </td>"
-    //        "<td rowspan='2' class='blue rate'> %4 </td>"
-    //        "<td class='blue name'> %5 </td>"
-    //        "</tr>"
-    //        "<tr>"
-    //        "<td class='red'> %6 </td>"
-    //        "<td class='blue'> %7 </td>"
-    //        "</tr>"
-    //        "</table>"
-    //        "</html>";
-
-    // server = new QTcpServer;
-    // if(!server->listen(QHostAddress::Any, 50000)){
-    //     qDebug() << "server is not started";
-    // } else {
-    //     qDebug() << "server is started";
-    // }
-
-    // connect(server,SIGNAL(newConnection()), this, SLOT(slotNewConnection()));
-    //connect(mainTimer, SIGNAL(sigStartedInit()), this, SLOT(slotStartRecordOBS()));
     f_Lib = new QLibrary;
 
     obs = new ControlObs();
@@ -696,6 +643,8 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
         player->addToPlaylist(urls);
     }
 
+    connect(player, SIGNAL(sigClose()), tvScreen, SLOT(hidePlayer2()));
+
 }
 
 void PCScreen::handleResultsObs(QString result){
@@ -718,10 +667,13 @@ void PCScreen::selectWebCam(bool b)
 {
     if(b){
         uiVideoSettings.cbWebCam->addItems(camera1->getListWebCams());
+        uiVideoSettings.cbSound->addItem("");
+        uiVideoSettings.cbSound->addItems(camera1->getListSoundDevices());
     }
     else{
         uiVideoSettings.cbWebCam->clear();
-        cam1Url = uiVideoSettings.leCam1->text();
+        uiVideoSettings.cbSound->clear();
+        //cam1Url = uiVideoSettings.leCam1->text();
     }
 }
 
@@ -968,6 +920,7 @@ void PCScreen::PlaySlowMotion(){
             connect(slowMotionPlayer, SIGNAL(sigClose()), this, SLOT(closePlayer()));
             connect(slowMotionPlayer, SIGNAL(sigClose()), tvScreen, SLOT(hidePlayer()));
             connect(slowMotionPlayer, SIGNAL(sigImage(QImage)), tvScreen->player, SLOT(draw_image(QImage)));
+
             tvScreen->showPlayer();
             btnPlayLastWithSound1->setEnabled(false);
             btnPlayLastSlowMotion1->setEnabled(false);
@@ -994,14 +947,15 @@ void PCScreen::PlaySlowMotion(){
 }
 
 void PCScreen::PlaySelectedFile(){
-    QString file = QFileDialog::getOpenFileName();
-    if(file == "" || !file.endsWith(".mp4"))
-        return;
+    // QString file = QFileDialog::getOpenFileName();
+    // if(file == "" || !file.endsWith(".mp4"))
+    //     return;
     //slowMotionPlayer = new PlayerViewer(file);
     //connect(slowMotionPlayer, SIGNAL(sigClose()), this, SLOT(closePlayer()));
     //connect(slowMotionPlayer, SIGNAL(sigClose()), tvScreen, SLOT(hidePlayer()));
     //connect(slowMotionPlayer, SIGNAL(sigImage(QImage)), tvScreen->player, SLOT(draw_image(QImage)));
     //tvScreen->showPlayer();
+    tvScreen->showPlayer();
     player->showFullScreen();
 }
 

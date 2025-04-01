@@ -52,42 +52,6 @@ void Camera::setUrl(QString u){
 QStringList Camera::getListWebCams()
 {
     QStringList listWebCam;
-    // AVDeviceInfoList* deviceList;
-    // const AVInputFormat* inFormat = NULL;
-    // inFormat = av_find_input_format("dshow");
-    // int deviceCount = avdevice_list_input_sources(inFormat, NULL, NULL, &deviceList);
-    // for(int i = 0; i < deviceCount; i++){
-    //     AVDeviceInfo dInfo = *deviceList->devices[i];
-    //     listWebCam.append(dInfo.device_description);
-    //     qDebug()<<"dInfo.device_description = "<<dInfo.device_description;
-    //     AVFormatContext* afctx =  avformat_alloc_context();
-    //     std::string sVideo = "video=" + std::string(dInfo.device_description);
-    //     qDebug()<<QString::fromStdString(sVideo);
-    //     int ret =  avformat_open_input	(&afctx,
-    //                                      sVideo.c_str(),
-    //                                      inFormat,
-    //                                      NULL);
-    //     const std::string c = av_make_error_string(ret);
-    //     QString s = QString::fromStdString(c);
-    //     qDebug()<<"ret = "<<ret<<s;
-    //     if(ret == 0){
-    //         for (int i = 0; i < afctx->nb_streams; i++)
-    //         {
-    //             AVStream *in_stream = afctx->streams[i];
-    //             if (in_stream->codecpar->codec_type == AVMEDIA_TYPE_VIDEO)
-    //             {
-    //                 int w = in_stream->codecpar->width;
-    //                 int h = in_stream->codecpar->height;
-    //                 int r = 0;
-    //                 if(in_stream->avg_frame_rate.den != 0 && in_stream->avg_frame_rate.num != 0)
-    //                     r = in_stream-> avg_frame_rate.num / in_stream-> avg_frame_rate.den; // how many frames per second
-    //                 qDebug()<<w<<h<<r;
-    //             }
-    //         }
-    //         avformat_close_input(&afctx);
-    //     }
-    // }
-    // avdevice_free_list_devices(&deviceList);
 
     const QList<QCameraInfo> cams = QCameraInfo::availableCameras();
     for (const QCameraInfo &cameraInfo : cams){
@@ -95,6 +59,22 @@ QStringList Camera::getListWebCams()
         if(list.count() != 0)
             listWebCam<<cameraInfo.description();
     }
+
+    return listWebCam;
+}
+
+QStringList Camera::getListSoundDevices()
+{
+    QStringList listWebCam;
+    AVDeviceInfoList* deviceList;
+    const AVInputFormat* inFormat = NULL;
+    inFormat = av_find_input_format("dshow");
+    int deviceCount = avdevice_list_input_sources(inFormat, NULL, NULL, &deviceList);
+    for(int i = 0; i < deviceCount; i++){
+        AVDeviceInfo dInfo = *deviceList->devices[i];
+        listWebCam.append(dInfo.device_description);
+    }
+    avdevice_free_list_devices(&deviceList);
 
     return listWebCam;
 }
@@ -214,7 +194,7 @@ void Camera::TurnOnCamera(){
     if ((ret = avformat_find_stream_info(ifmt_ctx, 0)) < 0) {
         goto end;
     }
-    qDebug()<<"1";
+    qDebug()<<"1"<<ifmt_ctx->nb_streams;
     best_video = av_find_best_stream(ifmt_ctx, AVMEDIA_TYPE_VIDEO, -1, -1, &dec, 0);
     if (best_video < 0) {
         goto end;

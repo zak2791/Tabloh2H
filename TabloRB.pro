@@ -43,6 +43,7 @@ HEADERS += \
     sportsman.h \
     togglebutton.h \
     tvscreen.h \
+    videoreplaycontrol.h \
     videowidget.h
 
 SOURCES += \
@@ -82,6 +83,7 @@ SOURCES += \
     sportsman.cpp \
     togglebutton.cpp \
     tvscreen.cpp \
+    videoreplaycontrol.cpp \
     videowidget.cpp
 
 FORMS += \
@@ -93,7 +95,8 @@ FORMS += \
     mainwindow.ui \
     new_sportsman.ui \
     settingsOBS.ui \
-    version.ui
+    version.ui \
+    videoreplaycontrol.ui
 
 DISTFILES += \
     ../build-TabloRB-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/script.js \

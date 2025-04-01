@@ -87,10 +87,11 @@ Player2::Player2(QVideoWidget* vW, QWidget *parent)
     connect(m_player, &QMediaPlayer::stateChanged, this, &Player2::stateChanged);
 
 //! [2]
-    //vWidget = new VideoWidget(this);
+    vWidget = static_cast<VideoWidget*>(vW);//new VideoWidget(this);
+\
     m_videoWidget = new VideoWidget(this);
 
-    m_player->setVideoOutput({m_videoWidget->videoSurface(), vW->videoSurface()});
+    m_player->setVideoOutput({m_videoWidget->videoSurface(), vWidget->videoSurface()});
 
     m_playlistModel = new PlaylistModel(this);
     m_playlistModel->setPlaylist(m_playlist);
@@ -156,7 +157,9 @@ Player2::Player2(QVideoWidget* vW, QWidget *parent)
     connect(m_colorButton, &QPushButton::clicked, this, &Player2::showColorDialog);
 
     QBoxLayout *displayLayout = new QHBoxLayout;
+    //displayLayout->addWidget(vWidget, 2);
     displayLayout->addWidget(m_videoWidget, 2);
+
     displayLayout->addWidget(m_playlistView);
 
     QBoxLayout *controlLayout = new QHBoxLayout;
@@ -502,4 +505,9 @@ void Player2::clearHistogram()
 {
     QMetaObject::invokeMethod(m_videoHistogram, "processFrame", Qt::QueuedConnection, Q_ARG(QVideoFrame, QVideoFrame()));
     QMetaObject::invokeMethod(m_audioHistogram, "processBuffer", Qt::QueuedConnection, Q_ARG(QAudioBuffer, QAudioBuffer()));
+}
+
+void Player2::closeEvent(QCloseEvent*){
+    qDebug()<<"ccccccccccc";
+    emit sigClose();
 }

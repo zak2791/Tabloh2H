@@ -47,6 +47,8 @@ private:
     int maxLenghtBuffer;
     QString videoFile;
 
+    int countStreams = 0;
+
 private slots:
     void turnPlay(void);
     void nextFrame(void);

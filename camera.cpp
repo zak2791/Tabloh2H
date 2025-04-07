@@ -1,4 +1,5 @@
 #include "camera.h"
+#include "qmessagebox.h"
 #include <QDebug>
 #include <QThread>
 #include <QCamera>
@@ -55,7 +56,7 @@ QStringList Camera::getListWebCams()
 
     const QList<QCameraInfo> cams = QCameraInfo::availableCameras();
     for (const QCameraInfo &cameraInfo : cams){
-        QStringList list = getListParamWebCam(cameraInfo.description());
+        QList<QList<int>> list = getListParamWebCam(cameraInfo.description());
         if(list.count() != 0)
             listWebCam<<cameraInfo.description();
     }
@@ -75,13 +76,14 @@ QStringList Camera::getListSoundDevices()
         listWebCam.append(dInfo.device_description);
     }
     avdevice_free_list_devices(&deviceList);
-
+    QMessageBox msg;
     return listWebCam;
 }
 
-QStringList Camera::getListParamWebCam(QString text)
+QList<QList<int>> Camera::getListParamWebCam(QString text)
 {
-    QStringList param;
+    // QStringList param;
+    QList<QList<int>> lParam;
     QCamera* cam;
     const QList<QCameraInfo> cams = QCameraInfo::availableCameras();
     for (const QCameraInfo &cameraInfo : cams) {
@@ -95,19 +97,24 @@ QStringList Camera::getListParamWebCam(QString text)
     if(cam->isAvailable())
         cam->start();
 
-    int i = 0;
+    //int i = 0;
 
     QList<QCameraViewfinderSettings> ViewSets = cam->supportedViewfinderSettings();
-    qDebug() << "viewfinderResolutions sizes.len = " << ViewSets.length();
+    //qDebug() << "viewfinderResolutions sizes.len = " << ViewSets.length();
     foreach (QCameraViewfinderSettings ViewSet, ViewSets) {
-        param<<"fps = " + QString::number(ViewSet.maximumFrameRate()) + "  resolution = " +
-                     QString::number(ViewSet.resolution().rwidth()) + "x" +
-                     QString::number(ViewSet.resolution().rheight());
-        qDebug()<<ViewSet.pixelFormat();
+        // param<<"fps = " + QString::number(ViewSet.maximumFrameRate()) + "  resolution = " +
+        //              QString::number(ViewSet.resolution().rwidth()) + "x" +
+        //              QString::number(ViewSet.resolution().rheight());
+        // qDebug()<<ViewSet.pixelFormat();
+        QList<int> par;
+        par.append(ViewSet.maximumFrameRate());
+        par.append(ViewSet.resolution().rwidth());
+        par.append(ViewSet.resolution().rheight());
+        lParam.append(par);
     }
     cam->stop();
 
-    return param;
+    return lParam;
 }
 
 void Camera::TurnOnCamera(){

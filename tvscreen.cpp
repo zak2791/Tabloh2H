@@ -107,7 +107,7 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
     hbr->addWidget(np_red);
 
     player = new PlayerViewerTV;
-    vWidget = new VideoWidget(this);
+    //vWidget = new VideoWidget(this);
 
 	grid = new QGridLayout(this);
 	grid->setObjectName("grid");
@@ -173,8 +173,8 @@ void TVScreen::showPlayer(){
 
 void TVScreen::showPlayer2(){
     if(flagReplayOnTV){
-        grid->addWidget(vWidget,    0, 0, 45, 68);
-        vWidget->show();
+        //grid->addWidget(vWidget,    0, 0, 45, 68);
+        //vWidget->show();
     }
 }
 
@@ -191,11 +191,11 @@ void TVScreen::hidePlayer(){
 
 void TVScreen::hidePlayer2(){
     qDebug()<<"hhhhhhhhhhhh";
-    grid->removeWidget(vWidget);
-    vWidget->hide();
-    vWidget->setVisible(false);
-    qDebug()<<vWidget->isVisible();
-    repaint();
+    //grid->removeWidget(vWidget);
+    //vWidget->hide();
+    //vWidget->setVisible(false);
+    //qDebug()<<vWidget->isVisible();
+    //repaint();
 }
 
 void TVScreen::paintEvent(QPaintEvent * ) {

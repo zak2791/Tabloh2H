@@ -29,20 +29,20 @@ PlayerViewer::PlayerViewer(QString file, QWidget* parent) : QGraphicsView(parent
     connect(slider, SIGNAL(sliderMoved(int)), this, SLOT(setSeek(int)));
 
     QString style = ".QSlider {min-height: 30px;"
-                              "max-height: 30px;"
-                              "}"
+                    "max-height: 30px;"
+                    "}"
 
                     ".QSlider::groove:horizontal {border: 1px solid #000000;"
-                                                 "height: 5px;"
+                    "height: 5px;"
 
-                                                 "margin: 0 10px;}"
+                    "margin: 0 10px;}"
 
                     ".QSlider::handle:horizontal {background: rgba(100, 100, 100, 200);"
-                                                 "border: 2px solid #000000;"
-                                                 "border-radius: 5px;"
-                                                 "width: 20px;"
+                    "border: 2px solid #000000;"
+                    "border-radius: 5px;"
+                    "width: 20px;"
 
-                                                 "margin: -10px 0;}";
+                    "margin: -10px 0;}";
 
     slider->setStyleSheet(style);
 
@@ -74,12 +74,61 @@ PlayerViewer::PlayerViewer(QString file, QWidget* parent) : QGraphicsView(parent
     connect(player, SIGNAL(sigBuffer(int,int)), this, SLOT(drawBuffer(int,int)));
     connect(player, SIGNAL(sigStartStopPlay(bool)), this, SLOT(playEnable(bool)));
 
+
     btnStream1 = new QPushButton("Камера 1", this);
-    connect(btnStream1, &QPushButton::clicked, this, [this](){player->setCamera(0);});
+    connect(btnStream1, &QPushButton::clicked, this, [this](){
+        player->setCamera(0);
+        btnStream1->setStyleSheet("QPushButton{background-color: green}");
+        if(countStreams > 1)
+            btnStream2->setStyleSheet("QPushButton{background-color: yellow}");
+        if(countStreams > 2)
+            btnStream3->setStyleSheet("QPushButton{background-color: yellow}");
+    });
+    btnStream1->setEnabled(false);
+    btnStream1->setStyleSheet("QPushButton{background-color: lightgray}");
+
     btnStream2 = new QPushButton("Камера 2", this);
-    connect(btnStream2, &QPushButton::clicked, this, [this](){player->setCamera(1);});
+    connect(btnStream2, &QPushButton::clicked, this, [this](){
+        player->setCamera(1);
+        btnStream2->setStyleSheet("QPushButton{background-color: green}");
+        btnStream1->setStyleSheet("QPushButton{background-color: yellow}");
+        if(countStreams > 2)
+            btnStream3->setStyleSheet("QPushButton{background-color: yellow}");
+    });
+    btnStream2->setEnabled(false);
+    btnStream2->setStyleSheet("QPushButton{background-color: lightgray}");
+
     btnStream3 = new QPushButton("Камера 3",  this);
-    connect(btnStream3, &QPushButton::clicked, this, [this](){player->setCamera(2);});
+    connect(btnStream3, &QPushButton::clicked, this, [this](){
+        player->setCamera(2);
+        btnStream3->setStyleSheet("QPushButton{background-color: green}");
+        btnStream1->setStyleSheet("QPushButton{background-color: yellow}");
+        btnStream2->setStyleSheet("QPushButton{background-color: yellow}");
+     });
+    btnStream3->setEnabled(false);
+    btnStream3->setStyleSheet("QPushButton{background-color: lightgray}");
+
+    connect(player, &Player::sigCountStreams, this, [this](int count){
+        countStreams = count;
+        if(count == 1){
+            btnStream1->setEnabled(true);
+            btnStream1->setStyleSheet("QPushButton{background-color: green}");
+        }
+        else if(count == 2){
+            btnStream1->setEnabled(true);
+            btnStream2->setEnabled(true);
+            btnStream1->setStyleSheet("QPushButton{background-color: green}");
+            btnStream2->setStyleSheet("QPushButton{background-color: yellow}");
+        }
+        else if(count == 3){
+            btnStream1->setEnabled(true);
+            btnStream2->setEnabled(true);
+            btnStream3->setEnabled(true);
+            btnStream1->setStyleSheet("QPushButton{background-color: green}");
+            btnStream2->setStyleSheet("QPushButton{background-color: yellow}");
+            btnStream3->setStyleSheet("QPushButton{background-color: yellow}");
+        }
+    });
 
     thread->start();
 
@@ -91,6 +140,7 @@ PlayerViewer::PlayerViewer(QString file, QWidget* parent) : QGraphicsView(parent
     //show();
 
     //player->turnPlay();
+
 
     player->nextFrame();
 
@@ -138,14 +188,17 @@ void PlayerViewer::draw_image(QImage img){
 }
 
 void PlayerViewer::parametersMedia(int numberFrames, int avgFps, int durationMediaInSecunds){
+    qDebug()<<"!3";
     maxLenghtBuffer = avgFps * 2;
+    qDebug()<<"!4";
     slider->setMaximum(numberFrames);
-
+    qDebug()<<"!5";
     slider->setTickPosition(QSlider::TicksAbove);
     if(durationMediaInSecunds < 60)
         slider->setTickInterval(avgFps);        //tick every second
-   else
+    else
         slider->setTickInterval(avgFps * 60);   //tick every minute
+    qDebug()<<"!6";
 }
 
 void PlayerViewer::turnPlay(){

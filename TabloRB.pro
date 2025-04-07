@@ -19,8 +19,6 @@ HEADERS += \
     fam_reg.h \
     firstlastname.h \
     helpform.h \
-    histogramwidget.h \
-    infoserver.h \
     lcdstopwatch.h \
     lcdtimer.h \
     list_family.h \
@@ -32,19 +30,16 @@ HEADERS += \
     newsportsman.h \
     pcscreen.h \
     player.h \
-    player2.h \
-    playercontrols.h \
     playerviewer.h \
     playerviewertv.h \
-    playlistmodel.h \
     plus.h \
     rate.h \
+    reclabel.h \
     sidelistmodel.h \
     sportsman.h \
     togglebutton.h \
     tvscreen.h \
-    videoreplaycontrol.h \
-    videowidget.h
+    videoreplaycontrol.h
 
 SOURCES += \
     JSTools.cpp \
@@ -59,8 +54,6 @@ SOURCES += \
     fam_reg.cpp \
     firstlastname.cpp \
     helpform.cpp \
-    histogramwidget.cpp \
-    infoserver.cpp \
     lcdstopwatch.cpp \
     lcdtimer.cpp \
     list_family.cpp \
@@ -72,19 +65,16 @@ SOURCES += \
     newsportsman.cpp \
     pcscreen.cpp \
     player.cpp \
-    player2.cpp \
-    playercontrols.cpp \
     playerviewer.cpp \
     playerviewertv.cpp \
-    playlistmodel.cpp \
     plus.cpp \
     rate.cpp \
+    reclabel.cpp \
     sidelistmodel.cpp \
     sportsman.cpp \
     togglebutton.cpp \
     tvscreen.cpp \
-    videoreplaycontrol.cpp \
-    videowidget.cpp
+    videoreplaycontrol.cpp
 
 FORMS += \
     FormSettingsVideoReplay.ui \

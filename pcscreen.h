@@ -5,7 +5,6 @@
 #include <QGridLayout>
 #include <QLabel>
 #include "narusheniya_pravil.h"
-#include "player2.h"
 #include "qfuture.h"
 #include "qlibrary.h"
 #include "rate.h"
@@ -195,6 +194,8 @@ private slots:
 
     void setTvScreenGeometry(void);
 
+    void setCameras(void);
+
 private:
     //QLabel* lblCpuUsage;
     QCheckBox* cbAddDisp;
@@ -326,7 +327,6 @@ private:
     ControlObs* obs;
     QThread obsThread;
 
-    Player2* player;
     VideoReplayControl* videoControl;
 
     //bool flag2screens = false;

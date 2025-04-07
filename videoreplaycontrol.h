@@ -2,6 +2,7 @@
 #define VIDEOREPLAYCONTROL_H
 
 #include "qprocess.h"
+#include "reclabel.h"
 #include <QWidget>
 
 namespace Ui {
@@ -37,8 +38,11 @@ private:
     void turnCam2(bool);
     void turnCam3(bool);
 
+    //RecLabel* reclabel;
+
 public slots:
     void setWebCam(QString);
+    void setParamWebCam(QList<int>);
     void setSound(QString);
     void setCam2(QString);
     void setCam3(QString);

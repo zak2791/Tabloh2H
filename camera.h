@@ -30,7 +30,7 @@ public:
     void setUrl(QString);
 
     QStringList getListWebCams(void);
-    QStringList getListParamWebCam(QString);
+    QList<QList<int> > getListParamWebCam(QString);
     QStringList getListSoundDevices(void);
 
 public slots:

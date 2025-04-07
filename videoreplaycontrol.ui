@@ -44,6 +44,13 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="RecLabel" name="label">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
      <item row="1" column="0">
@@ -51,10 +58,7 @@
        <item>
         <widget class="QLabel" name="lblCam1">
          <property name="frameShape">
-          <enum>QFrame::Shape::Box</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Shadow::Raised</enum>
+          <enum>QFrame::NoFrame</enum>
          </property>
          <property name="text">
           <string/>
@@ -67,10 +71,7 @@
        <item>
         <widget class="QLabel" name="lblCam2">
          <property name="frameShape">
-          <enum>QFrame::Shape::Box</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Shadow::Raised</enum>
+          <enum>QFrame::NoFrame</enum>
          </property>
          <property name="text">
           <string/>
@@ -83,10 +84,7 @@
        <item>
         <widget class="QLabel" name="lblCam3">
          <property name="frameShape">
-          <enum>QFrame::Shape::Box</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Shadow::Raised</enum>
+          <enum>QFrame::NoFrame</enum>
          </property>
          <property name="text">
           <string/>
@@ -145,6 +143,13 @@ QCheckBox{ font-size: 20px}</string>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>RecLabel</class>
+   <extends>QLabel</extends>
+   <header>reclabel.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

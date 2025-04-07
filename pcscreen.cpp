@@ -580,23 +580,31 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 
     connect(uiVideoSettings.cbShowOnTv, SIGNAL(toggled(bool)), tvScreen, SLOT(setPlayerEnabled(bool)));
     connect(uiVideoSettings.chbUseWebCam, SIGNAL(toggled(bool)), this, SLOT(selectWebCam(bool)));
+
     connect(uiVideoSettings.cbWebCam, &QComboBox::currentTextChanged, [this](QString text){
+        uiVideoSettings.cbParamWebCam->clear();
         if(uiVideoSettings.cbWebCam->count() > 0){
-            QStringList param = camera1->getListParamWebCam(text);
-            uiVideoSettings.cbParamWebCam->clear();
-            foreach(auto each, param)
-                uiVideoSettings.cbParamWebCam->addItem(each);
-        }
-        else{
-            uiVideoSettings.cbParamWebCam->clear();
+            videoControl->setWebCam(text);
+            QList<QList<int>> param = camera1->getListParamWebCam(text);
+            int count = 0;
+            foreach(auto each, param){
+                QString sParam = "fps = " + QString::number(each.at(0)) +
+                                 "resolution = " + QString::number(each.at(1)) +
+                                 "x" + QString::number(each.at(2));
+                uiVideoSettings.cbParamWebCam->addItem(sParam);
+                uiVideoSettings.cbParamWebCam->setItemData(count++, QVariant::fromValue(each));
+            }
         }
     });
-    connect(uiVideoSettings.cbParamWebCam, &QComboBox::currentTextChanged, [this](QString text){
-        videoControl->setWebCam(uiVideoSettings.cbWebCam->currentText() + ";" + text);
+    connect(uiVideoSettings.cbParamWebCam, &QComboBox::currentTextChanged, [this](){
+        QVariant variant = uiVideoSettings.cbParamWebCam->itemData(uiVideoSettings.cbParamWebCam->currentIndex());
+        QList<int> data = variant.value<QList<int>>();
+        videoControl->setParamWebCam(data);
     });
     connect(uiVideoSettings.cbSound, &QComboBox::currentTextChanged, [this](QString text){
         videoControl->setSound(text);
     });
+
     setSize();
     Variant(0);
 
@@ -631,19 +639,19 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     QApplication *app = (QApplication *)(QApplication::instance());
     parser.process(*app);
 
-    player = new Player2(tvScreen->vWidget);
+    //player = new Player2(tvScreen->vWidget);
 
-    if (parser.isSet(customAudioRoleOption))
-        player->setCustomAudioRole(parser.value(customAudioRoleOption));
+    // if (parser.isSet(customAudioRoleOption))
+    //     player->setCustomAudioRole(parser.value(customAudioRoleOption));
 
-    if (!parser.positionalArguments().isEmpty() && player->isPlayerAvailable()) {
-        QList<QUrl> urls;
-        for (auto &a: parser.positionalArguments())
-            urls.append(QUrl::fromUserInput(a, QDir::currentPath(), QUrl::AssumeLocalFile));
-        player->addToPlaylist(urls);
-    }
+    // if (!parser.positionalArguments().isEmpty() && player->isPlayerAvailable()) {
+    //     QList<QUrl> urls;
+    //     for (auto &a: parser.positionalArguments())
+    //         urls.append(QUrl::fromUserInput(a, QDir::currentPath(), QUrl::AssumeLocalFile));
+    //     player->addToPlaylist(urls);
+    // }
 
-    connect(player, SIGNAL(sigClose()), tvScreen, SLOT(hidePlayer2()));
+    // connect(player, SIGNAL(sigClose()), tvScreen, SLOT(hidePlayer2()));
 
 }
 
@@ -912,11 +920,11 @@ void PCScreen::PlayFile(){
 void PCScreen::PlaySlowMotion(){
     if(!slowMotionPlayer){
         if(sender()->objectName() == "btnPlayLastSlowMotion1"){
-            QDir dir("camera1");
+            QDir dir("videos");
             QStringList dirList = dir.entryList(QDir::Files, QDir::Time);
             if(dirList.count() == 0)
                 return;
-            slowMotionPlayer = new PlayerViewer("camera1/" + dirList.at(0));
+            slowMotionPlayer = new PlayerViewer("videos/" + dirList.at(0));
             connect(slowMotionPlayer, SIGNAL(sigClose()), this, SLOT(closePlayer()));
             connect(slowMotionPlayer, SIGNAL(sigClose()), tvScreen, SLOT(hidePlayer()));
             connect(slowMotionPlayer, SIGNAL(sigImage(QImage)), tvScreen->player, SLOT(draw_image(QImage)));
@@ -956,7 +964,7 @@ void PCScreen::PlaySelectedFile(){
     //connect(slowMotionPlayer, SIGNAL(sigImage(QImage)), tvScreen->player, SLOT(draw_image(QImage)));
     //tvScreen->showPlayer();
     tvScreen->showPlayer();
-    player->showFullScreen();
+    //player->showFullScreen();
 }
 
 void PCScreen::closePlayer(){
@@ -1591,5 +1599,13 @@ void PCScreen::setTvScreenGeometry(){
         tvScreen->show();
     }
 
+
+}
+
+void PCScreen::setCameras()
+{
+
+    qDebug()<<uiVideoSettings.cbWebCam->currentText()<<uiVideoSettings.cbParamWebCam->currentText();
+    videoControl->setWebCam(uiVideoSettings.cbWebCam->currentText() + ";" + uiVideoSettings.cbParamWebCam->currentText());
 
 }

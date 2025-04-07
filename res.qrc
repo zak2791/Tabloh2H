@@ -37,5 +37,8 @@
         <file>images/CheckBoxVideoUnchecked.svg</file>
         <file>images/CheckBoxVideoUnchecked.png</file>
         <file>images/CheckBoxVideoChecked.png</file>
+        <file>images/rec.svg</file>
+        <file>images/rec_blink.svg</file>
+        <file>images/rec_no_active.svg</file>
     </qresource>
 </RCC>

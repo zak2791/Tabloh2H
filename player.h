@@ -26,10 +26,12 @@ class Player : public QObject
     bool flag_one_next_frame = false;
     bool process = false;
     int oneFrameDuration;
+    QList<int> arrOneFrameDuration;
     QList<QImage>* bufImage;
     int currentImage = 0;
     QString videoFile;
     int currStream = 0;
+    int video_streams;
 
 public:
     explicit Player(QString file = "", QObject *parent = nullptr);
@@ -51,6 +53,7 @@ signals:
     void sigStartStopPlay(bool);
     void sigTime(QString);
     void sigClose(void);
+    void sigCountStreams(int);
 
 };
 

@@ -20,8 +20,6 @@
 #include <QSvgRenderer>
 #include <QPainter>
 
-#include "videowidget.h"
-
 class SvgLabel : public QLabel{
 
 public:
@@ -59,7 +57,6 @@ public:
 	NP * np_blue;
 
     PlayerViewerTV* player;
-    VideoWidget* vWidget;
 
     FirstLastName * fam_red;
     FirstLastName * fam_blue;

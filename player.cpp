@@ -11,9 +11,13 @@ void Player::Play(){
     process = true;
     int best_stream;
     int numberFrames;
+    QList<int> arrNumberFrames;
     int durationMedia;
+    QList<int> arrDurationMedia;
     int avgFps;
+    QList<int> arrAvgFps;
     int durationMediaInSecunds;
+    QList<int> arrDurationMediaInSecunds;
     bufImage = new  QList<QImage>;
 
     AVFormatContext *ifmt_ctx = NULL;
@@ -33,7 +37,7 @@ void Player::Play(){
     QList<const AVCodec*> arrDec;
     QList<int> video_stream_index;
     int streams;
-    int video_streams = 0;
+    video_streams = 0;
 
     QByteArray bain = videoFile.toLocal8Bit();
     in_filename = bain.data();
@@ -57,6 +61,8 @@ void Player::Play(){
 
     if(video_streams == 0)
         goto end;
+
+    emit sigCountStreams(video_streams);
 
     qDebug()<<"video_streams = "<<video_streams<<video_stream_index;
 
@@ -114,86 +120,80 @@ void Player::Play(){
     if (!stream_mapping) {
         goto end;
     }
-
     /////////////////////////////////////////////////////////
 
     AVStream *in_stream;
-    in_stream = ifmt_ctx->streams[video_stream_index[currStream]];//best_stream];
-
-    qDebug()<<"video_stream_index.count() = "<<video_stream_index.count();
-    qDebug()<<"video_stream_index[currStream] = "<<video_stream_index[currStream];
-
+    in_stream = ifmt_ctx->streams[video_stream_index[currStream]];//best_stream]
+    for(int i = 0; i < video_stream_index.count(); i++){
+        AVStream* in_stream = ifmt_ctx->streams[video_stream_index[i]];
+        arrNumberFrames.append(in_stream->nb_frames);
+        arrDurationMedia.append(in_stream->duration);
+        arrAvgFps.append(in_stream->avg_frame_rate.num / in_stream->avg_frame_rate.den);
+        arrOneFrameDuration.append(arrDurationMedia[i] / arrNumberFrames[i]);
+        arrDurationMediaInSecunds.append(arrNumberFrames[i] / arrAvgFps[i]);
+        qDebug()<<"arrNumberFrames[i] = "<<arrNumberFrames[i]
+                 <<"arrDurationMedia[i] = "<<arrDurationMedia[i]
+                 <<"arrAvgFps[i] = "<<arrAvgFps[i]
+                 <<"arrOneFrameDuration[i] = "<<arrOneFrameDuration[i]
+                 <<"arrDurationMediaInSecunds[i] = "<<arrDurationMediaInSecunds[i];
+    }
     numberFrames = in_stream->nb_frames;
     durationMedia = in_stream->duration;
     avgFps = in_stream->avg_frame_rate.num / in_stream->avg_frame_rate.den;
     oneFrameDuration = durationMedia / numberFrames;
     durationMediaInSecunds = numberFrames / avgFps;
-
     emit sigParam(numberFrames, avgFps, durationMediaInSecunds);
-
     while (process) {
-        //qDebug()<<"stream1"<<currStream;
+        int currentStream = currStream;
         if(flag_seek || flag_play || flag_one_next_frame){
-            qDebug()<<"stream2";
             if(flag_seek){
-                qDebug()<<"stream3";
                 //ret =av_seek_frame(ifmt_ctx, best_stream, flag_seek, AVSEEK_FLAG_FRAME);
-                ret =av_seek_frame(ifmt_ctx, video_stream_index[currStream], flag_seek, AVSEEK_FLAG_FRAME);
+                ret =av_seek_frame(ifmt_ctx, video_stream_index[currentStream], flag_seek, AVSEEK_FLAG_FRAME);
                 flag_seek = 0;
-                qDebug()<<"seek = 0";
                 bufImage->clear();
             }
-            qDebug()<<"stream4";
             ret = av_read_frame(ifmt_ctx, pkt);
             if (ret < 0){
-                ret =av_seek_frame(ifmt_ctx, video_stream_index[currStream], 0, AVSEEK_FLAG_FRAME);
+                ret =av_seek_frame(ifmt_ctx, video_stream_index[currentStream], 0, AVSEEK_FLAG_FRAME);
                 if (ret < 0 ) break;
                 continue;
             }
 
-            qDebug()<<"stream5";
-
             if (pkt->stream_index == video_stream_index[currStream]){
-                qDebug()<<"stream6";
                 if(flag_play || flag_one_next_frame)
-                    emit sigFrame(pkt->pts / oneFrameDuration);
-                int cel = (pkt->pts / oneFrameDuration) * 0.033;
-                float drob = (pkt->pts / oneFrameDuration) * 0.033 - cel;
+                    emit sigFrame(pkt->pts / arrOneFrameDuration.at(currentStream));
+                int integerPart = (pkt->pts / arrOneFrameDuration.at(currentStream)) * 1.0 / arrAvgFps.at(currentStream);
+                float fractionalPart = (pkt->pts / arrOneFrameDuration.at(currentStream)) * 1.0 / arrAvgFps.at(currentStream) - integerPart;
                 QString min = "";
                 QString sec = "";
                 QString msec = "";
-                if(cel / 60){
-                    min = QString::number(cel / 60) + ":";
-                    int s = cel % 60;
+                if(integerPart / 60){
+                    min = QString::number(integerPart / 60) + ":";
+                    int s = integerPart % 60;
                     if(s < 10)
                         sec = "0" + QString::number(s);
                     else
                         sec = QString::number(s);
                 }else{
                     min = "0:";
-                    if(cel < 10)
-                        sec = "0" + QString::number(cel);
+                    if(integerPart < 10)
+                        sec = "0" + QString::number(integerPart);
                     else
-                        sec = QString::number(cel);
+                        sec = QString::number(integerPart);
                 }
-                msec = QString::number(drob).remove(0, 1);
+                msec = QString::number(fractionalPart).remove(0, 1);
 
                 emit sigTime(min + sec + msec);
                 //ret = avcodec_send_packet(pCodecCtx, pkt);
-                qDebug()<<"stream7";
-                ret = avcodec_send_packet(arrCodecCtx[currStream], pkt);
-
-                qDebug()<<"stream8";
+                ret = avcodec_send_packet(arrCodecCtx[currentStream], pkt);
 
                 if (ret < 0) {
                     goto end_preview;
                 }
                 AVFrame* frame = av_frame_alloc();
-                qDebug()<<"stream9";
                 while (ret >= 0) {
                     //ret = avcodec_receive_frame(pCodecCtx, frame);
-                    qDebug()<<"stream10";
-                    ret = avcodec_receive_frame(arrCodecCtx[currStream], frame);
+                    ret = avcodec_receive_frame(arrCodecCtx[currentStream], frame);
                     if (ret == AVERROR(EAGAIN)){
                         av_frame_free(&frame);
                         goto end_preview;
@@ -207,8 +207,10 @@ void Player::Play(){
                         goto end_preview;
                     }
                     else{
-                        if(!flag_one_next_frame)
-                            QThread::msleep(20);
+                        if(!flag_one_next_frame){
+                            int delay = 1000 / arrAvgFps.at(currentStream);
+                            QThread::msleep(delay);
+                        }
                         QImage img = avFrame2QImage(frame);
                         if(flag_play || flag_one_next_frame){
                             flag_one_next_frame = false;
@@ -236,9 +238,8 @@ end:
 }
 
 void Player::seek(int s){
-    flag_seek = s * oneFrameDuration;
+    flag_seek = s * arrOneFrameDuration.at(currStream);
     currentImage = -1;
-    //qDebug()<<"flag_seek = "<<s<<oneFrameDuration<<flag_seek;
 }
 
 void Player::turnPlay(){
@@ -291,7 +292,6 @@ void Player::nextFrame(){
 }
 
 void Player::previewFrame(){
-    //qDebug()<<"currentImage"<<currentImage<<"bufImage->length()"<<bufImage->length();
     if(currentImage > 0 && !flag_play){
         emit sigImage(bufImage->at(--currentImage));
         emit sigBuffer(bufImage->length(), currentImage);

@@ -14,6 +14,7 @@ extern "C"
     #include <libavutil/timestamp.h>
     #include <libavformat/avformat.h>
     #include <libswscale/swscale.h>
+    #include <libavdevice/avdevice.h>
 }
 
 class Player : public QObject
@@ -38,6 +39,10 @@ public:
     void seek(int);
     void turnOff(void);
     void turnPlay(void);
+
+    static QStringList getListWebCams(void);
+    static QList<QList<int> > getListParamWebCam(QString);
+    static QStringList getListSoundDevices(void);
 
 public slots:
     void Play(void);

@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "pcscreen.h"
 #include "ui_mainwindow.h"
 
 #include <QMessageBox>
@@ -13,6 +14,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    setAttribute(Qt::WA_DeleteOnClose);
 
     lblStatus = new QLabel();
     statusBar()->addWidget(lblStatus);
@@ -182,13 +185,20 @@ void MainWindow::selectLogo(bool checked)
 }
 
 void MainWindow::closeEvent(QCloseEvent* e){
+    qDebug()<<"closeMain";
     int ret = QMessageBox::question(this, tr("Выход"),
                                     tr("Вы уверены?"),
                                     QMessageBox::Yes | QMessageBox::No
                                     );
     if(ret == QMessageBox::Yes){
-        emit sigExit();
-        qApp->exit(0);
+        //emit sigExit();
+
+
+        PCScreen* ps = (PCScreen*)centralWidget();
+        //delete ps;
+        ps->close();
+        e->accept();
+        //qApp->exit(0);
     }
     else
         e->ignore();

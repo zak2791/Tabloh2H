@@ -1,11 +1,13 @@
 #include "videoreplaycontrol.h"
 #include "qdatetime.h"
 #include "qdebug.h"
+#include "qdir.h"
 #include "qmessagebox.h"
 #include "qsettings.h"
 #include <QFile>
 #include "qtextcodec.h"
 #include "ui_videoreplaycontrol.h"
+#include <QFileDialog>
 
 VideoReplayControl::VideoReplayControl(QWidget *parent)
     : QWidget(parent)
@@ -100,11 +102,31 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
     });
 
     connect(ui->btnPlay, &QPushButton::clicked, [this](){
-        startRecord();
+        stopRecord();
+        QString file = QFileDialog::getOpenFileName();
+        if(file == "" || !file.endsWith(".mp4"))
+            return;
+        slowMotionPlayer = new PlayerViewer(file);
+        connect(slowMotionPlayer, &PlayerViewer::sigClose, this, [=](){slowMotionPlayer->deleteLater();});
+        connect(slowMotionPlayer, &PlayerViewer::sigClose, this, &VideoReplayControl::sigHidePlayer);
+        connect(slowMotionPlayer, &PlayerViewer::sigImage, this, &VideoReplayControl::sigImage);
+
     });
 
     connect(ui->btnPlayLast, &QPushButton::clicked, [this](){
         stopRecord();
+        QDir dir("videos");
+        QStringList dirList = dir.entryList(QDir::Files, QDir::Time);
+        if(dirList.count() == 0)
+            return;
+        slowMotionPlayer = new PlayerViewer("videos/" + dirList.at(0));
+        connect(slowMotionPlayer, &PlayerViewer::sigClose, this, [=](){slowMotionPlayer->deleteLater();});
+        connect(slowMotionPlayer, &PlayerViewer::sigClose, this, &VideoReplayControl::sigHidePlayer);
+        connect(slowMotionPlayer, &PlayerViewer::sigImage, this, &VideoReplayControl::sigImage);
+
+        emit sigShowPlayer();
+        //tvScreen->showPlayer();
+
     });
 
     QSettings settings("settings.ini", QSettings::IniFormat);
@@ -117,6 +139,28 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
 
 VideoReplayControl::~VideoReplayControl()
 {
+    qDebug()<<"~VideoReplayControl()";
+    if(procRecord.state() == QProcess::Running){
+        procRecord.write("q");
+        procRecord.waitForFinished();
+        qDebug()<<"procRecord"<<procRecord.state();
+    }
+
+    if(procReadCam1.state() == QProcess::Running){
+        procReadCam1.write("q");
+        procReadCam1.waitForFinished();
+        qDebug()<<"procReadCam1"<<procReadCam1.state();
+    }
+
+    if(procReadCam2.state() == QProcess::Running){
+        procReadCam2.write("q");
+        procReadCam2.waitForFinished();
+    }
+    if(procReadCam3.state() == QProcess::Running){
+        procReadCam3.write("q");
+        procReadCam3.waitForFinished();
+    }
+
     delete ui;
 }
 
@@ -223,7 +267,7 @@ void VideoReplayControl::setCam3(QString cam)
 
 void VideoReplayControl::startRecord(QString s)
 {
-    qDebug()<<"start0";
+    qDebug()<<"start0"<<s;
     QString file = "videos/" + s + "_" + QTime::currentTime().toString("hh:mm:ss");
     file.replace(":", "_");
 

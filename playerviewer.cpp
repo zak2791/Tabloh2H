@@ -154,6 +154,7 @@ void PlayerViewer::closeEvent(QCloseEvent*){
     player->turnOff();
     thread->quit();
     thread->wait();
+    player->deleteLater();
     emit sigClose();
 }
 

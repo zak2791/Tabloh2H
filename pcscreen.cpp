@@ -23,6 +23,7 @@
 
 #include <QRadioButton>
 
+#include "player.h"
 
 WidgetFilter::WidgetFilter(QObject* pobj) : QObject(pobj){
 }
@@ -227,10 +228,7 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 
     connect(ui.sbSec, SIGNAL(valueChanged(int)), this, SLOT(setSec(int)));
 
-    viewCam1 = new CameraViewer;
-    viewCam1->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    viewCam2 = new CameraViewer;
-    viewCam2->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+
 
     btnPlayLastWithSound1 = new IconButton(":/images/MotionSoundEnabled.svg", ":/images/MotionSoundDisabled.svg", 2);
     btnPlayLastWithSound1->setObjectName("btnPlayLastWithSound1");
@@ -270,23 +268,23 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     connect(btnStopRecord, SIGNAL(clicked()), SLOT(StopRecord()));
     //connect(mainTimer, SIGNAL(sigStopped(bool)), btnStopRecord, SLOT(setEnabled(bool)));
 
-    cbCam1 = new QCheckBox("Включить камеру 1");
-    cbCam1->setObjectName("cbCam1");
-    //cbCam1->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    cbCam1->setStyleSheet("QCheckBox::indicator:unchecked{image: url(:/images/CheckBoxVideoUnchecked.png)}"
-                          "QCheckBox::indicator:checked{image: url(:/images/CheckBoxVideoChecked.png)}"
-                          "QCheckBox::indicator {width: 25px; height: 25px;}");
+    // cbCam1 = new QCheckBox("Включить камеру 1");
+    // cbCam1->setObjectName("cbCam1");
+    // //cbCam1->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    // cbCam1->setStyleSheet("QCheckBox::indicator:unchecked{image: url(:/images/CheckBoxVideoUnchecked.png)}"
+    //                       "QCheckBox::indicator:checked{image: url(:/images/CheckBoxVideoChecked.png)}"
+    //                       "QCheckBox::indicator {width: 25px; height: 25px;}");
 
-    connect(cbCam1, SIGNAL(toggled(bool)), this, SLOT(turnCamera(bool)));
+    // connect(cbCam1, SIGNAL(toggled(bool)), this, SLOT(turnCamera(bool)));
 
-    cbCam2 = new QCheckBox("Включить камеру 2");
-    cbCam2->setObjectName("cbCam2");
-    //cbCam2->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    cbCam2->setStyleSheet("QCheckBox::indicator:unchecked{image: url(:/images/CheckBoxVideoUnchecked.png)}"
-                          "QCheckBox::indicator:checked{image: url(:/images/CheckBoxVideoChecked.png)}"
-                          "QCheckBox::indicator {width: 25px; height: 25px;}");
+    // cbCam2 = new QCheckBox("Включить камеру 2");
+    // cbCam2->setObjectName("cbCam2");
+    // //cbCam2->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    // cbCam2->setStyleSheet("QCheckBox::indicator:unchecked{image: url(:/images/CheckBoxVideoUnchecked.png)}"
+    //                       "QCheckBox::indicator:checked{image: url(:/images/CheckBoxVideoChecked.png)}"
+    //                       "QCheckBox::indicator {width: 25px; height: 25px;}");
 
-    connect(cbCam2, SIGNAL(toggled(bool)), this, SLOT(turnCamera(bool)));
+    // connect(cbCam2, SIGNAL(toggled(bool)), this, SLOT(turnCamera(bool)));
 
     // connect(ui.cbAutoCam1, SIGNAL(toggled(bool)), this, SLOT(autoCamera(bool)));
     // connect(ui.cbAutoCam2, SIGNAL(toggled(bool)), this, SLOT(autoCamera(bool)));
@@ -294,15 +292,15 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     connect(uiVideoSettings.cbAutoCam1, SIGNAL(toggled(bool)), this, SLOT(autoCamera(bool)));
     connect(uiVideoSettings.cbAutoCam2, SIGNAL(toggled(bool)), this, SLOT(autoCamera(bool)));
 
-    lbl = new QLabel("Последний записанный файл");
-    lbl->setAlignment(Qt::AlignCenter);
-    lbl->setStyleSheet("color: white; border-style: solid;"
-                       "border-width: 2px;"
-                       "border-color: white;"
-                       "border-top-style: none;"
-                       "border-bottom-left-radius: 10px;"
-                       "border-bottom-right-radius: 10px;"
-                       "font-size: 12pt");
+    // lbl = new QLabel("Последний записанный файл");
+    // lbl->setAlignment(Qt::AlignCenter);
+    // lbl->setStyleSheet("color: white; border-style: solid;"
+    //                    "border-width: 2px;"
+    //                    "border-color: white;"
+    //                    "border-top-style: none;"
+    //                    "border-bottom-left-radius: 10px;"
+    //                    "border-bottom-right-radius: 10px;"
+    //                    "font-size: 12pt");
 
     QLabel* lbl2 = new QLabel("Установка времени боя - 'F1', сброс - 'Backspace', выход - 'Esc'");
     lbl2->setAlignment(Qt::AlignCenter);
@@ -324,7 +322,7 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
                              "QCheckBox{color: white; font-size: 20px}"));
 
 
-    videoControl = new VideoReplayControl;
+    videoControl = new VideoReplayControl(this);
 
     grid = new QGridLayout(this);
     grid->setObjectName("grid");
@@ -374,19 +372,17 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     grid->addWidget(sec_red_t,              11,  0,  12, 24);
     grid->addWidget(sec_blue_t,             11,  44, 12, 24);
 
-    grid->addWidget(viewCam1,               14, 24,  6, 10);
-    grid->addWidget(btnPlayLastWithSound1,  20, 24,  2,  5);
-    grid->addWidget(btnPlayLastSlowMotion1, 20, 29,  2,  5);
-    grid->addWidget(btnPlaySlowMotion,      24, 24,  2, 10);
-    grid->addWidget(cbCam1,                 17, 25,  3,  9);
-    grid->addWidget(viewCam2,               14, 34,  6, 10);
-    grid->addWidget(btnPlayLastWithSound2,  20, 34,  2,  5);
-    grid->addWidget(btnPlayLastSlowMotion2, 20, 39,  2,  5);
-    grid->addWidget(btnStopRecord,          24, 34,  2, 10);
-    grid->addWidget(cbCam2,                 17, 35,  3,  9);
+    //grid->addWidget(btnPlayLastWithSound1,  20, 24,  2,  5);
+    //grid->addWidget(btnPlayLastSlowMotion1, 20, 29,  2,  5);
+    //grid->addWidget(btnPlaySlowMotion,      24, 24,  2, 10);
+    //grid->addWidget(cbCam1,                 17, 25,  3,  9);
+    //grid->addWidget(btnPlayLastWithSound2,  20, 34,  2,  5);
+    //grid->addWidget(btnPlayLastSlowMotion2, 20, 39,  2,  5);
+    //grid->addWidget(btnStopRecord,          24, 34,  2, 10);
+    //grid->addWidget(cbCam2,                 17, 35,  3,  9);
 
 
-    grid->addWidget(lbl,                    22, 24,  2, 20);
+    //grid->addWidget(lbl,                    22, 24,  2, 20);
 
 
     grid->addWidget(fam_next_red,           42,  0,  4,  34);
@@ -408,6 +404,10 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     }
 
     tvScreen = new TVScreen;
+
+    connect(videoControl, &VideoReplayControl::sigShowPlayer, tvScreen, &TVScreen::showPlayer);
+    connect(videoControl, &VideoReplayControl::sigHidePlayer, tvScreen, &TVScreen::hidePlayer);
+    connect(videoControl, &VideoReplayControl::sigImage, tvScreen->player, &PlayerViewerTV::draw_image);
 
     setTvScreenGeometry();
 
@@ -465,38 +465,8 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     cam2Url = settings->value("cam2", "").toString();
     settings->endGroup();
 
-    camera1 = new Camera;
-    camera1->setObjectName("camera1");
-    threadCam1 = new QThread;
-    camera1->moveToThread(threadCam1);
-    connect(threadCam1, SIGNAL(started()),        camera1,  SLOT(TurnOnCamera()));
-    connect(camera1,    SIGNAL(sigImage(QImage)), viewCam1, SLOT(draw_image(QImage)));
-    connect(camera1,    SIGNAL(finished()),       this,     SLOT(finishedCamera()));
-    connect(uiVideoSettings.cbKey,   SIGNAL(toggled(bool)),    camera1,  SLOT(onlyKeyFrame(bool)), Qt::DirectConnection);
-
-    camera2 = new Camera;
-    camera2->setObjectName("camera2");
-    threadCam2 = new QThread;
-    camera2->moveToThread(threadCam2);
-    connect(threadCam2, SIGNAL(started()),        camera2,  SLOT(TurnOnCamera()));
-    connect(camera2,    SIGNAL(sigImage(QImage)), viewCam2, SLOT(draw_image(QImage)));
-    connect(camera2,    SIGNAL(finished()),       this,     SLOT(finishedCamera()));
-    connect(uiVideoSettings.cbKey,   SIGNAL(toggled(bool)),    camera2,  SLOT(onlyKeyFrame(bool)), Qt::DirectConnection);
-
     connect(mainTimer, SIGNAL(sigStarted(bool)), this, SLOT(StartRecord(bool)));
     connect(mainTimer, SIGNAL(sigReset()), this, SLOT(StopRecord()));
-
-    QDir dir("camera1");
-    if(!dir.exists()){
-        QDir dir;
-        dir.mkdir("camera1");
-    }
-
-    dir.setPath("camera2");
-    if(!dir.exists()){
-        QDir dir;
-        dir.mkdir("camera2");
-    }
 
     QTimer* tmr = new QTimer(this);
     connect(tmr, SIGNAL(timeout()), this, SLOT(drawTvScreenshot()));
@@ -585,7 +555,7 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
         uiVideoSettings.cbParamWebCam->clear();
         if(uiVideoSettings.cbWebCam->count() > 0){
             videoControl->setWebCam(text);
-            QList<QList<int>> param = camera1->getListParamWebCam(text);
+            QList<QList<int>> param = Player::getListParamWebCam(text);
             int count = 0;
             foreach(auto each, param){
                 QString sParam = "fps = " + QString::number(each.at(0)) +
@@ -622,11 +592,6 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     connect(obs, &ControlObs::resultReady, this, &PCScreen::handleResultsObs);
     obsThread.start();
 
-    //QTimer *timer = new QTimer(this);
-    //connect(timer, &QTimer::timeout, this, &PCScreen::setTvScreenGeometry);
-
-    //timer->start(1000);
-
     QCommandLineParser parser;
     QCommandLineOption customAudioRoleOption("custom-audio-role",
                                              "Set a custom audio role for the player.",
@@ -638,20 +603,6 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     parser.addPositionalArgument("url", "The URL(s) to open.");
     QApplication *app = (QApplication *)(QApplication::instance());
     parser.process(*app);
-
-    //player = new Player2(tvScreen->vWidget);
-
-    // if (parser.isSet(customAudioRoleOption))
-    //     player->setCustomAudioRole(parser.value(customAudioRoleOption));
-
-    // if (!parser.positionalArguments().isEmpty() && player->isPlayerAvailable()) {
-    //     QList<QUrl> urls;
-    //     for (auto &a: parser.positionalArguments())
-    //         urls.append(QUrl::fromUserInput(a, QDir::currentPath(), QUrl::AssumeLocalFile));
-    //     player->addToPlaylist(urls);
-    // }
-
-    // connect(player, SIGNAL(sigClose()), tvScreen, SLOT(hidePlayer2()));
 
 }
 
@@ -674,14 +625,13 @@ void PCScreen::handleResultsObs(QString result){
 void PCScreen::selectWebCam(bool b)
 {
     if(b){
-        uiVideoSettings.cbWebCam->addItems(camera1->getListWebCams());
+        uiVideoSettings.cbWebCam->addItems(Player::getListWebCams());
         uiVideoSettings.cbSound->addItem("");
-        uiVideoSettings.cbSound->addItems(camera1->getListSoundDevices());
+        uiVideoSettings.cbSound->addItems(Player::getListSoundDevices());
     }
     else{
         uiVideoSettings.cbWebCam->clear();
         uiVideoSettings.cbSound->clear();
-        //cam1Url = uiVideoSettings.leCam1->text();
     }
 }
 
@@ -692,39 +642,10 @@ void PCScreen::slotStartRecordOBS(){
                      mainwin->uiObs.Password->text());
 }
 
-// void PCScreen::slotNewConnection()
-// {
-//     socket = server->nextPendingConnection();
-//     connect(socket, &QTcpSocket::readyRead, this, [=](){
-//         while(socket->bytesAvailable()>0)
-//         {
-//             QByteArray array = socket->readAll();
-//             QString sHtml = html.arg(fam_red->getText(),
-//                                      rateRed->text(),
-//                                      mainTimer->getTime(),
-//                                      rateBlue->text(),
-//                                      fam_blue->getText(),
-//                                      reg_red->getText(),
-//                                      reg_blue->getText());
-//             socket->write(sHtml.toUtf8());
-//         }
-//         socket->disconnectFromHost();
-//     });
-//     connect(socket, &QTcpSocket::disconnected, this, [=](){
-//         qDebug()<<"close";
-//         socket->close();
-//     });
-// }
-
 PCScreen::~PCScreen()
 {
-    //qDebug()<<"kill2";
-    // myProcess->kill();
-    // qDebug()<<"kill";
     obsThread.quit();
     obsThread.wait();
-    delete obs;
-    //delete tvScreen;
 }
 
 void PCScreen::CpuUsage(){
@@ -863,36 +784,41 @@ void PCScreen::closeVideoSettings()
 }
 
 void PCScreen::StartRecord(bool b){
-    if(!b){                          //если таймер остановился
-        btnStopRecord->setEnabled(true);
-        return;
-    }
-    QString currentTime = QTime::currentTime().toString().replace(":", "_");
-    if(threadCam1->isRunning()){
-        //finishedCamera();
-        camera1->StartRecord("camera1/" + currentTime + ".mp4");
-        //cbCam1->setChecked(true);;
-    }
-    if(threadCam2->isRunning()){
-        camera2->StartRecord("camera2/" + currentTime + ".mp4");
-    }
-    btnPlayLastWithSound1->setEnabled(false);
-    btnPlayLastSlowMotion1->setEnabled(false);
-    btnPlayLastWithSound2->setEnabled(false);
-    btnPlayLastSlowMotion2->setEnabled(false);
-    btnPlaySlowMotion->setEnabled(false);
-    btnStopRecord->setEnabled(false);
+    //qDebug()<<fam_red->text() + "-" + fam_blue->text();
+    QString redFam = fam_red->getText().split(" ").count() > 1 ? fam_red->getText().split(" ").at(0) : fam_red->getText();
+    QString blueFam = fam_blue->getText().split(" ").count() > 1 ? fam_blue->getText().split(" ").at(0) : fam_blue->getText();
+    videoControl->startRecord(redFam + "-" + blueFam);
+    // if(!b){                          //если таймер остановился
+    //     btnStopRecord->setEnabled(true);
+    //     return;
+    // }
+    // QString currentTime = QTime::currentTime().toString().replace(":", "_");
+    // if(threadCam1->isRunning()){
+    //     //finishedCamera();
+    //     camera1->StartRecord("camera1/" + currentTime + ".mp4");
+    //     //cbCam1->setChecked(true);;
+    // }
+    // if(threadCam2->isRunning()){
+    //     camera2->StartRecord("camera2/" + currentTime + ".mp4");
+    // }
+    // btnPlayLastWithSound1->setEnabled(false);
+    // btnPlayLastSlowMotion1->setEnabled(false);
+    // btnPlayLastWithSound2->setEnabled(false);
+    // btnPlayLastSlowMotion2->setEnabled(false);
+    // btnPlaySlowMotion->setEnabled(false);
+    // btnStopRecord->setEnabled(false);
 }
 
 void PCScreen::StopRecord(){
-    camera1->StopRecord();
-    camera2->StopRecord();
-    btnPlayLastWithSound1->setEnabled(true);
-    btnPlayLastSlowMotion1->setEnabled(true);
-    btnPlayLastWithSound2->setEnabled(true);
-    btnPlayLastSlowMotion2->setEnabled(true);
-    btnPlaySlowMotion->setEnabled(true);
-    btnStopRecord->setEnabled(false);
+    videoControl->stopRecord();
+    // camera1->StopRecord();
+    // camera2->StopRecord();
+    // btnPlayLastWithSound1->setEnabled(true);
+    // btnPlayLastSlowMotion1->setEnabled(true);
+    // btnPlayLastWithSound2->setEnabled(true);
+    // btnPlayLastSlowMotion2->setEnabled(true);
+    // btnPlaySlowMotion->setEnabled(true);
+    // btnStopRecord->setEnabled(false);
 }
 
 void PCScreen::PlayFile(){
@@ -930,12 +856,12 @@ void PCScreen::PlaySlowMotion(){
             connect(slowMotionPlayer, SIGNAL(sigImage(QImage)), tvScreen->player, SLOT(draw_image(QImage)));
 
             tvScreen->showPlayer();
-            btnPlayLastWithSound1->setEnabled(false);
-            btnPlayLastSlowMotion1->setEnabled(false);
-            btnPlayLastWithSound2->setEnabled(false);
-            btnPlayLastSlowMotion2->setEnabled(false);
-            btnPlaySlowMotion->setEnabled(false);
-        }else{
+            // btnPlayLastWithSound1->setEnabled(false);
+            // btnPlayLastSlowMotion1->setEnabled(false);
+            // btnPlayLastWithSound2->setEnabled(false);
+            // btnPlayLastSlowMotion2->setEnabled(false);
+            // btnPlaySlowMotion->setEnabled(false);
+        }/*else{
             QDir dir("camera2");
             QStringList dirList = dir.entryList(QDir::Files, QDir::Time);
             if(dirList.count() == 0)
@@ -950,7 +876,7 @@ void PCScreen::PlaySlowMotion(){
             btnPlayLastWithSound2->setEnabled(false);
             btnPlayLastSlowMotion2->setEnabled(false);
             btnPlaySlowMotion->setEnabled(false);
-        }
+        }*/
     }
 }
 
@@ -969,25 +895,25 @@ void PCScreen::PlaySelectedFile(){
 
 void PCScreen::closePlayer(){
     slowMotionPlayer->deleteLater();
-    btnPlayLastWithSound1->setEnabled(true);
-    btnPlayLastSlowMotion1->setEnabled(true);
-    btnPlayLastWithSound2->setEnabled(true);
-    btnPlayLastSlowMotion2->setEnabled(true);
-    btnPlaySlowMotion->setEnabled(true);
+    // btnPlayLastWithSound1->setEnabled(true);
+    // btnPlayLastSlowMotion1->setEnabled(true);
+    // btnPlayLastWithSound2->setEnabled(true);
+    // btnPlayLastSlowMotion2->setEnabled(true);
+    // btnPlaySlowMotion->setEnabled(true);
 }
 
 void PCScreen::finishedCamera(){
-    if(sender()->objectName() == "camera1"){
-        threadCam1->quit();
-        threadCam1->wait();
-        if(cbCam1->isChecked())
-            cbCam1->toggle();
-    }else{
-        threadCam2->quit();
-        threadCam2->wait();
-        if(cbCam2->isChecked())
-            cbCam2->toggle();
-    }
+    // if(sender()->objectName() == "camera1"){
+    //     threadCam1->quit();
+    //     threadCam1->wait();
+    //     if(cbCam1->isChecked())
+    //         cbCam1->toggle();
+    // }else{
+    //     threadCam2->quit();
+    //     threadCam2->wait();
+    //     if(cbCam2->isChecked())
+    //         cbCam2->toggle();
+    // }
 }
 
 void PCScreen::setCam(){
@@ -1005,38 +931,39 @@ void PCScreen::setCam(){
 }
 
 void PCScreen::turnCamera(bool state){
-    if(state){
-        if(sender()->objectName() == "cbCam1"){
-            camera1->setUrl(cam1Url);
-            threadCam1->start();
-        }else{
-            camera2->setUrl(cam2Url);
-            threadCam2->start();
-        }
-    }
-    else{
-        if(sender()->objectName() == "cbCam1"){
-            camera1->TurnOffCamera();
-        }else{
-            camera2->TurnOffCamera();
-        }
-    }
+    // if(state){
+    //     if(sender()->objectName() == "cbCam1"){
+    //         camera1->setUrl(cam1Url);
+    //         threadCam1->start();
+    //     }else{
+    //         camera2->setUrl(cam2Url);
+    //         threadCam2->start();
+    //     }
+    // }
+    // else{
+    //     if(sender()->objectName() == "cbCam1"){
+    //         camera1->TurnOffCamera();
+    //     }else{
+    //         camera2->TurnOffCamera();
+    //     }
+    // }
 }
 
 
 void PCScreen::closeEvent(QCloseEvent *){
 
-    if(cbCam1->isChecked()){
-        cbCam1->toggle();
-        threadCam1->quit();
-        threadCam1->wait();
-    }
-    if(cbCam2->isChecked()){
-        cbCam2->toggle();
-        threadCam2->quit();
-        threadCam2->wait();
-    }
-
+    // if(cbCam1->isChecked()){
+    //     cbCam1->toggle();
+    //     threadCam1->quit();
+    //     threadCam1->wait();
+    // }
+    // if(cbCam2->isChecked()){
+    //     cbCam2->toggle();
+    //     threadCam2->quit();
+    //     threadCam2->wait();
+    // }
+    qDebug()<<"closeEvent";
+    videoControl->deleteLater();
     qApp->quit();
 
 }
@@ -1112,6 +1039,7 @@ void PCScreen::setTimeFight(){
 
 void PCScreen::closeTablo(){
     //myProcess->kill();
+    qDebug()<<"close";
     QKeyEvent *key_press = new QKeyEvent(QKeyEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
     QApplication::sendEvent(this, key_press);
 }
@@ -1554,34 +1482,34 @@ void PCScreen::sbrosLogo(){
 }
 
 void PCScreen::Variant(int variant){
-    if(variant == 0){
-        viewCam1->setVisible(false);
-        btnPlayLastWithSound1->setVisible(false);
-        btnPlayLastSlowMotion1->setVisible(false);
-        btnPlaySlowMotion->setVisible(false);
-        cbCam1->setVisible(false);
-        viewCam2->setVisible(false);
-        btnPlayLastWithSound2->setVisible(false);
-        btnPlayLastSlowMotion2->setVisible(false);
-        btnStopRecord->setVisible(false);
-        cbCam2->setVisible(false);
-        lbl->setVisible(false);
-        cbAddDisp->setVisible(false);
-    }
-    else{
-        viewCam1->setVisible(true);
-        btnPlayLastWithSound1->setVisible(true);
-        btnPlayLastSlowMotion1->setVisible(true);
-        btnPlaySlowMotion->setVisible(true);
-        cbCam1->setVisible(true);
-        viewCam2->setVisible(true);
-        btnPlayLastWithSound2->setVisible(true);
-        btnPlayLastSlowMotion2->setVisible(true);
-        btnStopRecord->setVisible(true);
-        cbCam2->setVisible(true);
-        lbl->setVisible(true);
-        cbAddDisp->setVisible(true);
-    }
+    // if(variant == 0){
+    //     viewCam1->setVisible(false);
+    //     btnPlayLastWithSound1->setVisible(false);
+    //     btnPlayLastSlowMotion1->setVisible(false);
+    //     btnPlaySlowMotion->setVisible(false);
+    //     cbCam1->setVisible(false);
+    //     viewCam2->setVisible(false);
+    //     btnPlayLastWithSound2->setVisible(false);
+    //     btnPlayLastSlowMotion2->setVisible(false);
+    //     btnStopRecord->setVisible(false);
+    //     cbCam2->setVisible(false);
+    //     lbl->setVisible(false);
+    //     cbAddDisp->setVisible(false);
+    // }
+    // else{
+    //     viewCam1->setVisible(true);
+    //     btnPlayLastWithSound1->setVisible(true);
+    //     btnPlayLastSlowMotion1->setVisible(true);
+    //     btnPlaySlowMotion->setVisible(true);
+    //     cbCam1->setVisible(true);
+    //     viewCam2->setVisible(true);
+    //     btnPlayLastWithSound2->setVisible(true);
+    //     btnPlayLastSlowMotion2->setVisible(true);
+    //     btnStopRecord->setVisible(true);
+    //     cbCam2->setVisible(true);
+    //     lbl->setVisible(true);
+    //     cbAddDisp->setVisible(true);
+    // }
 }
 
 void PCScreen::setTvScreenGeometry(){

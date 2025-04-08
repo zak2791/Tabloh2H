@@ -1,10 +1,13 @@
 #include "player.h"
+#include "libavdevice/avdevice.h"
+#include "qcamerainfo.h"
 #include <QDebug>
 #include <QThread>
 
 Player::Player(QString file, QObject *parent) : QObject(parent){
     videoFile = file;
     currStream = 0;
+    qDebug()<<videoFile;
 }
 
 void Player::Play(){
@@ -39,7 +42,7 @@ void Player::Play(){
     int streams;
     video_streams = 0;
 
-    QByteArray bain = videoFile.toLocal8Bit();
+    QByteArray bain = videoFile.toUtf8();
     in_filename = bain.data();
 
     pkt = av_packet_alloc();
@@ -301,4 +304,62 @@ void Player::previewFrame(){
 void Player::setCamera(int stream)
 {
     currStream = stream;
+}
+
+QStringList Player::getListWebCams()
+{
+    QStringList listWebCam;
+
+    const QList<QCameraInfo> cams = QCameraInfo::availableCameras();
+    for (const QCameraInfo &cameraInfo : cams){
+        QList<QList<int>> list = getListParamWebCam(cameraInfo.description());
+        if(list.count() != 0)
+            listWebCam<<cameraInfo.description();
+    }
+
+    return listWebCam;
+}
+
+QStringList Player::getListSoundDevices()
+{
+    avdevice_register_all();
+    QStringList listWebCam;
+    AVDeviceInfoList* deviceList;
+    const AVInputFormat* inFormat = NULL;
+    inFormat = av_find_input_format("dshow");
+    int deviceCount = avdevice_list_input_sources(inFormat, NULL, NULL, &deviceList);
+    for(int i = 0; i < deviceCount; i++){
+        AVDeviceInfo dInfo = *deviceList->devices[i];
+        listWebCam.append(dInfo.device_description);
+    }
+    avdevice_free_list_devices(&deviceList);
+    return listWebCam;
+}
+
+QList<QList<int>> Player::getListParamWebCam(QString text)
+{
+    QList<QList<int>> lParam;
+    QCamera* cam;
+    const QList<QCameraInfo> cams = QCameraInfo::availableCameras();
+    for (const QCameraInfo &cameraInfo : cams) {
+        if (cameraInfo.description() == text){
+            cam = new QCamera(cameraInfo);
+            break;
+        }
+    }
+
+    if(cam->isAvailable())
+        cam->start();
+
+    QList<QCameraViewfinderSettings> ViewSets = cam->supportedViewfinderSettings();
+    foreach (QCameraViewfinderSettings ViewSet, ViewSets) {
+        QList<int> par;
+        par.append(ViewSet.maximumFrameRate());
+        par.append(ViewSet.resolution().rwidth());
+        par.append(ViewSet.resolution().rheight());
+        lParam.append(par);
+    }
+    cam->stop();
+
+    return lParam;
 }

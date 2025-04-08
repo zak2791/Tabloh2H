@@ -1,9 +1,10 @@
 #ifndef VIDEOREPLAYCONTROL_H
 #define VIDEOREPLAYCONTROL_H
 
+#include "playerviewer.h"
 #include "qprocess.h"
-#include "reclabel.h"
 #include <QWidget>
+#include <QPointer>
 
 namespace Ui {
 class VideoReplayControl;
@@ -38,6 +39,8 @@ private:
     void turnCam2(bool);
     void turnCam3(bool);
 
+    QPointer<PlayerViewer> slowMotionPlayer;
+
     //RecLabel* reclabel;
 
 public slots:
@@ -48,6 +51,11 @@ public slots:
     void setCam3(QString);
     void startRecord(QString s = "");
     void stopRecord();
+
+signals:
+    void sigShowPlayer(void);
+    void sigHidePlayer(void);
+    void sigImage(QImage);
 
 };
 

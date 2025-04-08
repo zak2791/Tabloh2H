@@ -9,9 +9,7 @@ QT += core gui widgets qml multimedia svg quickwidgets network multimediawidgets
 HEADERS += \
     JSTools.h \
     addform.h \
-    camera.h \
     cameraconnection.h \
-    cameraviewer.h \
     category.h \
     choosingnames.h \
     controlobs.h \
@@ -44,9 +42,7 @@ HEADERS += \
 SOURCES += \
     JSTools.cpp \
     addform.cpp \
-    camera.cpp \
     cameraconnection.cpp \
-    cameraviewer.cpp \
     category.cpp \
     choosingnames.cpp \
     controlobs.cpp \

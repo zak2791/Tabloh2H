@@ -15,7 +15,6 @@
 #include "fam_reg.h"
 #include "plus.h"
 #include "tvscreen.h"
-#include "cameraviewer.h"
 #include "camera.h"
 #include "playerviewer.h"
 #include <QPointer>
@@ -271,12 +270,6 @@ private:
     QPushButton * cat;  //категория
     QPushButton * age;  //возраст
 
-    CameraViewer* viewCam1;
-    CameraViewer* viewCam2;
-    Camera* camera1;
-    Camera* camera2;
-    QThread* threadCam1;
-    QThread* threadCam2;
     QDialog * dialogSetUrl;
     QCheckBox* cbCam1;
     QCheckBox* cbCam2;

@@ -45,12 +45,12 @@ int main(int argc, char** argv){
 
 	QJSEngine se;
 
-    QProcess proc;
-    QList<QString> args;
-    args<<"/c"<<"ffmpeg"<<"-codecs"<<"|"<<"findstr"<<"h264";
-    proc.start("cmd", args);
-    proc.waitForFinished();
-    qDebug()<<proc.readAllStandardOutput();
+    // QProcess proc;
+    // QList<QString> args;
+    // args<<"/c"<<"ffmpeg"<<"-codecs"<<"|"<<"findstr"<<"h264";
+    // proc.start("cmd", args);
+    // proc.waitForFinished();
+    // qDebug()<<proc.readAllStandardOutput();
 
 
     QFile  file("script.js");

@@ -174,11 +174,19 @@ void VideoReplayControl::turnCam1(bool check)
                 url = "video=" + urlCam1 + ":audio=" + urlSound;
             args<<"ffmpeg"<<"-loglevel"<<"error"
                  <<"-f"<<"dshow"<<"-rtbufsize"<<"2000M"<<"-framerate"<<fps
-                 <<"-video_size"<<resolution<<"-i"<<url
-                 //<<"-vcodec"<<"mjpeg"
-                 <<"-b:v"<<"4M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001"
-                 <<"-filter_complex"<<"[0:v]scale=100:50, fps=1 [vout]"
-                 <<"-map"<<"[vout]"<<"-vcodec"<<"png"<<"-f"<<"image2pipe"<<"-";
+                 <<"-video_size"<<resolution<<"-i"<<url;
+
+            if(streamToVk && camToVk == 1){
+                args<<"-f"<<"gdigrab"<<"-framerate"<<"1"<<"-i"<<"title=TabloOnTv";
+                args<<"-filter_complex"<<"[1]scale=iw/4:ih/4 [pip]; [0][pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10[out_vk]; [0:v]scale=100:50, fps=1 [vout]; "
+                      "[out_vk] drawtext=text='DEMO':x=(w / 2-text_w / 2):y=(h / 2-text_h / 2):fontfile=arial.ttf:fontsize=240:fontcolor=red";
+                args<<"-b:v"<<"2M"<<"-f"<<"flv"<<urlVk + keyVk;
+            }
+            else{
+                args<<"-filter_complex"<<"[0:v]scale=100:50, fps=1 [vout]";
+            }
+            args<<"-map"<<"[vout]"<<"-vcodec"<<"png"<<"-f"<<"image2pipe"<<"-";
+            args<<"-map"<<"0"<<"-b:v"<<"4M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
             procReadCam1.setArguments(args);
             procReadCam1.start();
             qDebug()<<args;
@@ -197,11 +205,15 @@ void VideoReplayControl::turnCam2(bool check)
     if(check){
         if(procReadCam2.state() == QProcess::NotRunning){
             QStringList args("/c");
-            args<<"ffmpeg"<<"-loglevel"<<"error"
-                 <<"-i"<<urlCam2
+            args<<"ffmpeg"<<"-loglevel"<<"error";
+            if(urlCam2.startsWith("rtsp"))
+                args<<"-rtsp_transport"<<"tcp";
+            args<<"-i"<<urlCam2
                  <<"-vcodec"<<"copy"
-                 <<"-f"<<"mpegts"<<"udp://127.0.0.1:5002"
-                 <<"-filter_complex"<<"[0:v]scale=100:50, fps=1 [vout]"
+                 <<"-f"<<"mpegts"<<"udp://127.0.0.1:5002";
+                if(streamToVk && camToVk == 2)
+                    args<<"-b:v"<<"2M"<<"-f"<<"flv"<<urlVk + keyVk;
+            args<<"-filter_complex"<<"[0:v]scale=100:50, fps=1 [vout]"
                  <<"-map"<<"[vout]"<<"-vcodec"<<"png"<<"-f"<<"image2pipe"<<"-";
             qDebug()<<"args 2 = "<<args;
             procReadCam2.setArguments(args);
@@ -221,11 +233,15 @@ void VideoReplayControl::turnCam3(bool check)
     if(check){
         if(procReadCam3.state() == QProcess::NotRunning){
             QStringList args("/c");
-            args<<"ffmpeg"<<"-loglevel"<<"error"
-                 <<"-i"<<urlCam3
+            args<<"ffmpeg"<<"-loglevel"<<"error";
+            if(urlCam2.startsWith("rtsp"))
+                args<<"-rtsp_transport"<<"tcp";
+            args<<"-i"<<urlCam3
                  <<"-vcodec"<<"copy"
-                 <<"-f"<<"mpegts"<<"udp://127.0.0.1:5003"
-                 <<"-filter_complex"<<"[0:v]scale=100:50, fps=1 [vout]"
+                 <<"-f"<<"mpegts"<<"udp://127.0.0.1:5003";
+                if(streamToVk && camToVk == 1)
+                    args<<"-b:v"<<"2M"<<"-f"<<"flv"<<urlVk + keyVk;
+            args<<"-filter_complex"<<"[0:v]scale=100:50, fps=1 [vout]"
                  <<"-map"<<"[vout]"<<"-vcodec"<<"png"<<"-f"<<"image2pipe"<<"-";
             procReadCam3.setArguments(args);
             procReadCam3.start();

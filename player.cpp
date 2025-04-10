@@ -184,8 +184,8 @@ void Player::Play(){
                     else
                         sec = QString::number(integerPart);
                 }
-                msec = QString::number(fractionalPart).remove(0, 1);
-
+                msec = QString::number(fractionalPart).remove(3, 10);
+                qDebug()<<fractionalPart<<msec;
                 emit sigTime(min + sec + msec);
                 //ret = avcodec_send_packet(pCodecCtx, pkt);
                 ret = avcodec_send_packet(arrCodecCtx[currentStream], pkt);
@@ -304,11 +304,13 @@ void Player::previewFrame(){
 void Player::setCamera(int stream)
 {
     currStream = stream;
+    nextFrame();
 }
 
 QStringList Player::getListWebCams()
 {
     QStringList listWebCam;
+    qDebug()<<"getListWebCams";
 
     const QList<QCameraInfo> cams = QCameraInfo::availableCameras();
     for (const QCameraInfo &cameraInfo : cams){
@@ -330,7 +332,9 @@ QStringList Player::getListSoundDevices()
     int deviceCount = avdevice_list_input_sources(inFormat, NULL, NULL, &deviceList);
     for(int i = 0; i < deviceCount; i++){
         AVDeviceInfo dInfo = *deviceList->devices[i];
-        listWebCam.append(dInfo.device_description);
+        QString name = dInfo.device_name;
+        if(name.contains("wave_"))
+            listWebCam.append(dInfo.device_description);
     }
     avdevice_free_list_devices(&deviceList);
     return listWebCam;

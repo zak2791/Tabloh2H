@@ -40,5 +40,12 @@
         <file>images/rec.svg</file>
         <file>images/rec_blink.svg</file>
         <file>images/rec_no_active.svg</file>
+        <file>images/doctor.png</file>
+        <file>images/plus_blue.png</file>
+        <file>images/plus_red.png</file>
+        <file>images/sportsmens.png</file>
+        <file>images/ttech_blue.png</file>
+        <file>images/ttech_red.png</file>
+        <file>images/parter_blue.png</file>
     </qresource>
 </RCC>

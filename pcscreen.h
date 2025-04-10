@@ -92,7 +92,7 @@ signals:
 
 
 class PCScreen : public QWidget {
-	Q_OBJECT
+    Q_OBJECT
 public:
     explicit PCScreen(MainWindow*, QWidget *parent = 0);
     MainWindow* mainwin;
@@ -103,7 +103,7 @@ public:
 
 
 signals:
-	void sendKey(int);
+    void sendKey(int);
     //void setCategory(void);
     //void signalReplay(void);
     //void changeViewName(int);
@@ -113,7 +113,7 @@ signals:
 public slots:
     //void setFrameWidth(int);
     //void setSpace(int);
-	void setSec(int);
+    void setSec(int);
     void setTime(void);
     void newListSportsmens(void);
     void sbrosLogo(void);
@@ -123,7 +123,7 @@ public slots:
     //void slotExit(void);
 
 private slots:
-    void setCam(void);
+    void setCam(QString);
     void showView(void);
     void showVideoSettings(void);
 
@@ -189,7 +189,7 @@ private slots:
 
     void slotStartRecordOBS(void);
     void handleResultsObs(QString);
-    void selectWebCam(bool);
+    void refreshWebCam(void);
 
     void setTvScreenGeometry(void);
 
@@ -200,7 +200,7 @@ private:
     QCheckBox* cbAddDisp;
     QSettings* settings;
     QString fileSettings;
-	QWidget * formView;
+    QWidget * formView;
     QWidget * formVideoSettings;
     QWidget * frmTime;
     LCDStopwatch * sec_doctor;
@@ -208,7 +208,7 @@ private:
     //Ui::frmTV uiTV;
     //QProcess* myProcess;
 
-	virtual void paintEvent(QPaintEvent *);
+    virtual void paintEvent(QPaintEvent *);
     virtual void closeEvent(QCloseEvent*);
     virtual void keyPressEvent(QKeyEvent *);
     virtual void resizeEvent(QResizeEvent *);
@@ -228,28 +228,28 @@ private:
 
     //void process_line(int, QString);
 
-	QString col_red;
-	QString col_blue;
+    QString col_red;
+    QString col_blue;
     //QEvent * ev_L;
     //QEvent * ev_R;
-	int minimum_height_family;
-	int minimum_height_region;
-	QGridLayout * grid;
-	NP * np_red;
-	NP * np_blue;
+    int minimum_height_family;
+    int minimum_height_region;
+    QGridLayout * grid;
+    NP * np_red;
+    NP * np_blue;
 
     Rate * rateRed;
     Rate * rateBlue;
     //Rate * actRed;
     //Rate * actBlue;
-	Fam * fam_red;
-	Fam * fam_blue;
-	Fam * reg_red;
-	Fam * reg_blue;
+    Fam * fam_red;
+    Fam * fam_blue;
+    Fam * reg_red;
+    Fam * reg_blue;
     Fam * fam_next_red;
     Fam * fam_next_blue;
-	Plus * plus_red;
-	Plus * plus_blue;
+    Plus * plus_red;
+    Plus * plus_blue;
 
     LCDTimer * mainTimer;
     LCDStopwatch * sec_red;
@@ -257,31 +257,31 @@ private:
     LCDStopwatch * sec_red_t;
     LCDStopwatch * sec_blue_t;
 
-	Ui::frmView ui;
+    Ui::frmView ui;
     Ui::frmSettingsVideoReplay uiVideoSettings;
     Ui::Form uiTime;
-	QDesktopWidget* desk;
-	int HEIGHT_REGION;
-	int HEIGHT_FAMILY;
+    QDesktopWidget* desk;
+    int HEIGHT_REGION;
+    int HEIGHT_FAMILY;
     int HEIGHT_NEXT_FAMILY;
-	int minimum_height;
-	int percent_height;
+    int minimum_height;
+    int percent_height;
     TVScreen * tvScreen;
     QPushButton * cat;  //категория
     QPushButton * age;  //возраст
 
     QDialog * dialogSetUrl;
-    QCheckBox* cbCam1;
-    QCheckBox* cbCam2;
-    QPointer<PlayerViewer> slowMotionPlayer;
+    //QCheckBox* cbCam1;
+    //QCheckBox* cbCam2;
+    //QPointer<PlayerViewer> slowMotionPlayer;
 
-    IconButton* btnStopRecord;
+    //IconButton* btnStopRecord;
     //QPushButton* btnStopRecord;
-    IconButton* btnPlayLastWithSound1;
-    IconButton* btnPlayLastSlowMotion1;
-    IconButton* btnPlayLastWithSound2;
-    IconButton* btnPlayLastSlowMotion2;
-    IconButton* btnPlaySlowMotion;
+    // IconButton* btnPlayLastWithSound1;
+    // IconButton* btnPlayLastSlowMotion1;
+    // IconButton* btnPlayLastWithSound2;
+    // IconButton* btnPlayLastSlowMotion2;
+    // IconButton* btnPlaySlowMotion;
     QLabel* lbl;
 
     QString cam1Url = "";

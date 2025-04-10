@@ -33,14 +33,6 @@
     <property name="title">
      <string>Настройки</string>
     </property>
-    <widget class="QMenu" name="select">
-     <property name="title">
-      <string>Вариант табло</string>
-     </property>
-     <addaction name="video"/>
-     <addaction name="no_video"/>
-    </widget>
-    <addaction name="select"/>
     <addaction name="winSettings"/>
     <addaction name="setOBS"/>
     <addaction name="videoSettings"/>

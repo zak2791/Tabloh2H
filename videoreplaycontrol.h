@@ -39,6 +39,11 @@ private:
     void turnCam2(bool);
     void turnCam3(bool);
 
+    QString urlVk = "";
+    QString keyVk = "";
+    bool streamToVk = "";
+    int camToVk = 1;
+
     QPointer<PlayerViewer> slowMotionPlayer;
 
     //RecLabel* reclabel;
@@ -51,6 +56,10 @@ public slots:
     void setCam3(QString);
     void startRecord(QString s = "");
     void stopRecord();
+    void turnStreamToVk(bool b){streamToVk = b;}
+    void setUrlVk(QString url){urlVk = url;}
+    void setKeyVk(QString key){keyVk = key;}
+    void setCamToVk(int cam){camToVk = cam;}
 
 signals:
     void sigShowPlayer(void);

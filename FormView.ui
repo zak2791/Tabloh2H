@@ -13,25 +13,25 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>570</height>
+    <height>419</height>
    </rect>
   </property>
   <property name="sizePolicy">
    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
     <horstretch>0</horstretch>
-    <verstretch>0</verstretch>
+    <verstretch>1</verstretch>
    </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
     <width>400</width>
-    <height>570</height>
+    <height>419</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>400</width>
-    <height>570</height>
+    <height>419</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -143,7 +143,7 @@
    <property name="geometry">
     <rect>
      <x>17</x>
-     <y>230</y>
+     <y>200</y>
      <width>361</width>
      <height>20</height>
     </rect>
@@ -224,7 +224,7 @@
    <property name="geometry">
     <rect>
      <x>26</x>
-     <y>380</y>
+     <y>230</y>
      <width>351</width>
      <height>176</height>
     </rect>
@@ -232,81 +232,6 @@
    <property name="text">
     <string/>
    </property>
-  </widget>
-  <widget class="QCheckBox" name="cbKey">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>250</y>
-     <width>361</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Показ только ключевых кадров (снижает нагрузку на ЦП)</string>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-  </widget>
-  <widget class="QGroupBox" name="groupBox_2">
-   <property name="geometry">
-    <rect>
-     <x>19</x>
-     <y>280</y>
-     <width>361</width>
-     <height>91</height>
-    </rect>
-   </property>
-   <property name="title">
-    <string>Автонастройка камер</string>
-   </property>
-   <widget class="QCheckBox" name="cbAutoCam1">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>20</y>
-      <width>171</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>URL камеры 1</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cbAutoCam2">
-    <property name="geometry">
-     <rect>
-      <x>190</x>
-      <y>20</y>
-      <width>171</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>URL камеры 2</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="leCam1">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>50</y>
-      <width>161</width>
-      <height>20</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="leCam2">
-    <property name="geometry">
-     <rect>
-      <x>190</x>
-      <y>50</y>
-      <width>161</width>
-      <height>20</height>
-     </rect>
-    </property>
-   </widget>
   </widget>
   <widget class="Line" name="line_4">
    <property name="geometry">
@@ -427,22 +352,6 @@
    </property>
    <property name="orientation">
     <enum>Qt::Vertical</enum>
-   </property>
-  </widget>
-  <widget class="QCheckBox" name="cbShowOnTv">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>196</y>
-     <width>361</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Показывать видеоповторы на телевизоре</string>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
    </property>
   </widget>
  </widget>

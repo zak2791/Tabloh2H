@@ -21,23 +21,23 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
     connect(ui->cbCam3, &QCheckBox::clicked, this, &VideoReplayControl::turnCam3);
 
     procReadCam1.setProgram("cmd");
-    connect(&procReadCam1, &QProcess::readyReadStandardOutput, [this](){
+    connect(&procReadCam1, &QProcess::readyReadStandardOutput, this, [this](){
         QByteArray ba = procReadCam1.readAllStandardOutput();
         QImage image(100, 50, QImage:: Format_RGB666);
         if (!image.loadFromData(ba, "PNG"))
             qDebug()<<"Not loaded";
         ui->lblCam1->setPixmap(QPixmap::fromImage(image));});
-    connect(&procReadCam1, &QProcess::readyReadStandardError, [this](){
+    connect(&procReadCam1, &QProcess::readyReadStandardError, this, [this](){
 
-        QTextCodec *codec = QTextCodec::codecForName("Windows-1251");
+        //QTextCodec *codec = QTextCodec::codecForName("cp866");
 
-        QString s = procReadCam1.readAllStandardError();
-        QByteArray encodedString = codec->fromUnicode(s);
-
+        QByteArray s = procReadCam1.readAllStandardError();
+        //QByteArray encodedString = codec-> fromUnicode(s);
+        qDebug()<<s<<QString(s);
         QFile file("camera1.txt");
         if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
             return;
-        file.write(encodedString, encodedString.length());
+        file.write(s, s.length());
         file.close();
 
         QMessageBox msgbox;
@@ -79,15 +79,15 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
 
     procRecord.setProgram("cmd");
     connect(&procRecord, &QProcess::readyReadStandardError, [this](){
-        QTextCodec *codec = QTextCodec::codecForName("Windows-1251");
+        //QTextCodec *codec = QTextCodec::codecForName("cp866");
 
-        QString s = procRecord.readAllStandardError();
-        QByteArray encodedString = codec->fromUnicode(s);
+        QByteArray s = procRecord.readAllStandardError();
+        //QByteArray encodedString = codec->fromUnicode(s);
 
         QFile file("record.txt");
         if (!file.open(QIODevice::Append | QIODevice::Text))
             return;
-        file.write(encodedString, encodedString.length());
+        file.write(s, s.length());
         file.close();
 
 
@@ -178,13 +178,17 @@ void VideoReplayControl::turnCam1(bool check)
 
             if(streamToVk && camToVk == 1){
                 args<<"-f"<<"gdigrab"<<"-framerate"<<"1"<<"-i"<<"title=TabloOnTv";
-                args<<"-filter_complex"<<"[1]scale=iw/4:ih/4 [pip]; [0][pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10[out_vk]; [0:v]scale=100:50, fps=1 [vout]; "
-                      "[out_vk] drawtext=text='DEMO':x=(w / 2-text_w / 2):y=(h / 2-text_h / 2):fontfile=arial.ttf:fontsize=240:fontcolor=red";
+                args<<"-filter_complex"<<"[1]scale=iw/4:ih/4 [pip]; "
+                        "[0][pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10[out_vk]; "
+                        "[0:v]scale=100:50, fps=1 [vout]; "
+                        "[out_vk] drawtext=text='DEMO':x=(w / 2-text_w / 2):y=(h / 2-text_h / 2)"
+                        ":fontfile=arial.ttf:fontsize=240:fontcolor=red";
                 args<<"-b:v"<<"2M"<<"-f"<<"flv"<<urlVk + keyVk;
             }
             else{
                 args<<"-filter_complex"<<"[0:v]scale=100:50, fps=1 [vout]";
             }
+
             args<<"-map"<<"[vout]"<<"-vcodec"<<"png"<<"-f"<<"image2pipe"<<"-";
             args<<"-map"<<"0"<<"-b:v"<<"4M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
             procReadCam1.setArguments(args);
@@ -208,13 +212,21 @@ void VideoReplayControl::turnCam2(bool check)
             args<<"ffmpeg"<<"-loglevel"<<"error";
             if(urlCam2.startsWith("rtsp"))
                 args<<"-rtsp_transport"<<"tcp";
-            args<<"-i"<<urlCam2
-                 <<"-vcodec"<<"copy"
-                 <<"-f"<<"mpegts"<<"udp://127.0.0.1:5002";
-                if(streamToVk && camToVk == 2)
-                    args<<"-b:v"<<"2M"<<"-f"<<"flv"<<urlVk + keyVk;
-            args<<"-filter_complex"<<"[0:v]scale=100:50, fps=1 [vout]"
-                 <<"-map"<<"[vout]"<<"-vcodec"<<"png"<<"-f"<<"image2pipe"<<"-";
+            args<<"-i"<<urlCam2;
+            if(streamToVk && camToVk == 2){
+                args<<"-f"<<"gdigrab"<<"-framerate"<<"1"<<"-i"<<"title=TabloOnTv";
+                args<<"-filter_complex"<<"[1]scale=iw/4:ih/4 [pip]; "
+                        "[0][pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10[out_vk]; "
+                        "[0:v]scale=100:50, fps=1 [vout]; "
+                        "[out_vk] drawtext=text='DEMO':x=(w / 2-text_w / 2):y=(h / 2-text_h / 2)"
+                        ":fontfile=arial.ttf:fontsize=240:fontcolor=red";
+                args<<"-b:v"<<"2M"<<"-f"<<"flv"<<urlVk + keyVk;
+            }
+            else{
+                args<<"-filter_complex"<<"[0:v]scale=100:50, fps=1 [vout]";
+            }
+            args<<"-map"<<"[vout]"<<"-vcodec"<<"png"<<"-f"<<"image2pipe"<<"-";
+            args<<"-map"<<"0"<<"-vcodec"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5002";
             qDebug()<<"args 2 = "<<args;
             procReadCam2.setArguments(args);
             procReadCam2.start();
@@ -234,15 +246,24 @@ void VideoReplayControl::turnCam3(bool check)
         if(procReadCam3.state() == QProcess::NotRunning){
             QStringList args("/c");
             args<<"ffmpeg"<<"-loglevel"<<"error";
-            if(urlCam2.startsWith("rtsp"))
+            if(urlCam3.startsWith("rtsp"))
                 args<<"-rtsp_transport"<<"tcp";
-            args<<"-i"<<urlCam3
-                 <<"-vcodec"<<"copy"
-                 <<"-f"<<"mpegts"<<"udp://127.0.0.1:5003";
-                if(streamToVk && camToVk == 1)
-                    args<<"-b:v"<<"2M"<<"-f"<<"flv"<<urlVk + keyVk;
-            args<<"-filter_complex"<<"[0:v]scale=100:50, fps=1 [vout]"
-                 <<"-map"<<"[vout]"<<"-vcodec"<<"png"<<"-f"<<"image2pipe"<<"-";
+            args<<"-i"<<urlCam3;
+            if(streamToVk && camToVk == 3){
+                args<<"-f"<<"gdigrab"<<"-framerate"<<"1"<<"-i"<<"title=TabloOnTv";
+                args<<"-filter_complex"<<"[1]scale=iw/4:ih/4 [pip]; "
+                        "[0][pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10[out_vk]; "
+                        "[0:v]scale=100:50, fps=1 [vout]; "
+                        "[out_vk] drawtext=text='DEMO':x=(w / 2-text_w / 2):y=(h / 2-text_h / 2)"
+                        ":fontfile=arial.ttf:fontsize=240:fontcolor=red";
+                args<<"-b:v"<<"2M"<<"-f"<<"flv"<<urlVk + keyVk;
+            }
+            else{
+                args<<"-filter_complex"<<"[0:v]scale=100:50, fps=1 [vout]";
+            }
+            args<<"-map"<<"[vout]"<<"-vcodec"<<"png"<<"-f"<<"image2pipe"<<"-";
+            args<<"-map"<<"0"<<"-vcodec"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5003";
+            qDebug()<<"args 2 = "<<args;
             procReadCam3.setArguments(args);
             procReadCam3.start();
         }

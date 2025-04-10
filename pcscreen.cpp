@@ -731,7 +731,7 @@ void PCScreen::refreshWebCam()
     uiVideoSettings.cbSound->clear();
     uiVideoSettings.cbWebCam->clear();
     uiVideoSettings.cbWebCam->addItems(Player::getListWebCams());
-    uiVideoSettings.cbSound->addItem("");
+    //uiVideoSettings.cbSound->addItem("");
     uiVideoSettings.cbSound->addItems(Player::getListSoundDevices());
 }
 

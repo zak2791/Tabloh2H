@@ -107,45 +107,47 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     cbAddDisp->setStyleSheet("color: white");
     connect(cbAddDisp, SIGNAL(stateChanged(int)), this, SLOT(addDisplay(int)));
 
-    IconButton* doctor = new IconButton(":/images/doctor.svg");
-    doctor->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    SVGPushButton* doctor = new SVGPushButton(":/images/doctor.svg");
+    //doctor->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     connect(doctor, SIGNAL(clicked()), this, SLOT(turnDoctor()));
 
-    IconButton * btnParter_red = new IconButton(":/images/parter_red.svg");
+    SVGPushButton * btnParter_red = new SVGPushButton(":/images/parter_red.svg");
     btnParter_red->setObjectName("btnParter_red");
-    btnParter_red->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    //btnParter_red->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
-    IconButton * btnTime = new IconButton(":/images/time.svg");
+    SVGPushButton * btnTime = new SVGPushButton(":/images/time.svg");
     btnTime->setObjectName("btnTime");
-    btnTime->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    //btnTime->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
-    IconButton * btnParter_blue = new IconButton(":/images/parter_blue.svg");
+    SVGPushButton * btnParter_blue = new SVGPushButton(":/images/parter_blue.svg");
     btnParter_blue->setObjectName("btnParter_blue");
-    btnParter_blue->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    //btnParter_blue->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
-    IconButton * btnTehTime_red = new IconButton(":/images/ttech_red.svg");
+    SVGPushButton * btnTehTime_red = new SVGPushButton(":/images/ttech_red.svg");
+    //IconButton * btnTehTime_red = new IconButton(":/images/ttech_red.svg");
     btnTehTime_red->setObjectName("btnTehTime_red");
-    btnTehTime_red->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    btnTehTime_red->setStyleSheet("color: red; font: bold " + QString::number(round(btnTehTime_red->height() / 2)) + "px;");
+    //btnTehTime_red->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    //btnTehTime_red->setStyleSheet("color: red; font: bold " + QString::number(round(btnTehTime_red->height() / 2)) + "px;");
 
-    IconButton * btnSettings = new IconButton(":/images/sportsmens.svg");
+    SVGPushButton* btnSettings = new SVGPushButton(":/images/sportsmens.svg");
+    //IconButton * btnSettings = new IconButton(":/images/sportsmens.svg");
     btnSettings->setObjectName("btnSettings");
-    btnSettings->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    //btnSettings->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     connect(btnSettings, SIGNAL(clicked()), this, SLOT(showListSportsmens()));
 
-    IconButton * btnTehTime_blue = new IconButton(":/images/ttech_blue.svg");
+    SVGPushButton * btnTehTime_blue = new SVGPushButton(":/images/ttech_blue.svg");
     btnTehTime_blue->setObjectName("btnTehTime_blue");
-    btnTehTime_blue->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    //btnTehTime_blue->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
-    IconButton * btnPlus_red = new IconButton(":/images/plus_red.svg");
+    SVGPushButton * btnPlus_red = new SVGPushButton(":/images/plus_red.svg");
     btnPlus_red->setObjectName("btnPlus_red");
-    btnPlus_red->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    btnPlus_red->setStyleSheet("color: red; font: bold " + QString::number(btnPlus_red->height()) + "px;");
+    //btnPlus_red->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    //btnPlus_red->setStyleSheet("color: red; font: bold " + QString::number(btnPlus_red->height()) + "px;");
 
-    IconButton * btnPlus_blue = new IconButton(":/images/plus_blue.svg");
+    SVGPushButton * btnPlus_blue = new SVGPushButton(":/images/plus_blue.svg");
     btnPlus_blue->setObjectName("btnPlus_blue");
-    btnPlus_blue->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    btnPlus_blue->setStyleSheet("color: blue; font: bold " + QString::number(btnPlus_blue->height()) + "px;");
+    //btnPlus_blue->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    //btnPlus_blue->setStyleSheet("color: blue; font: bold " + QString::number(btnPlus_blue->height()) + "px;");
 
     plus_red = new Plus(col_red, this);
     plus_red->setObjectName("plus_red");
@@ -887,7 +889,7 @@ void PCScreen::StartRecord(bool b){
     //qDebug()<<fam_red->text() + "-" + fam_blue->text();
     QString redFam = fam_red->getText().split(" ").count() > 1 ? fam_red->getText().split(" ").at(0) : fam_red->getText();
     QString blueFam = fam_blue->getText().split(" ").count() > 1 ? fam_blue->getText().split(" ").at(0) : fam_blue->getText();
-    videoControl->startRecord(redFam + "-" + blueFam);
+    videoControl->startRecord(b, redFam + "-" + blueFam);
     // if(!b){                          //если таймер остановился
     //     btnStopRecord->setEnabled(true);
     //     return;
@@ -1022,11 +1024,13 @@ void PCScreen::setCam(QString text){
         settings->beginGroup("URL");
         settings->setValue("cam1", cam1Url);
         settings->endGroup();
+        videoControl->setCam2(cam1Url);
     }else{
         cam2Url = text;
         settings->beginGroup("URL");
         settings->setValue("cam2", cam2Url);
-        settings->endGroup();    
+        settings->endGroup();
+        videoControl->setCam3(cam2Url);
     }
 }
 

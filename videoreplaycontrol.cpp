@@ -28,62 +28,70 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
             qDebug()<<"Not loaded";
         ui->lblCam1->setPixmap(QPixmap::fromImage(image));});
     connect(&procReadCam1, &QProcess::readyReadStandardError, this, [this](){
-
-        //QTextCodec *codec = QTextCodec::codecForName("cp866");
-
-        QByteArray s = procReadCam1.readAllStandardError();
-        //QByteArray encodedString = codec-> fromUnicode(s);
-        qDebug()<<s<<QString(s);
+        QByteArray ba = procReadCam1.readAllStandardError();
         QFile file("camera1.txt");
         if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
             return;
-        file.write(s, s.length());
+        file.write(ba, ba.length());
         file.close();
-
+        //QTextCodec *codec = QTextCodec::codecForName("CP866");
+        //QString s  = codec->toUnicode(ba);
+        //qDebug()<<"s = "<<s<<QString(ba);
         QMessageBox msgbox;
-        msgbox.setText(s);
+        msgbox.setText(QString(ba));
         msgbox.exec();
-
         if(procRecord.state() == QProcess::Running)
             procRecord.write("q");
         ui->cbCam1->setChecked(false);
     });
 
     procReadCam2.setProgram("cmd");
-    connect(&procReadCam2, &QProcess::readyReadStandardOutput, [this](){
+    connect(&procReadCam2, &QProcess::readyReadStandardOutput, this, [this](){
         QByteArray ba = procReadCam2.readAllStandardOutput();
         QImage image(100, 50, QImage:: Format_RGB666);
         if (!image.loadFromData(ba, "PNG"))
             qDebug()<<"Not loaded";
         ui->lblCam2->setPixmap(QPixmap::fromImage(image));});
-    connect(&procReadCam2, &QProcess::readyReadStandardError, [this](){
-        qDebug()<<procReadCam2.readAllStandardError();
+    connect(&procReadCam2, &QProcess::readyReadStandardError, this, [this](){
+        QByteArray ba = procReadCam2.readAllStandardError();
+        QFile file("camera2.txt");
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+            return;
+        file.write(ba, ba.length());
+        file.close();
+        QMessageBox msgbox;
+        msgbox.setText(QString(ba));
+        msgbox.exec();
         if(procRecord.state() == QProcess::Running)
             procRecord.write("q");
         ui->cbCam2->setChecked(false);
     });
 
     procReadCam3.setProgram("cmd");
-    connect(&procReadCam3, &QProcess::readyReadStandardOutput, [this](){
+    connect(&procReadCam3, &QProcess::readyReadStandardOutput, this, [this](){
         QByteArray ba = procReadCam3.readAllStandardOutput();
         QImage image(100, 50, QImage:: Format_RGB666);
         if (!image.loadFromData(ba, "PNG"))
             qDebug()<<"Not loaded";
         ui->lblCam3->setPixmap(QPixmap::fromImage(image));});
-    connect(&procReadCam3, &QProcess::readyReadStandardError, [this](){
-        qDebug()<<procReadCam3.readAllStandardError();
+    connect(&procReadCam3, &QProcess::readyReadStandardError, this, [this](){
+        QByteArray ba = procReadCam3.readAllStandardError();
+        QFile file("camera3.txt");
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+            return;
+        file.write(ba, ba.length());
+        file.close();
+        QMessageBox msgbox;
+        msgbox.setText(QString(ba));
+        msgbox.exec();
         if(procRecord.state() == QProcess::Running)
             procRecord.write("q");
         ui->cbCam3->setChecked(false);
     });
 
     procRecord.setProgram("cmd");
-    connect(&procRecord, &QProcess::readyReadStandardError, [this](){
-        //QTextCodec *codec = QTextCodec::codecForName("cp866");
-
+    connect(&procRecord, &QProcess::readyReadStandardError, this, [this](){
         QByteArray s = procRecord.readAllStandardError();
-        //QByteArray encodedString = codec->fromUnicode(s);
-
         QFile file("record.txt");
         if (!file.open(QIODevice::Append | QIODevice::Text))
             return;
@@ -101,7 +109,7 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
         ui->label->setStatusRec(true);
     });
 
-    connect(ui->btnPlay, &QPushButton::clicked, [this](){
+    connect(ui->btnPlay, &QPushButton::clicked, this, [this](){
         stopRecord();
         QString file = QFileDialog::getOpenFileName();
         if(file == "" || !file.endsWith(".mp4"))
@@ -113,7 +121,7 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
 
     });
 
-    connect(ui->btnPlayLast, &QPushButton::clicked, [this](){
+    connect(ui->btnPlayLast, &QPushButton::clicked, this, [this](){
         stopRecord();
         QDir dir("videos");
         QStringList dirList = dir.entryList(QDir::Files, QDir::Time);
@@ -125,7 +133,6 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
         connect(slowMotionPlayer, &PlayerViewer::sigImage, this, &VideoReplayControl::sigImage);
 
         emit sigShowPlayer();
-        //tvScreen->showPlayer();
 
     });
 
@@ -143,15 +150,11 @@ VideoReplayControl::~VideoReplayControl()
     if(procRecord.state() == QProcess::Running){
         procRecord.write("q");
         procRecord.waitForFinished();
-        qDebug()<<"procRecord"<<procRecord.state();
     }
-
     if(procReadCam1.state() == QProcess::Running){
         procReadCam1.write("q");
         procReadCam1.waitForFinished();
-        qDebug()<<"procReadCam1"<<procReadCam1.state();
     }
-
     if(procReadCam2.state() == QProcess::Running){
         procReadCam2.write("q");
         procReadCam2.waitForFinished();
@@ -302,14 +305,13 @@ void VideoReplayControl::setCam3(QString cam)
     urlCam3 = cam;
 }
 
-void VideoReplayControl::startRecord(QString s)
+void VideoReplayControl::startRecord(bool b, QString s)
 {
-    qDebug()<<"start0"<<s;
+    ui->btnPlay->setEnabled(!b);
+    ui->btnPlayLast->setEnabled(!b);
     QString file = "videos/" + s + "_" + QTime::currentTime().toString("hh:mm:ss");
     file.replace(":", "_");
-
     if(procRecord.state() == QProcess::NotRunning){
-        qDebug()<<"start1";
         bool stateProc1 = procReadCam1.state() == QProcess::Running ? true : false;
         bool stateProc2 = procReadCam2.state() == QProcess::Running ? true : false;
         bool stateProc3 = procReadCam3.state() == QProcess::Running ? true : false;
@@ -358,6 +360,8 @@ void VideoReplayControl::startRecord(QString s)
         args<<"-b"<<"10M";
         args<<file + ".mp4";
         qDebug()<<"args = "<<args;
+        ui->btnPlay->setEnabled(false);
+        ui->btnPlayLast->setEnabled(false);
         procRecord.setArguments(args);
         procRecord.start();
     }
@@ -365,11 +369,14 @@ void VideoReplayControl::startRecord(QString s)
 
 void VideoReplayControl::stopRecord()
 {
+    ui->btnPlay->setEnabled(true);
+    ui->btnPlayLast->setEnabled(true);
     if(procRecord.state() == QProcess::Running){
         qDebug()<<"rec start stop";
         procRecord.write("q");
         procRecord.waitForFinished();
-        if(procRecord.state() == QProcess::NotRunning)
-            qDebug()<<"rec stopped";
+        //if(procRecord.state() == QProcess::NotRunning){
+
+        //}
     }
 }

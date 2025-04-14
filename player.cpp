@@ -1,16 +1,31 @@
 #include "player.h"
 #include "libavdevice/avdevice.h"
 #include "qcamerainfo.h"
+#include "qmessagebox.h"
 #include <QDebug>
 #include <QThread>
+#include <QFile>
 
 Player::Player(QString file, QObject *parent) : QObject(parent){
     videoFile = file;
     currStream = 0;
     qDebug()<<videoFile;
+    QFile f("player.txt");
+    if (!f.open(QIODevice::Append | QIODevice::Text))
+        return;
+    f.write("create\n");
+    f.flush();
+    f.close();
+
 }
 
 void Player::Play(){
+    QFile file("player.txt");
+    if (!file.open(QIODevice::Append | QIODevice::Text))
+        return;
+    file.write("start\n");
+    file.flush();
+
     process = true;
     int best_stream;
     int numberFrames;
@@ -125,51 +140,81 @@ void Player::Play(){
     }
     /////////////////////////////////////////////////////////
 
+    file.write("play\n");
+    file.flush();
+
     AVStream *in_stream;
-    in_stream = ifmt_ctx->streams[video_stream_index[currStream]];//best_stream]
-    for(int i = 0; i < video_stream_index.count(); i++){
-        AVStream* in_stream = ifmt_ctx->streams[video_stream_index[i]];
-        arrNumberFrames.append(in_stream->nb_frames);
-        arrDurationMedia.append(in_stream->duration);
-        arrAvgFps.append(in_stream->avg_frame_rate.num / in_stream->avg_frame_rate.den);
-        arrOneFrameDuration.append(arrDurationMedia[i] / arrNumberFrames[i]);
-        arrDurationMediaInSecunds.append(arrNumberFrames[i] / arrAvgFps[i]);
-        qDebug()<<"arrNumberFrames[i] = "<<arrNumberFrames[i]
-                 <<"arrDurationMedia[i] = "<<arrDurationMedia[i]
-                 <<"arrAvgFps[i] = "<<arrAvgFps[i]
-                 <<"arrOneFrameDuration[i] = "<<arrOneFrameDuration[i]
-                 <<"arrDurationMediaInSecunds[i] = "<<arrDurationMediaInSecunds[i];
+    try{
+        in_stream = ifmt_ctx->streams[video_stream_index[currStream]];//best_stream]
+        for(int i = 0; i < video_stream_index.count(); i++){
+            AVStream* in_stream = ifmt_ctx->streams[video_stream_index[i]];
+            arrNumberFrames.append(in_stream->nb_frames);
+            arrDurationMedia.append(in_stream->duration);
+            arrAvgFps.append(in_stream->avg_frame_rate.num / in_stream->avg_frame_rate.den);
+            arrOneFrameDuration.append(arrDurationMedia[i] / arrNumberFrames[i]);
+            arrDurationMediaInSecunds.append(arrNumberFrames[i] / arrAvgFps[i]);
+            qDebug()<<"arrNumberFrames[i] = "<<arrNumberFrames[i]
+                     <<"arrDurationMedia[i] = "<<arrDurationMedia[i]
+                     <<"arrAvgFps[i] = "<<arrAvgFps[i]
+                     <<"arrOneFrameDuration[i] = "<<arrOneFrameDuration[i]
+                     <<"arrDurationMediaInSecunds[i] = "<<arrDurationMediaInSecunds[i];
+        }
     }
-    numberFrames = in_stream->nb_frames;
-    durationMedia = in_stream->duration;
-    avgFps = in_stream->avg_frame_rate.num / in_stream->avg_frame_rate.den;
-    oneFrameDuration = durationMedia / numberFrames;
-    durationMediaInSecunds = numberFrames / avgFps;
+    catch(...){
+        QMessageBox msgbox;
+        msgbox.setText("Error 1");
+        msgbox.exec();
+        goto end;
+    }
+    try{
+        numberFrames = in_stream->nb_frames;
+        durationMedia = in_stream->duration;
+        avgFps = in_stream->avg_frame_rate.num / in_stream->avg_frame_rate.den;
+        oneFrameDuration = durationMedia / numberFrames;
+        durationMediaInSecunds = numberFrames / avgFps;
+    }
+    catch(...){
+        QMessageBox msgbox;
+        msgbox.setText("Error 2");
+        msgbox.exec();
+        goto end;
+    }
+
     emit sigParam(numberFrames, avgFps, durationMediaInSecunds);
+    file.write("process\n");
+    file.flush();
     while (process) {
+
         int currentStream = currStream;
         if(flag_seek || flag_play || flag_one_next_frame){
+            file.write("seek0\n");
+            file.flush();
             if(flag_seek){
-                //ret =av_seek_frame(ifmt_ctx, best_stream, flag_seek, AVSEEK_FLAG_FRAME);
                 ret =av_seek_frame(ifmt_ctx, video_stream_index[currentStream], flag_seek, AVSEEK_FLAG_FRAME);
                 flag_seek = 0;
                 bufImage->clear();
             }
+            file.write("seek1\n");
+            file.flush();
             ret = av_read_frame(ifmt_ctx, pkt);
             if (ret < 0){
                 ret =av_seek_frame(ifmt_ctx, video_stream_index[currentStream], 0, AVSEEK_FLAG_FRAME);
                 if (ret < 0 ) break;
                 continue;
             }
-
+            file.write("seek2\n");
+            file.flush();
             if (pkt->stream_index == video_stream_index[currStream]){
                 if(flag_play || flag_one_next_frame)
                     emit sigFrame(pkt->pts / arrOneFrameDuration.at(currentStream));
-                int integerPart = (pkt->pts / arrOneFrameDuration.at(currentStream)) * 1.0 / arrAvgFps.at(currentStream);
-                float fractionalPart = (pkt->pts / arrOneFrameDuration.at(currentStream)) * 1.0 / arrAvgFps.at(currentStream) - integerPart;
+
                 QString min = "";
                 QString sec = "";
                 QString msec = "";
+                try{
+                int integerPart = (pkt->pts / arrOneFrameDuration.at(currentStream)) * 1.0 / arrAvgFps.at(currentStream);
+                float fractionalPart = (pkt->pts / arrOneFrameDuration.at(currentStream)) * 1.0 / arrAvgFps.at(currentStream) - integerPart;
+
                 if(integerPart / 60){
                     min = QString::number(integerPart / 60) + ":";
                     int s = integerPart % 60;
@@ -185,9 +230,14 @@ void Player::Play(){
                         sec = QString::number(integerPart);
                 }
                 msec = QString::number(fractionalPart).remove(3, 10);
-                qDebug()<<fractionalPart<<msec;
+                }
+                catch(...){
+                    QMessageBox msgbox;
+                    msgbox.setText("Error 3");
+                    msgbox.exec();
+                    goto end;
+                }
                 emit sigTime(min + sec + msec);
-                //ret = avcodec_send_packet(pCodecCtx, pkt);
                 ret = avcodec_send_packet(arrCodecCtx[currentStream], pkt);
 
                 if (ret < 0) {
@@ -195,7 +245,6 @@ void Player::Play(){
                 }
                 AVFrame* frame = av_frame_alloc();
                 while (ret >= 0) {
-                    //ret = avcodec_receive_frame(pCodecCtx, frame);
                     ret = avcodec_receive_frame(arrCodecCtx[currentStream], frame);
                     if (ret == AVERROR(EAGAIN)){
                         av_frame_free(&frame);
@@ -211,7 +260,16 @@ void Player::Play(){
                     }
                     else{
                         if(!flag_one_next_frame){
-                            int delay = 1000 / arrAvgFps.at(currentStream);
+                            int delay;
+                            try{
+                                delay = 1000 / arrAvgFps.at(currentStream);
+                            }
+                            catch(...){
+                                QMessageBox msgbox;
+                                msgbox.setText("Error 2");
+                                msgbox.exec();
+                                goto end;
+                            }
                             QThread::msleep(delay);
                         }
                         QImage img = avFrame2QImage(frame);
@@ -226,9 +284,13 @@ void Player::Play(){
                         emit sigImage(img);
                     }
                 }
+                file.write("video\n");
+                file.flush();
             }
-            end_preview:
+        end_preview:
             av_packet_unref(pkt);
+            file.write("seek\n");
+            file.flush();
         }   //if seek
     }   //while process
 end:
@@ -238,6 +300,9 @@ end:
     foreach(auto each, arrCodecCtx)
         avcodec_free_context(&each);
     av_freep(&stream_mapping);
+    file.write("close\n");
+    file.flush();
+    file.close();
 }
 
 void Player::seek(int s){
@@ -260,7 +325,7 @@ void Player::turnPlay(){
 QImage Player::avFrame2QImage(AVFrame* frame){
     struct SwsContext *img_convert_ctx = NULL;
     img_convert_ctx = sws_getContext(frame->width, frame->height,
-                                    (AVPixelFormat)frame->format, frame->width, frame->height,
+                                     (AVPixelFormat)frame->format, frame->width, frame->height,
                                      AV_PIX_FMT_RGB24, SWS_BICUBIC, NULL, NULL, NULL);
 
     if (img_convert_ctx == nullptr){

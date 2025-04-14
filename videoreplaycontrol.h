@@ -54,7 +54,7 @@ public slots:
     void setSound(QString);
     void setCam2(QString);
     void setCam3(QString);
-    void startRecord(QString s = "");
+    void startRecord(bool, QString s = "");
     void stopRecord();
     void turnStreamToVk(bool b){streamToVk = b;}
     void setUrlVk(QString url){urlVk = url;}

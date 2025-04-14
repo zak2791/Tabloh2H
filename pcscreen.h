@@ -36,6 +36,27 @@
 #include <QLibrary>
 #include "controlobs.h"
 #include "videoreplaycontrol.h"
+#include <QSvgWidget>
+
+class SVGPushButton : public QPushButton
+{
+public:
+    SVGPushButton(QString svgPath) : QPushButton()
+{
+
+
+    setSizePolicy( QSizePolicy::Ignored, QSizePolicy::Ignored );
+    QSvgWidget *w = new QSvgWidget(svgPath,this);
+
+    QHBoxLayout* box = new QHBoxLayout(this);
+    box->setContentsMargins(0,0,0,0);
+    setLayout( new QHBoxLayout(this) );
+    layout()->addWidget( w );
+}
+
+};
+
+
 
 class IconButton : public QPushButton{
 
@@ -43,6 +64,7 @@ public:
         IconButton(const QString& iconPath, const QString& iconPath2 = "", int as = 1){
             path = iconPath;
             path2 = iconPath2;
+            renderer.load(path);
             if(path2 != ""){
                 flag = true;
                 aspectRatio = as;
@@ -52,7 +74,7 @@ public:
     void paintEvent(QPaintEvent* ev){
         QPushButton::paintEvent(ev);
         QPainter painter(this);
-        QSvgRenderer renderer(path);
+
         if(flag){
             QRect rect(width() / 2 - height() * aspectRatio / 2, 0, height() * aspectRatio, height());
             if(isEnabled())
@@ -71,6 +93,7 @@ private:
     QString path2;
     bool flag;
     int aspectRatio;
+    QSvgRenderer renderer;
 
 };
 

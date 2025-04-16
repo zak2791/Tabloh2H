@@ -1,4 +1,4 @@
-#include "videoreplaycontrol.h"
+  #include "videoreplaycontrol.h"
 #include "qdatetime.h"
 #include "qdebug.h"
 #include "qdir.h"
@@ -288,6 +288,7 @@ void VideoReplayControl::setParamWebCam(QList<int> param)
 {
     fps = QString::number(param.at(0));
     resolution = QString::number(param.at(1)) + "x" + QString::number(param.at(2));
+    qDebug()<<"fps = "<<fps<<"resolution = "<<resolution;
 }
 
 void VideoReplayControl::setSound(QString sound)

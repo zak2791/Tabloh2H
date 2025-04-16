@@ -217,6 +217,7 @@ private slots:
     void setTvScreenGeometry(void);
 
     void setCameras(void);
+    void setParamWebCam(int index);
 
 private:
     //QLabel* lblCpuUsage;

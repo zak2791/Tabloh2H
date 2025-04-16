@@ -640,29 +640,27 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     });
 
     connect(uiVideoSettings.cbWebCam, &QComboBox::currentTextChanged, [this](QString text){
+        //disconnect(uiVideoSettings.cbParamWebCam);
         uiVideoSettings.cbParamWebCam->clear();
         if(uiVideoSettings.cbWebCam->count() > 0){
             videoControl->setWebCam(text);
             QList<QList<int>> param = Player::getListParamWebCam(text);
             int count = 0;
+
             foreach(auto each, param){
                 QString sParam = "fps = " + QString::number(each.at(0)) +
                                  "resolution = " + QString::number(each.at(1)) +
-                                 "x" + QString::number(each.at(2));
+                                 "x" + QString::number(each.at(2));  
                 uiVideoSettings.cbParamWebCam->addItem(sParam);
-                uiVideoSettings.cbParamWebCam->setItemData(count++, QVariant::fromValue(each));
+                qDebug()<<"count = "<<count;
+                uiVideoSettings.cbParamWebCam->setItemData(count++, QVariant::fromValue(each));     
             }
+            setParamWebCam(uiVideoSettings.cbParamWebCam->currentIndex());
         }
+        //connect(uiVideoSettings.cbParamWebCam, &QComboBox::currentTextChanged, this, &PCScreen::setParamWebCam);
     });
-    connect(uiVideoSettings.cbParamWebCam, &QComboBox::currentTextChanged, this, [this](QString text){
-        QVariant variant = uiVideoSettings.cbParamWebCam->itemData(uiVideoSettings.cbParamWebCam->currentIndex());
-        QList<int> data = variant.value<QList<int>>();
-        videoControl->setParamWebCam(data);
-        settings->beginGroup("webcam");
-        settings->setValue("cam", uiVideoSettings.cbWebCam->currentText());
-        settings->setValue("param", text);
-        settings->endGroup();
-    });
+    connect(uiVideoSettings.cbParamWebCam, QOverload<int>::of(&QComboBox::activated), this, &PCScreen::setParamWebCam);
+
     connect(uiVideoSettings.cbSound, &QComboBox::currentTextChanged, this, [this](QString text){
         videoControl->setSound(text);
         settings->beginGroup("webcam");
@@ -1636,8 +1634,17 @@ void PCScreen::setTvScreenGeometry(){
 
 void PCScreen::setCameras()
 {
-
-    qDebug()<<uiVideoSettings.cbWebCam->currentText()<<uiVideoSettings.cbParamWebCam->currentText();
     videoControl->setWebCam(uiVideoSettings.cbWebCam->currentText() + ";" + uiVideoSettings.cbParamWebCam->currentText());
 
+}
+
+void PCScreen::setParamWebCam(int index)
+{
+    QVariant variant = uiVideoSettings.cbParamWebCam->itemData(index);
+    QList<int> data = variant.value<QList<int>>();
+    videoControl->setParamWebCam(data);
+    settings->beginGroup("webcam");
+    settings->setValue("cam", uiVideoSettings.cbWebCam->currentText());
+    settings->setValue("param", uiVideoSettings.cbParamWebCam->currentText());
+    settings->endGroup();
 }

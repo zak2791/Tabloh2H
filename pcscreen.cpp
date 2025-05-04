@@ -589,6 +589,18 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     else
         uiVideoSettings.rbVK3->setChecked(true);
 
+    QString w = settings->value("widthPip", "1920/4").toString();
+    videoControl->setWidthPipVk(w);
+    uiVideoSettings.leWidthPip->setText(w);
+
+    QString h = settings->value("heightPip", "1080/4").toString();
+    videoControl->setHeightPipVk(h);
+    uiVideoSettings.leHeightPip->setText(h);
+
+    QString t = settings->value("transparentPip", "0.5").toString();
+    videoControl->setTransparentPipVk(t);
+    uiVideoSettings.sbTransparent->setValue(t.toDouble());
+
     settings->endGroup();
 
     connect(uiVideoSettings.chbVk, &QCheckBox::toggled, this, [this](bool b){
@@ -665,6 +677,27 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
         videoControl->setSound(text);
         settings->beginGroup("webcam");
         settings->setValue("sound", text);
+        settings->endGroup();
+    });
+
+    connect(uiVideoSettings.leWidthPip, &QLineEdit::editingFinished, this, [this](){
+        videoControl->setWidthPipVk(uiVideoSettings.leWidthPip->text());
+        settings->beginGroup("vk");
+        settings->setValue("widthPip", uiVideoSettings.leWidthPip->text());
+        settings->endGroup();
+    });
+
+    connect(uiVideoSettings.leHeightPip, &QLineEdit::editingFinished, this, [this](){
+        videoControl->setHeightPipVk(uiVideoSettings.leHeightPip->text());
+        settings->beginGroup("vk");
+        settings->setValue("heightPip", uiVideoSettings.leHeightPip->text());
+        settings->endGroup();
+    });
+
+    connect(uiVideoSettings.sbTransparent, &QDoubleSpinBox::textChanged, this, [this](){
+        videoControl->setTransparentPipVk(uiVideoSettings.sbTransparent->text());
+        settings->beginGroup("vk");
+        settings->setValue("transparentPip", uiVideoSettings.sbTransparent->text().replace(",", "."));
         settings->endGroup();
     });
 

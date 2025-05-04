@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="42.3332mm" height="42.3332mm" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 4233.32 4233.32"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:xodm="http://www.corel.com/coreldraw/odm/2003">
+ <defs>
+  <font id="FontID0" horiz-adv-x="667" font-variant="normal" style="fill-rule:nonzero" font-style="normal" font-weight="400">
+	<font-face 
+		font-family="Arial">
+		<font-face-src>
+			<font-face-name name="Arial"/>
+		</font-face-src>
+	</font-face>
+   <missing-glyph><path d="M0 0z"/></missing-glyph>
+   <glyph unicode="K" horiz-adv-x="667" d="M73 0l0 716 95 0 0 -355 355.665 355 128.335 0 -300.335 -290.335 313.335 -425.665 -125 0 -254.835 361.335 -117.165 -113.335 0 -248 -95 0z"/>
+   <glyph unicode="V" horiz-adv-x="667" d="M281 0l-276.665 716 102.665 0 186 -520.335c14.8346,-41.6654 27.5,-80.6654 37.5,-117.165 11,39.1654 23.8346,78.1654 38.5,117.165l193 520.335 96.6654 0 -279.165 -716 -98.5 0z"/>
+  </font>
+  <style type="text/css">
+   <![CDATA[
+    @font-face { font-family:"Arial";font-variant:normal;font-style:normal;font-weight:normal;src:url("#FontID0") format(svg)}
+    .str0 {stroke:blue;stroke-width:135.47;stroke-miterlimit:22.9256}
+    .fil0 {fill:none}
+    .fil1 {fill:#B3B3B3}
+    .fnt0 {font-weight:normal;font-size:2540px;font-family:'Arial'}
+   ]]>
+  </style>
+ </defs>
+ <g id="frame_gray">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+ </g>
+ <g id="frame_blue">
+  <metadata id="CorelCorpID_1Corel-Layer"/>
+  <path class="fil0 str0" d="M3598.32 211.66c0,0 -2540,0 -2963.33,0 -423.33,0 -423.33,423.34 -423.33,423.34 0,0 0,2540 0,2963.33 0,423.33 423.33,423.33 423.33,423.33 0,0 2539.99,0 2963.33,0 423.34,0 423.34,-423.33 423.34,-423.33l0 -2963.33c0,-423.34 -423.34,-423.34 -423.34,-423.34z"/>
+ </g>
+ <g id="text_gray">
+  <metadata id="CorelCorpID_2Corel-Layer"/>
+  <text x="419.52" y="3025.98"  class="fil1 fnt0">VK</text>
+ </g>
+ <g id="text_blue">
+  <metadata id="CorelCorpID_3Corel-Layer"/>
+ </g>
+</svg>

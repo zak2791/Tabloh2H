@@ -16,7 +16,14 @@ Player::Player(QString file, QObject *parent) : QObject(parent){
     f.write("create\n");
     f.flush();
     f.close();
+    bufImage = new  QList<QImage>;
 
+}
+
+Player::~Player()
+{
+    bufImage->clear();
+    delete bufImage;
 }
 
 void Player::Play(){
@@ -36,7 +43,7 @@ void Player::Play(){
     QList<int> arrAvgFps;
     int durationMediaInSecunds;
     QList<int> arrDurationMediaInSecunds;
-    bufImage = new  QList<QImage>;
+
 
     AVFormatContext *ifmt_ctx = NULL;
 

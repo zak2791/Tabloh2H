@@ -137,10 +137,6 @@ PlayerViewer::PlayerViewer(QString file, QWidget* parent) : QGraphicsView(parent
     connect(player, SIGNAL(sigTime(QString)), lblTime, SLOT(setText(QString)));
 
     showFullScreen();
-    //show();
-
-    //player->turnPlay();
-
 
     player->nextFrame();
 
@@ -154,24 +150,19 @@ void PlayerViewer::closeEvent(QCloseEvent*){
     player->turnOff();
     thread->quit();
     thread->wait();
-    player->deleteLater();
+    delete player;
     emit sigClose();
 }
 
 void PlayerViewer::resizeEvent(QResizeEvent*){
-    qDebug()<<"resize0";
     slider->setGeometry(0, height() - 100, width(), 30);
     btnPlay->setGeometry(10, height() - 55, 100, 40);
     btnNextFrame->setGeometry(230, height() - 55, 100, 40);
     btnPreviewFrame->setGeometry(120, height() - 55, 100, 40);
     btnClose->setGeometry(width() - 110, height() - 55, 100, 40);
-    qDebug()<<"resize1";
     btnStream1->setGeometry(400, height() - 55, 100, 40);
-    qDebug()<<"resize2";
     btnStream2->setGeometry(520, height() - 55, 100, 40);
-    qDebug()<<"resize3";
     btnStream3->setGeometry(640, height() - 55, 100, 40);
-    qDebug()<<"resize4";
 }
 
 void PlayerViewer::setSeek(int s){

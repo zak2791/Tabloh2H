@@ -5,6 +5,7 @@
 #include "qprocess.h"
 #include <QWidget>
 #include <QPointer>
+#include <QTimer>
 
 namespace Ui {
 class VideoReplayControl;
@@ -21,11 +22,12 @@ public:
 private:
     Ui::VideoReplayControl *ui;
 
-    QProcess procReadCam1;
-    QProcess procReadCam2;
-    QProcess procReadCam3;
+    QProcess* procReadCam1;
+    QProcess* procReadCam2;
+    QProcess* procReadCam3;
+    QProcess* procVk;
 
-    QProcess procRecord;
+    QProcess* procRecord;
 
     QString urlCam1;
     QString urlCam2;
@@ -44,9 +46,29 @@ private:
     bool streamToVk = "";
     int camToVk = 1;
 
+    QTimer* timerCam1;
+    QTimer* timerCam2;
+    QTimer* timerCam3;
+
+    int countCam1 = 0;
+    int countCam2 = 0;
+    int countCam3 = 0;
+
+    QString widthPipVk;
+    QString heightPipVk;
+    QString transparentPipVk;
+
     QPointer<PlayerViewer> slowMotionPlayer;
+    //void stopRecord(void);
+    void killFfmpegProcess(void);
+    void offStreamVk(void);
+    void getHWcodec(void);
+    QString hwEncoder = "";
+    QString hwDecoder = "";
 
     //RecLabel* reclabel;
+private slots:
+    void onStreamVk(void);
 
 public slots:
     void setWebCam(QString);
@@ -55,11 +77,14 @@ public slots:
     void setCam2(QString);
     void setCam3(QString);
     void startRecord(bool, QString s = "");
-    void stopRecord();
+    void stopRecord(void);
     void turnStreamToVk(bool b){streamToVk = b;}
     void setUrlVk(QString url){urlVk = url;}
     void setKeyVk(QString key){keyVk = key;}
     void setCamToVk(int cam){camToVk = cam;}
+    void setWidthPipVk(QString width){widthPipVk = width;}
+    void setHeightPipVk(QString height){heightPipVk = height;}
+    void setTransparentPipVk(QString transparent){transparentPipVk = transparent;}
 
 signals:
     void sigShowPlayer(void);

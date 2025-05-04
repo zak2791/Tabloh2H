@@ -36,6 +36,7 @@ class Player : public QObject
 
 public:
     explicit Player(QString file = "", QObject *parent = nullptr);
+    ~Player();
     void seek(int);
     void turnOff(void);
     void turnPlay(void);

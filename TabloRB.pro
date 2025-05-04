@@ -37,7 +37,8 @@ HEADERS += \
     sportsman.h \
     togglebutton.h \
     tvscreen.h \
-    videoreplaycontrol.h
+    videoreplaycontrol.h \
+    vklabel.h
 
 SOURCES += \
     JSTools.cpp \
@@ -70,7 +71,8 @@ SOURCES += \
     sportsman.cpp \
     togglebutton.cpp \
     tvscreen.cpp \
-    videoreplaycontrol.cpp
+    videoreplaycontrol.cpp \
+    vklabel.cpp
 
 FORMS += \
     FormSettingsVideoReplay.ui \

@@ -45,6 +45,20 @@
         </widget>
        </item>
        <item>
+        <widget class="QPushButton" name="btn">
+         <property name="text">
+          <string>PushButton</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="VkLabel" name="labelvk">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="RecLabel" name="label">
          <property name="text">
           <string>TextLabel</string>
@@ -148,6 +162,11 @@ QCheckBox{ font-size: 20px}</string>
    <class>RecLabel</class>
    <extends>QLabel</extends>
    <header>reclabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>VkLabel</class>
+   <extends>QLabel</extends>
+   <header>vklabel.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

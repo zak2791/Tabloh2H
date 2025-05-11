@@ -144,6 +144,7 @@ public slots:
 
     void initListNames(void);   //инициализация списков спортсменов
     //void slotExit(void);
+    //void slotRegistration(void);
 
 private slots:
     void setCam(QString);

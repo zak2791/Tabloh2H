@@ -36,6 +36,7 @@ int main(int argc, char** argv){
     mWin->setCentralWidget(pwgt);
     mWin->show();
 
+    //QObject::connect(mWin, &MainWindow::sigRegistration, pwgt, &PCScreen::slotRegistration);
     QObject::connect(mWin, SIGNAL(newFile()), pwgt, SLOT(newListSportsmens()));
     QObject::connect(mWin, SIGNAL(variant(int)), pwgt, SLOT(Variant(int)));
 
@@ -64,7 +65,6 @@ int main(int argc, char** argv){
 
     QJsonDocument doc = QJsonDocument::fromJson(val.toUtf8());
     QJsonObject jObj = doc.object();
-    qDebug()<<jObj;
 
     if (file.open(QFile::ReadOnly)) {
 

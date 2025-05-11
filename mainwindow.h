@@ -4,9 +4,11 @@
 #include <QMainWindow>
 #include <QLabel>
 #include "helpform.h"
+#include "ui_mainwindow.h"
 #include "ui_version.h"
 #include "ui_settingsOBS.h"
 #include <QSettings>
+#include "ui_code.h"
 
 namespace Ui {
 class MainWindow;
@@ -31,6 +33,7 @@ public:
     //QAction* tvSettings;
     QString getFileSportsmens(void);
     Ui::dlgObs uiObs;
+    bool getStatusRegistration(void){return registration->isEnabled();};
 
 private:
     Ui::MainWindow *ui;
@@ -42,11 +45,19 @@ private:
     QString fileSettings;
     HelpForm* hf;
     QAction* winHelp;
+    QAction* registration;
 
     Ui::dlgVersion uiVersion;
     QDialog* dlg;
     QSettings* settings;
-
+    QString serialNumberMac;
+    QString serialNumberBios;
+    int func(int);
+    QLineEdit* leId;
+    QDialog* frmCode;
+    Ui::dlgCode ui_code;
+    QString readCode = "";
+    QString serialNumber = "";
 
 private slots:
     void openFile(void);
@@ -55,12 +66,16 @@ private slots:
     void selectLogo(bool);
     void slotAcceptSettingsObs(void);
     void slotRejectSettingsObs(void);
+    void slotRegistration(void);
+    QString calculateCode(QString);
+    void slotChangeId(bool);
 
 signals:
     void newFile(void);
     void variant(int);  //0-без видео, 1-с видео
     void sigLogo(bool);
     void sigExit(void);
+    //void sigRegistration(void);
 
 };
 

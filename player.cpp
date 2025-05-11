@@ -9,13 +9,6 @@
 Player::Player(QString file, QObject *parent) : QObject(parent){
     videoFile = file;
     currStream = 0;
-    qDebug()<<videoFile;
-    QFile f("player.txt");
-    if (!f.open(QIODevice::Append | QIODevice::Text))
-        return;
-    f.write("create\n");
-    f.flush();
-    f.close();
     bufImage = new  QList<QImage>;
 
 }
@@ -30,8 +23,6 @@ void Player::Play(){
     QFile file("player.txt");
     if (!file.open(QIODevice::Append | QIODevice::Text))
         return;
-    file.write("start\n");
-    file.flush();
 
     process = true;
     int best_stream;
@@ -89,8 +80,6 @@ void Player::Play(){
 
     emit sigCountStreams(video_streams);
 
-    qDebug()<<"video_streams = "<<video_streams<<video_stream_index;
-
     ret = av_find_best_stream(ifmt_ctx, AVMEDIA_TYPE_VIDEO, -1, -1, &dec, 0);
     if (ret < 0)
         goto end;
@@ -109,8 +98,6 @@ void Player::Play(){
         arrDec.append(dec);
     }
 
-    qDebug()<<"arrDec = "<<arrDec;
-
     if (!dec)
         goto end;
 
@@ -124,8 +111,6 @@ void Player::Play(){
             goto end;
         arrCodecCtx.append(pCodecCtx);
     }
-
-    qDebug()<<"arrCodecCtx = "<<arrCodecCtx;
 
     avcodec_parameters_to_context(pCodecCtx, ifmt_ctx->streams[best_stream]->codecpar);
 
@@ -147,49 +132,43 @@ void Player::Play(){
     }
     /////////////////////////////////////////////////////////
 
-    file.write("play\n");
-    file.flush();
 
     AVStream *in_stream;
-    try{
-        in_stream = ifmt_ctx->streams[video_stream_index[currStream]];//best_stream]
-        for(int i = 0; i < video_stream_index.count(); i++){
-            AVStream* in_stream = ifmt_ctx->streams[video_stream_index[i]];
-            arrNumberFrames.append(in_stream->nb_frames);
-            arrDurationMedia.append(in_stream->duration);
-            arrAvgFps.append(in_stream->avg_frame_rate.num / in_stream->avg_frame_rate.den);
-            arrOneFrameDuration.append(arrDurationMedia[i] / arrNumberFrames[i]);
-            arrDurationMediaInSecunds.append(arrNumberFrames[i] / arrAvgFps[i]);
-            qDebug()<<"arrNumberFrames[i] = "<<arrNumberFrames[i]
-                     <<"arrDurationMedia[i] = "<<arrDurationMedia[i]
-                     <<"arrAvgFps[i] = "<<arrAvgFps[i]
-                     <<"arrOneFrameDuration[i] = "<<arrOneFrameDuration[i]
-                     <<"arrDurationMediaInSecunds[i] = "<<arrDurationMediaInSecunds[i];
-        }
-    }
-    catch(...){
-        QMessageBox msgbox;
-        msgbox.setText("Error 1");
-        msgbox.exec();
-        goto end;
-    }
-    try{
-        numberFrames = in_stream->nb_frames;
-        durationMedia = in_stream->duration;
-        avgFps = in_stream->avg_frame_rate.num / in_stream->avg_frame_rate.den;
-        oneFrameDuration = durationMedia / numberFrames;
-        durationMediaInSecunds = numberFrames / avgFps;
-    }
-    catch(...){
-        QMessageBox msgbox;
-        msgbox.setText("Error 2");
-        msgbox.exec();
-        goto end;
+
+    in_stream = ifmt_ctx->streams[video_stream_index[currStream]];//best_stream]
+    for(int i = 0; i < video_stream_index.count(); i++){
+        AVStream* in_stream = ifmt_ctx->streams[video_stream_index[i]];
+        arrNumberFrames.append(in_stream->nb_frames);
+        arrDurationMedia.append(in_stream->duration);
+        if(in_stream->avg_frame_rate.den == 0)
+            goto end;
+        arrAvgFps.append(in_stream->avg_frame_rate.num / in_stream->avg_frame_rate.den);
+        if(arrNumberFrames[i] == 0)
+            goto end;
+        arrOneFrameDuration.append(arrDurationMedia[i] / arrNumberFrames[i]);
+        if(arrAvgFps[i] == 0)
+            goto end;
+        arrDurationMediaInSecunds.append(arrNumberFrames[i] / arrAvgFps[i]);
+        qDebug()<<"arrNumberFrames[i] = "<<arrNumberFrames[i]
+                 <<"arrDurationMedia[i] = "<<arrDurationMedia[i]
+                 <<"arrAvgFps[i] = "<<arrAvgFps[i]
+                 <<"arrOneFrameDuration[i] = "<<arrOneFrameDuration[i]
+                 <<"arrDurationMediaInSecunds[i] = "<<arrDurationMediaInSecunds[i];
     }
 
+
+
+
+    numberFrames = in_stream->nb_frames;
+    durationMedia = in_stream->duration;
+    avgFps = in_stream->avg_frame_rate.num / in_stream->avg_frame_rate.den;
+    oneFrameDuration = durationMedia / numberFrames;
+    durationMediaInSecunds = numberFrames / avgFps;
+
+
+
     emit sigParam(numberFrames, avgFps, durationMediaInSecunds);
-    file.write("process\n");
-    file.flush();
+
     while (process) {
 
         int currentStream = currStream;
@@ -218,7 +197,7 @@ void Player::Play(){
                 QString min = "";
                 QString sec = "";
                 QString msec = "";
-                try{
+
                 int integerPart = (pkt->pts / arrOneFrameDuration.at(currentStream)) * 1.0 / arrAvgFps.at(currentStream);
                 float fractionalPart = (pkt->pts / arrOneFrameDuration.at(currentStream)) * 1.0 / arrAvgFps.at(currentStream) - integerPart;
 
@@ -237,13 +216,8 @@ void Player::Play(){
                         sec = QString::number(integerPart);
                 }
                 msec = QString::number(fractionalPart).remove(3, 10);
-                }
-                catch(...){
-                    QMessageBox msgbox;
-                    msgbox.setText("Error 3");
-                    msgbox.exec();
-                    goto end;
-                }
+
+
                 emit sigTime(min + sec + msec);
                 ret = avcodec_send_packet(arrCodecCtx[currentStream], pkt);
 
@@ -291,13 +265,11 @@ void Player::Play(){
                         emit sigImage(img);
                     }
                 }
-                file.write("video\n");
-                file.flush();
+
             }
         end_preview:
             av_packet_unref(pkt);
-            file.write("seek\n");
-            file.flush();
+
         }   //if seek
     }   //while process
 end:
@@ -307,7 +279,7 @@ end:
     foreach(auto each, arrCodecCtx)
         avcodec_free_context(&each);
     av_freep(&stream_mapping);
-    file.write("close\n");
+
     file.flush();
     file.close();
 }
@@ -382,7 +354,6 @@ void Player::setCamera(int stream)
 QStringList Player::getListWebCams()
 {
     QStringList listWebCam;
-    qDebug()<<"getListWebCams";
 
     const QList<QCameraInfo> cams = QCameraInfo::availableCameras();
     for (const QCameraInfo &cameraInfo : cams){

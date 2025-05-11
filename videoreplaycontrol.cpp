@@ -1,4 +1,5 @@
 #include "videoreplaycontrol.h"
+#include "mainwindow.h"
 #include "qdatetime.h"
 #include "qdebug.h"
 #include "qdir.h"
@@ -72,9 +73,9 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
             return;
         file.write(ba, ba.length());
         file.close();
-        QMessageBox msgbox;
-        msgbox.setText(QString(ba));
-        msgbox.exec();
+        // QMessageBox msgbox;
+        // msgbox.setText(QString(ba));
+        // msgbox.exec();
     });
 
     connect(procReadCam1, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this,
@@ -84,7 +85,6 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
         countCam1 = 0;
         ui->cbCam1->setChecked(false);
         ui->lblCam1->clear();
-        //stopRecord();
         if(camToVk == 1)
             offStreamVk();
     });
@@ -107,9 +107,9 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
             return;
         file.write(ba, ba.length());
         file.close();
-        QMessageBox msgbox;
-        msgbox.setText(QString(ba));
-        msgbox.exec();
+        // QMessageBox msgbox;
+        // msgbox.setText(QString(ba));
+        // msgbox.exec();
     });
     connect(procReadCam2, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, [this](){
         timerCam2->stop();
@@ -138,9 +138,9 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
             return;
         file.write(ba, ba.length());
         file.close();
-        QMessageBox msgbox;
-        msgbox.setText(QString(ba));
-        msgbox.exec();
+        // QMessageBox msgbox;
+        // msgbox.setText(QString(ba));
+        // msgbox.exec();
     });
 
     connect(procReadCam3, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, [this](){
@@ -240,6 +240,9 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
     settings.endGroup();
 
     getHWcodec();
+
+    p = parent;
+
 }
 
 VideoReplayControl::~VideoReplayControl()
@@ -289,19 +292,26 @@ void VideoReplayControl::turnCam1(bool check)
             if(hwDecoder != "")
                 args<<"-c:v"<<hwDecoder;
 
-            args<<"-f"<<"dshow"<<"-rtbufsize"<<"2000M"<<"-framerate"<<fps
-                 <<"-video_size"<<resolution;
+            args<<"-f"<<"dshow"<<"-rtbufsize"<<"2000M"<<"-framerate"<<fps<<"-video_size"<<resolution;
 
-            args<<"-i"<<url;
+            args<<"-i"<<url;    //0
 
             if(streamToVk && camToVk == 1){
-                args<<"-f"<<"gdigrab"<<"-framerate"<<"1"<<"-i"<<"title=TabloOnTv";
-                args<<"-filter_complex"<<"[1]scale=" + widthPipVk + ":" + heightPipVk + ", colorchannelmixer=aa=" + transparentPipVk + " [pip]; "
-                        "[0][pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10[out_vk]; "
-                        "[0:v]scale=100:50, fps=1 [vout]; "
-                        "[out_vk] drawtext=text='DEMO':x=(w / 2-text_w / 2):y=(h / 2-text_h / 2)"
-                        ":fontfile=arial.ttf:fontsize=240:fontcolor=red";
-                args<<"-b:v"<<"4M"<<"-f"<<"flv"<<"udp://127.0.0.1:5004";    //for stream to vk
+                args<<"-f"<<"gdigrab"<<"-framerate"<<"1"<<"-i"<<"title=TabloOnTv";  //1
+                if(static_cast<MainWindow*>(p->parent())->getStatusRegistration()){
+                    args<<"-filter_complex"<<"[1]scale=" + widthPipVk + ":" + heightPipVk + ", colorchannelmixer=aa=" + transparentPipVk + " [pip]; "
+                    "[0][pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10 [out_vk]; [0:v]scale=100:50, fps=1 [vout]; "
+                    "[out_vk] drawtext=text='DEMO':x=(w / 2-text_w / 2):y=(h / 2-text_h / 2):fontfile=arial.ttf:fontsize=240:fontcolor=red " ;
+
+                    args<<"-b:v"<<"4M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";    //for stream to vk
+                }
+                else{
+                    args<<"-filter_complex"<<"[1]scale=" + widthPipVk + ":" + heightPipVk + ", colorchannelmixer=aa=" + transparentPipVk + " [pip]; "
+                    "[0][pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10 [out_vk]; [0:v]scale=100:50, fps=1 [vout] ";
+
+                    args<<"-map"<<"[out_vk]"<<"-b:v"<<"4M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";    //for stream to vk
+                }
+
             }
             else{
                 args<<"-filter_complex"<<"[0:v]scale=100:50, fps=1 [vout]";
@@ -311,13 +321,14 @@ void VideoReplayControl::turnCam1(bool check)
 
             QString codec = hwEncoder == "" ? "mpeg2video" : hwEncoder;
 
-            args<<"-map"<<"0"<<"-b:v"<<"4M"<<"-vcodec"<<codec<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
+            args<<"-map"<<"0"<<"-g"<<"1"<<"-b:v"<<"4M"<<"-vcodec"<<codec<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
+            qDebug()<<args;
 
             procReadCam1->setArguments(args);
             procReadCam1->start();
             procReadCam1->waitForStarted();
             timerCam1->start(1000);
-            qDebug()<<args;
+
             if(camToVk == 1)
                 onStreamVk();
         }
@@ -331,30 +342,35 @@ void VideoReplayControl::turnCam1(bool check)
 
 void VideoReplayControl::turnCam2(bool check)
 {
-    qDebug()<<"turn cam2"<<check;
     if(check){
         if(procReadCam2->state() == QProcess::NotRunning){
             QStringList args;
             args<<"-hide_banner"<<"-loglevel"<<"error";
             if(urlCam2.startsWith("rtsp"))
                args<<"-rtsp_transport"<<"tcp";
-            //args<<"-vsync"<<"vfr";
-            args<<"-i"<<urlCam2;
+            args<<"-i"<<urlCam2;    //0
             if(streamToVk && camToVk == 2){
-                args<<"-f"<<"gdigrab"<<"-framerate"<<"1"<<"-i"<<"title=TabloOnTv";
-                args<<"-filter_complex"<<"[1]scale=" + widthPipVk + ":" + heightPipVk + ", colorchannelmixer=aa=" + transparentPipVk + " [pip]; "
-                        "[0][pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10[out_vk]; "
-                        "[0:v]scale=100:50, fps=1 [vout]; "
-                        "[out_vk] drawtext=text='DEMO':x=(w / 2-text_w / 2):y=(h / 2-text_h / 2)"
-                        ":fontfile=arial.ttf:fontsize=240:fontcolor=red";
-                args<<"-f"<<"flv"<<"udp://127.0.0.1:5004";
+                args<<"-f"<<"gdigrab"<<"-framerate"<<"1"<<"-i"<<"title=TabloOnTv";  //1
+                args<<"-f"<<"dshow"<<"-i"<<"audio=" + urlSound; //2
+                if(static_cast<MainWindow*>(p->parent())->getStatusRegistration()){
+                    args<<"-filter_complex"<<"[1]scale=" + widthPipVk + ":" + heightPipVk + ", colorchannelmixer=aa=" + transparentPipVk + " [pip]; "
+                        "[0][pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10[out_vk]; [0:v]scale=100:50, fps=1 [vout]; "
+                        "[out_vk] drawtext=text='DEMO':x=(w / 2-text_w / 2):y=(h / 2-text_h / 2):fontfile=arial.ttf:fontsize=240:fontcolor=red ";
+
+                    args<<"-b:v"<<"4M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";    //for stream to vk
+                }
+                else{
+                    args<<"-filter_complex"<<"[1]scale=" + widthPipVk + ":" + heightPipVk + ", colorchannelmixer=aa=" + transparentPipVk + " [pip]; "
+                        "[0][pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10[out_vk]; [0:v]scale=100:50, fps=1 [vout]; ";
+
+                    args<<"-map"<<"[out_vk]:v"<<"-map"<<"2:a"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
+                }
             }
             else{
                 args<<"-filter_complex"<<"[0:v]scale=100:50, fps=1 [vout]";
             }
             args<<"-map"<<"[vout]"<<"-vcodec"<<"png"<<"-f"<<"image2pipe"<<"-";
-            args<<"-map"<<"0"<<"-vcodec"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5002";
-            qDebug()<<"args 2 = "<<args;
+            args<<"-map"<<"0"<<"-g"<<"1"<<"-vcodec"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5002";
             procReadCam2->setArguments(args);
             procReadCam2->start();
             timerCam2->start(1000);
@@ -380,23 +396,30 @@ void VideoReplayControl::turnCam3(bool check)
             args<<"-i"<<urlCam3;
             if(streamToVk && camToVk == 3){
                 args<<"-f"<<"gdigrab"<<"-framerate"<<"1"<<"-i"<<"title=TabloOnTv";
-                args<<"-filter_complex"<<"[1]scale=" + widthPipVk + ":" + heightPipVk + ", colorchannelmixer=aa=" + transparentPipVk + " [pip]; "
-                        "[0][pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10[out_vk]; "
-                        "[0:v]scale=100:50, fps=1 [vout]; "
-                        "[out_vk] drawtext=text='DEMO':x=(w / 2-text_w / 2):y=(h / 2-text_h / 2)"
-                        ":fontfile=arial.ttf:fontsize=240:fontcolor=red";
-                args<<"-map"<<"0"<<"-f"<<"flv"<<"udp://127.0.0.1:5004";
+                args<<"-f"<<"dshow"<<"-i"<<"audio=" + urlSound;
+                if(static_cast<MainWindow*>(p->parent())->getStatusRegistration()){
+                    args<<"-filter_complex"<<"[1]scale=" + widthPipVk + ":" + heightPipVk + ", colorchannelmixer=aa=" + transparentPipVk + " [pip]; "
+                        "[0][pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10[out_vk]; [0:v]scale=100:50, fps=1 [vout]; "
+                        "[out_vk] drawtext=text='DEMO':x=(w / 2-text_w / 2):y=(h / 2-text_h / 2):fontfile=arial.ttf:fontsize=240:fontcolor=red ";
+
+                    args<<"-b:v"<<"4M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";    //for stream to vk
+                }
+                else{
+                    args<<"-filter_complex"<<"[1]scale=" + widthPipVk + ":" + heightPipVk + ", colorchannelmixer=aa=" + transparentPipVk + " [pip]; "
+                        "[0][pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10[out_vk]; [0:v]scale=100:50, fps=1 [vout]";
+
+                    args<<"-map"<<"[out_vk]:v"<<"-map"<<"2:a"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
+                };
             }
             else{
                 args<<"-filter_complex"<<"[0:v]scale=100:50, fps=1 [vout]";
             }
             args<<"-map"<<"[vout]"<<"-vcodec"<<"png"<<"-f"<<"image2pipe"<<"-";
-            args<<"-map"<<"0"<<"-vcodec"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5003";
+            args<<"-map"<<"0"<<"-g"<<"1"<<"-vcodec"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5003";
             procReadCam3->setArguments(args);
             procReadCam3->start();
             timerCam3->start(1000);
             procReadCam3->waitForStarted();
-            qDebug()<<args;
 
             if(camToVk == 3)
                 onStreamVk();
@@ -468,11 +491,11 @@ void VideoReplayControl::getHWcodec()
 
 void VideoReplayControl::onStreamVk()
 {
-    qDebug()<<"cam = "<<camToVk;
+    // qDebug()<<"cam = "<<camToVk;
     if(streamToVk && procVk->state() == QProcess::NotRunning){
         QStringList args;
-        args<<"-loglevel"<<"error"<<
-            "-i"<<"udp://127.0.0.1:5004"<<"-vcodec"<<"copy"<<"-f"<<"flv"<<urlVk + keyVk;
+        args<<"-loglevel"<<"debug"<<"-rtbufsize"<<"2000M"<<
+            "-i"<<"udp://127.0.0.1:5004"<<"-f"<<"flv"<<urlVk + keyVk;
         procVk->setArguments(args);
         procVk->start();
     }
@@ -519,15 +542,17 @@ void VideoReplayControl::startRecord(bool b, QString s)
         if(!(stateProc1 || stateProc2 || stateProc3))
             return;
 
-        //args<<"-loglevel"<<"error";
-        //args<<"-hwaccel"<<"auto";
+        args<<"-hide_banner"<<"-loglevel"<<"error";
 
         if(stateProc1)
-            args<<"-i"<<"udp://127.0.0.1:5001";
+            args<<"-rtbufsize"<<"2000M"<<"-probesize"<<"1M"<<"-analyzeduration"<<"100000"<<
+                "-i"<<"udp://127.0.0.1:5001";
         if(stateProc2)
-            args<<"-i"<<"udp://127.0.0.1:5002";
+            args<<"-rtbufsize"<<"2000M"<<"-probesize"<<"1M"<<"-analyzeduration"<<"100000"<<
+                "-i"<<"udp://127.0.0.1:5002";
         if(stateProc3)
-            args<<"-i"<<"udp://127.0.0.1:5003";
+            args<<"-rtbufsize"<<"2000M"<<"-probesize"<<"1M"<<"-analyzeduration"<<"100000"<<
+                "-i"<<"udp://127.0.0.1:5003";
 
         int iCam1 = (stateProc1 ? 1 : 0);
         int iCam2 = (stateProc2 ? 2 : 0);
@@ -539,13 +564,13 @@ void VideoReplayControl::startRecord(bool b, QString s)
             args<<"-vcodec"<<"copy";
             break;
         case 8:
-            args<<"-map"<<"0"<<"-r"<<"30"<<"-map"<<"1:v"<<"-r"<<"30"<<"-c:v:0"<<hwEncoder<<"-c:v:1"<<"copy";
+            args<<"-map"<<"0"<<"-r"<<"30"<<"-map"<<"1:v"<<"-r"<<"30"<<"-c:v:0"<<"copy"<<"-c:v:1"<<"copy";
             break;
         case 3:
-            args<<"-map"<<"0"<<"-map"<<"1:v"<<"-c:v:0"<<hwEncoder<<"-c:v:1"<<"copy";
+            args<<"-map"<<"0"<<"-map"<<"1:v"<<"-c:v:0"<<"copy"<<"-c:v:1"<<"copy";
             break;
         case 10:
-            args<<"-map"<<"0"<<"-map"<<"1:v"<<"-map"<<"2:v"<<"-c:v:0"<<hwEncoder<<"-c:v:1"<<"copy"<<"-c:v:2"<<"copy";
+            args<<"-map"<<"0"<<"-map"<<"1:v"<<"-map"<<"2:v"<<"-c:v:0"<<"copy"<<"-c:v:1"<<"copy"<<"-c:v:2"<<"copy";
             break;
         case 2:
             args<<"-vcodec"<<"copy";
@@ -561,7 +586,6 @@ void VideoReplayControl::startRecord(bool b, QString s)
         args<<"-b"<<"10M";
 
         args<<file + ".mp4";
-        qDebug()<<"args = "<<args;
         ui->btnPlay->setEnabled(false);
         ui->btnPlayLast->setEnabled(false);
         procRecord->setArguments(args);
@@ -574,12 +598,10 @@ void VideoReplayControl::stopRecord()
     ui->btnPlay->setEnabled(true);
     ui->btnPlayLast->setEnabled(true);
     if(procRecord->state() == QProcess::Running){
-        qDebug()<<"stopRecord0";
         procRecord->write("q");
         procRecord->waitForBytesWritten();
         procRecord->closeWriteChannel();
-        qDebug()<<"procRecord->waitForFinished(1000) = "<<procRecord->waitForFinished(1000);
+        procRecord->waitForFinished(1000);
         procRecord->close();
-        qDebug()<<"stopRecord1";
     }
 }

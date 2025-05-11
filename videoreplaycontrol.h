@@ -6,6 +6,7 @@
 #include <QWidget>
 #include <QPointer>
 #include <QTimer>
+#include <QDebug>
 
 namespace Ui {
 class VideoReplayControl;
@@ -66,6 +67,8 @@ private:
     QString hwEncoder = "";
     QString hwDecoder = "";
 
+    QWidget* p;
+
     //RecLabel* reclabel;
 private slots:
     void onStreamVk(void);
@@ -85,6 +88,7 @@ public slots:
     void setWidthPipVk(QString width){widthPipVk = width;}
     void setHeightPipVk(QString height){heightPipVk = height;}
     void setTransparentPipVk(QString transparent){transparentPipVk = transparent;}
+
 
 signals:
     void sigShowPlayer(void);

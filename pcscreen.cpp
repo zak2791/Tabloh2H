@@ -829,6 +829,7 @@ void PCScreen::initListNames()
     connect(choosingNames, SIGNAL(startRecordObs()), this, SLOT(slotStartRecordOBS()));
 }
 
+
 // void PCScreen::slotExit()
 // {
 //     //myProcess->kill();

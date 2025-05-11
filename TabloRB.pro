@@ -78,6 +78,7 @@ FORMS += \
     FormSettingsVideoReplay.ui \
     FormView.ui \
     addform.ui \
+    code.ui \
     frmTime.ui \
     helpform.ui \
     mainwindow.ui \

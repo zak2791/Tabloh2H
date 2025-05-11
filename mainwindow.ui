@@ -49,6 +49,7 @@
     </property>
     <addaction name="winHelp"/>
     <addaction name="about"/>
+    <addaction name="registration"/>
    </widget>
    <widget class="QMenu" name="mSbros">
     <property name="title">
@@ -161,6 +162,11 @@
   <action name="videoSettings">
    <property name="text">
     <string>Настройки видеоповторов</string>
+   </property>
+  </action>
+  <action name="registration">
+   <property name="text">
+    <string>Регистрация</string>
    </property>
   </action>
  </widget>

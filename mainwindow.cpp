@@ -8,7 +8,6 @@
 #include <QDebug>
 #include <QFileDialog>
 
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -118,6 +117,80 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(dlg, SIGNAL(accepted()), this, SLOT(slotAcceptSettingsObs()));
     connect(dlg, SIGNAL(rejected()), this, SLOT(slotRejectSettingsObs()));
 
+    registration = ui->registration;
+    connect(registration, &QAction::triggered, this, &MainWindow::slotRegistration);
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    QProcess process(this);
+    process.setProgram("getmac");
+    process.start();
+    process.waitForFinished (); // Ожидание завершения процесса запуска, тайм-аут 30 с, затем блокировка контакта
+    QRegularExpression re("^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})|([0-9a-fA-F]{4}\\.[0-9a-fA-F]{4}\\.[0-9a-fA-F]{4})$");
+    serialNumberMac = "";
+    while(1){
+        char buf[1024];
+        qint64 lineLength = process.readLine(buf, sizeof(buf));
+        if (lineLength == -1) {
+            break;
+        }
+        QString s = QString::fromUtf8(buf);
+        QList<QString> list = s.split(QRegExp("\\s+"));
+        foreach(auto each, list){
+            QRegularExpressionMatch match = re.match(each);
+            if (match.hasMatch()) {
+                serialNumberMac = each;
+                break;
+            }
+        }
+    }
+
+    process.setProgram("wmic");
+    process.setArguments({"bios", "get", "serialnumber"});
+    process.start();
+    process.waitForFinished (); // Ожидание завершения процесса запуска, тайм-аут 30 с, затем блокировка контакта
+    QString s;
+    while(true){
+        s = QString::fromLocal8Bit(process.readLine());
+        if(s.contains("SerialNumber"))
+            break;
+    }
+
+    serialNumberBios = QString::fromLocal8Bit(process.readLine()).simplified();
+    qDebug()<<serialNumberBios;
+    QSettings settings("settings.ini", QSettings::IniFormat);
+    settings.beginGroup("code");
+    QString codeBios(settings.value("codeBios", "").toString());
+    QString codeMacAddr(settings.value("codeMacAddr", "").toString());
+    settings.endGroup();
+
+    if(codeBios != ""){
+        readCode = codeBios;
+        serialNumber = serialNumberBios;
+    }
+    else if(codeMacAddr != ""){
+        readCode = codeMacAddr;
+        serialNumber = serialNumberMac;
+    }
+
+    frmCode = new QDialog;
+
+    ui_code.setupUi(frmCode);
+    ui_code.leID->setText(serialNumberBios);
+    frmCode->setModal(true);
+    leId = ui_code.leID;
+    connect(ui_code.rbBios, SIGNAL(toggled(bool)), this, SLOT(slotChangeId(bool)));
+
+    QString code = calculateCode(serialNumber);
+
+    //connect(centralWidget();
+
+    if(code == readCode && code != ""){
+        registration->setEnabled(false);
+        //emit sigRegistration();
+        //static_cast<PCScreen*>(centralWidget())->slotRegistration();
+
+    }
+
 }
 
 MainWindow::~MainWindow()
@@ -140,6 +213,88 @@ void MainWindow::slotRejectSettingsObs(){
     uiObs.IpAddress->setText(settings->value("ipAddr", "localhost").toString());
     uiObs.Password->setText(settings->value("password", "").toString());
     settings->endGroup();
+}
+
+void MainWindow::slotChangeId(bool b)
+{
+    if(b)
+        leId->setText(serialNumberBios);
+    else
+        leId->setText(serialNumberMac);
+}
+
+int MainWindow::func(int num){
+    int dig = 0;
+    QString str_num = QString::number(num);
+    for(int i = 0; i < str_num.length(); i++){
+        dig +=  QString(str_num.at(i)).toInt();
+    }
+    if(dig > 9){
+        return func(dig);
+    }else{
+        return dig;
+    }
+}
+
+QString MainWindow::calculateCode(QString serial)
+{
+    int lenString = serial.length();
+    int myListStart[lenString];
+    int myListEnd[lenString];
+    for(int i=0; i < lenString; i++)
+        myListStart[i] = serial.at(i).toLatin1();
+
+    QString code = "";
+    for(int i=0; i < lenString; i++){
+        if(i < lenString - 1){
+            myListEnd[i] = myListStart[i] + myListStart[i + 1];
+        }else{
+            myListEnd[i] = myListStart[i] + myListStart[0];
+        }
+        code = code + QString::number(func(myListEnd[i]));
+    }
+    return code;
+}
+
+void MainWindow::slotRegistration()
+{
+    qDebug()<<"slotReg";
+
+    QString code;// = calculateCode(serialNumber);
+    while(1){
+        int ret = frmCode->exec();
+        if(ret == 1){
+            if(ui_code.rbBios->isChecked())
+                code = calculateCode(serialNumberBios);
+            else
+                code = calculateCode(serialNumberMac);
+
+            if(ui_code.leCode->text() == code){
+                settings->beginGroup("code");
+                if(ui_code.rbBios->isChecked()) {
+                    settings->setValue("codeBios", code);
+                    settings->setValue("codeMacAddr", "");
+                }
+                else {
+                    settings->setValue("codeBios", "");
+                    settings->setValue("codeMacAddr", code);
+                }
+                settings->endGroup();
+                //tvScreen->removeLogo();
+                registration->setEnabled(false);
+                //emit sigRegistration();
+                //static_cast<PCScreen*>(centralWidget())->slotRegistration();
+                break;
+            }else{
+                //frmCode->leCode->setText("");
+                //break;
+            }
+        }else{
+            //delete frmCode;
+            //tvScreen->removeLogo();
+            break;
+        }
+    }
 }
 
 void MainWindow::Variant(){

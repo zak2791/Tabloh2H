@@ -921,7 +921,7 @@ void PCScreen::StartRecord(bool b){
     //qDebug()<<fam_red->text() + "-" + fam_blue->text();
     QString redFam = fam_red->getText().split(" ").count() > 1 ? fam_red->getText().split(" ").at(0) : fam_red->getText();
     QString blueFam = fam_blue->getText().split(" ").count() > 1 ? fam_blue->getText().split(" ").at(0) : fam_blue->getText();
-    videoControl->startRecord(b, redFam + "-" + blueFam);
+    videoControl->startDelayedRecord(b, redFam + "-" + blueFam);
     // if(!b){                          //если таймер остановился
     //     btnStopRecord->setEnabled(true);
     //     return;

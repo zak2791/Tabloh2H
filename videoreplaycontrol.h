@@ -28,7 +28,10 @@ private:
     QProcess* procReadCam3;
     QProcess* procVk;
 
+    QProcess* procRead;
     QProcess* procRecord;
+
+    //QProcess* procRecord;
 
     QString urlCam1;
     QString urlCam2;
@@ -38,9 +41,9 @@ private:
     QString fps;
     QString resolution;
 
-    void turnCam1(bool);
-    void turnCam2(bool);
-    void turnCam3(bool);
+    void turnCam1(void);
+    void turnCam2(void);
+    void turnCam3(void);
 
     QString urlVk = "";
     QString keyVk = "";
@@ -67,6 +70,15 @@ private:
     QString hwEncoder = "";
     QString hwDecoder = "";
 
+    // void turnOnCam1(void);
+    // void turnOnCam2(void);
+    // void turnOnCam3(void);
+
+    void startReadCams(void);
+    bool stopReadCams(void);
+
+    void startRecord(QString);
+
     QWidget* p;
 
     //RecLabel* reclabel;
@@ -79,7 +91,8 @@ public slots:
     void setSound(QString);
     void setCam2(QString);
     void setCam3(QString);
-    void startRecord(bool, QString s = "");
+
+    void startDelayedRecord(bool, QString s = "");
     void stopRecord(void);
     void turnStreamToVk(bool b){streamToVk = b;}
     void setUrlVk(QString url){urlVk = url;}

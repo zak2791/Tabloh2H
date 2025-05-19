@@ -41,9 +41,9 @@ private:
     QString fps;
     QString resolution;
 
-    void turnCam1(void);
-    void turnCam2(void);
-    void turnCam3(void);
+    // void turnCam1(void);
+    // void turnCam2(void);
+    // void turnCam3(void);
 
     QString urlVk = "";
     QString keyVk = "";
@@ -63,7 +63,6 @@ private:
     QString transparentPipVk;
 
     QPointer<PlayerViewer> slowMotionPlayer;
-    //void stopRecord(void);
     void killFfmpegProcess(void);
     void offStreamVk(void);
     void getHWcodec(void);
@@ -75,9 +74,8 @@ private:
     // void turnOnCam3(void);
 
     void startReadCams(void);
-    bool stopReadCams(void);
+    void stopReadCams(void);
 
-    void startRecord(QString);
 
     QWidget* p;
 
@@ -92,7 +90,7 @@ public slots:
     void setCam2(QString);
     void setCam3(QString);
 
-    void startDelayedRecord(bool, QString s = "");
+    void startRecord(bool, QString s = "");
     void stopRecord(void);
     void turnStreamToVk(bool b){streamToVk = b;}
     void setUrlVk(QString url){urlVk = url;}

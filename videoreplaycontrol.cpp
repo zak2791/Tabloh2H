@@ -25,30 +25,30 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
         killFfmpegProcess();
     });
 
-    // timerCam1 = new QTimer(this);
-    // connect(timerCam1, &QTimer::timeout, this, [this](){
-    //     if(countCam1 < 11)
-    //         countCam1 += 1;
-    //     if(countCam1 == 10)
-    //         ui->lblCam1->clear();
-    // });
+    timerCam1 = new QTimer(this);
+    connect(timerCam1, &QTimer::timeout, this, [this](){
+        if(countCam1 < 11)
+            countCam1 += 1;
+        if(countCam1 == 10)
+            ui->lblCam1->clear();
+    });
 
-    // timerCam2 = new QTimer(this);
-    // connect(timerCam2, &QTimer::timeout, this, [this](){
-    //     if(countCam2 < 11)
-    //         countCam2 += 1;
-    //     if(countCam2 == 10)
-    //         ui->lblCam2->clear();
-    // });
+    timerCam2 = new QTimer(this);
+    connect(timerCam2, &QTimer::timeout, this, [this](){
+        if(countCam2 < 11)
+            countCam2 += 1;
+        if(countCam2 == 10)
+            ui->lblCam2->clear();
+    });
 
-    // timerCam3 = new QTimer(this);
-    // connect(timerCam3, &QTimer::timeout, this, [this](){
-    //     qDebug()<<"countCam3 = "<<countCam3;
-    //     if(countCam3 < 11)
-    //         countCam3 += 1;
-    //     if(countCam3 == 10)
-    //         ui->lblCam3->clear();
-    // });
+    timerCam3 = new QTimer(this);
+    connect(timerCam3, &QTimer::timeout, this, [this](){
+        qDebug()<<"countCam3 = "<<countCam3;
+        if(countCam3 < 11)
+            countCam3 += 1;
+        if(countCam3 == 10)
+            ui->lblCam3->clear();
+    });
 
     QStringList args;
 
@@ -62,7 +62,7 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
     connect(procRead, &QProcess::readyReadStandardError, this, [this](){
         QByteArray ba = procRead->readAllStandardError();
         QMessageBox box;
-        qDebug()<<ba;
+        qDebug()<<"err read = "<<ba;
 
         if(QString(ba).contains(urlCam2)){
             ui->cbCam2->setChecked(false);
@@ -111,7 +111,7 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
         if (!image.loadFromData(ba, "PNG"))
             qDebug()<<"Not loaded";
         ui->lblCam1->setPixmap(QPixmap::fromImage(image));
-        //countCam1 = 0;
+        countCam1 = 0;
     });
 
     connect(procReadCam1, &QProcess::readyReadStandardError, this, [this](){
@@ -176,7 +176,6 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
         if (!image.loadFromData(ba, "PNG"))
             qDebug()<<"Not loaded";
         ui->lblCam3->setPixmap(QPixmap::fromImage(image));
-        qDebug()<<"procReadCam3";
         countCam3 = 0;
     });
 
@@ -200,8 +199,10 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
 
     procRecord = new QProcess(this);
     procRecord->setProgram("ffmpeg");
+    //procRecord->open();
     connect(procRecord, &QProcess::readyReadStandardError, this, [this](){
         QByteArray ba = procRecord->readAllStandardError();
+        qDebug()<<"err rec ="<<ba;
         QFile file("record.txt");
         if (!file.open(QIODevice::Append | QIODevice::Text))
             return;
@@ -243,11 +244,13 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
 
     connect(procRecord, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this,
             [=](int exitCode, QProcess::ExitStatus exitStatus){
-                qDebug()<<"exitCode = "<<exitCode<<"exitStatus = "<<exitStatus;
+                qDebug()<<"exitCodeRec = "<<exitCode<<"exitStatus = "<<exitStatus;
                 ui->label->setStatusRec(false);
-                QTimer::singleShot(1000, this, [this](){startReadCams();});
+                //QTimer::singleShot(1000, this, [this](){startReadCams();});
             });
     connect(procRecord, &QProcess::started, this, [=](){ui->label->setStatusRec(true);});
+
+    //procRead->setStandardOutputProcess(procRecord);
 
     procVk = new QProcess(this);
     procVk->setProgram("ffmpeg");
@@ -323,69 +326,44 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
     p = parent;
 
     procReadCam1->start();
-    //timerCam1->start(1000);
+    timerCam1->start(500);
     procReadCam2->start();
-    //timerCam2->start(1000);
+    timerCam2->start(500);
     procReadCam3->start();
-    //timerCam3->start(1000);
+    timerCam3->start(500);
 }
 
 VideoReplayControl::~VideoReplayControl()
 {
-    qDebug()<<"~VideoReplayControl()";
-    // if(procRecord->state() == QProcess::Running){
-    //     procRecord->write("q");
-    //     procRecord->waitForBytesWritten();
-    //     procRecord->closeWriteChannel();
-    //     procRecord->waitForFinished();
-    // }
-    // if(procReadCam1->state() == QProcess::Running){
-    //     procReadCam1->write("q");
-    //     procReadCam1->waitForBytesWritten();
-    //     procReadCam1->closeWriteChannel();
-    //     procReadCam1->waitForFinished();
-    // }
-    // if(procReadCam2->state() == QProcess::Running){
-    //     procReadCam2->write("q");
-    //     procReadCam2->waitForBytesWritten();
-    //     procReadCam2->closeWriteChannel();
-    //     procReadCam2->waitForFinished();
-    // }
-    // if(procReadCam3->state() == QProcess::Running){
-    //     procReadCam3->write("q");
-    //     procReadCam3->waitForBytesWritten();
-    //     procReadCam3->closeWriteChannel();
-    //     procReadCam3->waitForFinished();
-    // }
 
     killFfmpegProcess();
 
     delete ui;
 }
 
-void VideoReplayControl::turnCam1()
-{
-    if(procReadCam1->state() == QProcess::NotRunning){
-        procReadCam1->start();
-        timerCam1->start(1000);
-    }
-}
+// void VideoReplayControl::turnCam1()
+// {
+//     if(procReadCam1->state() == QProcess::NotRunning){
+//         procReadCam1->start();
+//         timerCam1->start(1000);
+//     }
+// }
 
-void VideoReplayControl::turnCam2()
-{
-    if(procReadCam2->state() == QProcess::NotRunning){
-        procReadCam2->start();
-        timerCam2->start(1000);
-    }
-}
+// void VideoReplayControl::turnCam2()
+// {
+//     if(procReadCam2->state() == QProcess::NotRunning){
+//         procReadCam2->start();
+//         timerCam2->start(1000);
+//     }
+// }
 
-void VideoReplayControl::turnCam3()
-{
-    if(procReadCam3->state() == QProcess::NotRunning){
-        procReadCam3->start();
-        timerCam3->start(1000);
-    }
-}
+// void VideoReplayControl::turnCam3()
+// {
+//     if(procReadCam3->state() == QProcess::NotRunning){
+//         procReadCam3->start();
+//         timerCam3->start(1000);
+//     }
+// }
 
 void VideoReplayControl::killFfmpegProcess()
 {
@@ -446,13 +424,15 @@ void VideoReplayControl::getHWcodec()
 void VideoReplayControl::startReadCams()
 {
     if(procRead->state() == QProcess::Running)
-        bool result = stopReadCams();
-
-    QThread::msleep(500);
+        stopReadCams();
 
     int isCam1 = ui->cbCam1->isChecked() ? 1 : 0;
     int isCam2 = ui->cbCam2->isChecked() ? 2 : 0;
     int isCam3 = ui->cbCam3->isChecked() ? 4 : 0;
+
+    QStringList argsInput1;
+    QStringList argsInput2;
+    QStringList argsInput3;
 
     int turnOnCams = isCam1 + isCam2 + isCam3;
     if(turnOnCams == 0)
@@ -460,98 +440,112 @@ void VideoReplayControl::startReadCams()
 
     QString codec = hwEncoder == "" ? "mpeg2video" : hwEncoder;
     QStringList args;
-    args<<"-hide_banner"<<"-loglevel"<<"error";
-
     QString url = "video=" + urlCam1;
     if(urlSound != "")
         url += ":audio=" + urlSound;
 
+    if(hwDecoder != "")
+        argsInput1<<"-c:v"<<hwDecoder;
+    argsInput1<<"-f"<<"dshow"<<"-rtbufsize"<<"2000M"<<"-framerate"<<fps<<"-video_size"<<resolution
+              <<"-i"<<url;
+
+    argsInput2<<"-rtbufsize"<<"2000M";
+    if(urlCam2.startsWith("rtsp"))
+        argsInput2<<"-rtsp_transport"<<"tcp"<<"-stimeout"<<"10000";
+    argsInput2<<"-i"<<urlCam2;
+
+    argsInput3<<"-rtbufsize"<<"2000M";
+    if(urlCam3.startsWith("rtsp"))
+        argsInput3<<"-rtsp_transport"<<"tcp"<<"-stimeout"<<"10000";
+    argsInput3<<"-i"<<urlCam3;
+
+    args<<"-hide_banner"<<"-loglevel"<<"error";
+
     switch(turnOnCams){
     case 1:             //1
-        if(hwDecoder != "")
-            args<<"-c:v"<<hwDecoder;
-        args<<"-f"<<"dshow"<<"-rtbufsize"<<"2000M"<<"-framerate"<<fps<<"-video_size"<<resolution;
-        args<<"-i"<<url<<"-b:v"<<"1M"<<"-vcodec"<<codec;
+        args += argsInput1;
+        args<<"-map"<<"0"<<"-vcodec"<<codec<<"-b:v"<<"5M"<<"-g"<<"1"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5000";
+        args<<"-map"<<"0:v"<<"-vcodec"<<codec<<"-b:v"<<"1M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
         if(streamToVk && camToVk == 1)
-            args<<"-map"<<"0"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001"<<"-map"<<"0"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
-        else
-            args<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
+            args<<"-map"<<"0"<<"-vcodec"<<codec<<"-b"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
         break;
     case 2:             //2
-        if(urlCam2.startsWith("rtsp"))
-            args<<"-rtsp_transport"<<"tcp"<<"-stimeout"<<"10000";
-        args<<"-i"<<urlCam2<<"-vcodec"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5002";
+        args += argsInput2;
+        args<<"-map"<<"0"<<"-vcodec"<<"copy"<<"-g"<<"1"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5000";
+        args<<"-map"<<"0:v"<<"-vcodec"<<"copy"<<"-b:v"<<"1M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5002";
+        if(streamToVk && camToVk == 2)
+            args<<"-map"<<"0"<<"-vcodec"<<"copy"<<"-b"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
         break;
-    case 4:             //3
-        if(urlCam3.startsWith("rtsp"))
-            args<<"-rtsp_transport"<<"tcp"<<"-stimeout"<<"10000";
-        args<<"-i"<<urlCam3<<"-vcodec"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5003";
+    case 4:             //3   
+        args += argsInput3;
+        args<<"-map"<<"0"<<"-vcodec"<<"copy"<<"-g"<<"1"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5000";
+        args<<"-map"<<"0:v"<<"-vcodec"<<"copy"<<"-b:v"<<"1M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5003";
+        if(streamToVk && camToVk == 3)
+            args<<"-map"<<"0"<<"-vcodec"<<"copy"<<"-b"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
         break;
-
     case 3:             //1 & 2
-        if(hwDecoder != "")
-            args<<"-c:v"<<hwDecoder;
-        args<<"-f"<<"dshow"<<"-rtbufsize"<<"2000M"<<"-framerate"<<fps<<"-video_size"<<resolution;
-        args<<"-i"<<url;
-        if(urlCam2.startsWith("rtsp"))
-            args<<"-rtsp_transport"<<"tcp"<<"-stimeout"<<"10000";
-        args<<"-i"<<urlCam2;
-        args<<"-map"<<"0"<<"-b:v"<<"1M"<<"-vcodec"<<codec<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
-        args<<"-map"<<"1"<<"-vcodec"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5002";
+        args += argsInput1;
+        args += argsInput2;
+        args<<"-map"<<"0"<<"-b"<<"5M";
+        args<<"-map"<<"1";
+        args<<"-g"<<"1"<<"-c:v:0"<<codec<<"-c:v:1"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5000";
+        args<<"-map"<<"0:v"<<"-vcodec"<<codec<<"-b:v"<<"1M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
+        args<<"-map"<<"1:v"<<"-vcodec"<<"copy"<<"-b:v"<<"1M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5002";
+        if(streamToVk && camToVk == 1)
+            args<<"-map"<<"0"<<"-vcodec"<<codec<<"-b"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
+        else if(streamToVk && camToVk == 2)
+            args<<"-map"<<"1"<<"-vcodec"<<"copy"<<"-b"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
         break;
-
     case 5:             //1 & 3
-        if(hwDecoder != "")
-            args<<"-c:v"<<hwDecoder;
-        args<<"-f"<<"dshow"<<"-rtbufsize"<<"2000M"<<"-framerate"<<fps<<"-video_size"<<resolution;
-        args<<"-i"<<url;
-        if(urlCam3.startsWith("rtsp"))
-            args<<"-rtsp_transport"<<"tcp"<<"-stimeout"<<"10000";
-        args<<"-i"<<urlCam3;
-        args<<"-map"<<"0"<<"-b:v"<<"1M"<<"-vcodec"<<codec<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
-        args<<"-map"<<"1"<<"-vcodec"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5003";
-        if(streamToVk){
-            if(camToVk == 1)
-                args<<"-map"<<"0"<<"-vcodec"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
-            if(camToVk == 3)
-                args<<"-map"<<"1"<<"-vcodec"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
-            if(camToVk == 1 || camToVk == 3)
-                turnStreamToVk(true);
-        }
+        args += argsInput1;
+        args += argsInput3;
+        args<<"-map"<<"0"<<"-b"<<"5M";
+        args<<"-map"<<"1";
+        args<<"-g"<<"1"<<"-c:v:0"<<codec<<"-c:v:1"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5000";
+        args<<"-map"<<"0:v"<<"-vcodec"<<codec<<"-b:v"<<"1M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
+        args<<"-map"<<"1:v"<<"-vcodec"<<"copy"<<"-b:v"<<"1M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5003";
+        if(streamToVk && camToVk == 1)
+            args<<"-map"<<"0"<<"-vcodec"<<codec<<"-b"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
+        else if(streamToVk && camToVk == 2)
+            args<<"-map"<<"1"<<"-vcodec"<<"copy"<<"-b"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
         break;
-
     case 6:             //2 & 3
-        if(urlCam2.startsWith("rtsp"))
-            args<<"-rtsp_transport"<<"tcp";
-        args<<"-i"<<urlCam2;
-        if(urlCam3.startsWith("rtsp"))
-            args<<"-rtsp_transport"<<"tcp"<<"-stimeout"<<"10000";
-        args<<"-i"<<urlCam3;
-        args<<"-map"<<"0"<<"-vcodec"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5002";
-        args<<"-map"<<"1"<<"-vcodec"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5003";
+        args += argsInput2;
+        args += argsInput3;
+        args<<"-map"<<"0";
+        args<<"-map"<<"1";
+        args<<"-g"<<"1"<<"-c:v:0"<<"copy"<<"-c:v:1"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5000";
+        args<<"-map"<<"0:v"<<"-vcodec"<<"copy"<<"-b:v"<<"1M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5002";
+        args<<"-map"<<"1:v"<<"-vcodec"<<"copy"<<"-b:v"<<"1M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5003";
+        if(streamToVk && camToVk == 1)
+            args<<"-map"<<"0"<<"-vcodec"<<"copy"<<"-b"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
+        else if(streamToVk && camToVk == 2)
+            args<<"-map"<<"1"<<"-vcodec"<<"copy"<<"-b"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
         break;
-
     case 7:             //1 & 2 & 3
-        if(hwDecoder != "")
-            args<<"-c:v"<<hwDecoder;
-        args<<"-f"<<"dshow"<<"-rtbufsize"<<"2000M"<<"-framerate"<<fps<<"-video_size"<<resolution;
-        args<<"-i"<<url;
-        if(urlCam2.startsWith("rtsp"))
-            args<<"-rtsp_transport"<<"tcp"<<"-stimeout"<<"10000";
-        args<<"-i"<<urlCam2;
-        if(urlCam3.startsWith("rtsp"))
-            args<<"-rtsp_transport"<<"tcp"<<"-stimeout"<<"10000";
-        args<<"-i"<<urlCam3;
-        args<<"-map"<<"0"<<"-b:v"<<"1M"<<"-vcodec"<<codec<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
-        args<<"-map"<<"1"<<"-vcodec"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5002";
-        args<<"-map"<<"2"<<"-vcodec"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5003";
+        args += argsInput1;
+        args += argsInput2;
+        args += argsInput3;
+        args<<"-map"<<"0"<<"-b"<<"5M";
+        args<<"-map"<<"1";
+        args<<"-map"<<"2";
+        args<<"-g"<<"1"<<"-c:v:0"<<codec<<"-c:v:1"<<"copy"<<"-c:v:2"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5000";
+        args<<"-map"<<"0:v"<<"-vcodec"<<codec<<"-b:v"<<"1M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
+        args<<"-map"<<"1:v"<<"-vcodec"<<"copy"<<"-b:v"<<"1M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5002";
+        args<<"-map"<<"1:v"<<"-vcodec"<<"copy"<<"-b:v"<<"1M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5003";
+        if(streamToVk && camToVk == 1)
+            args<<"-map"<<"0"<<"-vcodec"<<codec<<"-b"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
+        else if(streamToVk && camToVk == 2)
+            args<<"-map"<<"1"<<"-vcodec"<<"copy"<<"-b"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
+        else if(streamToVk && camToVk == 3)
+            args<<"-map"<<"2"<<"-vcodec"<<"copy"<<"-b"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
         break;
     }
 
     qDebug()<<args;
     procRead->setArguments(args);
     procRead->start();
-    onStreamVk();
+    //onStreamVk();
     // if(isCam1 > 0)
     //     turnCam1();
     // if(isCam2 > 0)
@@ -560,14 +554,13 @@ void VideoReplayControl::startReadCams()
     //     turnCam3();
 }
 
-bool VideoReplayControl::stopReadCams()
+void VideoReplayControl::stopReadCams()
 {
     qDebug()<<"finished";
     procRead->write("q");
     procRead->closeWriteChannel();
     procRead->waitForFinished();
     qDebug()<<"procRead->state() = "<<procRead->state();
-    return true;
 }
 
 void VideoReplayControl::onStreamVk()
@@ -670,143 +663,22 @@ void VideoReplayControl::setCam3(QString cam)
     urlCam3 = cam;
 }
 
-/////////////////////////////////////////////////////
-/// \brief VideoReplayControl::startDelayedRecord ///
-/// Задержка нужна для переподключения SRT        ///
-/// потока со смартфона                           ///
-/////////////////////////////////////////////////////
-void VideoReplayControl::startDelayedRecord(bool b, QString s)
+void VideoReplayControl::startRecord(bool b, QString s)
 {
     ui->btnPlay->setEnabled(!b);
     ui->btnPlayLast->setEnabled(!b);
-    if(procRead->state() == QProcess::Running){
-        bool result = stopReadCams();
-        QTimer::singleShot(1000, this, [s, this](){
-            startRecord(s);
-        });
-    }
 
-}
-
-void VideoReplayControl::startRecord(QString s)
-{
-
-    // if(procRead->state() == QProcess::Running)
-    //     bool result = stopReadCams();
-
-    // QThread::msleep(500);
-
-    //if(procRead->state() == QProcess::Running)
-    //    bool result = stopReadCams();
-
-    int isCam1 = ui->cbCam1->isChecked() ? 1 : 0;
-    int isCam2 = ui->cbCam2->isChecked() ? 2 : 0;
-    int isCam3 = ui->cbCam3->isChecked() ? 4 : 0;
-
-    int turnOnCams = isCam1 + isCam2 + isCam3;
-    if(turnOnCams == 0)
+    if(procRecord->state() == QProcess::Starting || procRecord->state() == QProcess::Running)
         return;
 
     QString file = "videos/" + s + "_" + QTime::currentTime().toString("hh:mm:ss");
     file.replace(":", "_");
 
-    QString codec = hwEncoder == "" ? "mpeg2video" : hwEncoder;
     QStringList args;
-    args<<"-hide_banner"<<"-loglevel"<<"error";
-
-    QString url = "video=" + urlCam1;
-    if(urlSound != "")
-        url += ":audio=" + urlSound;
-
-    switch(turnOnCams){
-    case 1:             //1
-        if(hwDecoder != "")
-            args<<"-c:v"<<hwDecoder;
-        args<<"-f"<<"dshow"<<"-rtbufsize"<<"2000M"<<"-framerate"<<fps<<"-video_size"<<resolution;
-        args<<"-i"<<url;
-        args<<"-map"<<"0"<<"-b"<<"5M"<<"-c:v"<<codec<<file + ".mp4";
-        args<<"-map"<<"0"<<"-b"<<"500K"<<"-c:v"<<codec;
-        if(streamToVk && camToVk == 1)
-            args<<"-map"<<"0"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001"<<"-map"<<"0"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
-        else
-            args<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
-        break;
-        break;
-    case 2:             //2
-        if(urlCam2.startsWith("rtsp"))
-            args<<"-rtsp_transport"<<"tcp";
-        args<<"-i"<<urlCam2;
-        args<<"-map"<<"0"<<"-b"<<"5M"<<"-c:v"<<"copy"<<file + ".mp4";
-        args<<"-map"<<"0"<<"-b"<<"500K"<<"-c:v"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5002";
-        break;
-    case 4:             //3
-        if(urlCam3.startsWith("rtsp"))
-            args<<"-rtsp_transport"<<"tcp"<<"-stimeout"<<"10000";
-        args<<"-i"<<urlCam3;
-        args<<"-map"<<"0"<<"-b"<<"5M"<<"-c:v"<<"copy"<<file + ".mp4";
-        args<<"-map"<<"0"<<"-b"<<"500K"<<"-c:v"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5003";
-        break;
-
-    case 3:             //1 & 2
-        if(hwDecoder != "")
-            args<<"-c:v"<<hwDecoder;
-        args<<"-f"<<"dshow"<<"-rtbufsize"<<"2000M"<<"-framerate"<<fps<<"-video_size"<<resolution;
-        args<<"-i"<<url;
-        if(urlCam2.startsWith("rtsp"))
-            args<<"-rtsp_transport"<<"tcp"<<"-stimeout"<<"10000";
-        args<<"-i"<<urlCam2;
-        args<<"-map"<<"0"<<"-map"<<"1"<<"-c:v:0"<<codec<<"-c:v:1"<<"copy"<<"-b"<<"8M"<< file + ".mp4";
-        args<<"-map"<<"0"<<"-b:v"<<"1M"<<"-vcodec"<<codec<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
-        args<<"-map"<<"1"<<"-vcodec"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5002";
-        break;
-
-    case 5:             //1 & 3
-        if(hwDecoder != "")
-            args<<"-c:v"<<hwDecoder;
-        args<<"-f"<<"dshow"<<"-rtbufsize"<<"2000M"<<"-framerate"<<fps<<"-video_size"<<resolution;
-        args<<"-i"<<url;
-        if(urlCam3.startsWith("rtsp"))
-            args<<"-rtsp_transport"<<"tcp"<<"-stimeout"<<"10000";
-        args<<"-i"<<urlCam3;
-        args<<"-map"<<"0"<<"-map"<<"1"<<"-c:v:0"<<codec<<"-c:v:1"<<"copy"<<"-b"<<"8M"<< file + ".mp4";
-        args<<"-map"<<"0"<<"-b"<<"500K"<<"-c:v"<<codec<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
-        args<<"-map"<<"1"<<"-b"<<"500K"<<"-c:v"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5003";
-        break;
-
-    case 6:             //2 & 3
-        if(urlCam2.startsWith("rtsp"))
-            args<<"-rtsp_transport"<<"tcp";
-        args<<"-i"<<urlCam2;
-        if(urlCam3.startsWith("rtsp"))
-            args<<"-rtsp_transport"<<"tcp"<<"-stimeout"<<"10000";
-        args<<"-i"<<urlCam3;
-        args<<"-map"<<"0"<<"-map"<<"1"<<"-c:v:0"<<"copy"<<"-c:v:1"<<"copy"<<"-b"<<"8M"<< file + ".mp4";
-        args<<"-map"<<"0"<<"-vcodec"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5002";
-        args<<"-map"<<"1"<<"-vcodec"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5003";
-        break;
-
-    case 7:             //1 & 2 & 3
-        if(hwDecoder != "")
-            args<<"-c:v"<<hwDecoder;
-        args<<"-f"<<"dshow"<<"-rtbufsize"<<"2000M"<<"-framerate"<<fps<<"-video_size"<<resolution;
-        args<<"-i"<<url;
-        if(urlCam2.startsWith("rtsp"))
-            args<<"-rtsp_transport"<<"tcp"<<"-stimeout"<<"10000";
-        args<<"-i"<<urlCam2;
-        if(urlCam3.startsWith("rtsp"))
-            args<<"-rtsp_transport"<<"tcp"<<"-stimeout"<<"10000";
-        args<<"-i"<<urlCam3;
-        args<<"-map"<<"0"<<"-map"<<"1"<<"-map"<<"2"<<"-c:v:0"<<codec<<"-c:v:1"<<"copy"<<"-c:v:2"<<"copy"<<"-b"<<"10M"<< file + ".mp4";
-        args<<"-map"<<"0"<<"-b:v"<<"1M"<<"-vcodec"<<codec<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
-        args<<"-map"<<"1"<<"-vcodec"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5002";
-        args<<"-map"<<"2"<<"-vcodec"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5003";
-        break;
-    }
-
+    args<<"-hide_banner"<<"-loglevel"<<"error"<<"-i"<<"udp://127.0.0.1:5000"<<"-map"<<"0"<<"-codec"<<"copy"<<file + ".mp4";
     qDebug()<<args;
     procRecord->setArguments(args);
     procRecord->start();
-    onStreamVk();
 }
 
 void VideoReplayControl::stopRecord()
@@ -817,8 +689,5 @@ void VideoReplayControl::stopRecord()
         procRecord->write("q");
         procRecord->waitForBytesWritten();
         procRecord->closeWriteChannel();
-        //procRecord->waitForFinished();
-        //procRecord->close();
     }
-    //startReadCams();
 }

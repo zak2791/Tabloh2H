@@ -277,6 +277,7 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
 
     connect(ui->btnPlay, &QPushButton::clicked, this, [this](){
         stopRecord();
+        QThread::sleep(500);
         QString file = QFileDialog::getOpenFileName(nullptr, "Выбор видео", "videos");
         if(file == "" || !file.endsWith(".mp4"))
             return;

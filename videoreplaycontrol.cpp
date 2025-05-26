@@ -6,7 +6,6 @@
 #include "qmessagebox.h"
 #include "qsettings.h"
 #include <QFile>
-#include "qtextcodec.h"
 #include "ui_videoreplaycontrol.h"
 #include <QFileDialog>
 
@@ -17,12 +16,39 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
     ui->setupUi(this);
     setAutoFillBackground(true);
 
-    connect(ui->cbCam1, &QCheckBox::clicked, this, &VideoReplayControl::startReadCams);
-    connect(ui->cbCam2, &QCheckBox::clicked, this, &VideoReplayControl::startReadCams);
-    connect(ui->cbCam3, &QCheckBox::clicked, this, &VideoReplayControl::startReadCams);
+    killFfmpegProcess();
 
-    connect(ui->btn, &QPushButton::clicked, this, [this](){
-        killFfmpegProcess();
+    btnPlay = new SvgButton(":/images/play_choice_enable.svg", ":/images/play_choice_disable.svg", this);
+    btnPlay->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    ui->hLayoutButtons->insertWidget(0, btnPlay);
+    btnPlay->setMinimumHeight(50);
+
+    btnPlayLast = new SvgButton(":/images/play_last_enable.svg", ":/images/play_last_disable.svg", this);
+    btnPlayLast->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    ui->hLayoutButtons->insertWidget(1, btnPlayLast);
+
+    player = new PlayerPc;
+
+    connect(ui->cbCam1, &QCheckBox::clicked, this, [this](){
+        if(procRead->state() == QProcess::Running)
+            stopReadCams();
+        else
+            startReadCams();
+
+    });
+    connect(ui->cbCam2, &QCheckBox::clicked, this, [this](){
+        if(procRead->state() == QProcess::Running)
+            stopReadCams();
+        else
+            startReadCams();
+
+    });
+    connect(ui->cbCam3, &QCheckBox::clicked, this, [this](){
+        if(procRead->state() == QProcess::Running)
+            stopReadCams();
+        else
+            startReadCams();
+
     });
 
     timerCam1 = new QTimer(this);
@@ -43,12 +69,23 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
 
     timerCam3 = new QTimer(this);
     connect(timerCam3, &QTimer::timeout, this, [this](){
-        qDebug()<<"countCam3 = "<<countCam3;
         if(countCam3 < 11)
             countCam3 += 1;
         if(countCam3 == 10)
             ui->lblCam3->clear();
     });
+
+    // timerVk = new QTimer(this);
+    // connect(timerVk, &QTimer::timeout, this, [this](){
+    //     qDebug()<<"countVk = "<<countVk;
+    //     if(countVk < 11)
+    //         countVk += 1;
+    //     if(countVk == 10){
+    //         //ui->labelvk->setStatusVk(false);
+    //         procVk->write("q");
+    //         procVk->close();
+    //     }
+    // });
 
     QStringList args;
 
@@ -57,8 +94,19 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
     connect(procRead, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this,
             [=](int exitCode, QProcess::ExitStatus exitStatus){
                 qDebug()<<"exitCodeRead = "<<exitCode<<"exitStatusRead = "<<exitStatus;
-
+                startReadCams();
             });
+    connect(procRead, &QProcess::started, this, [this](){
+        if(streamToVk && procVk->state() == QProcess::NotRunning){
+            if(camToVk == 1 && ui->cbCam1->isChecked())
+                procProbeAudio->start();
+            if(camToVk == 2 && ui->cbCam2->isChecked())
+                procProbeAudio->start();
+            if(camToVk == 3 && ui->cbCam3->isChecked())
+                procProbeAudio->start();
+            //timerVk->start(500);
+        }
+    });
     connect(procRead, &QProcess::readyReadStandardError, this, [this](){
         QByteArray ba = procRead->readAllStandardError();
         QMessageBox box;
@@ -123,17 +171,6 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
         file.close();
     });
 
-    // connect(procReadCam1, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this,
-    //         [=](int exitCode, QProcess::ExitStatus exitStatus){
-    //             qDebug()<<"exitCodeCam1 = "<<exitCode<<"exitStatus = "<<exitStatus;
-    //             timerCam1->stop();
-    //             countCam1 = 0;
-    //             //ui->cbCam1->setChecked(false);
-    //             ui->lblCam1->clear();
-    //             if(camToVk == 1)
-    //                 offStreamVk();
-    //         });
-
     procReadCam2 = new QProcess(this);
     procReadCam2->setProgram("ffmpeg");
     args.clear();
@@ -156,14 +193,6 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
         file.write(ba, ba.length());
         file.close();
     });
-    // connect(procReadCam2, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, [this](){
-    //     timerCam2->stop();
-    //     countCam2 = 0;
-    //     //ui->cbCam2->setChecked(false);
-    //     ui->lblCam2->clear();
-    //     //if(camToVk == 2)
-    //     //    offStreamVk();
-    // });
 
     procReadCam3 = new QProcess(this);
     procReadCam3->setProgram("ffmpeg");
@@ -188,18 +217,8 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
         file.close();
     });
 
-    // connect(procReadCam3, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, [this](){
-    //     timerCam3->stop();
-    //     countCam3 = 0;
-    //     //ui->cbCam3->setChecked(false);
-    //     ui->lblCam3->clear();
-    //     if(camToVk == 3)
-    //         offStreamVk();
-    // });
-
     procRecord = new QProcess(this);
     procRecord->setProgram("ffmpeg");
-    //procRecord->open();
     connect(procRecord, &QProcess::readyReadStandardError, this, [this](){
         QByteArray ba = procRecord->readAllStandardError();
         qDebug()<<"err rec ="<<ba;
@@ -246,22 +265,35 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
             [=](int exitCode, QProcess::ExitStatus exitStatus){
                 qDebug()<<"exitCodeRec = "<<exitCode<<"exitStatus = "<<exitStatus;
                 ui->label->setStatusRec(false);
-                //QTimer::singleShot(1000, this, [this](){startReadCams();});
+                ui->cbCam1->setEnabled(true);
+                ui->cbCam2->setEnabled(true);
+                ui->cbCam3->setEnabled(true);
             });
-    connect(procRecord, &QProcess::started, this, [=](){ui->label->setStatusRec(true);});
-
-    //procRead->setStandardOutputProcess(procRecord);
+    connect(procRecord, &QProcess::started, this, [=](){
+        ui->cbCam1->setEnabled(false);
+        ui->cbCam2->setEnabled(false);
+        ui->cbCam3->setEnabled(false);
+        ui->label->setStatusRec(true);
+    });
 
     procVk = new QProcess(this);
     procVk->setProgram("ffmpeg");
     connect(procVk, &QProcess::readyReadStandardError, this, [this](){
         QByteArray s = procVk->readAllStandardError();
-        QFile file("vk.txt");
-        if (!file.open(QIODevice::Append | QIODevice::Text))
-            return;
-        file.write(s, s.length());
-        file.close();
-        //procVk->write("q");
+        qDebug()<<"err vk =  "<<s;
+        if(s.contains("I/O error"))
+            procVk->write("q");
+        // QString sFrame = QString(s);
+        // if(sFrame.startsWith("frame= ")){
+        //     int countFrame = sFrame.split(" ").at(1).toInt();
+        //     if(countFrame != 0){
+        //         if(countFrame > lastCountFrame){
+        //             lastCountFrame = countFrame;
+        //             countVk = 0;
+        //             qDebug()<<"countFrame = "<<countFrame;
+        //         }
+        //     }
+        // }
     });
     connect(procVk, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this,
             [=](int exitCode, QProcess::ExitStatus exitStatus){
@@ -269,51 +301,49 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
                 ui->labelvk->setStatusVk(false);
             });
     connect(procVk, &QProcess::started, this, [=](){
+        lastCountFrame = 0;
         ui->labelvk->setStatusVk(true);
     });
     // connect(procVk, &QProcess::bytesWritten, this, [=](int bytes){
     //     qDebug()<<"bytes written = "<<bytes;
     // });
 
-    connect(ui->btnPlay, &QPushButton::clicked, this, [this](){
+    connect(btnPlay, &QPushButton::clicked, this, [this](){
         stopRecord();
-        QThread::sleep(500);
         QString file = QFileDialog::getOpenFileName(nullptr, "Выбор видео", "videos");
         if(file == "" || !file.endsWith(".mp4"))
             return;
-        slowMotionPlayer = new PlayerViewer(file);
-        ui->btnPlay->setEnabled(false);
-        ui->btnPlayLast->setEnabled(false);
-        connect(slowMotionPlayer, &PlayerViewer::sigClose, this, [=](){slowMotionPlayer->deleteLater();});
-        //connect(slowMotionPlayer, &PlayerViewer::sigClose, this, &VideoReplayControl::sigHidePlayer);
-        connect(slowMotionPlayer, &PlayerViewer::sigImage, this, &VideoReplayControl::sigImage);
-        connect(slowMotionPlayer, &PlayerViewer::sigClose, this, [this](){
-            emit sigHidePlayer();
-            ui->btnPlay->setEnabled(true);
-            ui->btnPlayLast->setEnabled(true);
-        });
+
+        player->setMediaUrl(file);
+        player->showFullScreen();
+        btnPlay->setEnabled(false);
+        btnPlayLast->setEnabled(false);
+        emit sigShowPlayer();
+
     });
 
-    connect(ui->btnPlayLast, &QPushButton::clicked, this, [this](){
+    connect(btnPlayLast, &QPushButton::clicked, this, [this](){
         stopRecord();
         QDir dir("videos");
         QStringList dirList = dir.entryList(QDir::Files, QDir::Time);
         if(dirList.count() == 0)
             return;
-        slowMotionPlayer = new PlayerViewer("videos/" + dirList.at(0));
-        ui->btnPlay->setEnabled(false);
-        ui->btnPlayLast->setEnabled(false);
-        connect(slowMotionPlayer, &PlayerViewer::sigClose, this, [=](){slowMotionPlayer->deleteLater();});
-        //connect(slowMotionPlayer, &PlayerViewer::sigClose, this, &VideoReplayControl::sigHidePlayer);
-        connect(slowMotionPlayer, &PlayerViewer::sigImage, this, &VideoReplayControl::sigImage);
-        connect(slowMotionPlayer, &PlayerViewer::sigClose, this, [this](){
-            emit sigHidePlayer();
-            ui->btnPlay->setEnabled(true);
-            ui->btnPlayLast->setEnabled(true);
-        });
-
+        QThread::sleep(1);
+        //QTimer::singleShot(1000, this, [&dirList, this](){
+        player->setMediaUrl("videos/" + dirList.at(0));
+        player->show();
         emit sigShowPlayer();
+        //});
 
+        btnPlay->setEnabled(false);
+        btnPlayLast->setEnabled(false);
+
+    });
+
+    connect(player, &PlayerPc::sigClose, this, [this](){
+        emit sigHidePlayer();
+        btnPlay->setEnabled(true);
+        btnPlayLast->setEnabled(true);
     });
 
     QSettings settings("settings.ini", QSettings::IniFormat);
@@ -332,39 +362,42 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
     timerCam2->start(500);
     procReadCam3->start();
     timerCam3->start(500);
+
+    procProbeAudio = new QProcess(this);
+    procProbeAudio->setProgram("ffprobe");
+    procProbeAudio->setArguments({"-hide_banner", "-i", "udp://127.0.0.1:5004"});
+    procProbeAudio->setReadChannel(QProcess::StandardError);
+    connect(procProbeAudio,  QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, [this](){
+        isAudio = false;
+        qDebug()<<"procProbeAudio";
+        while(true){
+            QByteArray ba = procProbeAudio->readLine();
+            qDebug()<<"ba = "<<ba;
+            //if(ba.contains("error"))
+            //    break;
+            if(ba.size() == 0)
+                break;
+            if(ba.contains("Stream") && ba.contains("Audio"))
+                isAudio = true;
+
+        }
+        onStreamVk();
+    });
+
 }
 
 VideoReplayControl::~VideoReplayControl()
 {
 
     killFfmpegProcess();
-
+    delete player;
     delete ui;
 }
 
-// void VideoReplayControl::turnCam1()
-// {
-//     if(procReadCam1->state() == QProcess::NotRunning){
-//         procReadCam1->start();
-//         timerCam1->start(1000);
-//     }
-// }
-
-// void VideoReplayControl::turnCam2()
-// {
-//     if(procReadCam2->state() == QProcess::NotRunning){
-//         procReadCam2->start();
-//         timerCam2->start(1000);
-//     }
-// }
-
-// void VideoReplayControl::turnCam3()
-// {
-//     if(procReadCam3->state() == QProcess::NotRunning){
-//         procReadCam3->start();
-//         timerCam3->start(1000);
-//     }
-// }
+void VideoReplayControl::setPlayerTv(QMediaPlayer* p)
+{
+    player->setTvPlayer(p);
+}
 
 void VideoReplayControl::killFfmpegProcess()
 {
@@ -386,7 +419,7 @@ void VideoReplayControl::offStreamVk()
         procVk->waitForBytesWritten();
         procVk->closeWriteChannel();
         //procVk->waitForFinished();
-        procVk->close();
+        //procVk->close();
     }
 }
 
@@ -394,38 +427,41 @@ void VideoReplayControl::getHWcodec()
 {
     QProcess proc(this);
     proc.setProgram("ffmpeg");
-    QStringList args;
-    args<<"-y"<<"-loglevel"<<"error"<<"-f"<<"lavfi"<<"-i"<<"nullsrc"<<"-frames:v"<<"1"<<"-c:v"<<"h264_nvenc"<<"test.mp4";
-    proc.setArguments(args);
-    proc.start();
-    proc.waitForFinished();
-    QByteArray ba = proc.readAllStandardError();
-    if(ba.count() == 0){
-        proc.close();
-        hwEncoder = "h264_nvenc";
-        hwDecoder = "mjpeg_cuvid";
-        return;
+    QStringList decoders = {"mjpeg_cuvid", "mjpeg_amf", "mjpeg_qsv"};
+    QStringList encoders = {"h264_nvenc", "h264_amf", "h264_qsv"};
+    foreach(auto each, encoders){
+        QStringList args({"-y", "-loglevel", "error", "-f", "lavfi", "-i", "nullsrc", "-frames:v", "1", "-c:v", each, "test.mp4"});
+        proc.setArguments(args);
+        proc.start();
+        proc.waitForFinished();
+        QByteArray ba = proc.readAllStandardError();
+        if(ba.size() == 0){
+            hwEncoder = each;
+            qDebug()<<"hwEncoder = "<<hwEncoder;
+            break;
+        }
     }
-    args.clear();
-    args<<"-y"<<"-loglevel"<<"error"<<"-f"<<"lavfi"<<"-i"<<"nullsrc"<<"-frames:v"<<"1"<<"-c:v"<<"h264_qsv"<<"test.mp4";
-    proc.setArguments(args);
-    proc.start();
-    proc.waitForFinished();
-    ba = proc.readAllStandardError();
-    if(ba.count() == 0){
-        proc.close();
-        hwEncoder = "h264_qsv";
-        hwDecoder = "mjpeg_qsv";
-        return;
+    foreach(auto each, decoders){
+        QStringList args({"-y", "-loglevel", "error", "-c:v", each, "-f", "mjpeg", "-i", "test.jpg", "-frames:v", "1", "test.mp4"});
+        proc.setArguments(args);
+        proc.start();
+        proc.waitForFinished();
+        QByteArray ba = proc.readAllStandardError();
+        if(ba.size() == 0){
+            hwDecoder = each;
+            qDebug()<<"hwDecoder = "<<hwDecoder;
+            break;
+        }
     }
+
     proc.close();
     return;
 }
 
 void VideoReplayControl::startReadCams()
 {
-    if(procRead->state() == QProcess::Running)
-        stopReadCams();
+    //if(procRead->state() == QProcess::Running)
+    //    stopReadCams();
 
     int isCam1 = ui->cbCam1->isChecked() ? 1 : 0;
     int isCam2 = ui->cbCam2->isChecked() ? 2 : 0;
@@ -448,7 +484,7 @@ void VideoReplayControl::startReadCams()
     if(hwDecoder != "")
         argsInput1<<"-c:v"<<hwDecoder;
     argsInput1<<"-f"<<"dshow"<<"-rtbufsize"<<"2000M"<<"-framerate"<<fps<<"-video_size"<<resolution
-              <<"-i"<<url;
+               <<"-i"<<url;
 
     argsInput2<<"-rtbufsize"<<"2000M";
     if(urlCam2.startsWith("rtsp"))
@@ -468,7 +504,7 @@ void VideoReplayControl::startReadCams()
         args<<"-map"<<"0"<<"-vcodec"<<codec<<"-b:v"<<"5M"<<"-g"<<"1"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5000";
         args<<"-map"<<"0:v"<<"-vcodec"<<codec<<"-b:v"<<"1M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
         if(streamToVk && camToVk == 1)
-            args<<"-map"<<"0"<<"-vcodec"<<codec<<"-b"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
+            args<<"-map"<<"0"<<"-g"<<"1"<<"-vcodec"<<codec<<"-b"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
         break;
     case 2:             //2
         args += argsInput2;
@@ -493,7 +529,7 @@ void VideoReplayControl::startReadCams()
         args<<"-map"<<"0:v"<<"-vcodec"<<codec<<"-b:v"<<"1M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
         args<<"-map"<<"1:v"<<"-vcodec"<<"copy"<<"-b:v"<<"1M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5002";
         if(streamToVk && camToVk == 1)
-            args<<"-map"<<"0"<<"-vcodec"<<codec<<"-b"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
+            args<<"-map"<<"0"<<"-g"<<"1"<<"-vcodec"<<codec<<"-b"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
         else if(streamToVk && camToVk == 2)
             args<<"-map"<<"1"<<"-vcodec"<<"copy"<<"-b"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
         break;
@@ -506,8 +542,8 @@ void VideoReplayControl::startReadCams()
         args<<"-map"<<"0:v"<<"-vcodec"<<codec<<"-b:v"<<"1M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
         args<<"-map"<<"1:v"<<"-vcodec"<<"copy"<<"-b:v"<<"1M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5003";
         if(streamToVk && camToVk == 1)
-            args<<"-map"<<"0"<<"-vcodec"<<codec<<"-b"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
-        else if(streamToVk && camToVk == 2)
+            args<<"-map"<<"0"<<"-g"<<"1"<<"-vcodec"<<codec<<"-b"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
+        else if(streamToVk && camToVk == 3)
             args<<"-map"<<"1"<<"-vcodec"<<"copy"<<"-b"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
         break;
     case 6:             //2 & 3
@@ -518,9 +554,9 @@ void VideoReplayControl::startReadCams()
         args<<"-g"<<"1"<<"-c:v:0"<<"copy"<<"-c:v:1"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5000";
         args<<"-map"<<"0:v"<<"-vcodec"<<"copy"<<"-b:v"<<"1M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5002";
         args<<"-map"<<"1:v"<<"-vcodec"<<"copy"<<"-b:v"<<"1M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5003";
-        if(streamToVk && camToVk == 1)
+        if(streamToVk && camToVk == 2)
             args<<"-map"<<"0"<<"-vcodec"<<"copy"<<"-b"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
-        else if(streamToVk && camToVk == 2)
+        else if(streamToVk && camToVk == 3)
             args<<"-map"<<"1"<<"-vcodec"<<"copy"<<"-b"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
         break;
     case 7:             //1 & 2 & 3
@@ -533,9 +569,9 @@ void VideoReplayControl::startReadCams()
         args<<"-g"<<"1"<<"-c:v:0"<<codec<<"-c:v:1"<<"copy"<<"-c:v:2"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5000";
         args<<"-map"<<"0:v"<<"-vcodec"<<codec<<"-b:v"<<"1M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
         args<<"-map"<<"1:v"<<"-vcodec"<<"copy"<<"-b:v"<<"1M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5002";
-        args<<"-map"<<"1:v"<<"-vcodec"<<"copy"<<"-b:v"<<"1M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5003";
+        args<<"-map"<<"2:v"<<"-vcodec"<<"copy"<<"-b:v"<<"1M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5003";
         if(streamToVk && camToVk == 1)
-            args<<"-map"<<"0"<<"-vcodec"<<codec<<"-b"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
+            args<<"-map"<<"0"<<"-g"<<"1"<<"-vcodec"<<codec<<"-b"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
         else if(streamToVk && camToVk == 2)
             args<<"-map"<<"1"<<"-vcodec"<<"copy"<<"-b"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
         else if(streamToVk && camToVk == 3)
@@ -546,13 +582,8 @@ void VideoReplayControl::startReadCams()
     qDebug()<<args;
     procRead->setArguments(args);
     procRead->start();
-    //onStreamVk();
-    // if(isCam1 > 0)
-    //     turnCam1();
-    // if(isCam2 > 0)
-    //     turnCam2();
-    // if(isCam3 > 0)
-    //     turnCam3();
+
+
 }
 
 void VideoReplayControl::stopReadCams()
@@ -560,82 +591,60 @@ void VideoReplayControl::stopReadCams()
     qDebug()<<"finished";
     procRead->write("q");
     procRead->closeWriteChannel();
-    procRead->waitForFinished();
+    //procRead->waitForFinished();
     qDebug()<<"procRead->state() = "<<procRead->state();
 }
 
 void VideoReplayControl::onStreamVk()
 {
-    if(procVk->state() == QProcess::Running)
-        return;
-    QProcess procProbe(this);
-    procProbe.setProgram("ffprobe");
-    procProbe.setArguments({"-hide_banner", "-probesize", "100K", "-analyzeduration", "2000000", "-i", "udp://127.0.0.1:5004"});
-    procProbe.setReadChannel(QProcess::StandardError);
-    procProbe.start();
-    procProbe.waitForReadyRead();
+    // if(procVk->state() == QProcess::Running)
+    //     return;
 
-    bool isAudio = false;
-    bool err = false;
-    while(true){
-        QByteArray ba = procProbe.readLine();
-        qDebug()<<ba;
-        if(ba.contains("error")){
-            err = true;
-            break;
-        }
-        if(ba.count() == 0)
-            break;
-        if(ba.contains("Stream") && ba.contains("Audio"))
-            isAudio = true;
-    }
-    procProbe.waitForFinished();
-    procProbe.close();
-    if(err) return;
-    if(streamToVk && procVk->state() == QProcess::NotRunning){
+    //if(streamToVk && procVk->state() == QProcess::NotRunning){
         QStringList args;
-        args<<"-loglevel"<<"debug";//<<"-rtbufsize"<<"2000M";
-        args<<"-probesize"<<"100K"<<"-analyzeduration"<<"100000"<<"-i"<<"udp://127.0.0.1:5004"; //0
+        args<<"-hide_banner"<<"-rtbufsize"<<"2000M"<<"-timeout"<<"1000";
+        args<<"-i"<<"udp://127.0.0.1:5004"; //0
         args<<"-f"<<"gdigrab"<<"-framerate"<<"1"<<"-i"<<"title=TabloOnTv"; //1
+        qDebug()<<"isAudio = "<<isAudio;
         if(!isAudio)
             args<<"-f"<<"dshow"<<"-i"<<"audio=" + urlSound; //2
 
         if(static_cast<MainWindow*>(p->parent())->getStatusRegistration()){
             if(isAudio){
                 args<<"-filter_complex"<<"[1]scale=" + widthPipVk + ":" + heightPipVk + ", colorchannelmixer=aa=" + transparentPipVk + " [pip]; "
-                    "[pip] setpts=PTS-STARTPTS+2/TB [sync_pip]; "
-                    "[0][sinc_pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10 [out_vk]; "
-                    "[out_vk] drawtext=text='DEMO':x=(w / 2-text_w / 2):y=(h / 2-text_h / 2):fontfile=arial.ttf:fontsize=240:fontcolor=red ";
+                                                                                                                      "[pip] setpts=PTS-STARTPTS+7/TB [sync_pip]; "
+                                                                                                                      "[0][sync_pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10 [out_vk]; "
+                                                                                                                      "[out_vk] drawtext=text='DEMO':x=(w / 2-text_w / 2):y=(h / 2-text_h / 2):fontfile=arial.ttf:fontsize=240:fontcolor=red ";
             }
             else{
                 args<<"-filter_complex"<<"[1]scale=" + widthPipVk + ":" + heightPipVk + ", colorchannelmixer=aa=" + transparentPipVk + " [pip]; "
-                "[pip] setpts=PTS-STARTPTS+2/TB [sync_pip]; "
-                "[0][sinc_pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10 [out_vk]; "
-                "[2] asetpts=PTS+5/TB [out_audio]; "
-                "[out_vk] drawtext=text='DEMO':x=(w / 2-text_w / 2):y=(h / 2-text_h / 2):fontfile=arial.ttf:fontsize=240:fontcolor=red [out]";
+                                                                                                                      "[pip] setpts=PTS-STARTPTS+7/TB [sync_pip]; "
+                                                                                                                      "[0][sync_pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10 [out_vk]; "
+                                                                                                                      "[2] asetpts=PTS+5/TB [out_audio]; "
+                                                                                                                      "[out_vk] drawtext=text='DEMO':x=(w / 2-text_w / 2):y=(h / 2-text_h / 2):fontfile=arial.ttf:fontsize=240:fontcolor=red [out]";
             }
         }
         else{
             if(isAudio){
                 args<<"-filter_complex"<<"[1]scale=" + widthPipVk + ":" + heightPipVk + ", colorchannelmixer=aa=" + transparentPipVk + " [pip]; "
-                    "[pip] setpts=PTS-STARTPTS+2/TB [sync_pip]; "
-                    "[0][sync_pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10 ";
+                                                                                                                      "[pip] setpts=PTS-STARTPTS+7/TB [sync_pip]; "
+                                                                                                                      "[0][sync_pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10 ";
             }
             else{
                 args<<"-filter_complex"<<"[1]scale=" + widthPipVk + ":" + heightPipVk + ", colorchannelmixer=aa=" + transparentPipVk + " [pip]; "
-                    "[pip] setpts=PTS-STARTPTS+2/TB [sync_pip]; "
-                    "[2] asetpts=PTS+5/TB [out_audio]; "
-                    "[0][sync_pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10 [out]";
+                                                                                                                      "[pip] setpts=PTS-STARTPTS+7/TB [sync_pip]; "
+                                                                                                                      "[2] asetpts=PTS+5/TB [out_audio]; "
+                                                                                                                      "[0][sync_pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10 [out]";
             }
         }
         if(isAudio)
-            args<<"-f"<<"flv"<<urlVk + keyVk;
+            args<<"-b"<<"3M"<<"-f"<<"flv"<<"-flvflags"<<"no_duration_filesize"<<urlVk + keyVk;
         else
-            args<<"-map"<<"[out]"<<"-map"<<"[out_audio]"<<"-f"<<"flv"<<urlVk + keyVk;
+            args<<"-map"<<"[out]"<<"-map"<<"[out_audio]"<<"-b"<<"3M"<<"-f"<<"flv"<<"-flvflags"<<"no_duration_filesize"<<urlVk + keyVk;
         qDebug()<<"vk = "<<args;
         procVk->setArguments(args);
         procVk->start();
-    }
+    //}
 }
 
 void VideoReplayControl::setWebCam(QString cam)
@@ -666,8 +675,11 @@ void VideoReplayControl::setCam3(QString cam)
 
 void VideoReplayControl::startRecord(bool b, QString s)
 {
-    ui->btnPlay->setEnabled(!b);
-    ui->btnPlayLast->setEnabled(!b);
+    btnPlay->setEnabled(!b);
+    btnPlayLast->setEnabled(!b);
+
+    if(procRead->state() == QProcess::NotRunning)
+        return;
 
     if(procRecord->state() == QProcess::Starting || procRecord->state() == QProcess::Running)
         return;
@@ -676,7 +688,7 @@ void VideoReplayControl::startRecord(bool b, QString s)
     file.replace(":", "_");
 
     QStringList args;
-    args<<"-hide_banner"<<"-loglevel"<<"error"<<"-i"<<"udp://127.0.0.1:5000"<<"-map"<<"0"<<"-codec"<<"copy"<<file + ".mp4";
+    args<<"-hide_banner"<<"-loglevel"<<"error"<<"-i"<<"udp://127.0.0.1:5000"<<"-map"<<"0"<<"-c:v"<<"copy"<<"-c:a"<<"aac"<<file + ".mp4";
     qDebug()<<args;
     procRecord->setArguments(args);
     procRecord->start();
@@ -684,11 +696,12 @@ void VideoReplayControl::startRecord(bool b, QString s)
 
 void VideoReplayControl::stopRecord()
 {
-    ui->btnPlay->setEnabled(true);
-    ui->btnPlayLast->setEnabled(true);
+    btnPlay->setEnabled(true);
+    btnPlayLast->setEnabled(true);
     if(procRecord->state() == QProcess::Running){
         procRecord->write("q");
         procRecord->waitForBytesWritten();
         procRecord->closeWriteChannel();
+        procRecord->waitForFinished();
     }
 }

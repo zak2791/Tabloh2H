@@ -1,6 +1,8 @@
 #include "player.h"
 #include "libavdevice/avdevice.h"
-#include "qcamerainfo.h"
+
+#include <QCamera>
+#include <QMediaDevices>
 #include "qmessagebox.h"
 #include <QDebug>
 #include <QThread>
@@ -354,14 +356,24 @@ void Player::setCamera(int stream)
 QStringList Player::getListWebCams()
 {
     QStringList listWebCam;
-
-    const QList<QCameraInfo> cams = QCameraInfo::availableCameras();
-    for (const QCameraInfo &cameraInfo : cams){
-        QList<QList<int>> list = getListParamWebCam(cameraInfo.description());
-        if(list.count() != 0)
-            listWebCam<<cameraInfo.description();
+    const QList<QCameraDevice> cameras = QMediaDevices::videoInputs();
+    for (const QCameraDevice &cameraDevice : cameras) {
+        if(cameras.count() != 0){
+            //listWebCam<<cameraDevice.description();
+            QList<QList<int>> list = getListParamWebCam(cameraDevice.description());
+            if(list.count() != 0)
+                listWebCam<<cameraDevice.description();
+        }
     }
 
+    // const QList<QCameraInfo> cams = QCameraInfo::availableCameras();
+    // for (const QCameraInfo &cameraInfo : cams){
+    //     QList<QList<int>> list = getListParamWebCam(cameraInfo.description());
+    //     if(list.count() != 0)
+    //         listWebCam<<cameraInfo.description();
+    // }
+
+    //qDebug()<<listWebCam<<cameras;
     return listWebCam;
 }
 
@@ -387,26 +399,46 @@ QList<QList<int>> Player::getListParamWebCam(QString text)
 {
     QList<QList<int>> lParam;
     QCamera* cam;
-    const QList<QCameraInfo> cams = QCameraInfo::availableCameras();
-    for (const QCameraInfo &cameraInfo : cams) {
-        if (cameraInfo.description() == text){
-            cam = new QCamera(cameraInfo);
+
+    const QList<QCameraDevice> cameras = QMediaDevices::videoInputs();
+    for (const QCameraDevice &cameraDevice : cameras) {
+        if (cameraDevice.description() == text){
+            //cam = new QCamera(cameraDevice);
+            foreach(auto each, cameraDevice.videoFormats()){
+                qDebug()<<each.pixelFormat()<<each.maxFrameRate()<<each.resolution();
+                QList<int> par;
+                par.append(each.maxFrameRate());
+                par.append(each.resolution().rwidth());
+                par.append(each.resolution().rheight());
+                if(each.pixelFormat() ==  QVideoFrameFormat::Format_Jpeg)
+                    lParam.append(par);
+            }
             break;
         }
     }
 
-    if(cam->isAvailable())
-        cam->start();
+    // if(cam->isAvailable())
+    //     cam->start();
 
-    QList<QCameraViewfinderSettings> ViewSets = cam->supportedViewfinderSettings();
-    foreach (QCameraViewfinderSettings ViewSet, ViewSets) {
-        QList<int> par;
-        par.append(ViewSet.maximumFrameRate());
-        par.append(ViewSet.resolution().rwidth());
-        par.append(ViewSet.resolution().rheight());
-        lParam.append(par);
-    }
-    cam->stop();
+    // QList<QCameraViewfinderSettings> ViewSets = cam->supportedViewfinderSettings();
+    // foreach (QCameraViewfinderSettings ViewSet, ViewSets) {
+    //     QList<int> par;
+    //     par.append(ViewSet.maximumFrameRate());
+    //     par.append(ViewSet.resolution().rwidth());
+    //     par.append(ViewSet.resolution().rheight());
+    //     lParam.append(par);
+    // }
+    //QList<QCameraFormat> lFormat = cam->cameraDevice().videoFormats();
+    // foreach(auto each, lFormat){
+    //     qDebug()<<each.pixelFormat()<<each.maxFrameRate()<<each.resolution();
+    //     QList<int> par;
+    //     par.append(each.maxFrameRate());
+    //     par.append(each.resolution().rwidth());
+    //     par.append(each.resolution().rheight());
+    //     if(each.pixelFormat() ==  QVideoFrameFormat::Format_Jpeg)
+    //         lParam.append(par);
+    // }
+    //cam->stop();
 
     return lParam;
 }

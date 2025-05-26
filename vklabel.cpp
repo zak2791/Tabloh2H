@@ -20,11 +20,13 @@ VkLabel::VkLabel(QWidget *parent) : QLabel{parent}
         repaint();
     });
     timer->start(500);
+    status = false;
 }
 
 void VkLabel::setStatusVk(bool b)
 {
-    if(b)
+    status = b;
+    if(status)
         rendererVkCurrent = rendererVk;
     else
         rendererVkCurrent = rendererVkNoActive;

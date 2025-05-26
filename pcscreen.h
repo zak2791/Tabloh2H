@@ -285,7 +285,7 @@ private:
     Ui::frmView ui;
     Ui::frmSettingsVideoReplay uiVideoSettings;
     Ui::Form uiTime;
-    QDesktopWidget* desk;
+    QScreen* desk;
     int HEIGHT_REGION;
     int HEIGHT_FAMILY;
     int HEIGHT_NEXT_FAMILY;

@@ -5,7 +5,7 @@
 #include <QKeyEvent>
 #include <QApplication>
 #include <QDebug>
-#include <QDesktopWidget>
+#include <QScreen>
 
 #include <QMessageBox>
 #include <QPalette>
@@ -17,11 +17,15 @@
 #include "qcommandlineoption.h"
 #include "qcommandlineparser.h"
 
+#include <fileapi.h>
 #include <math.h>
 
 #include <QNetworkInterface>
 
 #include <QRadioButton>
+#include <minwindef.h>
+#include <winnt.h>
+#include <Windows.h>
 
 #include "player.h"
 
@@ -332,7 +336,7 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     //margin = 6;
     //сетка 68х42
     grid->setSpacing(6);
-    grid->setMargin(6);
+    //grid->setMargin(6);
     grid->addWidget(fam_red,                0,  0,  4,  34);
     grid->addWidget(fam_blue,               0,  34, 4,  34);
     grid->addWidget(reg_red,                4, 0,  4,  34);
@@ -406,10 +410,11 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     }
 
     tvScreen = new TVScreen;
+    videoControl->setPlayerTv(tvScreen->getPlayer());
 
     connect(videoControl, &VideoReplayControl::sigShowPlayer, tvScreen, &TVScreen::showPlayer);
     connect(videoControl, &VideoReplayControl::sigHidePlayer, tvScreen, &TVScreen::hidePlayer);
-    connect(videoControl, &VideoReplayControl::sigImage, tvScreen->player, &PlayerViewerTV::draw_image);
+    //connect(videoControl, &VideoReplayControl::sigImage, tvScreen->player, &PlayerViewerTV::draw_image);
 
     setTvScreenGeometry();
 
@@ -657,6 +662,7 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
         if(uiVideoSettings.cbWebCam->count() > 0){
             videoControl->setWebCam(text);
             QList<QList<int>> param = Player::getListParamWebCam(text);
+            qDebug()<<"param = "<<param;
             int count = 0;
 
             foreach(auto each, param){
@@ -764,7 +770,7 @@ void PCScreen::refreshWebCam()
     uiVideoSettings.cbSound->clear();
     uiVideoSettings.cbWebCam->clear();
     uiVideoSettings.cbWebCam->addItems(Player::getListWebCams());
-    //uiVideoSettings.cbSound->addItem("");
+    uiVideoSettings.cbSound->addItem("");
     uiVideoSettings.cbSound->addItems(Player::getListSoundDevices());
 }
 
@@ -1156,7 +1162,6 @@ void PCScreen::paintEvent(QPaintEvent * ) {
 }
 
 void PCScreen::keyPressEvent(QKeyEvent * pe){
-    //qDebug()<<pe->key();
     if(pe->key() == Qt::Key_F1){
         if(mainTimer->getStatus() != 1)
             frmTime->show();
@@ -1174,8 +1179,6 @@ void PCScreen::setTimeFight(){
 }
 
 void PCScreen::closeTablo(){
-    //myProcess->kill();
-    qDebug()<<"close";
     QKeyEvent *key_press = new QKeyEvent(QKeyEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
     QApplication::sendEvent(this, key_press);
 }
@@ -1224,8 +1227,6 @@ void PCScreen::saveTime(int iTime)
     QString sData(sTime + ";" + fam_red->getText() + ";" + reg_red->getText() + ";" + rateRed->text()
                   + ";" + fam_blue->getText() + ";" + reg_blue->getText() + ";" + rateBlue->text());
     QByteArray data(sData.toUtf8());
-    //datagram->setData(data);
-    //socketDataToVideo->writeDatagram(*datagram);
 }
 
 void PCScreen::saveConditionRate(int rate)
@@ -1285,13 +1286,6 @@ void PCScreen::saveConditionPlus(QString str)
     }
     settings->endGroup();
 }
-
-//void PCScreen::tvFullScreen(bool b){
-//    if(b)
-//        tvScreen->showFullScreen();
-//    else
-//        tvScreen->showNormal();
-//}
 
 void PCScreen::resizeEvent(QResizeEvent *){
     minimum_height = (height() - 12) / 42;
@@ -1594,7 +1588,7 @@ void PCScreen::udpSend(){
         else
             data.append("0");
 
-        baDatagram.append(data);
+        baDatagram.append(data.toStdString());
         s_udp->writeDatagram(baDatagram, *remoteAddress, 2424);
     }
 }
@@ -1650,7 +1644,7 @@ void PCScreen::Variant(int variant){
 
 void PCScreen::setTvScreenGeometry(){
     if(QGuiApplication::screens().count() == 2){
-        tvScreen->setGeometry(QApplication::desktop()->availableGeometry(this).width() + 100,
+        tvScreen->setGeometry(QApplication::primaryScreen()->availableGeometry().width() + 100,
                               0,
                               100,
                               50);
@@ -1658,8 +1652,8 @@ void PCScreen::setTvScreenGeometry(){
         tvScreen->showFullScreen();
     }
     else{
-        tvScreen->setGeometry(0, 0, QApplication::desktop()->availableGeometry(this).width() / 2,
-                              QApplication::desktop()->availableGeometry(this).height() / 2);
+        tvScreen->setGeometry(0, 0, QApplication::primaryScreen()->availableGeometry().width() / 2,
+                              QApplication::primaryScreen()->availableGeometry().height() / 2);
         tvScreen->show();
     }
 

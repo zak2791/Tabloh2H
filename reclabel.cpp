@@ -7,8 +7,11 @@
 RecLabel::RecLabel(QWidget *parent) : QLabel{parent}
 {
     rendererRecNoActive = new QSvgRenderer(path_no_active);
+    rendererRecNoActive->setAspectRatioMode(Qt::KeepAspectRatio);
     rendererRecBlink    = new QSvgRenderer(path_blink);
+    rendererRecBlink->setAspectRatioMode(Qt::KeepAspectRatio);
     rendererRec         = new QSvgRenderer(path);
+    rendererRec->setAspectRatioMode(Qt::KeepAspectRatio);
     rendererRecCurrent = rendererRecNoActive;
     QTimer* timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, [this](){
@@ -43,5 +46,5 @@ void RecLabel::paintEvent(QPaintEvent *ev)
 void RecLabel::resizeEvent(QResizeEvent *ev)
 {
     int h = ev->size().height();
-    setMaximumWidth(h * 2);
+    setMinimumWidth(h * 2);
 }

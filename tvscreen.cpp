@@ -106,7 +106,7 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
     QHBoxLayout* hbr = new QHBoxLayout;
     hbr->addWidget(np_red);
 
-    player = new PlayerViewerTV;
+    player = new PlayerTv;
     //vWidget = new VideoWidget(this);
 
 	grid = new QGridLayout(this);

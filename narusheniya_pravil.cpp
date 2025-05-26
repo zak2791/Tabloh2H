@@ -149,11 +149,12 @@ void NP::mousePressEvent(QMouseEvent *  pe) {
 
 void NP::resizeEvent(QResizeEvent * ) {
 	QFont fnt;
-	fnt.setWeight(50);
+    fnt.setWeight(QFont::DemiBold);
     //QFontMetrics fm(fnt);
     int a = height() * 0.75;
 	fnt.setPixelSize(a);
 	setFont(fnt);
+
     //int w = width();
     int h = height();
     //if(w>h)

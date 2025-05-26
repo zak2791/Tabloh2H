@@ -46,7 +46,7 @@ void EndTime::timerEvent(QTimerEvent*){
 //}
 
 void EndTime::mousePressEvent(QMouseEvent* e){
-    QMouseEvent* eventCopy = new QMouseEvent(*e);
+    QMouseEvent* eventCopy = e->clone();// new QMouseEvent(e->type(), e->pos(), e->button(), e->buttons(), e->modifiers());
             QApplication::instance()->postEvent(this->parent(), eventCopy);
             //...but this time, ignore it
             setAttribute(Qt::WA_TransparentForMouseEvents, true);

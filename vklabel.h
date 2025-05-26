@@ -11,6 +11,7 @@ public:
     explicit VkLabel(QWidget *parent = nullptr);
 
     void setStatusVk(bool);
+    bool getStatusVk(void){return status;}
 
 private:
     virtual void paintEvent(QPaintEvent* ev);
@@ -22,6 +23,7 @@ private:
     QSvgRenderer* rendererVkBlink;
     QSvgRenderer* rendererVkNoActive;
     QSvgRenderer* rendererVkCurrent;
+    bool status;
 
 signals:
 };

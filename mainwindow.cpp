@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "pcscreen.h"
+#include <QRegExp>
 #include "ui_mainwindow.h"
 
 #include <QMessageBox>
@@ -134,7 +135,7 @@ MainWindow::MainWindow(QWidget *parent) :
             break;
         }
         QString s = QString::fromUtf8(buf);
-        QList<QString> list = s.split(QRegExp("\\s+"));
+        QList<QString> list = s.split(QRegularExpression("\\s+"));
         foreach(auto each, list){
             QRegularExpressionMatch match = re.match(each);
             if (match.hasMatch()) {

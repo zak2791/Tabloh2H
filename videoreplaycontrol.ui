@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>448</width>
+    <width>468</width>
     <height>233</height>
    </rect>
   </property>
@@ -17,39 +17,22 @@
    <item row="0" column="0">
     <layout class="QGridLayout" name="gridLayout" rowstretch="0,2,1">
      <item row="2" column="0">
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <layout class="QHBoxLayout" name="hLayoutButtons">
        <item>
-        <widget class="QPushButton" name="btnPlay">
-         <property name="minimumSize">
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Maximum</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
           <size>
-           <width>0</width>
-           <height>45</height>
+           <width>40</width>
+           <height>20</height>
           </size>
          </property>
-         <property name="text">
-          <string>Смотреть с выбором</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="btnPlayLast">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>45</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Смотреть последний</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="btn">
-         <property name="text">
-          <string>PushButton</string>
-         </property>
-        </widget>
+        </spacer>
        </item>
        <item>
         <widget class="VkLabel" name="labelvk">
@@ -115,8 +98,10 @@
        <item>
         <widget class="QCheckBox" name="cbCam1">
          <property name="styleSheet">
-          <string notr="true">QCheckBox::indicator:unchecked{image: url(:/images/CheckBoxVideoUnchecked.png)}
-QCheckBox::indicator:checked{image: url(:/images/CheckBoxVideoChecked.png)}
+          <string notr="true">QCheckBox::indicator:unchecked:enabled{image: url(:/images/CheckBoxVideoUnchecked.png)}
+QCheckBox::indicator:unchecked:disabled{image: url(:/images/CheckBoxVideoUncheckedDisabled.png)}
+QCheckBox::indicator:enabled:checked{image: url(:/images/CheckBoxVideoChecked.png)}
+QCheckBox::indicator:disabled:checked{image: url(:/images/CheckBoxVideoCheckedDisabled.png)}
 QCheckBox::indicator {width: 45px; height: 45px;}
 QCheckBox{font-size: 20px}</string>
          </property>
@@ -128,8 +113,10 @@ QCheckBox{font-size: 20px}</string>
        <item>
         <widget class="QCheckBox" name="cbCam2">
          <property name="styleSheet">
-          <string notr="true">QCheckBox::indicator:unchecked{image: url(:/images/CheckBoxVideoUnchecked.png)}
-QCheckBox::indicator:checked{image: url(:/images/CheckBoxVideoChecked.png)}
+          <string notr="true">QCheckBox::indicator:unchecked:enabled{image: url(:/images/CheckBoxVideoUnchecked.png)}
+QCheckBox::indicator:unchecked:disabled{image: url(:/images/CheckBoxVideoUncheckedDisabled.png)}
+QCheckBox::indicator:enabled:checked{image: url(:/images/CheckBoxVideoChecked.png)}
+QCheckBox::indicator:disabled:checked{image: url(:/images/CheckBoxVideoCheckedDisabled.png)}
 QCheckBox::indicator {width: 45px; height: 45px;}
 QCheckBox{font-size: 20px}</string>
          </property>
@@ -141,10 +128,12 @@ QCheckBox{font-size: 20px}</string>
        <item>
         <widget class="QCheckBox" name="cbCam3">
          <property name="styleSheet">
-          <string notr="true">QCheckBox::indicator:unchecked{image: url(:/images/CheckBoxVideoUnchecked.png)}
-QCheckBox::indicator:checked{image: url(:/images/CheckBoxVideoChecked.png)}
+          <string notr="true">QCheckBox::indicator:unchecked:enabled{image: url(:/images/CheckBoxVideoUnchecked.png)}
+QCheckBox::indicator:unchecked:disabled{image: url(:/images/CheckBoxVideoUncheckedDisabled.png)}
+QCheckBox::indicator:enabled:checked{image: url(:/images/CheckBoxVideoChecked.png)}
+QCheckBox::indicator:disabled:checked{image: url(:/images/CheckBoxVideoCheckedDisabled.png)}
 QCheckBox::indicator {width: 45px; height: 45px;}
-QCheckBox{ font-size: 20px}</string>
+QCheckBox{font-size: 20px}</string>
          </property>
          <property name="text">
           <string>Камера 3</string>

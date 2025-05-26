@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="84.6666mm" height="42.3332mm" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 8466.66 4233.32"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:xodm="http://www.corel.com/coreldraw/odm/2003">
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .str2 {stroke:#2B2A29;stroke-width:169.33;stroke-miterlimit:22.9256}
+    .str1 {stroke:#2B2A29;stroke-width:16.93;stroke-miterlimit:22.9256}
+    .str0 {stroke:#2B2A29;stroke-width:20;stroke-miterlimit:22.9256}
+    .fil1 {fill:none}
+    .fil0 {fill:#2B2A29}
+   ]]>
+  </style>
+ </defs>
+ <g id="Слой_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <path class="fil0 str0" d="M4259.87 1378.31l3333.67 0 0 1486.62 -3333.67 0 0 -1486.62zm0 -247.76l0 -247.78 476.25 0 0 247.78 -476.25 0zm714.36 0l0 -247.78 476.24 0 0 247.78 -476.24 0zm714.35 0l0 -247.78 476.25 0 0 247.78 -476.25 0zm2133.54 -139.95c9.53,-355.6 -476.23,-348.2 -476.23,-348.2 0,0 -2352.6,-7.4 -2847.89,-7.4 -495.29,0 -476.25,355.6 -476.25,355.6l0.01 2237.32c0,370.41 476.24,370.41 476.24,370.41l2857.42 0c476.23,0 476.23,-370.41 476.23,-370.41l-9.53 -2237.32zm-1419.18 139.95l0 -247.78 476.24 0 0 247.78 -476.24 0zm714.35 0l0 -247.78 476.25 0 0 247.78 -476.25 0zm-2857.42 1982.16l476.25 0 0 247.77 -476.25 0 0 -247.77zm2857.42 247.77l0 -247.77 476.25 0 0 247.77 -476.25 0zm-2143.06 -247.77l476.24 0 0 247.77 -476.24 0 0 -247.77zm714.35 0l476.25 0 0 247.77 -476.25 0 0 -247.77zm714.36 0l476.24 0 0 247.77 -476.24 0 0 -247.77z"/>
+  <polygon class="fil1 str1" points="5672.66,1693.33 6438.63,2116.66 5672.66,2540 "/>
+  <polygon class="fil0 str0" points="6438.9,2116.66 5672.93,1693.33 5672.93,2540 "/>
+ </g>
+ <g id="Слой_x0020_2">
+  <metadata id="CorelCorpID_1Corel-Layer"/>
+  <circle class="fil1 str1" cx="2116.66" cy="2116.66" r="1481.67"/>
+  <circle class="fil1 str1" cx="2119.48" cy="2116.67" r="1234.72"/>
+  <path class="fil0 str0" d="M2116.65 3351.39c-681.92,0 -1234.71,-552.8 -1234.71,-1234.71 0,-681.93 552.79,-1234.73 1234.71,-1234.73 681.94,0 1234.73,552.8 1234.73,1234.73 0,681.91 -552.79,1234.71 -1234.73,1234.71zm1481.68 -1234.72c0,-818.3 -663.37,-1481.67 -1481.67,-1481.67 -818.29,0 -1481.66,663.37 -1481.66,1481.67 0,818.29 663.37,1481.66 1481.66,1481.66 818.3,0 1481.67,-663.37 1481.67,-1481.66z"/>
+ </g>
+ <g id="Слой_x0020_3">
+  <metadata id="CorelCorpID_2Corel-Layer"/>
+  <line class="fil1 str2" x1="2119.47" y1="2166.06" x2="2119.48" y2= "1128.9" />
+  <line class="fil1 str2" x1="2168.87" y1="2091.98" x2="1625.59" y2= "2363.61" />
+ </g>
+</svg>

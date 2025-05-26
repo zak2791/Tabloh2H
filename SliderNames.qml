@@ -71,6 +71,7 @@ Item {
                     horizontalAlignment: Text.AlignHCenter
 
                     y: txtYpos + textOffset
+
                 }
             }
             Rectangle{

@@ -50,5 +50,19 @@
         <file>images/vk.svg</file>
         <file>images/vk_blue.svg</file>
         <file>images/vk_gray_blue.svg</file>
+        <file>sound/gong.wav</file>
+        <file>images/play.ico</file>
+        <file>images/play.svg</file>
+        <file>images/play.png</file>
+        <file>images/stop.svg</file>
+        <file>images/play_last_disable.svg</file>
+        <file>images/play_last_enable.svg</file>
+        <file>images/play_choice_disable.svg</file>
+        <file>images/play_choice_enable.svg</file>
+        <file>images/off.svg</file>
+        <file>images/frame_backward.svg</file>
+        <file>images/frame_forward.svg</file>
+        <file>images/CheckBoxVideoCheckedDisabled.png</file>
+        <file>images/CheckBoxVideoUncheckedDisabled.png</file>
     </qresource>
 </RCC>

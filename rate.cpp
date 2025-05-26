@@ -70,10 +70,10 @@ void Rate::setRate(int r) {
 }
 
 void Rate::resizeEvent(QResizeEvent * ){
-    largeFont.setWeight(50);
+    largeFont.setWeight(QFont::DemiBold);
     largeFont.setPixelSize(height() * 2);
     QFontMetrics fm = QFontMetrics(largeFont);
-    smallFont.setWeight(50);
+    smallFont.setWeight(QFont::DemiBold);
     smallFont.setPixelSize(height() * 2);
     int fontSize = height();
 
@@ -86,6 +86,8 @@ void Rate::resizeEvent(QResizeEvent * ){
             break;
         if (fontSize > 20)
             fontSize -= 20;
+        if(fontSize < 0)
+            fontSize = 0;
         else
             break;
     }
@@ -99,6 +101,8 @@ void Rate::resizeEvent(QResizeEvent * ){
             break;
         if (fontSize > 20)
             fontSize -= 20;
+        if(fontSize < 0)
+            fontSize = 0;
         else
             break;
     }

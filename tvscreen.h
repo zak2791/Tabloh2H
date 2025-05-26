@@ -5,6 +5,7 @@
 #include <QGridLayout>
 #include <QLabel>
 #include "narusheniya_pravil.h"
+#include "playertv.h"
 #include "rate.h"
 #include "ui_FormView.h"
 #include "fam_reg.h"
@@ -15,7 +16,7 @@
 #include "endtime.h"
 #include "logofrb.h"
 
-#include "playerviewertv.h"
+//#include "playerviewertv.h"
 
 #include <QSvgRenderer>
 #include <QPainter>
@@ -56,7 +57,8 @@ public:
 	NP * np_red;
 	NP * np_blue;
 
-    PlayerViewerTV* player;
+    //PlayerViewerTV* player;
+
 
     FirstLastName * fam_red;
     FirstLastName * fam_blue;
@@ -95,6 +97,7 @@ public:
 
     void showPlayer(void);
     void showPlayer2(void);
+    QMediaPlayer* getPlayer(void){return player->player;}
 
 public slots:
     void hidePlayer(void);
@@ -102,6 +105,7 @@ public slots:
     void setPlayerEnabled(bool);
 
 private:
+    PlayerTv* player;
 	
 	virtual void paintEvent(QPaintEvent *);
     virtual void resizeEvent(QResizeEvent *);

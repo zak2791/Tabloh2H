@@ -5,7 +5,7 @@ QMAKE_CXXFLAGS_RELEASE -= -O0
 
 RC_ICONS = appico.ico
 
-QT += core gui widgets qml multimedia svg quickwidgets network multimediawidgets
+QT += core gui widgets qml multimedia svg quickwidgets network multimediawidgets svgwidgets core5compat
 HEADERS += \
     JSTools.h \
     addform.h \
@@ -28,6 +28,8 @@ HEADERS += \
     newsportsman.h \
     pcscreen.h \
     player.h \
+    playerpc.h \
+    playertv.h \
     playerviewer.h \
     playerviewertv.h \
     plus.h \
@@ -35,7 +37,7 @@ HEADERS += \
     reclabel.h \
     sidelistmodel.h \
     sportsman.h \
-    togglebutton.h \
+    svgbutton.h \
     tvscreen.h \
     videoreplaycontrol.h \
     vklabel.h
@@ -62,6 +64,8 @@ SOURCES += \
     newsportsman.cpp \
     pcscreen.cpp \
     player.cpp \
+    playerpc.cpp \
+    playertv.cpp \
     playerviewer.cpp \
     playerviewertv.cpp \
     plus.cpp \
@@ -69,7 +73,6 @@ SOURCES += \
     reclabel.cpp \
     sidelistmodel.cpp \
     sportsman.cpp \
-    togglebutton.cpp \
     tvscreen.cpp \
     videoreplaycontrol.cpp \
     vklabel.cpp
@@ -90,7 +93,8 @@ FORMS += \
 DISTFILES += \
     ../build-TabloRB-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/script.js \
     ../build-TabloRB-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/script.js \
-    script.js
+    script.js \
+    sound/gong.wav
 
 win32: LIBS += -L$$PWD/ffmpeg/lib/ -lavformat
 
@@ -122,4 +126,6 @@ RESOURCES  += \
     res.qrc
 
 #DEFINES += APP_LAUNCH_FROM_IDE
+
+DEFINE += QT_DISABLE_DEPRECATED_UP_TO=0x050F00
 

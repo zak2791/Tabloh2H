@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="33.8742mm" height="33.897mm" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 3387.42 3389.7"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:xodm="http://www.corel.com/coreldraw/odm/2003">
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .str2 {stroke:#2B2A29;stroke-width:400;stroke-miterlimit:22.9256}
+    .str1 {stroke:#2B2A29;stroke-width:20;stroke-miterlimit:22.9256}
+    .str0 {stroke:#2B2A29;stroke-width:20;stroke-miterlimit:22.9256}
+    .str3 {stroke:#2B2A29;stroke-width:200;stroke-linejoin:round;stroke-miterlimit:22.9256}
+    .fil1 {fill:none}
+    .fil0 {fill:black}
+    .fil2 {fill:black}
+   ]]>
+  </style>
+ </defs>
+ <g id="Слой_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+ </g>
+ <g id="Слой_x0020_2" visibility="hidden">
+  <metadata id="CorelCorpID_1Corel-Layer"/>
+  <polygon class="fil0 str0" points="708.37,349.39 708.37,3072.43 2911.04,1710.91 "/>
+ </g>
+ <g id="Слой_x0020_3" visibility="hidden">
+  <metadata id="CorelCorpID_2Corel-Layer"/>
+  <rect class="fil1 str1" x="415.25" y="433.31" width="846.66" height="2540"/>
+  <rect class="fil1 str1" x="2108.57" y="433.31" width="846.67" height="2540"/>
+  <polygon class="fil2 str1" points="1261.91,2973.31 1261.91,433.31 415.25,433.31 415.25,2973.31 "/>
+  <polygon class="fil2 str1" points="2108.58,433.31 2108.58,2973.31 2955.25,2973.31 2955.25,433.31 "/>
+ </g>
+ <g id="Слой_x0020_4" visibility="hidden">
+  <metadata id="CorelCorpID_3Corel-Layer"/>
+  <path class="fil1 str2" d="M2729.31 263.98c444.77,323.18 733.94,847.49 733.94,1439.33 0,981.96 -796.04,1778 -1778,1778 -981.96,0 -1778,-796.04 -1778,-1778 0,-591.84 289.17,-1116.15 733.94,-1439.33"/>
+  <line class="fil1 str2" x1="1685.25" y1="1449.31" x2="1689.5" y2= "-244.02" />
+ </g>
+ <g id="Слой_x0020_5">
+  <metadata id="CorelCorpID_4Corel-Layer"/>
+  <polygon class="fil1 str3" points="1602.64,2582.31 1605.63,826.65 3124.47,1703.55 "/>
+  <polyline class="fil1 str3" points="1603.31,2190.79 925.28,2582.31 928.27,826.65 1604.96,1217.34 "/>
+  <polyline class="fil1 str3" points="925.95,2190.79 247.92,2582.31 250.91,826.65 927.61,1217.34 "/>
+ </g>
+</svg>

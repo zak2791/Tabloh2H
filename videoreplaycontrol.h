@@ -1,6 +1,7 @@
 #ifndef VIDEOREPLAYCONTROL_H
 #define VIDEOREPLAYCONTROL_H
 
+#include "playerpc.h"
 #include "playerviewer.h"
 #include "qprocess.h"
 #include <QWidget>
@@ -19,6 +20,7 @@ class VideoReplayControl : public QWidget
 public:
     explicit VideoReplayControl(QWidget *parent = nullptr);
     ~VideoReplayControl();
+    void setPlayerTv(QMediaPlayer*);
 
 private:
     Ui::VideoReplayControl *ui;
@@ -27,9 +29,11 @@ private:
     QProcess* procReadCam2;
     QProcess* procReadCam3;
     QProcess* procVk;
+    QProcess* procProbeAudio;
 
     QProcess* procRead;
     QProcess* procRecord;
+    bool isAudio = false;
 
     //QProcess* procRecord;
 
@@ -57,6 +61,7 @@ private:
     int countCam1 = 0;
     int countCam2 = 0;
     int countCam3 = 0;
+    int countVk = 0;
 
     QString widthPipVk;
     QString heightPipVk;
@@ -69,15 +74,16 @@ private:
     QString hwEncoder = "";
     QString hwDecoder = "";
 
-    // void turnOnCam1(void);
-    // void turnOnCam2(void);
-    // void turnOnCam3(void);
-
     void startReadCams(void);
     void stopReadCams(void);
 
+    PlayerPc* player;
+    int lastCountFrame;
+
 
     QWidget* p;
+    SvgButton* btnPlayLast;
+    SvgButton* btnPlay;
 
     //RecLabel* reclabel;
 private slots:

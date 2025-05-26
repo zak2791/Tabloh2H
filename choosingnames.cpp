@@ -1,5 +1,6 @@
 
 #include "choosingnames.h"
+#include "qnamespace.h"
 #include <QQuickItem>
 //#include <QJsonObject>
 //#include <QJsonDocument>
@@ -86,8 +87,8 @@ void ChoosingNames::setNames(QStringList list){
     model->setList(list);
     slmodel->clearModel();
     QMetaObject::invokeMethod(objGridSide, "updateSlider");
-    proxyAge->setFilterRegExp("");
-    proxyWeight->setFilterRegExp("");
+    proxyAge->setFilterRegularExpression("");
+    proxyWeight->setFilterRegularExpression("");
 }
 
 void ChoosingNames::setAge(QStringList list){
@@ -148,17 +149,17 @@ void ChoosingNames::closeEvent(QCloseEvent *){
 }
 
 void ChoosingNames::choiceAge(QString age){
-    proxyAge->setFilterRegExp(age);
+    proxyAge->setFilterRegularExpression(age);
 }
 
 void ChoosingNames::choiceWeight(QString weight){
-    proxyWeight->setFilterRegExp(weight);
+    proxyWeight->setFilterRegularExpression(weight);
 
 }
 
 void ChoosingNames::filterName(QString name){
-    QRegExp regExp( "^" + name, Qt::CaseInsensitive );
-    proxyName->setFilterRegExp(regExp);
+    QRegularExpression  regExp("^" + name, QRegularExpression::CaseInsensitiveOption );
+    proxyName->setFilterRegularExpression(regExp);
 }
 
 void ChoosingNames::fromAllToSide(int item){

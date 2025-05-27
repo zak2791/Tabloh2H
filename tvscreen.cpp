@@ -241,10 +241,14 @@ void TVScreen::resizeEvent(QResizeEvent *){
 
 void TVScreen::mouseDoubleClickEvent(QMouseEvent*)
 {
-    if(windowState() == Qt::WindowFullScreen)
+    if(windowState() == Qt::WindowFullScreen){
+        QRect r = geometry();
         showNormal();
-    else
+        setGeometry(r.x() + 100, r.y() + 100, r.width() / 2, r.height() / 2);
+    }
+    else{
         showFullScreen();
+    }
 }
 
 

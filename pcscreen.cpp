@@ -1643,11 +1643,16 @@ void PCScreen::Variant(int variant){
 }
 
 void PCScreen::setTvScreenGeometry(){
+    qDebug()<<"setTvScreenGeometry";
     if(QGuiApplication::screens().count() == 2){
-        tvScreen->setGeometry(QApplication::primaryScreen()->availableGeometry().width() + 100,
-                              0,
-                              100,
-                              50);
+        // tvScreen->setGeometry(QApplication::primaryScreen()->availableGeometry().width() + 100,
+        //                       0,
+        //                       100,
+        //                       50);
+        qDebug()<<"geometry = "<<QApplication::primaryScreen()->availableVirtualGeometry();
+        QList<QScreen*> lScreens = QGuiApplication::screens();
+        qDebug()<<lScreens<<lScreens.at(0)->availableGeometry()<<lScreens.at(1)->availableGeometry();
+        tvScreen->setGeometry(lScreens.at(1)->availableGeometry());
         tvScreen->show();
         tvScreen->showFullScreen();
     }

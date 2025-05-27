@@ -34,7 +34,6 @@
      <string>Настройки</string>
     </property>
     <addaction name="winSettings"/>
-    <addaction name="setOBS"/>
     <addaction name="videoSettings"/>
    </widget>
    <widget class="QMenu" name="time">

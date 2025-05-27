@@ -6,7 +6,7 @@
 #include "helpform.h"
 #include "ui_mainwindow.h"
 #include "ui_version.h"
-#include "ui_settingsOBS.h"
+//#include "ui_settingsOBS.h"
 #include <QSettings>
 #include "ui_code.h"
 
@@ -32,7 +32,7 @@ public:
     QAction* winVideoSettings;
     //QAction* tvSettings;
     QString getFileSportsmens(void);
-    Ui::dlgObs uiObs;
+    //Ui::dlgObs uiObs;
     bool getStatusRegistration(void){return registration->isEnabled();};
 
 private:
@@ -64,8 +64,8 @@ private slots:
     void choiceFile(void);
     void Variant(void);
     void selectLogo(bool);
-    void slotAcceptSettingsObs(void);
-    void slotRejectSettingsObs(void);
+    // void slotAcceptSettingsObs(void);
+    // void slotRejectSettingsObs(void);
     void slotRegistration(void);
     QString calculateCode(QString);
     void slotChangeId(bool);

@@ -144,7 +144,7 @@ void ChoosingNames::closeEvent(QCloseEvent *){
     if(weight == "")
         weight = slider->property("weightBlue").toString();
     emit close(NameRed, RegionRed, NameBlue, RegionBlue, NameRedNext, NameBlueNext, age, weight);
-    emit startRecordObs();
+    //emit startRecordObs();
     //setCursor(cur);
 }
 

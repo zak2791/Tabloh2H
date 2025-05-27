@@ -283,7 +283,7 @@ void PlayerPc::metaDataChanged()
 
     videoOutput->update();
     //player->setPosition(duration / 2);
-    //player->play();
+    player->play();
     //player->pause();
     //sliderPosition->setSliderPosition(0);
 

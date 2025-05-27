@@ -98,25 +98,25 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     settings->endGroup();
 
-    dlg = new QDialog;
-    uiObs.setupUi(dlg);
+    //dlg = new QDialog;
+    //uiObs.setupUi(dlg);
 
-    connect(ui->setOBS, SIGNAL(triggered()), dlg, SLOT(show()));
+    //connect(ui->setOBS, SIGNAL(triggered()), dlg, SLOT(show()));
 
-    settings->beginGroup("obs");
-    int obsPort = settings->value("port", 4455).toInt();
-    QString obsIpAddr = settings->value("ipAddr", "localhost").toString();
-    QString obsPassword = settings->value("password", "").toString();
-    bool turnObs = settings->value("turnObs", false).toBool();
-    settings->endGroup();
+    // settings->beginGroup("obs");
+    // int obsPort = settings->value("port", 4455).toInt();
+    // QString obsIpAddr = settings->value("ipAddr", "localhost").toString();
+    // QString obsPassword = settings->value("password", "").toString();
+    // bool turnObs = settings->value("turnObs", false).toBool();
+    // settings->endGroup();
 
-    uiObs.IpAddress->setText(obsIpAddr);
-    uiObs.Password->setText(obsPassword);
-    uiObs.Port->setValue(obsPort);
-    uiObs.cbConnectToOBS->setChecked(turnObs);
+    // uiObs.IpAddress->setText(obsIpAddr);
+    // uiObs.Password->setText(obsPassword);
+    // uiObs.Port->setValue(obsPort);
+    // uiObs.cbConnectToOBS->setChecked(turnObs);
 
-    connect(dlg, SIGNAL(accepted()), this, SLOT(slotAcceptSettingsObs()));
-    connect(dlg, SIGNAL(rejected()), this, SLOT(slotRejectSettingsObs()));
+    // connect(dlg, SIGNAL(accepted()), this, SLOT(slotAcceptSettingsObs()));
+    // connect(dlg, SIGNAL(rejected()), this, SLOT(slotRejectSettingsObs()));
 
     registration = ui->registration;
     connect(registration, &QAction::triggered, this, &MainWindow::slotRegistration);
@@ -199,22 +199,22 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::slotAcceptSettingsObs(){
-    settings->beginGroup("obs");
-    settings->setValue("port", uiObs.Port->value());
-    settings->setValue("ipAddr", uiObs.IpAddress->text());
-    settings->setValue("password", uiObs.Password->text());
-    settings->setValue("turnObs", uiObs.cbConnectToOBS->isChecked());
-    settings->endGroup();
-}
+// void MainWindow::slotAcceptSettingsObs(){
+//     settings->beginGroup("obs");
+//     settings->setValue("port", uiObs.Port->value());
+//     settings->setValue("ipAddr", uiObs.IpAddress->text());
+//     settings->setValue("password", uiObs.Password->text());
+//     settings->setValue("turnObs", uiObs.cbConnectToOBS->isChecked());
+//     settings->endGroup();
+// }
 
-void MainWindow::slotRejectSettingsObs(){
-    settings->beginGroup("obs");
-    uiObs.Port->setValue(settings->value("port", 4455).toInt());
-    uiObs.IpAddress->setText(settings->value("ipAddr", "localhost").toString());
-    uiObs.Password->setText(settings->value("password", "").toString());
-    settings->endGroup();
-}
+// void MainWindow::slotRejectSettingsObs(){
+//     settings->beginGroup("obs");
+//     uiObs.Port->setValue(settings->value("port", 4455).toInt());
+//     uiObs.IpAddress->setText(settings->value("ipAddr", "localhost").toString());
+//     uiObs.Password->setText(settings->value("password", "").toString());
+//     settings->endGroup();
+// }
 
 void MainWindow::slotChangeId(bool b)
 {

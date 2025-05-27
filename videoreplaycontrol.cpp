@@ -75,18 +75,6 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
             ui->lblCam3->clear();
     });
 
-    // timerVk = new QTimer(this);
-    // connect(timerVk, &QTimer::timeout, this, [this](){
-    //     qDebug()<<"countVk = "<<countVk;
-    //     if(countVk < 11)
-    //         countVk += 1;
-    //     if(countVk == 10){
-    //         //ui->labelvk->setStatusVk(false);
-    //         procVk->write("q");
-    //         procVk->close();
-    //     }
-    // });
-
     QStringList args;
 
     procRead = new QProcess(this);
@@ -98,13 +86,14 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
             });
     connect(procRead, &QProcess::started, this, [this](){
         if(streamToVk && procVk->state() == QProcess::NotRunning){
-            if(camToVk == 1 && ui->cbCam1->isChecked())
+            if(camToVk == 1 && ui->cbCam1->isChecked()){
                 procProbeAudio->start();
+                qDebug()<<"procProbeAudio cam1";
+            }
             if(camToVk == 2 && ui->cbCam2->isChecked())
                 procProbeAudio->start();
             if(camToVk == 3 && ui->cbCam3->isChecked())
                 procProbeAudio->start();
-            //timerVk->start(500);
         }
     });
     connect(procRead, &QProcess::readyReadStandardError, this, [this](){
@@ -313,7 +302,7 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
         QString file = QFileDialog::getOpenFileName(nullptr, "Выбор видео", "videos");
         if(file == "" || !file.endsWith(".mp4"))
             return;
-
+        QThread::sleep(1);
         player->setMediaUrl(file);
         player->showFullScreen();
         btnPlay->setEnabled(false);
@@ -329,9 +318,8 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
         if(dirList.count() == 0)
             return;
         QThread::sleep(1);
-        //QTimer::singleShot(1000, this, [&dirList, this](){
         player->setMediaUrl("videos/" + dirList.at(0));
-        player->show();
+        player->showFullScreen();
         emit sigShowPlayer();
         //});
 
@@ -588,11 +576,8 @@ void VideoReplayControl::startReadCams()
 
 void VideoReplayControl::stopReadCams()
 {
-    qDebug()<<"finished";
     procRead->write("q");
     procRead->closeWriteChannel();
-    //procRead->waitForFinished();
-    qDebug()<<"procRead->state() = "<<procRead->state();
 }
 
 void VideoReplayControl::onStreamVk()

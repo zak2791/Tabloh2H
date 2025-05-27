@@ -34,7 +34,7 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QLibrary>
-#include "controlobs.h"
+//#include "controlobs.h"
 #include "videoreplaycontrol.h"
 #include <QSvgWidget>
 
@@ -211,8 +211,8 @@ private slots:
 
     //void slotNewConnection(void);
 
-    void slotStartRecordOBS(void);
-    void handleResultsObs(QString);
+    // void slotStartRecordOBS(void);
+    // void handleResultsObs(QString);
     void refreshWebCam(void);
 
     void setTvScreenGeometry(void);
@@ -342,8 +342,8 @@ private:
     //void resultStartRecordOBS(void);
     QFuture<QString> future;
 
-    ControlObs* obs;
-    QThread obsThread;
+    // ControlObs* obs;
+    // QThread obsThread;
 
     VideoReplayControl* videoControl;
 

@@ -727,13 +727,13 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 
     f_Lib = new QLibrary;
 
-    obs = new ControlObs();
+    // obs = new ControlObs();
 
-    obs->moveToThread(&obsThread);
-    connect(&obsThread, &QThread::finished, obs, &QObject::deleteLater);
-    connect(this, &PCScreen::operate, obs, &ControlObs::doWork);
-    connect(obs, &ControlObs::resultReady, this, &PCScreen::handleResultsObs);
-    obsThread.start();
+    // obs->moveToThread(&obsThread);
+    // connect(&obsThread, &QThread::finished, obs, &QObject::deleteLater);
+    // connect(this, &PCScreen::operate, obs, &ControlObs::doWork);
+    // connect(obs, &ControlObs::resultReady, this, &PCScreen::handleResultsObs);
+    // obsThread.start();
 
     QCommandLineParser parser;
     QCommandLineOption customAudioRoleOption("custom-audio-role",
@@ -749,21 +749,21 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 
 }
 
-void PCScreen::handleResultsObs(QString result){
-    if(result == "ok"){
-        QMessageBox msgBox(QMessageBox::Icon::Information,
-                           "Старт записи",
-                           QString("Запись начата"));
-        msgBox.exec();
-    }
-    else{
-        QMessageBox msgBox(QMessageBox::Icon::Critical,
-                           "Ошибка сервера",
-                           QString("Сервер не работает из за возникновения ошибки:\r\n") + result);
-        msgBox.exec();
-    }
+// void PCScreen::handleResultsObs(QString result){
+//     if(result == "ok"){
+//         QMessageBox msgBox(QMessageBox::Icon::Information,
+//                            "Старт записи",
+//                            QString("Запись начата"));
+//         msgBox.exec();
+//     }
+//     else{
+//         QMessageBox msgBox(QMessageBox::Icon::Critical,
+//                            "Ошибка сервера",
+//                            QString("Сервер не работает из за возникновения ошибки:\r\n") + result);
+//         msgBox.exec();
+//     }
 
-}
+// }
 
 void PCScreen::refreshWebCam()
 {
@@ -774,17 +774,17 @@ void PCScreen::refreshWebCam()
     uiVideoSettings.cbSound->addItems(Player::getListSoundDevices());
 }
 
-void PCScreen::slotStartRecordOBS(){
-    if(mainwin->uiObs.cbConnectToOBS->isChecked())
-        emit operate(mainwin->uiObs.IpAddress->text(),
-                     mainwin->uiObs.Port->value(),
-                     mainwin->uiObs.Password->text());
-}
+// void PCScreen::slotStartRecordOBS(){
+//     if(mainwin->uiObs.cbConnectToOBS->isChecked())
+//         emit operate(mainwin->uiObs.IpAddress->text(),
+//                      mainwin->uiObs.Port->value(),
+//                      mainwin->uiObs.Password->text());
+// }
 
 PCScreen::~PCScreen()
 {
-    obsThread.quit();
-    obsThread.wait();
+    // obsThread.quit();
+    // obsThread.wait();
 }
 
 void PCScreen::CpuUsage(){
@@ -832,7 +832,7 @@ void PCScreen::initListNames()
     connect(choosingNames, SIGNAL(close(QString, QString, QString, QString, QString, QString, QString, QString)),
             this, SLOT(closeWinName(QString, QString, QString, QString, QString, QString, QString, QString)));
     connect(choosingNames, SIGNAL(del()), this, SLOT(delListNames()));
-    connect(choosingNames, SIGNAL(startRecordObs()), this, SLOT(slotStartRecordOBS()));
+    //connect(choosingNames, SIGNAL(startRecordObs()), this, SLOT(slotStartRecordOBS()));
 }
 
 

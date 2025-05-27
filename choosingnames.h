@@ -49,7 +49,7 @@ private slots:
 
 signals:
     void close(QString, QString, QString, QString, QString, QString, QString, QString);
-    void startRecordObs(void);
+    //void startRecordObs(void);
     void del(void);
 
 };

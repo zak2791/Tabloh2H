@@ -12,7 +12,6 @@ HEADERS += \
     cameraconnection.h \
     category.h \
     choosingnames.h \
-    controlobs.h \
     endtime.h \
     fam_reg.h \
     firstlastname.h \
@@ -48,7 +47,6 @@ SOURCES += \
     cameraconnection.cpp \
     category.cpp \
     choosingnames.cpp \
-    controlobs.cpp \
     endtime.cpp \
     fam_reg.cpp \
     firstlastname.cpp \
@@ -86,7 +84,6 @@ FORMS += \
     helpform.ui \
     mainwindow.ui \
     new_sportsman.ui \
-    settingsOBS.ui \
     version.ui \
     videoreplaycontrol.ui
 

@@ -321,7 +321,6 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
         player->setMediaUrl("videos/" + dirList.at(0));
         player->showFullScreen();
         emit sigShowPlayer();
-        //});
 
         btnPlay->setEnabled(false);
         btnPlayLast->setEnabled(false);

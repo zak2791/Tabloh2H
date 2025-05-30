@@ -15,8 +15,6 @@
 #include "fam_reg.h"
 #include "plus.h"
 #include "tvscreen.h"
-#include "camera.h"
-#include "playerviewer.h"
 #include <QPointer>
 #include <QCheckBox>
 #include "cameraconnection.h"

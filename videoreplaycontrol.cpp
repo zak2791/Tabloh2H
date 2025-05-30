@@ -98,7 +98,7 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
     });
     connect(procRead, &QProcess::readyReadStandardError, this, [this](){
         QByteArray ba = procRead->readAllStandardError();
-        QMessageBox box;
+        //QMessageBox box;
         qDebug()<<"err read = "<<ba;
 
         if(QString(ba).contains(urlCam2)){
@@ -117,8 +117,8 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
         int index = url.lastIndexOf(":");
 
         url = url.remove(index, 20);
-        box.setText(url);
-        box.exec();
+        // box.setText(url);
+        // box.exec();
 
         QString url1;
         url1 = url.split(":").at(0);
@@ -229,13 +229,13 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
 
         if(!ba.contains("I/O error"))
             return;
-        QMessageBox box;
+        // QMessageBox box;
         QString url(ba);
         int index = url.lastIndexOf(":");
 
         url = url.remove(index, 20);
-        box.setText(url);
-        box.exec();
+        // box.setText(url);
+        // box.exec();
 
         QString url1;
         url1 = url.split(":").at(0);
@@ -302,9 +302,9 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
         QString file = QFileDialog::getOpenFileName(nullptr, "Выбор видео", "videos");
         if(file == "" || !file.endsWith(".mp4"))
             return;
-        QThread::sleep(1);
+        //QThread::sleep(1);
         player->setMediaUrl(file);
-        player->showFullScreen();
+        player->show();
         btnPlay->setEnabled(false);
         btnPlayLast->setEnabled(false);
         emit sigShowPlayer();
@@ -317,11 +317,11 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
         QStringList dirList = dir.entryList(QDir::Files, QDir::Time);
         if(dirList.count() == 0)
             return;
-        QThread::sleep(1);
-        player->setMediaUrl("videos/" + dirList.at(0));
+        //QThread::sleep(1);
+
         player->showFullScreen();
+        player->setMediaUrl("videos/" + dirList.at(0));
         emit sigShowPlayer();
-        //});
 
         btnPlay->setEnabled(false);
         btnPlayLast->setEnabled(false);
@@ -389,6 +389,7 @@ void VideoReplayControl::setPlayerTv(QMediaPlayer* p)
 
 void VideoReplayControl::killFfmpegProcess()
 {
+    qDebug()<<"killFfmpegProcess";
     QProcess findProc(this);
     findProc.setProgram("cmd");
     QStringList args;
@@ -430,7 +431,7 @@ void VideoReplayControl::getHWcodec()
         }
     }
     foreach(auto each, decoders){
-        QStringList args({"-y", "-loglevel", "error", "-c:v", each, "-f", "mjpeg", "-i", "test.jpg", "-frames:v", "1", "test.mp4"});
+        QStringList args({"-y", "-loglevel", "error", "-c:v", each, "-i", "test.mov", "-frames:v", "1", "test.mp4"});
         proc.setArguments(args);
         proc.start();
         proc.waitForFinished();
@@ -476,12 +477,12 @@ void VideoReplayControl::startReadCams()
 
     argsInput2<<"-rtbufsize"<<"2000M";
     if(urlCam2.startsWith("rtsp"))
-        argsInput2<<"-rtsp_transport"<<"tcp"<<"-stimeout"<<"10000";
+        argsInput2<<"-rtsp_transport"<<"tcp"<<"-timeout"<<"10000";
     argsInput2<<"-i"<<urlCam2;
 
     argsInput3<<"-rtbufsize"<<"2000M";
     if(urlCam3.startsWith("rtsp"))
-        argsInput3<<"-rtsp_transport"<<"tcp"<<"-stimeout"<<"10000";
+        argsInput3<<"-rtsp_transport"<<"tcp"<<"-timeout"<<"10000";
     argsInput3<<"-i"<<urlCam3;
 
     args<<"-hide_banner"<<"-loglevel"<<"error";

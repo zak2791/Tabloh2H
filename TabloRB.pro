@@ -5,7 +5,17 @@ QMAKE_CXXFLAGS_RELEASE -= -O0
 
 RC_ICONS = appico.ico
 
-QT += core gui widgets qml multimedia svg quickwidgets network multimediawidgets svgwidgets core5compat
+QT += core \
+       gui\
+        widgets \
+       qml \
+       multimedia \
+       svg \
+       quickwidgets \
+       network \
+       multimediawidgets \
+       svgwidgets
+
 HEADERS += \
     JSTools.h \
     addform.h \
@@ -29,7 +39,6 @@ HEADERS += \
     player.h \
     playerpc.h \
     playertv.h \
-    playerviewer.h \
     playerviewertv.h \
     plus.h \
     rate.h \
@@ -41,7 +50,7 @@ HEADERS += \
     videoreplaycontrol.h \
     vklabel.h
 
-SOURCES += \
+  SOURCES += \
     JSTools.cpp \
     addform.cpp \
     cameraconnection.cpp \
@@ -64,7 +73,6 @@ SOURCES += \
     player.cpp \
     playerpc.cpp \
     playertv.cpp \
-    playerviewer.cpp \
     playerviewertv.cpp \
     plus.cpp \
     rate.cpp \
@@ -88,29 +96,27 @@ FORMS += \
     videoreplaycontrol.ui
 
 DISTFILES += \
-    ../build-TabloRB-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/script.js \
-    ../build-TabloRB-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/script.js \
     script.js \
     sound/gong.wav
 
-win32: LIBS += -L$$PWD/ffmpeg/lib/ -lavformat
+# win32: LIBS += -L$$PWD/ffmpeg/lib/ -lavformat
 
-INCLUDEPATH += $$PWD/ffmpeg/include
-DEPENDPATH += $$PWD/ffmpeg/include
+# INCLUDEPATH += $$PWD/ffmpeg/include
+# DEPENDPATH += $$PWD/ffmpeg/include
 
-win32: LIBS += -L$$PWD/ffmpeg/lib/ -lavutil
+# win32: LIBS += -L$$PWD/ffmpeg/lib/ -lavutil
 
-win32: LIBS += -L$$PWD/ffmpeg/lib/ -lavcodec
+# win32: LIBS += -L$$PWD/ffmpeg/lib/ -lavcodec
 
-win32: LIBS += -L$$PWD/ffmpeg/lib/ -lavdevice
+# win32: LIBS += -L$$PWD/ffmpeg/lib/ -lavdevice
 
-win32: LIBS += -L$$PWD/ffmpeg/lib/ -lavfilter
+# win32: LIBS += -L$$PWD/ffmpeg/lib/ -lavfilter
 
-win32: LIBS += -L$$PWD/ffmpeg/lib/ -lswscale
+# win32: LIBS += -L$$PWD/ffmpeg/lib/ -lswscale
 
-win32: LIBS += -L$$PWD/ffmpeg/lib/ -lswresample
+# win32: LIBS += -L$$PWD/ffmpeg/lib/ -lswresample
 
-# QXlsx code for Application Qt project
+# #QXlsx code for Application Qt project
 QXLSX_PARENTPATH=./         # current QXlsx path is . (. means curret directory)
 QXLSX_HEADERPATH=./header/  # current QXlsx header path is ./header/
 QXLSX_SOURCEPATH=./source/  # current QXlsx source path is ./source/
@@ -124,5 +130,5 @@ RESOURCES  += \
 
 #DEFINES += APP_LAUNCH_FROM_IDE
 
-DEFINE += QT_DISABLE_DEPRECATED_UP_TO=0x050F00
+#DEFINE += QT_DISABLE_DEPRECATED_UP_TO=0x050F00
 

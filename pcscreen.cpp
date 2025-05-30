@@ -14,8 +14,7 @@
 #include <QTime>
 #include "pcscreen.h"
 #include "QAction"
-#include "qcommandlineoption.h"
-#include "qcommandlineparser.h"
+
 
 #include <fileapi.h>
 #include <math.h>
@@ -24,7 +23,7 @@
 
 #include <QRadioButton>
 #include <minwindef.h>
-#include <winnt.h>
+//#include <winnt.h>
 #include <Windows.h>
 
 #include "player.h"
@@ -234,86 +233,15 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 
     connect(ui.sbSec, SIGNAL(valueChanged(int)), this, SLOT(setSec(int)));
 
-
-
-    // btnPlayLastWithSound1 = new IconButton(":/images/MotionSoundEnabled.svg", ":/images/MotionSoundDisabled.svg", 2);
-    // btnPlayLastWithSound1->setObjectName("btnPlayLastWithSound1");
-    // btnPlayLastWithSound1->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    // btnPlayLastWithSound1->setStyleSheet("font-size: 8pt");
-    // connect(btnPlayLastWithSound1, SIGNAL(clicked()), SLOT(PlayFile()));
-
-    // btnPlayLastWithSound2 = new IconButton(":/images/MotionSoundEnabled.svg", ":/images/MotionSoundDisabled.svg", 2);
-    // btnPlayLastWithSound2->setObjectName("btnPlayLastWithSound2");
-    // btnPlayLastWithSound2->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    // btnPlayLastWithSound2->setStyleSheet("font-size: 8pt");
-    // connect(btnPlayLastWithSound2, SIGNAL(clicked()), SLOT(PlayFile()));
-
-    // btnPlayLastSlowMotion1 = new IconButton(":/images/SlowMotionEnabled.svg", ":/images/SlowMotionDisabled.svg", 2);
-    // btnPlayLastSlowMotion1->setObjectName("btnPlayLastSlowMotion1");
-    // btnPlayLastSlowMotion1->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    // btnPlayLastSlowMotion1->setStyleSheet("font-size: 8pt");
-    // connect(btnPlayLastSlowMotion1, SIGNAL(clicked()), SLOT(PlaySlowMotion()));
-
-    // btnPlayLastSlowMotion2 = new IconButton(":/images/SlowMotionEnabled.svg", ":/images/SlowMotionDisabled.svg", 2);
-    // btnPlayLastSlowMotion2->setObjectName("btnPlayLastSlowMotion2");
-    // btnPlayLastSlowMotion2->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    // btnPlayLastSlowMotion2->setStyleSheet("font-size: 8pt");
-    // connect(btnPlayLastSlowMotion2, SIGNAL(clicked()), SLOT(PlaySlowMotion()));
-
-    // btnPlaySlowMotion = new IconButton(":/images/MotionFileEnabled.svg", ":/images/MotionFileDisabled.svg", 2);
-    // btnPlaySlowMotion->setObjectName("btnPlaySlowMotion");
-    // btnPlaySlowMotion->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    // btnPlaySlowMotion->setStyleSheet("font-size: 8pt");
-    // connect(btnPlaySlowMotion, SIGNAL(clicked()), SLOT(PlaySelectedFile()));
-
-    //btnStopRecord = new IconButton(":/images/RecStopEnabled.svg", ":/images/RecStopDisabled.svg");
-    //btnStopRecord = new QPushButton("Стоп запись");
-    //btnStopRecord->setIcon(QIcon("C:/Users/Colorfull/Documents/Stop record.png"));
-    //btnStopRecord->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    //btnStopRecord->setStyleSheet("font-size: 8pt");
-    //connect(btnStopRecord, SIGNAL(clicked()), SLOT(StopRecord()));
-    //connect(mainTimer, SIGNAL(sigStopped(bool)), btnStopRecord, SLOT(setEnabled(bool)));
-
-    // cbCam1 = new QCheckBox("Включить камеру 1");
-    // cbCam1->setObjectName("cbCam1");
-    // //cbCam1->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    // cbCam1->setStyleSheet("QCheckBox::indicator:unchecked{image: url(:/images/CheckBoxVideoUnchecked.png)}"
-    //                       "QCheckBox::indicator:checked{image: url(:/images/CheckBoxVideoChecked.png)}"
-    //                       "QCheckBox::indicator {width: 25px; height: 25px;}");
-
-    // connect(cbCam1, SIGNAL(toggled(bool)), this, SLOT(turnCamera(bool)));
-
-    // cbCam2 = new QCheckBox("Включить камеру 2");
-    // cbCam2->setObjectName("cbCam2");
-    // //cbCam2->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    // cbCam2->setStyleSheet("QCheckBox::indicator:unchecked{image: url(:/images/CheckBoxVideoUnchecked.png)}"
-    //                       "QCheckBox::indicator:checked{image: url(:/images/CheckBoxVideoChecked.png)}"
-    //                       "QCheckBox::indicator {width: 25px; height: 25px;}");
-
-    // connect(cbCam2, SIGNAL(toggled(bool)), this, SLOT(turnCamera(bool)));
-
-    // connect(ui.cbAutoCam1, SIGNAL(toggled(bool)), this, SLOT(autoCamera(bool)));
-    // connect(ui.cbAutoCam2, SIGNAL(toggled(bool)), this, SLOT(autoCamera(bool)));
-
     connect(uiVideoSettings.cbAutoCam1, SIGNAL(toggled(bool)), this, SLOT(autoCamera(bool)));
     connect(uiVideoSettings.cbAutoCam2, SIGNAL(toggled(bool)), this, SLOT(autoCamera(bool)));
-
-    // lbl = new QLabel("Последний записанный файл");
-    // lbl->setAlignment(Qt::AlignCenter);
-    // lbl->setStyleSheet("color: white; border-style: solid;"
-    //                    "border-width: 2px;"
-    //                    "border-color: white;"
-    //                    "border-top-style: none;"
-    //                    "border-bottom-left-radius: 10px;"
-    //                    "border-bottom-right-radius: 10px;"
-    //                    "font-size: 12pt");
 
     QLabel* lbl2 = new QLabel("Установка времени боя - 'F1', сброс - 'Backspace', выход - 'Esc'");
     lbl2->setAlignment(Qt::AlignCenter);
     lbl2->setStyleSheet("color: white; font-size: 12pt");
 
     QLabel* lbl3 = new QLabel("Добавить спортсмена - 'F2'");
-    //lbl3->setAlignment(Qt::);
+
     lbl3->setStyleSheet("color: white; font-size: 12pt");
 
     connect(mainwin->time, SIGNAL(triggered()), this, SLOT(setTimeFight()));
@@ -337,6 +265,7 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     //сетка 68х42
     grid->setSpacing(6);
     //grid->setMargin(6);
+
     grid->addWidget(fam_red,                0,  0,  4,  34);
     grid->addWidget(fam_blue,               0,  34, 4,  34);
     grid->addWidget(reg_red,                4, 0,  4,  34);
@@ -377,19 +306,6 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 
     grid->addWidget(sec_red_t,              11,  0,  12, 24);
     grid->addWidget(sec_blue_t,             11,  44, 12, 24);
-
-    //grid->addWidget(btnPlayLastWithSound1,  20, 24,  2,  5);
-    //grid->addWidget(btnPlayLastSlowMotion1, 20, 29,  2,  5);
-    //grid->addWidget(btnPlaySlowMotion,      24, 24,  2, 10);
-    //grid->addWidget(cbCam1,                 17, 25,  3,  9);
-    //grid->addWidget(btnPlayLastWithSound2,  20, 34,  2,  5);
-    //grid->addWidget(btnPlayLastSlowMotion2, 20, 39,  2,  5);
-    //grid->addWidget(btnStopRecord,          24, 34,  2, 10);
-    //grid->addWidget(cbCam2,                 17, 35,  3,  9);
-
-
-    //grid->addWidget(lbl,                    22, 24,  2, 20);
-
 
     grid->addWidget(fam_next_red,           42,  0,  4,  34);
     grid->addWidget(fam_next_blue,          42,  34, 4,  34);
@@ -670,7 +586,6 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
                                  "resolution = " + QString::number(each.at(1)) +
                                  "x" + QString::number(each.at(2));  
                 uiVideoSettings.cbParamWebCam->addItem(sParam);
-                qDebug()<<"count = "<<count;
                 uiVideoSettings.cbParamWebCam->setItemData(count++, QVariant::fromValue(each));     
             }
             setParamWebCam(uiVideoSettings.cbParamWebCam->currentIndex());
@@ -727,26 +642,6 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 
     f_Lib = new QLibrary;
 
-    // obs = new ControlObs();
-
-    // obs->moveToThread(&obsThread);
-    // connect(&obsThread, &QThread::finished, obs, &QObject::deleteLater);
-    // connect(this, &PCScreen::operate, obs, &ControlObs::doWork);
-    // connect(obs, &ControlObs::resultReady, this, &PCScreen::handleResultsObs);
-    // obsThread.start();
-
-    QCommandLineParser parser;
-    QCommandLineOption customAudioRoleOption("custom-audio-role",
-                                             "Set a custom audio role for the player.",
-                                             "role");
-    parser.setApplicationDescription("Qt MultiMedia Player Example");
-    parser.addHelpOption();
-    parser.addVersionOption();
-    parser.addOption(customAudioRoleOption);
-    parser.addPositionalArgument("url", "The URL(s) to open.");
-    QApplication *app = (QApplication *)(QApplication::instance());
-    parser.process(*app);
-
 }
 
 // void PCScreen::handleResultsObs(QString result){
@@ -770,7 +665,26 @@ void PCScreen::refreshWebCam()
     uiVideoSettings.cbSound->clear();
     uiVideoSettings.cbWebCam->clear();
     uiVideoSettings.cbWebCam->addItems(Player::getListWebCams());
-    uiVideoSettings.cbSound->addItem("");
+    //uiVideoSettings.cbSound->addItem("");
+
+    // QStringList listWebCam;
+    // QProcess* proc = new QProcess(this);
+    // proc->setProgram("ffmpeg");
+    // proc->setArguments({"-hide_banner", "-list_devices", "true", "-f", "dshow", "-i", "dummy"});
+    // proc->setReadChannel(QProcess::StandardError);
+    // proc->start();
+    // proc->waitForFinished();
+    // while(true){
+    //     QString s(proc->readLine());
+    //     if(s.size() == 0)
+    //         break;
+    //     if(s.contains("(audio)")){
+    //         char c = '"';
+    //         listWebCam.append(s.split(c).at(1));
+    //     }
+
+    // }
+
     uiVideoSettings.cbSound->addItems(Player::getListSoundDevices());
 }
 

@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 #include "pcscreen.h"
-#include <QRegExp>
+//#include <QRegExp>
 #include "ui_mainwindow.h"
 
 #include <QMessageBox>

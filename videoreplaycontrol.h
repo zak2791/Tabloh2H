@@ -2,7 +2,6 @@
 #define VIDEOREPLAYCONTROL_H
 
 #include "playerpc.h"
-#include "playerviewer.h"
 #include "qprocess.h"
 #include <QWidget>
 #include <QPointer>
@@ -67,7 +66,6 @@ private:
     QString heightPipVk;
     QString transparentPipVk;
 
-    QPointer<PlayerViewer> slowMotionPlayer;
     void killFfmpegProcess(void);
     void offStreamVk(void);
     void getHWcodec(void);

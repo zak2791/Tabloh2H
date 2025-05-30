@@ -1,6 +1,7 @@
 #ifndef PLAYERPC_H
 #define PLAYERPC_H
 
+#include "qcheckbox.h"
 #include "qmediaplayer.h"
 #include "qradiobutton.h"
 #include "qslider.h"
@@ -39,6 +40,13 @@ private:
     SvgButton* btnFrameForward;
     SvgButton* btnFrameBack;
     QVideoWidget* videoOutput;
+    QCheckBox* cbRepeat;
+    QSpinBox* sbRepeat;
+    int repeatPos;
+    int repeatTime;
+    int duration;
+    //int fps;
+    bool repeat = false;
 
     void playState(QMediaPlayer::PlaybackState);
 

@@ -1,6 +1,7 @@
 #include "playerpc.h"
 #include "qboxlayout.h"
 #include "qbuttongroup.h"
+#include "qcheckbox.h"
 #include "qframe.h"
 #include "qlabel.h"
 #include "qpushbutton.h"
@@ -53,6 +54,22 @@ PlayerPc::PlayerPc(QWidget *parent)
     playbackRate->setPrefix("x");
     playbackRate->setValue(1.0);
 
+    cbRepeat = new QCheckBox(this);
+    sbRepeat = new QSpinBox(this);
+
+    connect(cbRepeat, &QCheckBox::clicked, this, [this](bool checked){
+        repeatPos = player->position();
+        qDebug()<<"sbRepeat->value() = "<<sbRepeat->value();
+        repeatTime = sbRepeat->value();
+        repeat = checked;
+    });
+
+    sbRepeat->setRange(1, 10);
+    connect(sbRepeat, &QSpinBox::valueChanged, this, [this](int time){
+        qDebug()<<"set repeatTime"<<time;
+        repeatTime = time;
+    });
+
     QFrame* vLine1 = new QFrame;
     vLine1->setFrameShape(QFrame::VLine);
     QFrame* vLine2 = new QFrame;
@@ -61,6 +78,8 @@ PlayerPc::PlayerPc(QWidget *parent)
     vLine3->setFrameShape(QFrame::VLine);
     QFrame* vLine4 = new QFrame;
     vLine4->setFrameShape(QFrame::VLine);
+    QFrame* vLine5 = new QFrame;
+    vLine5->setFrameShape(QFrame::VLine);
 
     hLayout->addWidget(btnPlay, 1);
     hLayout->addWidget(btnFrameBack, 1);
@@ -81,6 +100,10 @@ PlayerPc::PlayerPc(QWidget *parent)
     hLayout->addWidget(vLine4);
     hLayout->addWidget(new QLabel("Скорость"));
     hLayout->addWidget(playbackRate);
+    hLayout->addWidget(vLine5);
+    hLayout->addWidget(new QLabel("Повтор"));
+    hLayout->addWidget(cbRepeat);
+    hLayout->addWidget(sbRepeat);
 
     hLayout->addStretch(8);
     hLayout->addWidget(btnClose, 1);
@@ -97,8 +120,46 @@ PlayerPc::PlayerPc(QWidget *parent)
     audioOutput = new QAudioOutput(this);
     player->setAudioOutput(audioOutput);
 
+    connect(player, &QMediaPlayer::mediaStatusChanged, [](QMediaPlayer::MediaStatus status){
+        qDebug()<<status;
+    });
+    connect(player, &QMediaPlayer::bufferProgressChanged, [](float status){
+        qDebug()<<status;
+    });
+
+    connect(player, &QMediaPlayer::positionChanged, [](int pos){
+        qDebug()<<"pos = "<<pos;;
+    });
+
     connect(player, &QMediaPlayer::positionChanged, sliderPosition, &QSlider::setSliderPosition);
     connect(sliderPosition, &QSlider::valueChanged, player, &QMediaPlayer::setPosition);
+    connect(player, &QMediaPlayer::positionChanged, this, [this](int position){
+        if(repeat){
+            if(position >= duration - 100){
+                int newPos = position - repeatTime * 1000;
+                if(newPos < 0)
+                    newPos = 0;
+                if(player->playbackState() == QMediaPlayer::PlayingState){
+                    player->pause();
+                    player->setPosition(newPos);
+                    player->play();
+                }
+                else{
+                    player->setPosition(newPos);
+                }
+            }
+            else if(position > repeatPos + repeatTime * 1000 / 2){
+                if(player->playbackState() == QMediaPlayer::PlayingState){
+                    player->pause();
+                    player->setPosition(position - repeatTime * 1000);
+                    player->play();
+                }
+                else{
+                    player->setPosition(position - repeatTime * 1000);
+                }
+            }
+        }
+    });
 
     connect(player, &QMediaPlayer::tracksChanged, [this](){
         qDebug()<<"player->activeAudioTrack() = "<<player->activeAudioTrack();
@@ -122,6 +183,7 @@ PlayerPc::PlayerPc(QWidget *parent)
     });
     connect(btnFrameForward, &QPushButton::clicked, this, [this](){
         player->setPosition(player->position() + 33);
+        //videoOutput->update();
     });
 
     connect(rbCam1, &QRadioButton::clicked, this, &PlayerPc::selectVideoTrack);
@@ -242,7 +304,9 @@ void PlayerPc::selectAudioTrack(bool checked)
 void PlayerPc::metaDataChanged()
 {
     QMediaMetaData data = player->metaData();
-    int duration = data.value(QMediaMetaData::Duration).toInt();
+    duration = data.value(QMediaMetaData::Duration).toInt();
+    //fps = data.value(QMediaMetaData::VideoFrameRate).toInt();
+    //qDebug()<<"fps = "<<fps;
     sliderPosition->setRange(0, duration);
     int countVideos = player->videoTracks().size();
     int countSounds = player->audioTracks().size();
@@ -281,10 +345,10 @@ void PlayerPc::metaDataChanged()
         rbSound3->setEnabled(false);
     }
 
-    videoOutput->update();
+    //videoOutput->update();
     //player->setPosition(duration / 2);
     player->play();
-    //player->pause();
+    player->pause();
     //sliderPosition->setSliderPosition(0);
 
 }

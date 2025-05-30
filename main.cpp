@@ -1,14 +1,23 @@
-#include <QJSEngine> 
+#include <QJSEngine>
 #include <QObject>
 #include "JSTools.h"
 #include "pcscreen.h"
-#include "rate.h"
+
 
 #include "mainwindow.h"
-
+#include <QApplication>
 
 int main(int argc, char** argv){
     QApplication app(argc, argv);
+
+    // QVideoWidget* v = new QVideoWidget;
+    // QAudioOutput* a = new QAudioOutput;
+    // QMediaPlayer* p = new QMediaPlayer;
+    // p->setSource(QUrl::fromLocalFile("1.mp4"));
+    // p->setVideoOutput(v);
+    // p->setAudioOutput(a);
+    // v->show();
+    // p->play();
 
     app.setOrganizationName("rffrb");
     app.setOrganizationDomain("rffrb.ru");
@@ -36,23 +45,12 @@ int main(int argc, char** argv){
     mWin->setCentralWidget(pwgt);
     mWin->show();
 
-    //QObject::connect(mWin, &MainWindow::sigRegistration, pwgt, &PCScreen::slotRegistration);
     QObject::connect(mWin, SIGNAL(newFile()), pwgt, SLOT(newListSportsmens()));
     QObject::connect(mWin, SIGNAL(variant(int)), pwgt, SLOT(Variant(int)));
-
     QObject::connect(mWin, SIGNAL(sigLogo(bool)), pwgt, SIGNAL(sigLogo(bool)));
 
-    //QObject::connect(mWin, SIGNAL(sigExit(void)), pwgt, SLOT(slotExit(void)));
 
-	QJSEngine se;
-
-    // QProcess proc;
-    // QList<QString> args;
-    // args<<"/c"<<"ffmpeg"<<"-codecs"<<"|"<<"findstr"<<"h264";
-    // proc.start("cmd", args);
-    // proc.waitForFinished();
-    // qDebug()<<proc.readAllStandardOutput();
-
+    QJSEngine se;
 
     QFile  file("script.js");
     QFile jFile("data.json");
@@ -69,32 +67,32 @@ int main(int argc, char** argv){
     if (file.open(QFile::ReadOnly)) {
 
         QJSValue sw = se.newQObject((QObject *)pwgt);
-		se.globalObject().setProperty("wgt", sw);
+        se.globalObject().setProperty("wgt", sw);
 
         QList<QObject*> lst = pwgt->findChildren<QObject*>();
         lst.prepend(pwgt);
 
-		foreach(QObject* pobj, lst) {
-			sw = se.newQObject(pobj);
-			se.globalObject().setProperty(pobj->objectName(), sw);
-		}
-		JSTools* pjt = new JSTools;
-		sw = se.newQObject(pjt);
-		QString strClassName = pjt->metaObject()->className();
-		se.globalObject().setProperty(strClassName, sw);
+        foreach(QObject* pobj, lst) {
+            sw = se.newQObject(pobj);
+            se.globalObject().setProperty(pobj->objectName(), sw);
+        }
+        JSTools* pjt = new JSTools;
+        sw = se.newQObject(pjt);
+        QString strClassName = pjt->metaObject()->className();
+        se.globalObject().setProperty(strClassName, sw);
         QJSValue result = se.evaluate(QLatin1String(file.readAll()));
-		if (result.isError()) {
-			QMessageBox::critical(0,
-								  "Evaluating error",
-								  result.toString(),
-								  QMessageBox::Yes);
-		}
-	}else {
-		QMessageBox::critical(0,
-							  "File open error",
+        if (result.isError()) {
+            QMessageBox::critical(0,
+                                  "Evaluating error",
+                                  result.toString(),
+                                  QMessageBox::Yes);
+        }
+    }else {
+        QMessageBox::critical(0,
+                              "File open error",
                               " Can not open the script file",
-							  QMessageBox::Yes);
-	}
+                              QMessageBox::Yes);
+    }
 
 	return app.exec();
 }

@@ -644,61 +644,18 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 
 }
 
-// void PCScreen::handleResultsObs(QString result){
-//     if(result == "ok"){
-//         QMessageBox msgBox(QMessageBox::Icon::Information,
-//                            "Старт записи",
-//                            QString("Запись начата"));
-//         msgBox.exec();
-//     }
-//     else{
-//         QMessageBox msgBox(QMessageBox::Icon::Critical,
-//                            "Ошибка сервера",
-//                            QString("Сервер не работает из за возникновения ошибки:\r\n") + result);
-//         msgBox.exec();
-//     }
-
-// }
-
 void PCScreen::refreshWebCam()
 {
     uiVideoSettings.cbSound->clear();
     uiVideoSettings.cbWebCam->clear();
     uiVideoSettings.cbWebCam->addItems(Player::getListWebCams());
-    //uiVideoSettings.cbSound->addItem("");
-
-    // QStringList listWebCam;
-    // QProcess* proc = new QProcess(this);
-    // proc->setProgram("ffmpeg");
-    // proc->setArguments({"-hide_banner", "-list_devices", "true", "-f", "dshow", "-i", "dummy"});
-    // proc->setReadChannel(QProcess::StandardError);
-    // proc->start();
-    // proc->waitForFinished();
-    // while(true){
-    //     QString s(proc->readLine());
-    //     if(s.size() == 0)
-    //         break;
-    //     if(s.contains("(audio)")){
-    //         char c = '"';
-    //         listWebCam.append(s.split(c).at(1));
-    //     }
-
-    // }
 
     uiVideoSettings.cbSound->addItems(Player::getListSoundDevices());
 }
 
-// void PCScreen::slotStartRecordOBS(){
-//     if(mainwin->uiObs.cbConnectToOBS->isChecked())
-//         emit operate(mainwin->uiObs.IpAddress->text(),
-//                      mainwin->uiObs.Port->value(),
-//                      mainwin->uiObs.Password->text());
-// }
-
 PCScreen::~PCScreen()
 {
-    // obsThread.quit();
-    // obsThread.wait();
+
 }
 
 void PCScreen::CpuUsage(){

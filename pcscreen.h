@@ -220,7 +220,7 @@ private slots:
 
 private:
     //QLabel* lblCpuUsage;
-    QCheckBox* cbAddDisp;
+    //QCheckBox* cbAddDisp;
     QSettings* settings;
     QString fileSettings;
     QWidget * formView;

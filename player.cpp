@@ -7,8 +7,7 @@
 #include <QDebug>
 
 
-Player::Player(QString file, QObject *parent) : QObject(parent){
-
+Player::Player(QObject *parent) : QObject(parent){
 
 }
 

@@ -106,9 +106,9 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     fam_next_blue = new Fam(col_blue, "", 63,"",this);
     fam_next_blue->setObjectName("fam_next_blue");
 
-    cbAddDisp = new QCheckBox("дополнительный\nдисплей", this);     //передача данных для дополнительного дисплея
-    cbAddDisp->setStyleSheet("color: white");
-    connect(cbAddDisp, SIGNAL(stateChanged(int)), this, SLOT(addDisplay(int)));
+    // cbAddDisp = new QCheckBox("дополнительный\nдисплей", this);     //передача данных для дополнительного дисплея
+    // cbAddDisp->setStyleSheet("color: white");
+    // connect(cbAddDisp, SIGNAL(stateChanged(int)), this, SLOT(addDisplay(int)));
 
     SVGPushButton* doctor = new SVGPushButton(":/images/doctor.svg");
     //doctor->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
@@ -312,7 +312,7 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 
     grid->addWidget(doctor,                 29,  45, 2,   6);
 
-    grid->addWidget(cbAddDisp,              28,  4, 4,   20);
+    //grid->addWidget(cbAddDisp,              28,  4, 4,   20);
 
     btnTime->setStyleSheet("color: green; font: bold " + QString::number(round(btnTime->height() / 2)) + "px;");
 
@@ -522,6 +522,14 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     videoControl->setTransparentPipVk(t);
     uiVideoSettings.sbTransparent->setValue(t.toDouble());
 
+    QString delay = settings->value("delayPicture", "7").toString();
+    videoControl->setDelayPicture(delay);
+    uiVideoSettings.sbPicture->setValue(delay.toInt());
+
+    delay = settings->value("delaySound", "5").toString();
+    videoControl->setDelaySound(delay);
+    uiVideoSettings.sbPicture->setValue(delay.toInt());
+
     settings->endGroup();
 
     connect(uiVideoSettings.chbVk, &QCheckBox::toggled, this, [this](bool b){
@@ -619,6 +627,20 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
         videoControl->setTransparentPipVk(uiVideoSettings.sbTransparent->text());
         settings->beginGroup("vk");
         settings->setValue("transparentPip", uiVideoSettings.sbTransparent->text().replace(",", "."));
+        settings->endGroup();
+    });
+
+    connect(uiVideoSettings.sbPicture, &QSpinBox::textChanged, this, [this](){
+        videoControl->setDelayPicture(uiVideoSettings.sbPicture->text());
+        settings->beginGroup("vk");
+        settings->setValue("delayPicture", uiVideoSettings.sbPicture->text());
+        settings->endGroup();
+    });
+
+    connect(uiVideoSettings.sbSound, &QSpinBox::textChanged, this, [this](){
+        videoControl->setDelayPicture(uiVideoSettings.sbSound->text());
+        settings->beginGroup("vk");
+        settings->setValue("delaySound", uiVideoSettings.sbSound->text());
         settings->endGroup();
     });
 

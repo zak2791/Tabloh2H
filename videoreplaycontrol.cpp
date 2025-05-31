@@ -86,10 +86,8 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
             });
     connect(procRead, &QProcess::started, this, [this](){
         if(streamToVk && procVk->state() == QProcess::NotRunning){
-            if(camToVk == 1 && ui->cbCam1->isChecked()){
+            if(camToVk == 1 && ui->cbCam1->isChecked())
                 procProbeAudio->start();
-                qDebug()<<"procProbeAudio cam1";
-            }
             if(camToVk == 2 && ui->cbCam2->isChecked())
                 procProbeAudio->start();
             if(camToVk == 3 && ui->cbCam3->isChecked())
@@ -287,6 +285,7 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
     connect(procVk, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this,
             [=](int exitCode, QProcess::ExitStatus exitStatus){
                 qDebug()<<"vk exitCode = "<<exitCode<<"vk exitStatus = "<<exitStatus;
+                stopReadCams();
                 ui->labelvk->setStatusVk(false);
             });
     connect(procVk, &QProcess::started, this, [=](){
@@ -304,7 +303,7 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
             return;
         //QThread::sleep(1);
         player->setMediaUrl(file);
-        player->show();
+        player->showFullScreen();
         btnPlay->setEnabled(false);
         btnPlayLast->setEnabled(false);
         emit sigShowPlayer();
@@ -371,7 +370,8 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
         }
         onStreamVk();
     });
-
+    ui->cbCam2->click();
+    ui->cbCam3->click();
 }
 
 VideoReplayControl::~VideoReplayControl()
@@ -477,12 +477,12 @@ void VideoReplayControl::startReadCams()
 
     argsInput2<<"-rtbufsize"<<"2000M";
     if(urlCam2.startsWith("rtsp"))
-        argsInput2<<"-rtsp_transport"<<"tcp"<<"-timeout"<<"10000";
+        argsInput2<<"-rtsp_transport"<<"tcp"<<"-stimeout"<<"1000000";
     argsInput2<<"-i"<<urlCam2;
 
     argsInput3<<"-rtbufsize"<<"2000M";
     if(urlCam3.startsWith("rtsp"))
-        argsInput3<<"-rtsp_transport"<<"tcp"<<"-timeout"<<"10000";
+        argsInput3<<"-rtsp_transport"<<"tcp"<<"tcp"<<"-stimeout"<<"1000000";
     argsInput3<<"-i"<<urlCam3;
 
     args<<"-hide_banner"<<"-loglevel"<<"error";
@@ -490,85 +490,86 @@ void VideoReplayControl::startReadCams()
     switch(turnOnCams){
     case 1:             //1
         args += argsInput1;
-        args<<"-map"<<"0"<<"-vcodec"<<codec<<"-b:v"<<"5M"<<"-g"<<"1"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5000";
-        args<<"-map"<<"0:v"<<"-vcodec"<<codec<<"-b:v"<<"1M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
+        args<<"-map"<<"0"<<"-g"<<"10"<<"-vcodec"<<codec<<"-f"<<"mpegts"<<"udp://127.0.0.1:5000";
+        args<<"-map"<<"0:v"<<"-vcodec"<<codec<<"-b:v"<<"500K"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
         if(streamToVk && camToVk == 1)
-            args<<"-map"<<"0"<<"-g"<<"1"<<"-vcodec"<<codec<<"-b"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
+            args<<"-map"<<"0"
+                 <<"-vcodec"<<codec<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
         break;
     case 2:             //2
         args += argsInput2;
-        args<<"-map"<<"0"<<"-vcodec"<<"copy"<<"-g"<<"1"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5000";
-        args<<"-map"<<"0:v"<<"-vcodec"<<"copy"<<"-b:v"<<"1M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5002";
+        args<<"-map"<<"0"<<"-g"<<"10"<<"-vcodec"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5000";
+        args<<"-map"<<"0:v"<<"-vcodec"<<"copy"<<"-b:v"<<"500K"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5002";
         if(streamToVk && camToVk == 2)
-            args<<"-map"<<"0"<<"-vcodec"<<"copy"<<"-b"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
+            args<<"-map"<<"0"<<"-vcodec"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
         break;
     case 4:             //3   
         args += argsInput3;
-        args<<"-map"<<"0"<<"-vcodec"<<"copy"<<"-g"<<"1"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5000";
-        args<<"-map"<<"0:v"<<"-vcodec"<<"copy"<<"-b:v"<<"1M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5003";
+        args<<"-map"<<"0"<<"-g"<<"10"<<"-vcodec"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5000";
+        args<<"-map"<<"0:v"<<"-vcodec"<<"copy"<<"-b:v"<<"500K"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5003";
         if(streamToVk && camToVk == 3)
-            args<<"-map"<<"0"<<"-vcodec"<<"copy"<<"-b"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
+            args<<"-map"<<"0"<<"-vcodec"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
         break;
     case 3:             //1 & 2
         args += argsInput1;
         args += argsInput2;
-        args<<"-map"<<"0"<<"-b"<<"5M";
+        args<<"-map"<<"0";
         args<<"-map"<<"1";
-        args<<"-g"<<"1"<<"-c:v:0"<<codec<<"-c:v:1"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5000";
-        args<<"-map"<<"0:v"<<"-vcodec"<<codec<<"-b:v"<<"1M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
-        args<<"-map"<<"1:v"<<"-vcodec"<<"copy"<<"-b:v"<<"1M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5002";
+        args<<"-g"<<"10"<<"-c:v:0"<<codec<<"-c:v:1"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5000";
+        args<<"-map"<<"0:v"<<"-vcodec"<<codec<<"-b:v"<<"500K"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
+        args<<"-map"<<"1:v"<<"-vcodec"<<"copy"<<"-b:v"<<"500K"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5002";
         if(streamToVk && camToVk == 1)
-            args<<"-map"<<"0"<<"-g"<<"1"<<"-vcodec"<<codec<<"-b"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
+            args<<"-map"<<"0"<<"-vcodec"<<codec<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
         else if(streamToVk && camToVk == 2)
-            args<<"-map"<<"1"<<"-vcodec"<<"copy"<<"-b"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
+            args<<"-map"<<"1"<<"-vcodec"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
         break;
     case 5:             //1 & 3
         args += argsInput1;
         args += argsInput3;
-        args<<"-map"<<"0"<<"-b"<<"5M";
+        args<<"-map"<<"0";
         args<<"-map"<<"1";
-        args<<"-g"<<"1"<<"-c:v:0"<<codec<<"-c:v:1"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5000";
-        args<<"-map"<<"0:v"<<"-vcodec"<<codec<<"-b:v"<<"1M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
-        args<<"-map"<<"1:v"<<"-vcodec"<<"copy"<<"-b:v"<<"1M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5003";
+        args<<"-g"<<"10"<<"-c:v:0"<<codec<<"-c:v:1"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5000";
+        args<<"-map"<<"0:v"<<"-vcodec"<<codec<<"-b:v"<<"500K"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
+        args<<"-map"<<"1:v"<<"-vcodec"<<"copy"<<"-b:v"<<"500K"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5003";
         if(streamToVk && camToVk == 1)
-            args<<"-map"<<"0"<<"-g"<<"1"<<"-vcodec"<<codec<<"-b"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
+            args<<"-map"<<"0"<<"-vcodec"<<codec<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
         else if(streamToVk && camToVk == 3)
-            args<<"-map"<<"1"<<"-vcodec"<<"copy"<<"-b"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
+            args<<"-map"<<"1"<<"-vcodec"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
         break;
     case 6:             //2 & 3
         args += argsInput2;
         args += argsInput3;
         args<<"-map"<<"0";
         args<<"-map"<<"1";
-        args<<"-g"<<"1"<<"-c:v:0"<<"copy"<<"-c:v:1"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5000";
-        args<<"-map"<<"0:v"<<"-vcodec"<<"copy"<<"-b:v"<<"1M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5002";
-        args<<"-map"<<"1:v"<<"-vcodec"<<"copy"<<"-b:v"<<"1M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5003";
+        args<<"-g"<<"10"<<"-c:v:0"<<"copy"<<"-c:v:1"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5000";
+        args<<"-map"<<"0:v"<<"-vcodec"<<"copy"<<"-b:v"<<"500K"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5002";
+        args<<"-map"<<"1:v"<<"-vcodec"<<"copy"<<"-b:v"<<"500K"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5003";
         if(streamToVk && camToVk == 2)
-            args<<"-map"<<"0"<<"-vcodec"<<"copy"<<"-b"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
+            args<<"-map"<<"0"<<"-vcodec"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
         else if(streamToVk && camToVk == 3)
-            args<<"-map"<<"1"<<"-vcodec"<<"copy"<<"-b"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
+            args<<"-map"<<"1"<<"-vcodec"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
         break;
     case 7:             //1 & 2 & 3
         args += argsInput1;
         args += argsInput2;
         args += argsInput3;
-        args<<"-map"<<"0"<<"-b"<<"5M";
+        args<<"-map"<<"0";
         args<<"-map"<<"1";
         args<<"-map"<<"2";
-        args<<"-g"<<"1"<<"-c:v:0"<<codec<<"-c:v:1"<<"copy"<<"-c:v:2"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5000";
-        args<<"-map"<<"0:v"<<"-vcodec"<<codec<<"-b:v"<<"1M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
-        args<<"-map"<<"1:v"<<"-vcodec"<<"copy"<<"-b:v"<<"1M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5002";
-        args<<"-map"<<"2:v"<<"-vcodec"<<"copy"<<"-b:v"<<"1M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5003";
+        args<<"-g"<<"10"<<"-c:v:0"<<codec<<"-c:v:1"<<"copy"<<"-c:v:2"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5000";
+        args<<"-map"<<"0:v"<<"-vcodec"<<codec<<"-b:v"<<"500K"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
+        args<<"-map"<<"1:v"<<"-vcodec"<<"copy"<<"-b:v"<<"500K"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5002";
+        args<<"-map"<<"2:v"<<"-vcodec"<<"copy"<<"-b:v"<<"500K"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5003";
         if(streamToVk && camToVk == 1)
-            args<<"-map"<<"0"<<"-g"<<"1"<<"-vcodec"<<codec<<"-b"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
+            args<<"-map"<<"0"<<"-vcodec"<<codec<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
         else if(streamToVk && camToVk == 2)
-            args<<"-map"<<"1"<<"-vcodec"<<"copy"<<"-b"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
+            args<<"-map"<<"1"<<"-vcodec"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
         else if(streamToVk && camToVk == 3)
-            args<<"-map"<<"2"<<"-vcodec"<<"copy"<<"-b"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
+            args<<"-map"<<"2"<<"-vcodec"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
         break;
     }
 
-    qDebug()<<args;
+    qDebug()<<"args read"<<args;
     procRead->setArguments(args);
     procRead->start();
 
@@ -583,53 +584,53 @@ void VideoReplayControl::stopReadCams()
 
 void VideoReplayControl::onStreamVk()
 {
-    // if(procVk->state() == QProcess::Running)
-    //     return;
+    QStringList args;
+    args<<"-hide_banner"<<"-timeout"<<"1000";
+    args<<"-thread_queue_size"<<"1024";
+    args<<"-i"<<"udp://127.0.0.1:5004"; //0
+    args<<"-f"<<"gdigrab"<<"-framerate"<<"1"<<"-i"<<"title=TabloOnTv"; //1
+    qDebug()<<"isAudio = "<<isAudio;
+    if(!isAudio)
+        args<<"-f"<<"dshow"<<"-i"<<"audio=" + urlSound; //2
 
-    //if(streamToVk && procVk->state() == QProcess::NotRunning){
-        QStringList args;
-        args<<"-hide_banner"<<"-rtbufsize"<<"2000M"<<"-timeout"<<"1000";
-        args<<"-i"<<"udp://127.0.0.1:5004"; //0
-        args<<"-f"<<"gdigrab"<<"-framerate"<<"1"<<"-i"<<"title=TabloOnTv"; //1
-        qDebug()<<"isAudio = "<<isAudio;
-        if(!isAudio)
-            args<<"-f"<<"dshow"<<"-i"<<"audio=" + urlSound; //2
-
-        if(static_cast<MainWindow*>(p->parent())->getStatusRegistration()){
-            if(isAudio){
-                args<<"-filter_complex"<<"[1]scale=" + widthPipVk + ":" + heightPipVk + ", colorchannelmixer=aa=" + transparentPipVk + " [pip]; "
-                                                                                                                      "[pip] setpts=PTS-STARTPTS+7/TB [sync_pip]; "
-                                                                                                                      "[0][sync_pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10 [out_vk]; "
-                                                                                                                      "[out_vk] drawtext=text='DEMO':x=(w / 2-text_w / 2):y=(h / 2-text_h / 2):fontfile=arial.ttf:fontsize=240:fontcolor=red ";
-            }
-            else{
-                args<<"-filter_complex"<<"[1]scale=" + widthPipVk + ":" + heightPipVk + ", colorchannelmixer=aa=" + transparentPipVk + " [pip]; "
-                                                                                                                      "[pip] setpts=PTS-STARTPTS+7/TB [sync_pip]; "
-                                                                                                                      "[0][sync_pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10 [out_vk]; "
-                                                                                                                      "[2] asetpts=PTS+5/TB [out_audio]; "
-                                                                                                                      "[out_vk] drawtext=text='DEMO':x=(w / 2-text_w / 2):y=(h / 2-text_h / 2):fontfile=arial.ttf:fontsize=240:fontcolor=red [out]";
-            }
+    if(static_cast<MainWindow*>(p->parent())->getStatusRegistration()){
+        if(isAudio){
+            args<<"-filter_complex"<<"[1]scale=" + widthPipVk + ":" + heightPipVk + ", colorchannelmixer=aa=" + transparentPipVk + " [pip]; "
+                "[pip] setpts=PTS-STARTPTS+" + delayPicture + "/TB [sync_pip]; "
+                "[0][sync_pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10 [out_vk]; "
+                "[out_vk] drawtext=text='DEMO':x=(w / 2-text_w / 2):y=(h / 2-text_h / 2):fontfile=arial.ttf:fontsize=240:fontcolor=red ";
         }
         else{
-            if(isAudio){
-                args<<"-filter_complex"<<"[1]scale=" + widthPipVk + ":" + heightPipVk + ", colorchannelmixer=aa=" + transparentPipVk + " [pip]; "
-                                                                                                                      "[pip] setpts=PTS-STARTPTS+7/TB [sync_pip]; "
-                                                                                                                      "[0][sync_pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10 ";
-            }
-            else{
-                args<<"-filter_complex"<<"[1]scale=" + widthPipVk + ":" + heightPipVk + ", colorchannelmixer=aa=" + transparentPipVk + " [pip]; "
-                                                                                                                      "[pip] setpts=PTS-STARTPTS+7/TB [sync_pip]; "
-                                                                                                                      "[2] asetpts=PTS+5/TB [out_audio]; "
-                                                                                                                      "[0][sync_pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10 [out]";
-            }
+            args<<"-filter_complex"<<"[1]scale=" + widthPipVk + ":" + heightPipVk + ", colorchannelmixer=aa=" + transparentPipVk + " [pip]; "
+            "[pip] setpts=PTS-STARTPTS+" + delayPicture + "/TB [sync_pip]; "
+            "[0][sync_pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10 [out_vk]; "
+            "[2] asetpts=PTS+" + delaySound + "/TB [out_audio]; "
+            "[out_vk] drawtext=text='DEMO':x=(w / 2-text_w / 2):y=(h / 2-text_h / 2):fontfile=arial.ttf:fontsize=240:fontcolor=red [out]";
         }
-        if(isAudio)
-            args<<"-b"<<"3M"<<"-f"<<"flv"<<"-flvflags"<<"no_duration_filesize"<<urlVk + keyVk;
-        else
-            args<<"-map"<<"[out]"<<"-map"<<"[out_audio]"<<"-b"<<"3M"<<"-f"<<"flv"<<"-flvflags"<<"no_duration_filesize"<<urlVk + keyVk;
-        qDebug()<<"vk = "<<args;
-        procVk->setArguments(args);
-        procVk->start();
+    }
+    else{
+        if(isAudio){
+            args<<"-filter_complex"<<"[1]scale=" + widthPipVk + ":" + heightPipVk + ", colorchannelmixer=aa=" + transparentPipVk + " [pip]; "
+            "[pip] setpts=PTS-STARTPTS+" + delayPicture + "/TB [sync_pip]; "
+            "[0][sync_pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10 ";
+        }
+        else{
+            args<<"-filter_complex"<<"[1]scale=" + widthPipVk + ":" + heightPipVk + ", colorchannelmixer=aa=" + transparentPipVk + " [pip]; "
+            "[pip] setpts=PTS-STARTPTS+" + delayPicture + "/TB [sync_pip]; "
+            "[2] asetpts=PTS+" + delaySound + "/TB [out_audio]; "
+            "[0][sync_pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10 [out]";
+        }
+    }
+    if(isAudio)
+        args<<"-max_muxing_queue_size"<<"1024"
+             <<"-f"<<"flv"<<"-flvflags"<<"no_duration_filesize"<<urlVk + keyVk;
+    else
+        args<<"-map"<<"[out]"<<"-map"<<"[out_audio]"
+             <<"-max_muxing_queue_size"<<"1024"
+             <<"-f"<<"flv"<<urlVk + keyVk;
+    qDebug()<<"vk = "<<args;
+    procVk->setArguments(args);
+    procVk->start();
     //}
 }
 
@@ -642,6 +643,7 @@ void VideoReplayControl::setParamWebCam(QList<int> param)
 {
     fps = QString::number(param.at(0));
     resolution = QString::number(param.at(1)) + "x" + QString::number(param.at(2));
+    ui->cbCam1->click();
 }
 
 void VideoReplayControl::setSound(QString sound)

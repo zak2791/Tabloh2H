@@ -9,7 +9,7 @@ class Player : public QObject
 
 
 public:
-    explicit Player(QString file = "", QObject *parent = nullptr);
+    explicit Player(QObject *parent = nullptr);
     ~Player();
 
     static QStringList getListWebCams(void);

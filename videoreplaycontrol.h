@@ -43,6 +43,8 @@ private:
 
     QString fps;
     QString resolution;
+    QString delaySound;
+    QString delayPicture;
 
     // void turnCam1(void);
     // void turnCam2(void);
@@ -103,7 +105,8 @@ public slots:
     void setWidthPipVk(QString width){widthPipVk = width;}
     void setHeightPipVk(QString height){heightPipVk = height;}
     void setTransparentPipVk(QString transparent){transparentPipVk = transparent;}
-
+    void setDelaySound(QString delay){delaySound = delay;}
+    void setDelayPicture(QString delay){delayPicture = delay;}
 
 signals:
     void sigShowPlayer(void);

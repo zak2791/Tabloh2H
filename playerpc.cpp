@@ -47,10 +47,10 @@ PlayerPc::PlayerPc(QWidget *parent)
     sliderVolume->setValue(100);
 
     playbackRate = new QDoubleSpinBox(this);
-    playbackRate->setMaximum(4.0);
-    playbackRate->setMinimum(0.5);
+    playbackRate->setMaximum(10.0);
+    playbackRate->setMinimum(0.2);
     playbackRate->setDecimals(1);
-    playbackRate->setSingleStep(0.1);
+    playbackRate->setSingleStep(0.2);
     playbackRate->setPrefix("x");
     playbackRate->setValue(1.0);
 
@@ -59,14 +59,13 @@ PlayerPc::PlayerPc(QWidget *parent)
 
     connect(cbRepeat, &QCheckBox::clicked, this, [this](bool checked){
         repeatPos = player->position();
-        qDebug()<<"sbRepeat->value() = "<<sbRepeat->value();
         repeatTime = sbRepeat->value();
         repeat = checked;
     });
 
     sbRepeat->setRange(1, 10);
+    sbRepeat->setSuffix(" c");
     connect(sbRepeat, &QSpinBox::valueChanged, this, [this](int time){
-        qDebug()<<"set repeatTime"<<time;
         repeatTime = time;
     });
 
@@ -120,25 +119,14 @@ PlayerPc::PlayerPc(QWidget *parent)
     audioOutput = new QAudioOutput(this);
     player->setAudioOutput(audioOutput);
 
-    connect(player, &QMediaPlayer::mediaStatusChanged, [](QMediaPlayer::MediaStatus status){
-        qDebug()<<status;
-    });
-    connect(player, &QMediaPlayer::bufferProgressChanged, [](float status){
-        qDebug()<<status;
-    });
-
-    connect(player, &QMediaPlayer::positionChanged, [](int pos){
-        qDebug()<<"pos = "<<pos;;
-    });
-
     connect(player, &QMediaPlayer::positionChanged, sliderPosition, &QSlider::setSliderPosition);
     connect(sliderPosition, &QSlider::valueChanged, player, &QMediaPlayer::setPosition);
     connect(player, &QMediaPlayer::positionChanged, this, [this](int position){
         if(repeat){
             if(position >= duration - 100){
                 int newPos = position - repeatTime * 1000;
-                if(newPos < 0)
-                    newPos = 0;
+                if(newPos <= 0)
+                    newPos = 1;
                 if(player->playbackState() == QMediaPlayer::PlayingState){
                     player->pause();
                     player->setPosition(newPos);
@@ -161,9 +149,6 @@ PlayerPc::PlayerPc(QWidget *parent)
         }
     });
 
-    connect(player, &QMediaPlayer::tracksChanged, [this](){
-        qDebug()<<"player->activeAudioTrack() = "<<player->activeAudioTrack();
-    });
     connect(player, &QMediaPlayer::metaDataChanged, this, &PlayerPc::metaDataChanged);
 
     connect(btnPlay, &QPushButton::clicked, player, [this](){
@@ -183,7 +168,6 @@ PlayerPc::PlayerPc(QWidget *parent)
     });
     connect(btnFrameForward, &QPushButton::clicked, this, [this](){
         player->setPosition(player->position() + 33);
-        //videoOutput->update();
     });
 
     connect(rbCam1, &QRadioButton::clicked, this, &PlayerPc::selectVideoTrack);
@@ -254,6 +238,8 @@ void PlayerPc::keyPressEvent(QKeyEvent* e)
         player->setPosition(player->position() + 33);
     if(e->key() == Qt::Key_Left)
         player->setPosition(player->position() - 33);
+    if(e->key() == Qt::Key_Space)
+        cbRepeat->click();
 
 }
 

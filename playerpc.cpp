@@ -291,8 +291,6 @@ void PlayerPc::metaDataChanged()
 {
     QMediaMetaData data = player->metaData();
     duration = data.value(QMediaMetaData::Duration).toInt();
-    //fps = data.value(QMediaMetaData::VideoFrameRate).toInt();
-    //qDebug()<<"fps = "<<fps;
     sliderPosition->setRange(0, duration);
     int countVideos = player->videoTracks().size();
     int countSounds = player->audioTracks().size();

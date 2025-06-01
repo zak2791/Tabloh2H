@@ -407,8 +407,6 @@ void VideoReplayControl::offStreamVk()
         procVk->write("q");
         procVk->waitForBytesWritten();
         procVk->closeWriteChannel();
-        //procVk->waitForFinished();
-        //procVk->close();
     }
 }
 
@@ -593,6 +591,9 @@ void VideoReplayControl::onStreamVk()
     if(!isAudio)
         args<<"-f"<<"dshow"<<"-i"<<"audio=" + urlSound; //2
 
+    if(hwEncoder != "")
+        args<<"-c:v"<<hwEncoder;
+
     if(static_cast<MainWindow*>(p->parent())->getStatusRegistration()){
         if(isAudio){
             args<<"-filter_complex"<<"[1]scale=" + widthPipVk + ":" + heightPipVk + ", colorchannelmixer=aa=" + transparentPipVk + " [pip]; "
@@ -621,13 +622,19 @@ void VideoReplayControl::onStreamVk()
             "[0][sync_pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10 [out]";
         }
     }
-    if(isAudio)
-        args<<"-max_muxing_queue_size"<<"1024"
-             <<"-f"<<"flv"<<"-flvflags"<<"no_duration_filesize"<<urlVk + keyVk;
-    else
+    if(isAudio){
+        args<<"-max_muxing_queue_size"<<"1024";
+        // if(hwEncoder != "")
+        //     args<<"-c:v"<<hwEncoder;
+        args<<"-f"<<"flv"<<urlVk + keyVk;
+    }
+    else{
         args<<"-map"<<"[out]"<<"-map"<<"[out_audio]"
-             <<"-max_muxing_queue_size"<<"1024"
-             <<"-f"<<"flv"<<urlVk + keyVk;
+             <<"-max_muxing_queue_size"<<"1024";
+        // if(hwEncoder != "")
+        //     args<<"-c:v"<<hwEncoder;
+        args<<"-f"<<"flv"<<urlVk + keyVk;
+    }
     qDebug()<<"vk = "<<args;
     procVk->setArguments(args);
     procVk->start();

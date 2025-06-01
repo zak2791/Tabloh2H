@@ -11,7 +11,6 @@
 #include "ui_FormSettingsVideoReplay.h"
 #include "ui_frmTime.h"
 #include "ui_FormView.h"
-//#include "ui_frmTv.h"
 #include "fam_reg.h"
 #include "plus.h"
 #include "tvscreen.h"
@@ -20,7 +19,6 @@
 #include "cameraconnection.h"
 #include "lcdstopwatch.h"
 #include "endtime.h"
-//#include "newsportsman.h"
 #include "list_family.h"
 #include <mainwindow.h>
 #include <QSettings>
@@ -32,7 +30,6 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QLibrary>
-//#include "controlobs.h"
 #include "videoreplaycontrol.h"
 #include <QSvgWidget>
 
@@ -107,7 +104,6 @@ public:
 
 signals:
     void sigClose(void);
-    //void setCategory(void);
 
 };
 
@@ -125,46 +121,32 @@ public:
 
 signals:
     void sendKey(int);
-    //void setCategory(void);
-    //void signalReplay(void);
-    //void changeViewName(int);
     void sig_hide(QString, QString, QString, QString);
     void sigLogo(bool);
 
 public slots:
-    //void setFrameWidth(int);
-    //void setSpace(int);
     void setSec(int);
     void setTime(void);
     void newListSportsmens(void);
     void sbrosLogo(void);
-    void Variant(int);
 
     void initListNames(void);   //инициализация списков спортсменов
-    //void slotExit(void);
-    //void slotRegistration(void);
+
 
 private slots:
     void setCam(QString);
     void showView(void);
     void showVideoSettings(void);
 
-    void finishedCamera(void);
-    void turnCamera(bool);
-    //void showSettings(void);
-    //void reset(void);
-
     void StopRecord(void);
     void StartRecord(bool);
-    void PlayFile(void);
-    void PlaySlowMotion(void);
-    void closePlayer(void);
+
     void PlaySelectedFile(void);
     void changeSize(void);
     void drawTvScreenshot(void);
 
     void autoCamera(bool);
-    void closeView(void);
+
     void closeVideoSettings(void);
     void setCamera(QString);
 
@@ -194,12 +176,6 @@ private slots:
     void resetTablo(void);
 
     void closeWinName(QString, QString, QString, QString, QString, QString, QString, QString);
-    //void tvXchange(int);
-    //void tvYchange(int);
-    //void tvWchange(int);
-    //void tvHchange(int);
-    //void tvReset(void);
-    //void tvFullScreen(bool);
     void delListNames(void);
     void saveTime(int);
     void saveConditionRate(int);
@@ -207,10 +183,6 @@ private slots:
     void saveConditionNames(QString);
     void saveConditionPlus(QString);
 
-    //void slotNewConnection(void);
-
-    // void slotStartRecordOBS(void);
-    // void handleResultsObs(QString);
     void refreshWebCam(void);
 
     void setTvScreenGeometry(void);
@@ -219,8 +191,6 @@ private slots:
     void setParamWebCam(int index);
 
 private:
-    //QLabel* lblCpuUsage;
-    //QCheckBox* cbAddDisp;
     QSettings* settings;
     QString fileSettings;
     QWidget * formView;
@@ -228,8 +198,6 @@ private:
     QWidget * frmTime;
     LCDStopwatch * sec_doctor;
     QWidget* frmTvSettings;
-    //Ui::frmTV uiTV;
-    //QProcess* myProcess;
 
     virtual void paintEvent(QPaintEvent *);
     virtual void closeEvent(QCloseEvent*);
@@ -243,18 +211,13 @@ private:
 
     void setSize(void);
 
-    //NewSportsman* newSportsman;
-
     ListFamily * lf = nullptr;
 
     ChoosingNames* choosingNames = nullptr;
 
-    //void process_line(int, QString);
-
     QString col_red;
     QString col_blue;
-    //QEvent * ev_L;
-    //QEvent * ev_R;
+
     int minimum_height_family;
     int minimum_height_region;
     QGridLayout * grid;
@@ -263,8 +226,7 @@ private:
 
     Rate * rateRed;
     Rate * rateBlue;
-    //Rate * actRed;
-    //Rate * actBlue;
+
     Fam * fam_red;
     Fam * fam_blue;
     Fam * reg_red;
@@ -294,28 +256,11 @@ private:
     QPushButton * age;  //возраст
 
     QDialog * dialogSetUrl;
-    //QCheckBox* cbCam1;
-    //QCheckBox* cbCam2;
-    //QPointer<PlayerViewer> slowMotionPlayer;
 
-    //IconButton* btnStopRecord;
-    //QPushButton* btnStopRecord;
-    // IconButton* btnPlayLastWithSound1;
-    // IconButton* btnPlayLastSlowMotion1;
-    // IconButton* btnPlayLastWithSound2;
-    // IconButton* btnPlayLastSlowMotion2;
-    // IconButton* btnPlaySlowMotion;
     QLabel* lbl;
 
     QString cam1Url = "";
     QString cam2Url = "";
-
-    //QString currentFileCam1 = "";
-    //QString currentFileCam2 = "";
-
-
-    //Ui::dlgSetUrl ui_url;
-
 
     QThread* cam1Thread;
     QThread* cam2Thread;
@@ -329,23 +274,15 @@ private:
     int flagUdp;    //0 - запрос адреса удаленного компьютера
                     //1 - отправка данных
 
-    //QUdpSocket* socketDataToVideo;
-    //QNetworkDatagram* datagram;
-
     QTcpServer* server;
     QTcpSocket* socket;
-    //QString html;
+
     QLibrary* f_Lib;
-    //QString startRecordOBS(void);
-    //void resultStartRecordOBS(void);
+
     QFuture<QString> future;
 
-    // ControlObs* obs;
-    // QThread obsThread;
 
     VideoReplayControl* videoControl;
-
-    //bool flag2screens = false;
 
 signals:
     void operate(QString, int, QString);

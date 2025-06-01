@@ -475,12 +475,12 @@ void VideoReplayControl::startReadCams()
 
     argsInput2<<"-rtbufsize"<<"2000M";
     if(urlCam2.startsWith("rtsp"))
-        argsInput2<<"-rtsp_transport"<<"tcp"<<"-stimeout"<<"1000000";
+        argsInput2<<"-rtsp_transport"<<"tcp"<<"-timeout"<<"1000000";
     argsInput2<<"-i"<<urlCam2;
 
     argsInput3<<"-rtbufsize"<<"2000M";
     if(urlCam3.startsWith("rtsp"))
-        argsInput3<<"-rtsp_transport"<<"tcp"<<"tcp"<<"-stimeout"<<"1000000";
+        argsInput3<<"-rtsp_transport"<<"tcp"<<"tcp"<<"-timeout"<<"1000000";
     argsInput3<<"-i"<<urlCam3;
 
     args<<"-hide_banner"<<"-loglevel"<<"error";

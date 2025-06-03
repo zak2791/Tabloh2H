@@ -138,7 +138,7 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
 
     procReadCam1 = new QProcess(this);
     procReadCam1->setProgram("ffmpeg");
-    args<<"-i"<<"udp://127.0.0.1:5001"<<"-filter_complex"<<"[0:v]scale=100:50, fps=5 "<<"-vcodec"<<"png"<<"-f"<<"image2pipe"<<"-";
+    args<<"-i"<<"udp://127.0.0.1:5001"<<"-filter_complex"<<"[0:v]scale=100:50, fps=1"<<"-vcodec"<<"png"<<"-f"<<"image2pipe"<<"-";
     procReadCam1->setArguments(args);
     connect(procReadCam1, &QProcess::readyReadStandardOutput, this, [this](){
         QByteArray ba = procReadCam1->readAllStandardOutput();
@@ -161,7 +161,7 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
     procReadCam2 = new QProcess(this);
     procReadCam2->setProgram("ffmpeg");
     args.clear();
-    args<<"-i"<<"udp://127.0.0.1:5002"<<"-filter_complex"<<"[0:v]scale=100:50, fps=5 "<<"-vcodec"<<"png"<<"-f"<<"image2pipe"<<"-";
+    args<<"-i"<<"udp://127.0.0.1:5002"<<"-filter_complex"<<"[0:v]scale=100:50, fps=2 "<<"-vcodec"<<"png"<<"-f"<<"image2pipe"<<"-";
     procReadCam2->setArguments(args);
     connect(procReadCam2, &QProcess::readyReadStandardOutput, this, [this](){
         QByteArray ba = procReadCam2->readAllStandardOutput();
@@ -184,7 +184,7 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
     procReadCam3 = new QProcess(this);
     procReadCam3->setProgram("ffmpeg");
     args.clear();
-    args<<"-i"<<"udp://127.0.0.1:5003"<<"-filter_complex"<<"[0:v]scale=100:50, fps=5 "<<"-vcodec"<<"png"<<"-f"<<"image2pipe"<<"-";
+    args<<"-i"<<"udp://127.0.0.1:5003"<<"-filter_complex"<<"[0:v]scale=100:50, fps=2"<<"-vcodec"<<"png"<<"-f"<<"image2pipe"<<"-";
     procReadCam3->setArguments(args);
     connect(procReadCam3, &QProcess::readyReadStandardOutput, this, [this](){
         QByteArray ba = procReadCam3->readAllStandardOutput();
@@ -479,8 +479,8 @@ void VideoReplayControl::startReadCams()
     argsInput2<<"-i"<<urlCam2;
 
     argsInput3<<"-rtbufsize"<<"2000M";
-    if(urlCam3.startsWith("rtsp"))
-        argsInput3<<"-rtsp_transport"<<"tcp"<<"tcp"<<"-timeout"<<"1000000";
+    // if(urlCam3.startsWith("rtsp"))
+    //     argsInput3<<"-rtsp_transport"<<"tcp"<<"-timeout"<<"1000000";
     argsInput3<<"-i"<<urlCam3;
 
     args<<"-hide_banner"<<"-loglevel"<<"error";
@@ -489,7 +489,7 @@ void VideoReplayControl::startReadCams()
     case 1:             //1
         args += argsInput1;
         args<<"-map"<<"0"<<"-g"<<"10"<<"-vcodec"<<codec<<"-f"<<"mpegts"<<"udp://127.0.0.1:5000";
-        args<<"-map"<<"0:v"<<"-vcodec"<<codec<<"-b:v"<<"500K"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
+        args<<"-map"<<"0:v"<<"-vcodec"<<codec<<"-b:v"<<"50K"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
         if(streamToVk && camToVk == 1)
             args<<"-map"<<"0"
                  <<"-vcodec"<<codec<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
@@ -497,14 +497,14 @@ void VideoReplayControl::startReadCams()
     case 2:             //2
         args += argsInput2;
         args<<"-map"<<"0"<<"-g"<<"10"<<"-vcodec"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5000";
-        args<<"-map"<<"0:v"<<"-vcodec"<<"copy"<<"-b:v"<<"500K"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5002";
+        args<<"-map"<<"0:v"<<"-vcodec"<<"copy"<<"-r"<<"5"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5002";
         if(streamToVk && camToVk == 2)
             args<<"-map"<<"0"<<"-vcodec"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
         break;
     case 4:             //3   
         args += argsInput3;
         args<<"-map"<<"0"<<"-g"<<"10"<<"-vcodec"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5000";
-        args<<"-map"<<"0:v"<<"-vcodec"<<"copy"<<"-b:v"<<"500K"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5003";
+        args<<"-map"<<"0:v"<<"-vcodec"<<"copy"<<"-r"<<"5"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5003";
         if(streamToVk && camToVk == 3)
             args<<"-map"<<"0"<<"-vcodec"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
         break;
@@ -514,8 +514,8 @@ void VideoReplayControl::startReadCams()
         args<<"-map"<<"0";
         args<<"-map"<<"1";
         args<<"-g"<<"10"<<"-c:v:0"<<codec<<"-c:v:1"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5000";
-        args<<"-map"<<"0:v"<<"-vcodec"<<codec<<"-b:v"<<"500K"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
-        args<<"-map"<<"1:v"<<"-vcodec"<<"copy"<<"-b:v"<<"500K"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5002";
+        args<<"-map"<<"0:v"<<"-vcodec"<<codec<<"-r"<<"5"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
+        args<<"-map"<<"1:v"<<"-vcodec"<<"copy"<<"-r"<<"5"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5002";
         if(streamToVk && camToVk == 1)
             args<<"-map"<<"0"<<"-vcodec"<<codec<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
         else if(streamToVk && camToVk == 2)
@@ -527,8 +527,8 @@ void VideoReplayControl::startReadCams()
         args<<"-map"<<"0";
         args<<"-map"<<"1";
         args<<"-g"<<"10"<<"-c:v:0"<<codec<<"-c:v:1"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5000";
-        args<<"-map"<<"0:v"<<"-vcodec"<<codec<<"-b:v"<<"500K"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
-        args<<"-map"<<"1:v"<<"-vcodec"<<"copy"<<"-b:v"<<"500K"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5003";
+        args<<"-map"<<"0:v"<<"-vcodec"<<codec<<"-r"<<"5"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
+        args<<"-map"<<"1:v"<<"-vcodec"<<"copy"<<"-r"<<"5"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5003";
         if(streamToVk && camToVk == 1)
             args<<"-map"<<"0"<<"-vcodec"<<codec<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
         else if(streamToVk && camToVk == 3)
@@ -540,8 +540,8 @@ void VideoReplayControl::startReadCams()
         args<<"-map"<<"0";
         args<<"-map"<<"1";
         args<<"-g"<<"10"<<"-c:v:0"<<"copy"<<"-c:v:1"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5000";
-        args<<"-map"<<"0:v"<<"-vcodec"<<"copy"<<"-b:v"<<"500K"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5002";
-        args<<"-map"<<"1:v"<<"-vcodec"<<"copy"<<"-b:v"<<"500K"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5003";
+        args<<"-map"<<"0:v"<<"-vcodec"<<"copy"<<"-r"<<"5"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5002";
+        args<<"-map"<<"1:v"<<"-vcodec"<<"copy"<<"-r"<<"5"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5003";
         if(streamToVk && camToVk == 2)
             args<<"-map"<<"0"<<"-vcodec"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
         else if(streamToVk && camToVk == 3)
@@ -555,9 +555,9 @@ void VideoReplayControl::startReadCams()
         args<<"-map"<<"1";
         args<<"-map"<<"2";
         args<<"-g"<<"10"<<"-c:v:0"<<codec<<"-c:v:1"<<"copy"<<"-c:v:2"<<"copy"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5000";
-        args<<"-map"<<"0:v"<<"-vcodec"<<codec<<"-b:v"<<"500K"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
-        args<<"-map"<<"1:v"<<"-vcodec"<<"copy"<<"-b:v"<<"500K"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5002";
-        args<<"-map"<<"2:v"<<"-vcodec"<<"copy"<<"-b:v"<<"500K"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5003";
+        args<<"-map"<<"0:v"<<"-vcodec"<<codec<<"-r"<<"5"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
+        args<<"-map"<<"1:v"<<"-vcodec"<<"h264_qsv"<<"-r"<<"5"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5002";
+        args<<"-map"<<"2:v"<<"-vcodec"<<"h264_qsv"<<"-r"<<"5"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5003";
         if(streamToVk && camToVk == 1)
             args<<"-map"<<"0"<<"-vcodec"<<codec<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
         else if(streamToVk && camToVk == 2)
@@ -591,9 +591,9 @@ void VideoReplayControl::onStreamVk()
     if(!isAudio)
         args<<"-f"<<"dshow"<<"-i"<<"audio=" + urlSound; //2
 
-    if(hwEncoder != "")
-        args<<"-c:v"<<hwEncoder;
-
+    // if(hwEncoder != "")
+    //     args<<"-c:v"<<hwEncoder;
+    //args<<"-hwaccel"<<"auto";
     if(static_cast<MainWindow*>(p->parent())->getStatusRegistration()){
         if(isAudio){
             args<<"-filter_complex"<<"[1]scale=" + widthPipVk + ":" + heightPipVk + ", colorchannelmixer=aa=" + transparentPipVk + " [pip]; "

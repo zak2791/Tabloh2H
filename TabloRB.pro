@@ -41,6 +41,7 @@ HEADERS += \
     playertv.h \
     playerviewertv.h \
     plus.h \
+    previewwidget.h \
     rate.h \
     reclabel.h \
     sidelistmodel.h \
@@ -75,6 +76,7 @@ HEADERS += \
     playertv.cpp \
     playerviewertv.cpp \
     plus.cpp \
+    previewwidget.cpp \
     rate.cpp \
     reclabel.cpp \
     sidelistmodel.cpp \

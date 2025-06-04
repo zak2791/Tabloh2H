@@ -204,7 +204,7 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     ui.setupUi(formView);
     WidgetFilter* wf = new WidgetFilter(formView);
     formView->installEventFilter(wf);
-    connect(wf, SIGNAL(sigClose()), this, SLOT(closeView()));
+    //connect(wf, SIGNAL(sigClose()), this, SLOT(closeView()));
 
     formVideoSettings = new QWidget;
     uiVideoSettings.setupUi(formVideoSettings);

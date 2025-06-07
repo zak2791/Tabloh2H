@@ -84,6 +84,8 @@ private:
     QWidget* p;
     SvgButton* btnPlayLast;
     SvgButton* btnPlay;
+    QString filterStreamVk;
+
 
     //RecLabel* reclabel;
 private slots:

@@ -85,14 +85,14 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
                 startReadCams();
             });
     connect(procRead, &QProcess::started, this, [this](){
-        if(streamToVk && procVk->state() == QProcess::NotRunning){
-            if(camToVk == 1 && ui->cbCam1->isChecked())
-                procProbeAudio->start();
-            if(camToVk == 2 && ui->cbCam2->isChecked())
-                procProbeAudio->start();
-            if(camToVk == 3 && ui->cbCam3->isChecked())
-                procProbeAudio->start();
-        }
+        // if(streamToVk && procVk->state() == QProcess::NotRunning){
+        //     if(camToVk == 1 && ui->cbCam1->isChecked())
+        //         procProbeAudio->start();
+        //     if(camToVk == 2 && ui->cbCam2->isChecked())
+        //         procProbeAudio->start();
+        //     if(camToVk == 3 && ui->cbCam3->isChecked())
+        //         procProbeAudio->start();
+        // }
     });
     connect(procRead, &QProcess::readyReadStandardError, this, [this](){
         QByteArray ba = procRead->readAllStandardError();
@@ -368,10 +368,23 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
                 isAudio = true;
 
         }
-        onStreamVk();
+        //onStreamVk();
     });
-    ui->cbCam2->click();
-    ui->cbCam3->click();
+    //ui->cbCam2->click();
+    //ui->cbCam3->click();
+    //////////////////////////////////////////////
+    /// %1 - ширина плашки, %2 - высота плашки ///
+    //////////////////////////////////////////////
+    filterStreamVk = "drawtext=fontsize=%2/3:fontcolor=Blue:fontfile=arial.ttf:textfile=name_blue.txt:x=10:y=h-%2:reload=10: "
+                     "boxw=%1*3/10:boxh=%2:box=1:boxcolor=yellow@0.4:boxborderw=10^|0^|10^|10:boxcolor=yellow@0.4:text_align=M:line_spacing=-%2/8: shadowx=1: shadowy=1,  "
+                     "drawtext=fontsize=%2:fontcolor=Blue:fontfile=arial.ttf:textfile=rate_blue.txt:x=%1*3/10+10:y=h-%2:reload=10: "
+                     "boxw=%1/10-10:boxh=%2:box=1:boxcolor=yellow@0.4:boxborderw=10^|0^|10^|0:boxcolor=yellow@0.4:text_align=C+M: shadowx=2: shadowy=2, "
+                     "drawtext=fontsize=%2:fontcolor=DarkGreen:fontfile=arial.ttf:textfile=time.txt: "
+                     "boxw=%1*2/10:boxh=%2:box=1:boxcolor=yellow@0.4:boxborderw=10^|0^|10^|0:boxcolor=yellow@0.4:x=%1*4/10:y=h-%2:reload=10:text_align=C+M, "
+                     "drawtext=fontsize=%2:fontcolor=Red:fontfile=arial.ttf:textfile=rate_red.txt:x=%1*6/10:y=h-%2:reload=10: "
+                     "boxw=%1/10-10:boxh=%2:box=1:boxcolor=yellow@0.4:boxborderw=10^|0^|10^|0:boxcolor=yellow@0.4:text_align=C+M: shadowx=2: shadowy=2, "
+                     "drawtext=fontsize=%2/3:fontcolor=Red:fontfile=arial.ttf:textfile=name_red.txt:x=%1*7/10:y=h-%2:reload=10: "
+                     "boxw=%1*3/10-20:boxh=%2:box=1:boxcolor=yellow@0.4:boxborderw=10^|10^|10^|10:boxcolor=yellow@0.4:text_align=M:line_spacing=-%2/8: shadowx=1: shadowy=1";
 }
 
 VideoReplayControl::~VideoReplayControl()
@@ -429,7 +442,7 @@ void VideoReplayControl::getHWcodec()
         }
     }
     foreach(auto each, decoders){
-        QStringList args({"-y", "-loglevel", "error", "-c:v", each, "-i", "test.mov", "-frames:v", "1", "test.mp4"});
+        QStringList args({" "});
         proc.setArguments(args);
         proc.start();
         proc.waitForFinished();
@@ -462,6 +475,8 @@ void VideoReplayControl::startReadCams()
     if(turnOnCams == 0)
         return;
 
+    QString filter = filterStreamVk.arg(widthPipVk).arg(heightPipVk);
+
     QString codec = hwEncoder == "" ? "mpeg2video" : hwEncoder;
     QStringList args;
     QString url = "video=" + urlCam1;
@@ -492,7 +507,9 @@ void VideoReplayControl::startReadCams()
         args<<"-map"<<"0:v"<<"-vcodec"<<codec<<"-b:v"<<"50K"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
         if(streamToVk && camToVk == 1)
             args<<"-map"<<"0"
-                 <<"-vcodec"<<codec<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
+                 //<<"-vcodec"<<codec<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
+                 <<"-vcodec"<<codec<<"-vf"<<filter<<"-b:v"<< "3M"<<"-f"<<"flv"<<urlVk + keyVk;
+
         break;
     case 2:             //2
         args += argsInput2;
@@ -650,7 +667,7 @@ void VideoReplayControl::setParamWebCam(QList<int> param)
 {
     fps = QString::number(param.at(0));
     resolution = QString::number(param.at(1)) + "x" + QString::number(param.at(2));
-    ui->cbCam1->click();
+    //ui->cbCam1->click();
 }
 
 void VideoReplayControl::setSound(QString sound)

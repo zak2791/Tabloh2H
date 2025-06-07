@@ -5,6 +5,7 @@
 #include <QWidget>
 #include <QPalette>
 #include <QTimer>
+#include <QFile>
 
 class LCDTimer : public QLCDNumber
 {
@@ -22,7 +23,7 @@ public:
              bool transparency = false
              );
 
-
+    ~LCDTimer();
 
     int getStatus(void);
     int getITime(void);
@@ -36,7 +37,7 @@ public:
 
 private:
 
-
+    QFile file;
     bool visible = false;
     //QString strInitTime;
     int strTimeToInt(QString);

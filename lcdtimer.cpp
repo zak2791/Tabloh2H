@@ -12,6 +12,8 @@ LCDTimer::LCDTimer(QWidget *parent,
                    ) : QLCDNumber(parent){
 
     timer = new QTimer();
+    file.setFileName("time.txt");
+    file.open(QIODevice::WriteOnly);
     connect(timer, SIGNAL(timeout()), this, SLOT(showTime()));
 
     status = 0;
@@ -75,6 +77,11 @@ LCDTimer::LCDTimer(QWidget *parent,
     pathToSound = "gong.mp3";
 
 
+}
+
+LCDTimer::~LCDTimer()
+{
+    file.close();
 }
 
 void LCDTimer::StartStop(){
@@ -166,6 +173,12 @@ void LCDTimer::showTime(){
     display(sTime);
     emit sigTime(sTime, styleSheet());
     emit sigIntTime(time);
+    QString t = intTimeToStr(time);
+    //QTextStream out(&file);
+    file.resize(0);
+    //out << t << Qt::endl;
+    file.write(t.toUtf8());
+    file.flush();
 }
 
 // void LCDTimer::showTime(QString sTime, QPalette pal){

@@ -229,7 +229,7 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     uiTime.setupUi(frmTime);
 
     connect(mainwin->winSettings, SIGNAL(triggered()), this, SLOT(showView()));
-    connect(mainwin->winVideoSettings, SIGNAL(triggered()), this, SLOT(showVideoSettings()));
+    //connect(mainwin->winVideoSettings, SIGNAL(triggered()), this, SLOT(showVideoSettings()));
 
     connect(ui.sbSec, SIGNAL(valueChanged(int)), this, SLOT(setSec(int)));
 
@@ -257,6 +257,7 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 
 
     videoControl = new VideoReplayControl(this);
+
 
     grid = new QGridLayout(this);
     grid->setObjectName("grid");
@@ -327,7 +328,9 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 
     connect(videoControl, &VideoReplayControl::sigShowPlayer, tvScreen, &TVScreen::showPlayer);
     connect(videoControl, &VideoReplayControl::sigHidePlayer, tvScreen, &TVScreen::hidePlayer);
+    connect(mainwin->winVideoSettings, SIGNAL(triggered()), videoControl, SLOT(showVideoSettings()));
     //connect(videoControl, &VideoReplayControl::sigImage, tvScreen->player, &PlayerViewerTV::draw_image);
+    connect(videoControl, &VideoReplayControl::sigShowReplayOnTv, tvScreen, &TVScreen::setPlayerEnabled);
 
     setTvScreenGeometry();
 
@@ -468,7 +471,7 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     connect(plus_red,  SIGNAL(textChange(QString)), this, SLOT(saveConditionPlus(QString)));
     connect(plus_blue, SIGNAL(textChange(QString)), this, SLOT(saveConditionPlus(QString)));
 
-    connect(uiVideoSettings.cbShowOnTv, SIGNAL(toggled(bool)), tvScreen, SLOT(setPlayerEnabled(bool)));
+    //connect(uiVideoSettings.cbShowOnTv, SIGNAL(toggled(bool)), tvScreen, SLOT(setPlayerEnabled(bool)));
     connect(uiVideoSettings.btnRefresh, SIGNAL(clicked()), this, SLOT(refreshWebCam()));
 
     QString cam;

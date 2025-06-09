@@ -3,6 +3,7 @@
 
 #include "playerpc.h"
 #include "qprocess.h"
+#include "settingsvideoreplay.h"
 #include <QWidget>
 #include <QPointer>
 #include <QTimer>
@@ -86,6 +87,8 @@ private:
     SvgButton* btnPlay;
     QString filterStreamVk;
 
+    SettingsVideoReplay* videoSettings;
+
 
     //RecLabel* reclabel;
 private slots:
@@ -109,11 +112,13 @@ public slots:
     void setTransparentPipVk(QString transparent){transparentPipVk = transparent;}
     void setDelaySound(QString delay){delaySound = delay;}
     void setDelayPicture(QString delay){delayPicture = delay;}
+    void showVideoSettings(void){videoSettings->show();}
 
 signals:
     void sigShowPlayer(void);
     void sigHidePlayer(void);
     void sigImage(QImage);
+    void sigShowReplayOnTv(bool);
 
 };
 

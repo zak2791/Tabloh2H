@@ -385,6 +385,9 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
                      "boxw=%1/10-10:boxh=%2:box=1:boxcolor=yellow@0.4:boxborderw=10^|0^|10^|0:boxcolor=yellow@0.4:text_align=C+M: shadowx=2: shadowy=2, "
                      "drawtext=fontsize=%2/3:fontcolor=Red:fontfile=arial.ttf:textfile=name_red.txt:x=%1*7/10:y=h-%2:reload=10: "
                      "boxw=%1*3/10-20:boxh=%2:box=1:boxcolor=yellow@0.4:boxborderw=10^|10^|10^|10:boxcolor=yellow@0.4:text_align=M:line_spacing=-%2/8: shadowx=1: shadowy=1";
+    videoSettings = new SettingsVideoReplay(this);
+    connect(videoSettings, &SettingsVideoReplay::sigShowReplayOnTv, this, &VideoReplayControl::sigShowReplayOnTv);
+    connect(videoSettings, &SettingsVideoReplay::sigShowReplayOnTv, this, [](bool b){qDebug()<<"show"<<b;});
 }
 
 VideoReplayControl::~VideoReplayControl()
@@ -442,7 +445,7 @@ void VideoReplayControl::getHWcodec()
         }
     }
     foreach(auto each, decoders){
-        QStringList args({" "});
+        QStringList args({"-y", "-loglevel", "error", "-c:v", each, "-i", "test.mov", "-frames:v", "1", "test.mp4"});
         proc.setArguments(args);
         proc.start();
         proc.waitForFinished();

@@ -43,6 +43,7 @@ HEADERS += \
     plus.h \
     rate.h \
     reclabel.h \
+    settingsvideoreplay.h \
     sidelistmodel.h \
     sportsman.h \
     svgbutton.h \
@@ -77,6 +78,7 @@ HEADERS += \
     plus.cpp \
     rate.cpp \
     reclabel.cpp \
+    settingsvideoreplay.cpp \
     sidelistmodel.cpp \
     sportsman.cpp \
     tvscreen.cpp \
@@ -92,6 +94,7 @@ FORMS += \
     helpform.ui \
     mainwindow.ui \
     new_sportsman.ui \
+    settingsvideoreplay.ui \
     version.ui \
     videoreplaycontrol.ui
 

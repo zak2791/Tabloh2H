@@ -26,7 +26,6 @@
 //#include <winnt.h>
 #include <Windows.h>
 
-#include "player.h"
 
 WidgetFilter::WidgetFilter(QObject* pobj) : QObject(pobj){
 }
@@ -229,12 +228,12 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     uiTime.setupUi(frmTime);
 
     connect(mainwin->winSettings, SIGNAL(triggered()), this, SLOT(showView()));
-    //connect(mainwin->winVideoSettings, SIGNAL(triggered()), this, SLOT(showVideoSettings()));
+    connect(mainwin->winVideoSettings, SIGNAL(triggered()), this, SLOT(showVideoSettings()));
 
     connect(ui.sbSec, SIGNAL(valueChanged(int)), this, SLOT(setSec(int)));
 
-    connect(uiVideoSettings.cbAutoCam1, SIGNAL(toggled(bool)), this, SLOT(autoCamera(bool)));
-    connect(uiVideoSettings.cbAutoCam2, SIGNAL(toggled(bool)), this, SLOT(autoCamera(bool)));
+    //connect(uiVideoSettings.cbAutoCam1, SIGNAL(toggled(bool)), this, SLOT(autoCamera(bool)));
+    //connect(uiVideoSettings.cbAutoCam2, SIGNAL(toggled(bool)), this, SLOT(autoCamera(bool)));
 
     QLabel* lbl2 = new QLabel("Установка времени боя - 'F1', сброс - 'Backspace', выход - 'Esc'");
     lbl2->setAlignment(Qt::AlignCenter);
@@ -328,7 +327,8 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 
     connect(videoControl, &VideoReplayControl::sigShowPlayer, tvScreen, &TVScreen::showPlayer);
     connect(videoControl, &VideoReplayControl::sigHidePlayer, tvScreen, &TVScreen::hidePlayer);
-    connect(mainwin->winVideoSettings, SIGNAL(triggered()), videoControl, SLOT(showVideoSettings()));
+    connect(mainwin->winVideoSettings, &QAction::triggered, videoControl, &VideoReplayControl::showVideoSettings);
+    //connect(mainwin->winVideoSettings, SIGNAL(triggered()), videoControl, SLOT(showVideoSettings()));
     //connect(videoControl, &VideoReplayControl::sigImage, tvScreen->player, &PlayerViewerTV::draw_image);
     connect(videoControl, &VideoReplayControl::sigShowReplayOnTv, tvScreen, &TVScreen::setPlayerEnabled);
 
@@ -337,18 +337,87 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     //tvScreen->show();
 
     connect(rateRed,	SIGNAL(sigRate(int)),		 tvScreen->ball_red,	  SLOT(setRate(int)));
+    connect(rateRed,    &Rate::sigRate, this, [this](int rate){
+        QFile file("rate_red.txt");
+        file.open(QIODevice::WriteOnly);
+        file.resize(0);
+        if(flagPlus == 1)
+            file.write(("+" + QString::number(rate)).toUtf8());
+        else
+            file.write(QString::number(rate).toUtf8());
+        file.close();
+    });
+
     connect(rateBlue,	SIGNAL(sigRate(int)),		 tvScreen->ball_blue,     SLOT(setRate(int)));
+    connect(rateBlue,   &Rate::sigRate, this, [this](int rate){
+        QFile file("rate_blue.txt");
+        file.open(QIODevice::WriteOnly);
+        file.resize(0);
+        if(flagPlus == 2)
+            file.write(("+" + QString::number(rate)).toUtf8());
+        else
+            file.write(QString::number(rate).toUtf8());
+        file.close();
+    });
 
     connect(np_red,		SIGNAL(ball(QString)),	     tvScreen->np_red,		  SLOT(setValue(QString)));
     connect(np_blue,	SIGNAL(ball(QString)),	     tvScreen->np_blue,	      SLOT(setValue(QString)));
 
     connect(plus_red,   SIGNAL(textChange(QString)), tvScreen->plus_red,      SLOT(setData(QString)));
+    connect(plus_red,   &Plus::textChange, [this](QString text){
+        QFile file("rate_red.txt");
+        file.open(QIODevice::WriteOnly);
+        file.resize(0);
+        if(text == "+"){
+            flagPlus = 1;
+            file.write(("+" + rateRed->getRate()).toUtf8());
+        }
+        else{
+            flagPlus = 0;
+            file.write(rateRed->getRate().toUtf8());
+        }
+        file.close();
+    });
+
     connect(plus_blue,  SIGNAL(textChange(QString)), tvScreen->plus_blue,     SLOT(setData(QString)));
+    connect(plus_blue,  &Plus::textChange, [this](QString text){
+        QFile file("rate_blue.txt");
+        file.open(QIODevice::WriteOnly);
+        file.resize(0);
+        if(text == "+"){
+            flagPlus = 2;
+            file.write(("+" + rateBlue->getRate()).toUtf8());
+        }
+        else{
+            flagPlus = 0;
+            file.write(rateBlue->getRate().toUtf8());
+        }
+        file.close();
+    });
 
     connect(fam_red,       SIGNAL(sigText(QString)), tvScreen->fam_red,       SLOT(Text(QString)));
     connect(fam_blue,      SIGNAL(sigText(QString)), tvScreen->fam_blue,      SLOT(Text(QString)));
+
     connect(reg_red,       SIGNAL(sigText(QString)), tvScreen->reg_red,       SLOT(Text(QString)));
+    connect(reg_red,    &Fam::sigText, this, [this](QString text){
+        QFile file("name_red.txt");
+        file.open(QIODevice::WriteOnly);
+        file.resize(0);
+        file.write(fam_red->getText().toUtf8() + "\n");
+        file.write(text.toUtf8());
+        file.close();
+    });
+
     connect(reg_blue,      SIGNAL(sigText(QString)), tvScreen->reg_blue,      SLOT(Text(QString)));
+    connect(reg_blue,    &Fam::sigText, this, [this](QString text){
+        QFile file("name_blue.txt");
+        file.open(QIODevice::WriteOnly);
+        file.resize(0);
+        file.write(fam_blue->getText().toUtf8() + "\n");
+        file.write(text.toUtf8());
+        file.close();
+    });
+
     connect(fam_next_red,  SIGNAL(sigText(QString)), tvScreen->fam_next_red,  SLOT(Text(QString)));
     connect(fam_next_blue, SIGNAL(sigText(QString)), tvScreen->fam_next_blue, SLOT(Text(QString)));
 
@@ -380,13 +449,13 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 
     uiVideoSettings.leCam1->setObjectName("leCam1");
     uiVideoSettings.leCam2->setObjectName("leCam2");
-    connect(uiVideoSettings.leCam1, SIGNAL(textEdited(QString)), this, SLOT(setCam(QString)));
-    connect(uiVideoSettings.leCam2, SIGNAL(textEdited(QString)), this, SLOT(setCam(QString)));
+    //connect(uiVideoSettings.leCam1, SIGNAL(textEdited(QString)), this, SLOT( setCam(QString)));
+    //connect(uiVideoSettings.leCam2, SIGNAL(textEdited(QString)), this, SLOT(setCam(QString)));
 
-    settings->beginGroup("URL");
-    cam1Url = settings->value("cam1", "").toString();
-    cam2Url = settings->value("cam2", "").toString();
-    settings->endGroup();
+    // settings->beginGroup("URL");
+    // cam1Url = settings->value("cam1", "").toString();
+    // cam2Url = settings->value("cam2", "").toString();
+    // settings->endGroup();
 
     connect(mainTimer, SIGNAL(sigStarted(bool)), this, SLOT(StartRecord(bool)));
     connect(mainTimer, SIGNAL(sigReset()), this, SLOT(StopRecord()));
@@ -472,188 +541,188 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     connect(plus_blue, SIGNAL(textChange(QString)), this, SLOT(saveConditionPlus(QString)));
 
     //connect(uiVideoSettings.cbShowOnTv, SIGNAL(toggled(bool)), tvScreen, SLOT(setPlayerEnabled(bool)));
-    connect(uiVideoSettings.btnRefresh, SIGNAL(clicked()), this, SLOT(refreshWebCam()));
+    //connect(uiVideoSettings.btnRefresh, SIGNAL(clicked()), this, SLOT(refreshWebCam()));
 
-    QString cam;
-    QString param;
-    QString sound;
-    settings->beginGroup("webcam");
-    cam =   settings->value("cam", "").toString();
-    param = settings->value("param", "").toString();
-    sound = settings->value("sound", "").toString();
-    settings->endGroup();
+    // QString cam;
+    // QString param;
+    // QString sound;
+    // settings->beginGroup("webcam");
+    // cam =   settings->value("cam", "").toString();
+    // param = settings->value("param", "").toString();
+    // sound = settings->value("sound", "").toString();
+    // settings->endGroup();
 
-    QString urlVk;
-    QString keyVk;
-    bool streamToVk;
-    int camToVk;
+    // QString urlVk;
+    // QString keyVk;
+    // bool streamToVk;
+    // int camToVk;
 
-    settings->beginGroup("vk");
-    urlVk       = settings->value("url", "").toString();
-    videoControl->setUrlVk(urlVk);
-    uiVideoSettings.leUrl->setText(urlVk);
+    // settings->beginGroup("vk");
+    // urlVk       = settings->value("url", "").toString();
+    // videoControl->setUrlVk(urlVk);
+    // uiVideoSettings.leUrl->setText(urlVk);
 
-    keyVk       = settings->value("key", "").toString();
-    videoControl->setKeyVk(keyVk);
-    uiVideoSettings.leKey->setText(keyVk);
+    // keyVk       = settings->value("key", "").toString();
+    // videoControl->setKeyVk(keyVk);
+    // uiVideoSettings.leKey->setText(keyVk);
 
-    streamToVk  = settings->value("isTurn", false).toBool();
-    videoControl->turnStreamToVk(streamToVk);
-    uiVideoSettings.chbVk->setChecked(streamToVk);
+    // streamToVk  = settings->value("isTurn", false).toBool();
+    // videoControl->turnStreamToVk(streamToVk);
+    // uiVideoSettings.chbVk->setChecked(streamToVk);
 
-    camToVk     = settings->value("cam", 1).toInt();
-    videoControl->setCamToVk(camToVk);
-    if(camToVk == 1)
-        uiVideoSettings.rbVK1->setChecked(true);
-    else if(camToVk == 2)
-        uiVideoSettings.rbVK2->setChecked(true);
-    else
-        uiVideoSettings.rbVK3->setChecked(true);
+    // camToVk     = settings->value("cam", 1).toInt();
+    // videoControl->setCamToVk(camToVk);
+    // if(camToVk == 1)
+    //     uiVideoSettings.rbVK1->setChecked(true);
+    // else if(camToVk == 2)
+    //     uiVideoSettings.rbVK2->setChecked(true);
+    // else
+    //     uiVideoSettings.rbVK3->setChecked(true);
 
-    QString w = settings->value("widthPip", "1920/4").toString();
-    videoControl->setWidthPipVk(w);
-    uiVideoSettings.leWidthPip->setText(w);
+    // QString w = settings->value("widthPip", "1920/4").toString();
+    // //videoControl->setWidthPipVk(w);
+    // uiVideoSettings.leWidthPip->setText(w);
 
-    QString h = settings->value("heightPip", "1080/4").toString();
-    videoControl->setHeightPipVk(h);
-    uiVideoSettings.leHeightPip->setText(h);
+    // QString h = settings->value("heightPip", "1080/4").toString();
+    // videoControl->setHeightPipVk(h);
+    // uiVideoSettings.leHeightPip->setText(h);
 
-    QString t = settings->value("transparentPip", "0.5").toString();
-    videoControl->setTransparentPipVk(t);
-    uiVideoSettings.sbTransparent->setValue(t.toDouble());
+    // QString t = settings->value("transparentPip", "0.5").toString();
+    // videoControl->setTransparentPipVk(t);
+    // uiVideoSettings.sbTransparent->setValue(t.toDouble());
 
-    QString delay = settings->value("delayPicture", "7").toString();
-    videoControl->setDelayPicture(delay);
-    uiVideoSettings.sbPicture->setValue(delay.toInt());
+    // QString delay = settings->value("delayPicture", "7").toString();
+    // videoControl->setDelayPicture(delay);
+    // uiVideoSettings.sbPicture->setValue(delay.toInt());
 
-    delay = settings->value("delaySound", "5").toString();
-    videoControl->setDelaySound(delay);
-    uiVideoSettings.sbPicture->setValue(delay.toInt());
+    // delay = settings->value("delaySound", "5").toString();
+    // videoControl->setDelaySound(delay);
+    // uiVideoSettings.sbPicture->setValue(delay.toInt());
 
-    settings->endGroup();
+    // settings->endGroup();
 
-    connect(uiVideoSettings.chbVk, &QCheckBox::toggled, this, [this](bool b){
-        videoControl->turnStreamToVk(b);
-        settings->beginGroup("vk");
-        settings->setValue("isTurn", b);
-        settings->endGroup();
-    });
+    // connect(uiVideoSettings.chbVk, &QCheckBox::toggled, this, [this](bool b){
+    //     videoControl->turnStreamToVk(b);
+    //     settings->beginGroup("vk");
+    //     settings->setValue("isTurn", b);
+    //     settings->endGroup();
+    // });
 
-    connect(uiVideoSettings.rbVK1, &QRadioButton::toggled, this, [this](bool b){
-        if(b){
-            videoControl->setCamToVk(1);
-            settings->beginGroup("vk");
-            settings->setValue("cam", 1);
-            settings->endGroup();
-        }
-    });
+    // connect(uiVideoSettings.rbVK1, &QRadioButton::toggled, this, [this](bool b){
+    //     if(b){
+    //         videoControl->setCamToVk(1);
+    //         settings->beginGroup("vk");
+    //         settings->setValue("cam", 1);
+    //         settings->endGroup();
+    //     }
+    // });
 
-    connect(uiVideoSettings.rbVK2, &QRadioButton::toggled, this, [this](bool b){
-        if(b){
-            videoControl->setCamToVk(2);
-            settings->beginGroup("vk");
-            settings->setValue("cam", 2);
-            settings->endGroup();
-        }
-    });
+    // connect(uiVideoSettings.rbVK2, &QRadioButton::toggled, this, [this](bool b){
+    //     if(b){
+    //         videoControl->setCamToVk(2);
+    //         settings->beginGroup("vk");
+    //         settings->setValue("cam", 2);
+    //         settings->endGroup();
+    //     }
+    // });
 
-    connect(uiVideoSettings.rbVK3, &QRadioButton::toggled, this, [this](bool b){
-        if(b){
-            videoControl->setCamToVk(3);
-            settings->beginGroup("vk");
-            settings->setValue("cam", 3);
-            settings->endGroup();
-        }
-    });
+    // connect(uiVideoSettings.rbVK3, &QRadioButton::toggled, this, [this](bool b){
+    //     if(b){
+    //         videoControl->setCamToVk(3);
+    //         settings->beginGroup("vk");
+    //         settings->setValue("cam", 3);
+    //         settings->endGroup();
+    //     }
+    // });
 
-    connect(uiVideoSettings.leUrl, &QLineEdit::editingFinished, this, [this](){
-        videoControl->setUrlVk(uiVideoSettings.leUrl->text());
-        settings->beginGroup("vk");
-        settings->setValue("url", uiVideoSettings.leUrl->text());
-        settings->endGroup();
-    });
+    // connect(uiVideoSettings.leUrl, &QLineEdit::editingFinished, this, [this](){
+    //     videoControl->setUrlVk(uiVideoSettings.leUrl->text());
+    //     settings->beginGroup("vk");
+    //     settings->setValue("url", uiVideoSettings.leUrl->text());
+    //     settings->endGroup();
+    // });
 
-    connect(uiVideoSettings.leKey, &QLineEdit::editingFinished, this, [this](){
-        videoControl->setKeyVk(uiVideoSettings.leKey->text());
-        settings->beginGroup("vk");
-        settings->setValue("key", uiVideoSettings.leKey->text());
-        settings->endGroup();
-    });
+    // connect(uiVideoSettings.leKey, &QLineEdit::editingFinished, this, [this](){
+    //     videoControl->setKeyVk(uiVideoSettings.leKey->text());
+    //     settings->beginGroup("vk");
+    //     settings->setValue("key", uiVideoSettings.leKey->text());
+    //     settings->endGroup();
+    // });
 
-    connect(uiVideoSettings.cbWebCam, &QComboBox::currentTextChanged, [this](QString text){
-        //disconnect(uiVideoSettings.cbParamWebCam);
-        uiVideoSettings.cbParamWebCam->clear();
-        if(uiVideoSettings.cbWebCam->count() > 0){
-            videoControl->setWebCam(text);
-            QList<QList<int>> param = Player::getListParamWebCam(text);
-            qDebug()<<"param = "<<param;
-            int count = 0;
+    // connect(uiVideoSettings.cbWebCam, &QComboBox::currentTextChanged, [this](QString text){
+    //     //disconnect(uiVideoSettings.cbParamWebCam);
+    //     uiVideoSettings.cbParamWebCam->clear();
+    //     if(uiVideoSettings.cbWebCam->count() > 0){
+    //         videoControl->setWebCam(text);
+    //         QList<QList<int>> param = Player::getListParamWebCam(text);
+    //         qDebug()<<"param = "<<param;
+    //         int count = 0;
 
-            foreach(auto each, param){
-                QString sParam = "fps = " + QString::number(each.at(0)) +
-                                 "resolution = " + QString::number(each.at(1)) +
-                                 "x" + QString::number(each.at(2));  
-                uiVideoSettings.cbParamWebCam->addItem(sParam);
-                uiVideoSettings.cbParamWebCam->setItemData(count++, QVariant::fromValue(each));     
-            }
-            setParamWebCam(uiVideoSettings.cbParamWebCam->currentIndex());
-        }
-        //connect(uiVideoSettings.cbParamWebCam, &QComboBox::currentTextChanged, this, &PCScreen::setParamWebCam);
-    });
-    connect(uiVideoSettings.cbParamWebCam, QOverload<int>::of(&QComboBox::activated), this, &PCScreen::setParamWebCam);
+    //         foreach(auto each, param){
+    //             QString sParam = "fps = " + QString::number(each.at(0)) +
+    //                              "resolution = " + QString::number(each.at(1)) +
+    //                              "x" + QString::number(each.at(2));
+    //             uiVideoSettings.cbParamWebCam->addItem(sParam);
+    //             uiVideoSettings.cbParamWebCam->setItemData(count++, QVariant::fromValue(each));
+    //         }
+    //         setParamWebCam(uiVideoSettings.cbParamWebCam->currentIndex());
+    //     }
+    //     //connect(uiVideoSettings.cbParamWebCam, &QComboBox::currentTextChanged, this, &PCScreen::setParamWebCam);
+    // });
+    //connect(uiVideoSettings.cbParamWebCam, QOverload<int>::of(&QComboBox::activated), this, &PCScreen::setParamWebCam);
 
-    connect(uiVideoSettings.cbSound, &QComboBox::currentTextChanged, this, [this](QString text){
-        videoControl->setSound(text);
-        settings->beginGroup("webcam");
-        settings->setValue("sound", text);
-        settings->endGroup();
-    });
+    // connect(uiVideoSettings.cbSound, &QComboBox::currentTextChanged, this, [this](QString text){
+    //     videoControl-> setSound(text);
+    //     settings->beginGroup("webcam");
+    //     settings->setValue("sound", text);
+    //     settings->endGroup();
+    // });
 
-    connect(uiVideoSettings.leWidthPip, &QLineEdit::editingFinished, this, [this](){
-        videoControl->setWidthPipVk(uiVideoSettings.leWidthPip->text());
-        settings->beginGroup("vk");
-        settings->setValue("widthPip", uiVideoSettings.leWidthPip->text());
-        settings->endGroup();
-    });
+    // connect(uiVideoSettings.leWidthPip, &QLineEdit::editingFinished, this, [this](){
+    //     videoControl->setWidthPipVk(uiVideoSettings.leWidthPip->text());
+    //     settings->beginGroup("vk");
+    //     settings->setValue("widthPip", uiVideoSettings.leWidthPip->text());
+    //     settings->endGroup();
+    // });
 
-    connect(uiVideoSettings.leHeightPip, &QLineEdit::editingFinished, this, [this](){
-        videoControl->setHeightPipVk(uiVideoSettings.leHeightPip->text());
-        settings->beginGroup("vk");
-        settings->setValue("heightPip", uiVideoSettings.leHeightPip->text());
-        settings->endGroup();
-    });
+    // connect(uiVideoSettings.leHeightPip, &QLineEdit::editingFinished, this, [this](){
+    //     videoControl->setHeightPipVk(uiVideoSettings.leHeightPip->text());
+    //     settings->beginGroup("vk");
+    //     settings->setValue("heightPip", uiVideoSettings.leHeightPip->text());
+    //     settings->endGroup();
+    // });
 
-    connect(uiVideoSettings.sbTransparent, &QDoubleSpinBox::textChanged, this, [this](){
-        videoControl->setTransparentPipVk(uiVideoSettings.sbTransparent->text());
-        settings->beginGroup("vk");
-        settings->setValue("transparentPip", uiVideoSettings.sbTransparent->text().replace(",", "."));
-        settings->endGroup();
-    });
+    // connect(uiVideoSettings.sbTransparent, &QDoubleSpinBox::textChanged, this, [this](){
+    //     videoControl->setTransparentPipVk(uiVideoSettings.sbTransparent->text());
+    //     settings->beginGroup("vk");
+    //     settings->setValue("transparentPip", uiVideoSettings.sbTransparent->text().replace(",", "."));
+    //     settings->endGroup();
+    // });
 
-    connect(uiVideoSettings.sbPicture, &QSpinBox::textChanged, this, [this](){
-        videoControl->setDelayPicture(uiVideoSettings.sbPicture->text());
-        settings->beginGroup("vk");
-        settings->setValue("delayPicture", uiVideoSettings.sbPicture->text());
-        settings->endGroup();
-    });
+    // connect(uiVideoSettings.sbPicture, &QSpinBox::textChanged, this, [this](){
+    //     videoControl->setDelayPicture(uiVideoSettings.sbPicture->text());
+    //     settings->beginGroup("vk");
+    //     settings->setValue("delayPicture", uiVideoSettings.sbPicture->text());
+    //     settings->endGroup();
+    // });
 
-    connect(uiVideoSettings.sbSound, &QSpinBox::textChanged, this, [this](){
-        videoControl->setDelayPicture(uiVideoSettings.sbSound->text());
-        settings->beginGroup("vk");
-        settings->setValue("delaySound", uiVideoSettings.sbSound->text());
-        settings->endGroup();
-    });
+    // connect(uiVideoSettings.sbSound, &QSpinBox::textChanged, this, [this](){
+    //     videoControl->setDelayPicture(uiVideoSettings.sbSound->text());
+    //     settings->beginGroup("vk");
+    //     settings->setValue("delaySound", uiVideoSettings.sbSound->text());
+    //     settings->endGroup();
+    // });
 
-    refreshWebCam();
-    int index = uiVideoSettings.cbWebCam->findText(cam);
-    if(index != -1)
-        uiVideoSettings.cbWebCam->setCurrentIndex(index);
-    index = uiVideoSettings.cbParamWebCam->findText(param);
-    if(index != -1)
-        uiVideoSettings.cbParamWebCam->setCurrentIndex(index);
-    index = uiVideoSettings.cbSound->findText(sound);
-    if(index != -1)
-        uiVideoSettings.cbSound->setCurrentIndex(index);
+    // refreshWebCam();
+    // int index = uiVideoSettings.cbWebCam->findText(cam);
+    // if(index != -1)
+    //     uiVideoSettings.cbWebCam->setCurrentIndex(index);
+    // index = uiVideoSettings.cbParamWebCam->findText(param);
+    // if(index != -1)
+    //     uiVideoSettings.cbParamWebCam->setCurrentIndex(index);
+    // index = uiVideoSettings.cbSound->findText(sound);
+    // if(index != -1)
+    //     uiVideoSettings.cbSound->setCurrentIndex(index);
 
     setSize();
 
@@ -665,14 +734,14 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 
 }
 
-void PCScreen::refreshWebCam()
-{
-    uiVideoSettings.cbSound->clear();
-    uiVideoSettings.cbWebCam->clear();
-    uiVideoSettings.cbWebCam->addItems(Player::getListWebCams());
+// void PCScreen::refreshWebCam()
+// {
+//     uiVideoSettings.cbSound->clear();
+//     uiVideoSettings.cbWebCam->clear();
+//     uiVideoSettings.cbWebCam->addItems(Player::getListWebCams());
 
-    uiVideoSettings.cbSound->addItems(Player::getListSoundDevices());
-}
+//     uiVideoSettings.cbSound->addItems(Player::getListSoundDevices());
+// }
 
 PCScreen::~PCScreen()
 {
@@ -735,45 +804,45 @@ void PCScreen::setAge(QString s){
     tvScreen->age->setText(s);
 }
 
-void PCScreen::autoCamera(bool state){
-    if(state){
-        if(sender()->objectName() == "cbAutoCam1"){
-            uiVideoSettings.cbAutoCam2->setEnabled(false);
-            camConn = new CameraConnection(this);
-            uiVideoSettings.leCam1->setText("");
-            uiVideoSettings.leCam1->setStyleSheet("background-color: red");
-        }
-        else{
-            uiVideoSettings.cbAutoCam1->setEnabled(false);
-            camConn = new CameraConnection(this, 2);
-            uiVideoSettings.leCam2->setText("");
-            uiVideoSettings.leCam2->setStyleSheet("background-color: red");
-        }
-        connect(camConn, SIGNAL(sigCamera(QString)), this, SLOT(setCamera(QString)));
-    }
-    else{
-        if(sender()->objectName() == "cbAutoCam1"){
-            uiVideoSettings.cbAutoCam2->setEnabled(true);
-            uiVideoSettings.leCam1->setStyleSheet("background-color: white");
-            settings->beginGroup("URL");
-            uiVideoSettings.leCam1->setText(settings->value("cam1", "").toString());
-            settings->endGroup();
-            //f.close();
-        }
-        else{
-            uiVideoSettings.cbAutoCam1->setEnabled(true);
-            uiVideoSettings.leCam2->setStyleSheet("background-color: white");
-            settings->beginGroup("URL");
-            uiVideoSettings.leCam2->setText(settings->value("cam2", "").toString());
-            settings->endGroup();
-            //f.close();
-        }
-        if(camConn){
-            disconnect(camConn, SIGNAL(sigCamera(QString)), nullptr, nullptr);
-            camConn->deleteLater();
-        }
-    }
-}
+// void PCScreen::autoCamera(bool state){
+//     if(state){
+//         if(sender()->objectName() == "cbAutoCam1"){
+//             uiVideoSettings.cbAutoCam2->setEnabled(false);
+//             camConn = new CameraConnection(this);
+//             uiVideoSettings.leCam1->setText("");
+//             uiVideoSettings.leCam1->setStyleSheet("background-color: red");
+//         }
+//         else{
+//             uiVideoSettings.cbAutoCam1->setEnabled(false);
+//             camConn = new CameraConnection(this, 2);
+//             uiVideoSettings.leCam2->setText("");
+//             uiVideoSettings.leCam2->setStyleSheet("background-color: red");
+//         }
+//         connect(camConn, SIGNAL(sigCamera(QString)), this, SLOT(setCamera(QString)));
+//     }
+//     else{
+//         if(sender()->objectName() == "cbAutoCam1"){
+//             uiVideoSettings.cbAutoCam2->setEnabled(true);
+//             uiVideoSettings.leCam1->setStyleSheet("background-color: white");
+//             settings->beginGroup("URL");
+//             uiVideoSettings.leCam1->setText(settings->value("cam1", "").toString());
+//             settings->endGroup();
+//             //f.close();
+//         }
+//         else{
+//             uiVideoSettings.cbAutoCam1->setEnabled(true);
+//             uiVideoSettings.leCam2->setStyleSheet("background-color: white");
+//             settings->beginGroup("URL");
+//             uiVideoSettings.leCam2->setText(settings->value("cam2", "").toString());
+//             settings->endGroup();
+//             //f.close();
+//         }
+//         if(camConn){
+//             disconnect(camConn, SIGNAL(sigCamera(QString)), nullptr, nullptr);
+//             camConn->deleteLater();
+//         }
+//     }
+// }
 
 void PCScreen::setCamera(QString ip){
     if(uiVideoSettings.cbAutoCam1->isChecked()){
@@ -821,21 +890,21 @@ void PCScreen::PlaySelectedFile(){
 
 
 
-void PCScreen::setCam(QString text){
-    if(sender()->objectName() == "leCam1"){
-        cam1Url = text;
-        settings->beginGroup("URL");
-        settings->setValue("cam1", cam1Url);
-        settings->endGroup();
-        videoControl->setCam2(cam1Url);
-    }else{
-        cam2Url = text;
-        settings->beginGroup("URL");
-        settings->setValue("cam2", cam2Url);
-        settings->endGroup();
-        videoControl->setCam3(cam2Url);
-    }
-}
+// void PCScreen::setCam(QString text){
+//     if(sender()->objectName() == "leCam1"){
+//         cam1Url = text;
+//         settings->beginGroup("URL");
+//         settings->setValue("cam1", cam1Url);
+//         settings->endGroup();
+//         videoControl->setCam2(cam1Url);
+//     }else {
+//         cam2Url = text;
+//         settings->beginGroup("URL");
+//         settings->setValue("cam2", cam2Url);
+//         settings->endGroup();
+//         videoControl->setCam3(cam2Url);
+//     }
+// }
 
 void PCScreen::closeEvent(QCloseEvent *){
     videoControl->deleteLater();
@@ -862,18 +931,18 @@ void PCScreen::showView(){
     formView->show();
 }
 
-void PCScreen::showVideoSettings()
-{
-    settings->beginGroup("URL");
-    uiVideoSettings.leCam1->setText(settings->value("cam1", "").toString());
-    settings->endGroup();
+// void PCScreen::showVideoSettings()
+// {
+//     settings->beginGroup("URL");
+//     uiVideoSettings.leCam1->setText(settings->value("cam1", "").toString());
+//     settings->endGroup();
 
-    settings->beginGroup("URL");
-    uiVideoSettings.leCam2->setText(settings->value("cam2", "").toString());
-    settings->endGroup();
+//     settings->beginGroup("URL");
+//     uiVideoSettings.leCam2->setText(settings->value("cam2", "").toString());
+//     settings->endGroup();
 
-    formVideoSettings->show();
-}
+//     formVideoSettings->show();
+// }
 
 void PCScreen::paintEvent(QPaintEvent * ) {
     QPainter pn;
@@ -1350,18 +1419,18 @@ void PCScreen::setTvScreenGeometry(){
 
 }
 
-void PCScreen::setCameras()
-{
-    videoControl->setWebCam(uiVideoSettings.cbWebCam->currentText() + ";" + uiVideoSettings.cbParamWebCam->currentText());
-}
+// void PCScreen::setCameras()
+// {
+//     videoControl->setWebCam(uiVideoSettings.cbWebCam->currentText() + ";" + uiVideoSettings.cbParamWebCam->currentText());
+// }
 
-void PCScreen::setParamWebCam(int index)
-{
-    QVariant variant = uiVideoSettings.cbParamWebCam->itemData(index);
-    QList<int> data = variant.value<QList<int>>();
-    videoControl->setParamWebCam(data);
-    settings->beginGroup("webcam");
-    settings->setValue("cam", uiVideoSettings.cbWebCam->currentText());
-    settings->setValue("param", uiVideoSettings.cbParamWebCam->currentText());
-    settings->endGroup();
-}
+// void PCScreen::setParamWebCam(int index)
+// {
+//     QVariant variant = uiVideoSettings.cbParamWebCam->itemData(index);
+//     QList<int> data = variant.value<QList<int>>();
+//     videoControl->setParamWebCam(data);
+//     settings->beginGroup("webcam");
+//     settings->setValue("cam", uiVideoSettings.cbWebCam->currentText());
+//     settings->setValue("param", uiVideoSettings.cbParamWebCam->currentText());
+//     settings->endGroup();
+// }

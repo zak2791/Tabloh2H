@@ -155,7 +155,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLineEdit" name="leCam2_2">
+   <widget class="QLineEdit" name="leCam3">
     <property name="geometry">
      <rect>
       <x>550</x>
@@ -165,7 +165,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QCheckBox" name="cbAutoCam2_2">
+   <widget class="QCheckBox" name="cbAutoCam3">
     <property name="geometry">
      <rect>
       <x>550</x>
@@ -219,7 +219,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="radioButton">
+       <widget class="QRadioButton" name="rbNoVK">
         <property name="text">
          <string>Выкл.</string>
         </property>
@@ -232,7 +232,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QComboBox" name="cbParamWebCam">
+  <widget class="QComboBox" name="cbParamWebCam1">
    <property name="geometry">
     <rect>
      <x>23</x>
@@ -323,7 +323,7 @@
     <string>Параметры камеры</string>
    </property>
   </widget>
-  <widget class="QComboBox" name="cbWebCam">
+  <widget class="QComboBox" name="cbWebCam1">
    <property name="geometry">
     <rect>
      <x>23</x>
@@ -359,7 +359,7 @@
     <string>Web камера 2</string>
    </property>
   </widget>
-  <widget class="QComboBox" name="cbWebCam_2">
+  <widget class="QComboBox" name="cbWebCam2">
    <property name="geometry">
     <rect>
      <x>290</x>
@@ -369,7 +369,7 @@
     </rect>
    </property>
   </widget>
-  <widget class="QComboBox" name="cbParamWebCam_2">
+  <widget class="QComboBox" name="cbParamWebCam2">
    <property name="geometry">
     <rect>
      <x>290</x>
@@ -392,7 +392,7 @@
     <string>Параметры камеры</string>
    </property>
   </widget>
-  <widget class="QSpinBox" name="spinBox">
+  <widget class="QSpinBox" name="sbHeight">
    <property name="geometry">
     <rect>
      <x>660</x>

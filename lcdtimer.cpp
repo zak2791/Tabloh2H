@@ -146,6 +146,10 @@ void LCDTimer::Reset(){
         emit sigTime(sTime, styleSheet());
         emit sigReset();
         emit sigIntTime(time);
+        QString t = intTimeToStr(time);
+        file.resize(0);
+        file.write(t.toUtf8());
+        file.flush();
     }
 }
 
@@ -174,9 +178,7 @@ void LCDTimer::showTime(){
     emit sigTime(sTime, styleSheet());
     emit sigIntTime(time);
     QString t = intTimeToStr(time);
-    //QTextStream out(&file);
     file.resize(0);
-    //out << t << Qt::endl;
     file.write(t.toUtf8());
     file.flush();
 }

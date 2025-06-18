@@ -36,7 +36,6 @@ HEADERS += \
     narusheniya_pravil.h \
     newsportsman.h \
     pcscreen.h \
-    player.h \
     playerpc.h \
     playertv.h \
     playerviewertv.h \
@@ -71,7 +70,6 @@ HEADERS += \
     narusheniya_pravil.cpp \
     newsportsman.cpp \
     pcscreen.cpp \
-    player.cpp \
     playerpc.cpp \
     playertv.cpp \
     playerviewertv.cpp \

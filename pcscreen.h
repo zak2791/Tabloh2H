@@ -134,9 +134,9 @@ public slots:
 
 
 private slots:
-    void setCam(QString);
+    //void setCam(QString);
     void showView(void);
-    void showVideoSettings(void);
+    //void showVideoSettings(void);
 
     void StopRecord(void);
     void StartRecord(bool);
@@ -145,7 +145,7 @@ private slots:
     void changeSize(void);
     void drawTvScreenshot(void);
 
-    void autoCamera(bool);
+    //void autoCamera(bool);
 
     void closeVideoSettings(void);
     void setCamera(QString);
@@ -183,12 +183,12 @@ private slots:
     void saveConditionNames(QString);
     void saveConditionPlus(QString);
 
-    void refreshWebCam(void);
+    //void refreshWebCam(void);
 
     void setTvScreenGeometry(void);
 
-    void setCameras(void);
-    void setParamWebCam(int index);
+    //void setCameras(void);
+    //void setParamWebCam(int index);
 
 private:
     QSettings* settings;
@@ -198,6 +198,8 @@ private:
     QWidget * frmTime;
     LCDStopwatch * sec_doctor;
     QWidget* frmTvSettings;
+
+    int flagPlus = 0;   //1: + red, 2: + blue
 
     virtual void paintEvent(QPaintEvent *);
     virtual void closeEvent(QCloseEvent*);

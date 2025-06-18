@@ -46,7 +46,7 @@ int main(int argc, char** argv){
     mWin->show();
 
     QObject::connect(mWin, SIGNAL(newFile()), pwgt, SLOT(newListSportsmens()));
-    QObject::connect(mWin, SIGNAL(variant(int)), pwgt, SLOT(Variant(int)));
+    //QObject::connect(mWin, SIGNAL(variant(int)), pwgt, SLOT(Variant(int)));
     QObject::connect(mWin, SIGNAL(sigLogo(bool)), pwgt, SIGNAL(sigLogo(bool)));
 
 

@@ -13,6 +13,7 @@ public:
 
     void plus();
     void minus();
+    QString getRate(void){return QString::number(rate);}
 
 signals:
     void sigRate(int);

@@ -40,10 +40,14 @@ private:
     QString urlCam1;
     QString urlCam2;
     QString urlCam3;
+    QString urlWebCam1;
+    QString urlWebCam2;
     QString urlSound;
 
-    QString fps;
-    QString resolution;
+    QString fps1;
+    QString fps2;
+    QString resolution1;
+    QString resolution2;
     QString delaySound;
     QString delayPicture;
 
@@ -53,7 +57,7 @@ private:
 
     QString urlVk = "";
     QString keyVk = "";
-    bool streamToVk = "";
+    //bool streamToVk = "";
     int camToVk = 1;
 
     QTimer* timerCam1;
@@ -88,26 +92,31 @@ private:
     QString filterStreamVk;
 
     SettingsVideoReplay* videoSettings;
-
+    void checkInputs(void);
 
     //RecLabel* reclabel;
+
 private slots:
     void onStreamVk(void);
+    //bool isSound(QString);
 
 public slots:
-    void setWebCam(QString);
-    void setParamWebCam(QList<int>);
+    void setWebCam1(QString);
+    void setWebCam2(QString);
+    void setParamWebCam1(QList<int>);
+    void setParamWebCam2(QList<int>);
     void setSound(QString);
+    void setCam1(QString);
     void setCam2(QString);
     void setCam3(QString);
 
     void startRecord(bool, QString s = "");
     void stopRecord(void);
-    void turnStreamToVk(bool b){streamToVk = b;}
+    //void turnStreamToVk(bool b){streamToVk = b;}
     void setUrlVk(QString url){urlVk = url;}
     void setKeyVk(QString key){keyVk = key;}
     void setCamToVk(int cam){camToVk = cam;}
-    void setWidthPipVk(QString width){widthPipVk = width;}
+    //void setWidthPipVk(QString width){widthPipVk = width;}
     void setHeightPipVk(QString height){heightPipVk = height;}
     void setTransparentPipVk(QString transparent){transparentPipVk = transparent;}
     void setDelaySound(QString delay){delaySound = delay;}

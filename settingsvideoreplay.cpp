@@ -18,6 +18,7 @@ SettingsVideoReplay::SettingsVideoReplay(QWidget *parent)
     connect(ui->cbShowOnTv, &QCheckBox::clicked, this, &SettingsVideoReplay::sigShowReplayOnTv);
     connect(ui->cbAutoCam1, &QCheckBox::toggled, this, &SettingsVideoReplay::autoCamera);
     connect(ui->cbAutoCam2, &QCheckBox::toggled, this, &SettingsVideoReplay::autoCamera);
+    connect(ui->cbAutoCam3, &QCheckBox::toggled, this, &SettingsVideoReplay::autoCamera);
     connect(ui->leCam1, &QLineEdit::textEdited, this, &SettingsVideoReplay::setCam);
     connect(ui->leCam2, &QLineEdit::textEdited, this, &SettingsVideoReplay::setCam);
     connect(ui->leCam3, &QLineEdit::textEdited, this, &SettingsVideoReplay::setCam);
@@ -97,7 +98,19 @@ SettingsVideoReplay::SettingsVideoReplay(QWidget *parent)
     ui->leCam3->setText(cam3Url);
     settings->endGroup();
     refreshWebCam();
-
+    sWeb = new SettingsWebCamera(this);
+    if(webCam1 == "")
+        ui->btnSettingsWbCam1->setEnabled(false);
+    if(webCam2 == "")
+        ui->btnSettingsWbCam2->setEnabled(false);
+    connect(ui->btnSettingsWbCam1, &QPushButton::clicked, this, [this](){
+        sWeb->setWebCamera(webCam1);
+        sWeb->show();
+    });
+    connect(ui->btnSettingsWbCam2, &QPushButton::clicked, this, [this](){
+        sWeb->setWebCamera(webCam2);
+        sWeb->show();
+    });
 }
 
 SettingsVideoReplay::~SettingsVideoReplay()
@@ -122,31 +135,50 @@ void SettingsVideoReplay::autoCamera(bool state){
     if(state){
         if(sender()->objectName() == "cbAutoCam1"){
             ui->cbAutoCam2->setEnabled(false);
+            ui->cbAutoCam3->setEnabled(false);
             camConn = new CameraConnection(this);
             ui->leCam1->setText("");
             ui->leCam1->setStyleSheet("background-color: red");
         }
-        else{
+        else if(sender()->objectName() == "cbAutoCam2"){
             ui->cbAutoCam1->setEnabled(false);
+            ui->cbAutoCam3->setEnabled(false);
             camConn = new CameraConnection(this, 2);
             ui->leCam2->setText("");
             ui->leCam2->setStyleSheet("background-color: red");
+        }
+        else{
+            ui->cbAutoCam1->setEnabled(false);
+            ui->cbAutoCam2->setEnabled(false);
+            camConn = new CameraConnection(this, 3);
+            ui->leCam3->setText("");
+            ui->leCam3->setStyleSheet("background-color: red");
         }
         connect(camConn, SIGNAL(sigCamera(QString)), this, SLOT(setCamera(QString)));
     }
     else{
         if(sender()->objectName() == "cbAutoCam1"){
             ui->cbAutoCam2->setEnabled(true);
+            ui->cbAutoCam3->setEnabled(true);
             ui->leCam1->setStyleSheet("background-color: white");
             settings->beginGroup("URL");
             ui->leCam1->setText(settings->value("cam1", "").toString());
             settings->endGroup();
         }
-        else{
+        else if(sender()->objectName() == "cbAutoCam2"){
             ui->cbAutoCam1->setEnabled(true);
+            ui->cbAutoCam3->setEnabled(true);
             ui->leCam2->setStyleSheet("background-color: white");
             settings->beginGroup("URL");
             ui->leCam2->setText(settings->value("cam2", "").toString());
+            settings->endGroup();
+        }
+        else{
+            ui->cbAutoCam1->setEnabled(true);
+            ui->cbAutoCam2->setEnabled(true);
+            ui->leCam3->setStyleSheet("background-color: white");
+            settings->beginGroup("URL");
+            ui->leCam3->setText(settings->value("cam3", "").toString());
             settings->endGroup();
         }
         if(camConn){
@@ -172,7 +204,7 @@ void SettingsVideoReplay::setCamera(QString ip){
         settings->setValue("cam2", cam2Url);
         settings->endGroup();
         ui->cbAutoCam2->setChecked(false);
-        static_cast<VideoReplayControl*>(control)->setCam1(cam2Url);
+        static_cast<VideoReplayControl*>(control)->setCam2(cam2Url);
     }
     if(ui->cbAutoCam3->isChecked()){
         cam3Url = "srt://" + ip + ":3333";
@@ -180,7 +212,7 @@ void SettingsVideoReplay::setCamera(QString ip){
         settings->setValue("cam3", cam2Url);
         settings->endGroup();
         ui->cbAutoCam3->setChecked(false);
-        static_cast<VideoReplayControl*>(control)->setCam1(cam3Url);
+        static_cast<VideoReplayControl*>(control)->setCam3(cam3Url);
     }
 }
 
@@ -227,6 +259,7 @@ QStringList SettingsVideoReplay::getListSoundDevices()
     for (const QAudioDevice &audioDevices : audio)
         if(audio.count() != 0)
             listSoundDevices<<audioDevices.description();
+    qDebug()<<listSoundDevices;
     return listSoundDevices;
 }
 

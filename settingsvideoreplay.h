@@ -4,6 +4,7 @@
 #include "cameraconnection.h"
 #include "qcombobox.h"
 #include "qsettings.h"
+#include "settingswebcamera.h"
 #include <QDialog>
 
 namespace Ui {
@@ -33,6 +34,8 @@ private:
     QString webCam2;
     QString paramWebCam2;
     QString sound;
+
+    SettingsWebCamera* sWeb;
 
     virtual void showEvent(QShowEvent *);
 

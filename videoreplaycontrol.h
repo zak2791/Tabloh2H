@@ -111,7 +111,7 @@ public slots:
     void setCam3(QString);
 
     void startRecord(bool, QString s = "");
-    void stopRecord(void);
+    void stopRecord(bool b = true);
     //void turnStreamToVk(bool b){streamToVk = b;}
     void setUrlVk(QString url){urlVk = url;}
     void setKeyVk(QString key){keyVk = key;}

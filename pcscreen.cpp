@@ -311,7 +311,7 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 
     //grid->addWidget(cbAddDisp,              28,  4, 4,   20);
 
-    btnTime->setStyleSheet("color: green; font: bold " + QString::number(round(btnTime->height() / 2)) + "px;");
+    //btnTime->setStyleSheet("color: green; font: bold " + QString::number(round(btnTime->height() / 2)) + "px;");
 
     lblEndTimer = new EndTime(this);
     lblEndTimer->setObjectName("lblEndTimer");

@@ -43,7 +43,6 @@ public:
 
     virtual void changeEvent(QEvent* e){
         if(e->type() == QEvent::EnabledChange){
-            qDebug()<<"state = "<<isEnabled();
             if(isEnabled()){
                 w->load(svgPathPlay);
                 w->renderer()->setAspectRatioMode(Qt::KeepAspectRatio);

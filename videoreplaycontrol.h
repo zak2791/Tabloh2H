@@ -92,7 +92,7 @@ private:
     QString filterStreamVk;
 
     SettingsVideoReplay* videoSettings;
-    void checkInputs(void);
+    //void checkInputs(void);
 
     //RecLabel* reclabel;
 

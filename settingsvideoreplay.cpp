@@ -99,9 +99,9 @@ SettingsVideoReplay::SettingsVideoReplay(QWidget *parent)
     settings->endGroup();
     refreshWebCam();
     sWeb = new SettingsWebCamera(this);
-    if(webCam1 == "")
+    if(ui->cbWebCam1->currentText() == "")
         ui->btnSettingsWbCam1->setEnabled(false);
-    if(webCam2 == "")
+    if(ui->cbWebCam2->currentText()  == "")
         ui->btnSettingsWbCam2->setEnabled(false);
     connect(ui->btnSettingsWbCam1, &QPushButton::clicked, this, [this](){
         sWeb->setWebCamera(webCam1);
@@ -306,12 +306,10 @@ void SettingsVideoReplay::refreshWebCam()
     ui->cbWebCam2->addItems(cams);
     ui->cbSound->addItems(getListSoundDevices());
     int index = ui->cbWebCam1->findText(webCam1);
-    qDebug()<<index<<webCam1;
     if(index > 0){
         ui->cbWebCam1->setCurrentIndex(index);
         static_cast<VideoReplayControl*>(control)->setWebCam1(webCam1);/////////////////////
-        qDebug()<<"setWebCam1"<<webCam1;
-
+        ui->btnSettingsWbCam1->setEnabled(true);
         QList<QList<int>> param = getListParamWebCam(webCam1);
         int count = 0;
         foreach(auto each, param){
@@ -337,6 +335,7 @@ void SettingsVideoReplay::refreshWebCam()
     if(index > 0){
         ui->cbWebCam2->setCurrentIndex(index);
         static_cast<VideoReplayControl*>(control)->setWebCam2(webCam2);
+        ui->btnSettingsWbCam2->setEnabled(true);
         QList<QList<int>> param = getListParamWebCam(webCam2);
         int count = 0;
         foreach(auto each, param){
@@ -437,6 +436,7 @@ void SettingsVideoReplay::selectWebCam1(QString text)
 {
     ui->cbParamWebCam1->clear();
     if(text == ""){
+        ui->btnSettingsWbCam1->setEnabled(false);
         setParamWebCam1(-1);
         ui->leCam1->setText(cam1Url);
         ui->leCam1->setEnabled(true);
@@ -459,6 +459,7 @@ void SettingsVideoReplay::selectWebCam1(QString text)
             ui->cbParamWebCam1->addItem(sParam);
             ui->cbParamWebCam1->setItemData(count++, QVariant::fromValue(each));
         }
+        ui->btnSettingsWbCam1->setEnabled(true);
         setParamWebCam1(ui->cbParamWebCam1->currentIndex());
         ui->leCam1->setText(text);
         ui->leCam1->setEnabled(false);
@@ -470,6 +471,7 @@ void SettingsVideoReplay::selectWebCam2(QString text)
 {
     ui->cbParamWebCam2->clear();
     if(text == ""){
+        ui->btnSettingsWbCam2->setEnabled(false);
         setParamWebCam2(-1);
         ui->leCam2->setText(cam2Url);
         ui->leCam2->setEnabled(true);
@@ -492,6 +494,7 @@ void SettingsVideoReplay::selectWebCam2(QString text)
             ui->cbParamWebCam2->addItem(sParam);
             ui->cbParamWebCam2->setItemData(count++, QVariant::fromValue(each));
         }
+        ui->btnSettingsWbCam2->setEnabled(true);
         setParamWebCam2(ui->cbParamWebCam2->currentIndex());
         ui->leCam2->setText(text);
         ui->leCam2->setEnabled(false);

@@ -41,9 +41,11 @@ private:
 
     void closeEvent(QCloseEvent *);
 
-    QStringList getListWebCams();
+    QList<QStringList> getListWebCams();
     QStringList getListSoundDevices();
     QList<QList<int> > getListParamWebCam(QString text);
+    QString getIdWebCam(QString);
+
     void SetComboBoxItemEnabled(QComboBox *comboBox, int index, bool enabled);
 signals:
     void sigShowReplayOnTv(bool);
@@ -53,10 +55,10 @@ private slots:
     void setCamera(QString ip);
     void setCam(QString text);
     void refreshWebCam();
-    void setParamWebCam1(int index);
-    void setParamWebCam2(int index);
-    void selectWebCam1(QString);
-    void selectWebCam2(QString);
+    void setParamWebCam1(int);
+    void setParamWebCam2(int);
+    void selectWebCam1(int);
+    void selectWebCam2(int);
     void setCamVk(bool);
 
 };

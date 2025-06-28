@@ -25,8 +25,37 @@ void SettingsWebCamera::setWebCamera(QString cam)
 {
     const QList<QCameraDevice> cameras = QMediaDevices::videoInputs();
     for (const QCameraDevice &cameraDevice : cameras){
-        if(cameraDevice.description() == cam){
-            procSettingsCamera->setArguments({"-f", "dshow", "-show_video_device_dialog", "true", "-i", "video=" + cam});
+        if(cameraDevice.id() == cam){
+            QProcess procNameCamera;
+            procNameCamera.setProgram("ffmpeg");
+            procNameCamera.setArguments({"-hide_banner", "-f", "dshow", "-list_devices", "true", "-i", "dummy"});
+            procNameCamera.setReadChannel(QProcess::StandardError);
+            procNameCamera.start();
+            procNameCamera.waitForFinished();
+            QString camera = "";
+            while(true){
+                QByteArray ba = procNameCamera.readLine();
+                if(ba.size() == 0)
+                    break;
+
+                QString fromFFmpeg = QString::fromLocal8Bit(ba).trimmed();
+                QString id = cam;
+                int firstIndex = cam.indexOf('#');
+                int lastIndex = cam.lastIndexOf('#');
+                id = id.mid(firstIndex,  lastIndex - firstIndex);
+                fromFFmpeg = fromFFmpeg.removeLast();
+                if(ba.contains(id.toUtf8())){
+                    firstIndex = ba.indexOf("\"");
+                    lastIndex = ba.lastIndexOf("\"");
+                    ba = ba.mid(firstIndex + 1,  lastIndex - firstIndex - 1);
+                    camera = QString::fromUtf8(ba);
+                    break;
+                }
+            }
+            procNameCamera.close();
+            if(camera == "")
+                return;
+            procSettingsCamera->setArguments({"-f", "dshow", "-show_video_device_dialog", "true", "-i", "video=" + camera});
             setCamera(cameraDevice);
         }
     }

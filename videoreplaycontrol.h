@@ -2,6 +2,7 @@
 #define VIDEOREPLAYCONTROL_H
 
 #include "playerpc.h"
+#include "playertv.h"
 #include "qprocess.h"
 #include "settingsvideoreplay.h"
 #include <QWidget>
@@ -20,7 +21,7 @@ class VideoReplayControl : public QWidget
 public:
     explicit VideoReplayControl(QWidget *parent = nullptr);
     ~VideoReplayControl();
-    void setPlayerTv(QMediaPlayer*);
+    void setPlayerTv(PlayerTv*);
 
 private:
     Ui::VideoReplayControl *ui;

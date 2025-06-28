@@ -1,16 +1,20 @@
 #ifndef PLAYERPC_H
 #define PLAYERPC_H
 
+#include "playertv.h"
 #include "qcheckbox.h"
+#include "qcombobox.h"
+#include "qmediacapturesession.h"
 #include "qmediaplayer.h"
 #include "qradiobutton.h"
 #include "qslider.h"
 #include "qspinbox.h"
+#include "qvideoframe.h"
 #include "qvideowidget.h"
 #include "svgbutton.h"
 #include <QWidget>
 #include <QKeyEvent>
-
+#include <QVideoSink>
 
 class PlayerPc : public QWidget
 {
@@ -18,23 +22,23 @@ class PlayerPc : public QWidget
 public:
     explicit PlayerPc(QWidget *parent = nullptr);
     void setMediaUrl(QString);
-    void setTvPlayer(QMediaPlayer*);
+    void setTvPlayer(PlayerTv*);
 
 private:
     virtual void closeEvent(QCloseEvent*);
     virtual void keyPressEvent(QKeyEvent*);
     QMediaPlayer* player;
-    QMediaPlayer* playerTv;
+    PlayerTv* playerTv;
     QSlider* sliderPosition;
     QSlider* sliderVolume;
     QAudioOutput* audioOutput;
     QDoubleSpinBox* playbackRate;
-    QRadioButton* rbCam1;
-    QRadioButton* rbCam2;
-    QRadioButton* rbCam3;
-    QRadioButton* rbSound1;
-    QRadioButton* rbSound2;
-    QRadioButton* rbSound3;
+    // QRadioButton* rbCam1;
+    // QRadioButton* rbCam2;
+    // QRadioButton* rbCam3;
+    // QRadioButton* rbSound1;
+    // QRadioButton* rbSound2;
+    // QRadioButton* rbSound3;
     SvgButton* btnPlay;
     SvgButton* btnClose;
     SvgButton* btnFrameForward;
@@ -48,15 +52,25 @@ private:
     //int fps;
     bool repeat = false;
 
+    QComboBox* selectVideo;
+    QComboBox* selectAudio;
+    QVideoSink* sinc;
+
     void playState(QMediaPlayer::PlaybackState);
 
 private slots:
-    void selectVideoTrack(bool);
-    void selectAudioTrack(bool);
+    //void selectVideoTrack(bool);
+    //void selectAudioTrack(bool);
+    void selectVideoStream(void);
+    void selectAudioStream(void);
     void metaDataChanged(void);
+    void tracksChanged(void);
+
+    //void statusChanged(QMediaPlayer::MediaStatus status);
 
 signals:
     void sigClose(void);
+    void sigFrame(QVideoFrame);
 
 };
 

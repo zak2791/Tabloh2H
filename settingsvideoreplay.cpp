@@ -238,15 +238,19 @@ void SettingsVideoReplay::setCam(QString text){
     }
 }
 
-QStringList SettingsVideoReplay::getListWebCams()
+QList<QStringList> SettingsVideoReplay::getListWebCams()
 {
-    QStringList listWebCam;
+    QList<QStringList> listWebCam;
+    int i = 0;
     const QList<QCameraDevice> cameras = QMediaDevices::videoInputs();
     for (const QCameraDevice &cameraDevice : cameras) {
         if(cameras.count() != 0){
-            QList<QList<int>> list = getListParamWebCam(cameraDevice.description());
-            if(list.count() != 0)
-                listWebCam<<cameraDevice.description();
+            QList<QList<int>> list = getListParamWebCam(cameraDevice.id());
+            if(list.count() != 0){
+                QStringList list;
+                list<<cameraDevice.description() + " " + QString::number(++i)<<cameraDevice.id();
+                listWebCam<<list;
+            }
         }
     }
     return listWebCam;
@@ -259,7 +263,7 @@ QStringList SettingsVideoReplay::getListSoundDevices()
     for (const QAudioDevice &audioDevices : audio)
         if(audio.count() != 0)
             listSoundDevices<<audioDevices.description();
-    qDebug()<<listSoundDevices;
+    //qDebug()<<listSoundDevices;
     return listSoundDevices;
 }
 
@@ -268,7 +272,7 @@ QList<QList<int>> SettingsVideoReplay::getListParamWebCam(QString text)
     QList<QList<int>> lParam;
     const QList<QCameraDevice> cameras = QMediaDevices::videoInputs();
     for (const QCameraDevice &cameraDevice : cameras) {
-        if (cameraDevice.description() == text){
+        if (cameraDevice.id() == text){
             foreach(auto each, cameraDevice.videoFormats()){
                 QList<int> par;
                 par.append(each.maxFrameRate());
@@ -286,10 +290,43 @@ QList<QList<int>> SettingsVideoReplay::getListParamWebCam(QString text)
     return lParam;
 }
 
+QString SettingsVideoReplay::getIdWebCam(QString cam)
+{
+    QProcess procNameCamera;
+    procNameCamera.setProgram("ffmpeg");
+    procNameCamera.setArguments({"-hide_banner", "-f", "dshow", "-list_devices", "true", "-i", "dummy"});
+    procNameCamera.setReadChannel(QProcess::StandardError);
+    procNameCamera.start();
+    procNameCamera.waitForFinished();
+    QString camera = "";
+    while(true){
+        QByteArray ba = procNameCamera.readLine();
+        if(ba.size() == 0)
+            break;
+
+        QString fromFFmpeg = QString::fromLocal8Bit(ba).trimmed();
+        QString id = cam;
+        int firstIndex = cam.indexOf('#');
+        int lastIndex = cam.lastIndexOf('#');
+        id = id.mid(firstIndex,  lastIndex - firstIndex);
+        fromFFmpeg = fromFFmpeg.removeLast();
+        if(ba.contains(id.toUtf8())){
+            firstIndex = ba.indexOf("\"");
+            lastIndex = ba.lastIndexOf("\"");
+            ba = ba.mid(firstIndex + 1,  lastIndex - firstIndex - 1);
+            camera = QString::fromUtf8(ba);
+            break;
+        }
+    }
+    procNameCamera.close();
+    qDebug()<<"camera = "<<camera;
+    return camera;
+
+}
+
 void SettingsVideoReplay::refreshWebCam()
 {
-    QStringList cams = getListWebCams();
-    qDebug()<<"cams = "<<cams;
+    QList<QStringList> cams = getListWebCams();
     ui->cbWebCam1->disconnect();
     ui->cbWebCam2->disconnect();
     ui->cbParamWebCam1->disconnect();
@@ -299,16 +336,26 @@ void SettingsVideoReplay::refreshWebCam()
     ui->cbWebCam1->clear();
     ui->cbWebCam1->addItem("");
     ui->cbParamWebCam1->clear();
-    ui->cbWebCam1->addItems(cams);
+
+    foreach(auto each, cams){
+        ui->cbWebCam1->addItem(each.at(0), each.at(1));
+        qDebug()<<each.at(0)<<each.at(1);
+    }
+
     ui->cbWebCam2->clear();
     ui->cbWebCam2->addItem("");
     ui->cbParamWebCam2->clear();
-    ui->cbWebCam2->addItems(cams);
+
+    foreach(auto each, cams)
+        ui->cbWebCam2->addItem(each.at(0), each.at(1));
+
     ui->cbSound->addItems(getListSoundDevices());
-    int index = ui->cbWebCam1->findText(webCam1);
+
+    int index = ui->cbWebCam1->findData(webCam1);
     if(index > 0){
+
         ui->cbWebCam1->setCurrentIndex(index);
-        static_cast<VideoReplayControl*>(control)->setWebCam1(webCam1);/////////////////////
+        static_cast<VideoReplayControl*>(control)->setWebCam1(getIdWebCam(webCam1));/////////////////////
         ui->btnSettingsWbCam1->setEnabled(true);
         QList<QList<int>> param = getListParamWebCam(webCam1);
         int count = 0;
@@ -323,18 +370,18 @@ void SettingsVideoReplay::refreshWebCam()
         if(index > 0)
             ui->cbParamWebCam1->setCurrentIndex(index);
         static_cast<VideoReplayControl*>(control)->setParamWebCam1(ui->cbParamWebCam1->currentData().value<QList<int>>());
-        ui->leCam1->setText(webCam1);
+        ui->leCam1->setText(ui->cbWebCam1->currentText());
         ui->leCam1->setEnabled(false);
         ui->cbAutoCam1->setEnabled(false);
     }
 
-    connect(ui->cbWebCam1, &QComboBox::currentTextChanged, this, &SettingsVideoReplay::selectWebCam1);
+    connect(ui->cbWebCam1, &QComboBox::currentIndexChanged, this, &SettingsVideoReplay::selectWebCam1);
     connect(ui->cbParamWebCam1, QOverload<int>::of(&QComboBox::activated), this, &SettingsVideoReplay::setParamWebCam1);
 
-    index = ui->cbWebCam2->findText(webCam2);
+    index = ui->cbWebCam2->findData(webCam2);
     if(index > 0){
         ui->cbWebCam2->setCurrentIndex(index);
-        static_cast<VideoReplayControl*>(control)->setWebCam2(webCam2);
+        static_cast<VideoReplayControl*>(control)->setWebCam2(getIdWebCam(webCam2));
         ui->btnSettingsWbCam2->setEnabled(true);
         QList<QList<int>> param = getListParamWebCam(webCam2);
         int count = 0;
@@ -354,18 +401,18 @@ void SettingsVideoReplay::refreshWebCam()
         ui->cbAutoCam2->setEnabled(false);
     }
 
-    connect(ui->cbWebCam2, &QComboBox::currentTextChanged, this, &SettingsVideoReplay::selectWebCam2);
+    connect(ui->cbWebCam2, &QComboBox::currentIndexChanged, this, &SettingsVideoReplay::selectWebCam2);
     connect(ui->cbParamWebCam2, QOverload<int>::of(&QComboBox::activated), this, &SettingsVideoReplay::setParamWebCam2);
 
     index = ui->cbSound->findText(sound);
     if(index != -1)
         ui->cbSound->setCurrentIndex(index);
 
-    index = ui->cbWebCam2->findText(webCam1);
+    index = ui->cbWebCam2->findData(webCam1);
     if(index > 0)
         SetComboBoxItemEnabled(ui->cbWebCam2 , index, false);
 
-    index = ui->cbWebCam1->findText(webCam2);
+    index = ui->cbWebCam1->findData(webCam2);
     if(index > 0)
         SetComboBoxItemEnabled(ui->cbWebCam1 , index, false);
 
@@ -405,7 +452,7 @@ void SettingsVideoReplay::setParamWebCam1(int index)
         settings->setValue("paramCam1", "");
     }
     else{
-        settings->setValue("cam1", ui->cbWebCam1->currentText());
+        settings->setValue("cam1", ui->cbWebCam1->currentData());
         settings->setValue("paramCam1", ui->cbParamWebCam1->currentText());
         QVariant variant = ui->cbParamWebCam1->itemData(index);
         QList<int> data = variant.value<QList<int>>();
@@ -423,7 +470,7 @@ void SettingsVideoReplay::setParamWebCam2(int index)
         settings->setValue("paramCam2", "");
     }
     else{
-        settings->setValue("cam2", ui->cbWebCam2->currentText());
+        settings->setValue("cam2", ui->cbWebCam2->currentData());
         settings->setValue("paramCam2", ui->cbParamWebCam2->currentText());
         QVariant variant = ui->cbParamWebCam2->itemData(index);
         QList<int> data = variant.value<QList<int>>();
@@ -432,10 +479,10 @@ void SettingsVideoReplay::setParamWebCam2(int index)
     settings->endGroup();
 }
 
-void SettingsVideoReplay::selectWebCam1(QString text)
+void SettingsVideoReplay::selectWebCam1(int index)
 {
     ui->cbParamWebCam1->clear();
-    if(text == ""){
+    if(index == 0){
         ui->btnSettingsWbCam1->setEnabled(false);
         setParamWebCam1(-1);
         ui->leCam1->setText(cam1Url);
@@ -448,9 +495,9 @@ void SettingsVideoReplay::selectWebCam1(QString text)
         return;
     }
     if(ui->cbWebCam1->count() > 0){
-        webCam1 = text;
-        static_cast<VideoReplayControl*>(control)->setWebCam1(text);
-        QList<QList<int>> param = getListParamWebCam(text);
+        webCam1 = ui->cbWebCam1->currentData().toString();
+        static_cast<VideoReplayControl*>(control)->setWebCam1(getIdWebCam(webCam1));
+        QList<QList<int>> param = getListParamWebCam(webCam1);
         int count = 0;
         foreach(auto each, param){
             QString sParam = "fps = " + QString::number(each.at(0)) +
@@ -461,16 +508,16 @@ void SettingsVideoReplay::selectWebCam1(QString text)
         }
         ui->btnSettingsWbCam1->setEnabled(true);
         setParamWebCam1(ui->cbParamWebCam1->currentIndex());
-        ui->leCam1->setText(text);
+        ui->leCam1->setText(ui->cbWebCam1->currentText());
         ui->leCam1->setEnabled(false);
         ui->cbAutoCam1->setEnabled(false);
     }
 }
 
-void SettingsVideoReplay::selectWebCam2(QString text)
+void SettingsVideoReplay::selectWebCam2(int index)
 {
     ui->cbParamWebCam2->clear();
-    if(text == ""){
+    if(index == 0){
         ui->btnSettingsWbCam2->setEnabled(false);
         setParamWebCam2(-1);
         ui->leCam2->setText(cam2Url);
@@ -483,9 +530,9 @@ void SettingsVideoReplay::selectWebCam2(QString text)
         return;
     }
     if(ui->cbWebCam2->count() > 0){
-        webCam2  = text;
-        static_cast<VideoReplayControl*>(control)->setWebCam2(text);
-        QList<QList<int>> param = getListParamWebCam(text);
+        webCam2  = ui->cbWebCam2->currentData().toString();
+        static_cast<VideoReplayControl*>(control)->setWebCam2(getIdWebCam(webCam2));
+        QList<QList<int>> param = getListParamWebCam(webCam2);
         int count = 0;
         foreach(auto each, param){
             QString sParam = "fps = " + QString::number(each.at(0)) +
@@ -496,7 +543,7 @@ void SettingsVideoReplay::selectWebCam2(QString text)
         }
         ui->btnSettingsWbCam2->setEnabled(true);
         setParamWebCam2(ui->cbParamWebCam2->currentIndex());
-        ui->leCam2->setText(text);
+        ui->leCam2->setText(ui->cbWebCam2->currentText());
         ui->leCam2->setEnabled(false);
         ui->cbAutoCam2->setEnabled(false);
     }

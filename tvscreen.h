@@ -97,7 +97,7 @@ public:
 
     void showPlayer(void);
     void showPlayer2(void);
-    QMediaPlayer* getPlayer(void){return player->player;}
+    PlayerTv* getPlayer(void){return player;}
 
 public slots:
     void hidePlayer(void);

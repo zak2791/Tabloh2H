@@ -1,5 +1,5 @@
 #include "videoreplaycontrol.h"
-#include "mainwindow.h"
+#include "playertv.h"
 #include "qdatetime.h"
 #include "qdebug.h"
 #include "qdir.h"
@@ -477,7 +477,7 @@ VideoReplayControl::~VideoReplayControl()
     delete ui;
 }
 
-void VideoReplayControl::setPlayerTv(QMediaPlayer* p)
+void VideoReplayControl::setPlayerTv(PlayerTv *p)
 {
     player->setTvPlayer(p);
 }
@@ -566,6 +566,9 @@ void VideoReplayControl::startReadCams()
     QString filter = filterStreamVk.arg(20).arg(heightPipVk);
 
     QString codec = hwEncoder == "" ? "mpeg2video" : hwEncoder;
+    if(hwDecoder == "")
+        codec = "mpeg2video";
+
     QStringList args;
 
     args<<"-hide_banner"<<"-loglevel"<<"error";
@@ -575,8 +578,8 @@ void VideoReplayControl::startReadCams()
             argsInput1<<"-c:v"<<hwDecoder;
         QString url = "video=" + urlWebCam1;
         if(urlSound != "")
-            url += ":audio=" + urlSound;
-        argsInput1<<"-f"<<"dshow"<<"-rtbufsize"<<"2000M"<<"-framerate"<<fps1<<"-video_size"<<resolution1<<"-i"<<url;//<<"-pix_fmt"<<"yuv420p";
+           url += ":audio=" + urlSound;
+        argsInput1<<"-f"<<"dshow"<<"-rtbufsize"<<"100M"<<"-framerate"<<fps1<<"-video_size"<<resolution1<<"-i"<<url;//<<"-pix_fmt"<<"yuv420p";
     }
     else{
         argsInput1<<"-rtbufsize"<<"2000M";
@@ -591,7 +594,7 @@ void VideoReplayControl::startReadCams()
         QString url = "video=" + urlWebCam2;
         if(urlSound != "")
             url += ":audio=" + urlSound;
-        argsInput2<<"-f"<<"dshow"<<"-rtbufsize"<<"2000M"<<"-framerate"<<fps2<<"-video_size"<<resolution2<<"-i"<<url;//<<"-pix_fmt"<<"yuv420p";
+        argsInput2<<"-f"<<"dshow"<<"-rtbufsize"<<"100M"<<"-framerate"<<fps2<<"-video_size"<<resolution2<<"-i"<<url;//<<"-pix_fmt"<<"yuv420p";
     }
     else{
         argsInput2<<"-rtbufsize"<<"2000M";
@@ -609,7 +612,7 @@ void VideoReplayControl::startReadCams()
 
     if(camToVk > 0){
         if(urlSound != "")
-            argsAudio<<"-rtbufsize"<<"100M"<<"-f"<<"dshow"<<"-i"<<"audio=" + urlSound;
+            argsAudio<<"-rtbufsize"<<"10M"<<"-f"<<"dshow"<<"-i"<<"audio=" + urlSound;
         else{
             QMessageBox msgBox;
             msgBox.setText("Нет источника звука. Трансляция невозможна");

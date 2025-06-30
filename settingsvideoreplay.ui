@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Настройки видеоповторов</string>
   </property>
   <widget class="Line" name="line_4">
    <property name="geometry">
@@ -35,7 +35,7 @@
     </rect>
    </property>
    <property name="orientation">
-    <enum>Qt::Orientation::Horizontal</enum>
+    <enum>Qt::Horizontal</enum>
    </property>
   </widget>
   <widget class="QLabel" name="label">
@@ -61,7 +61,7 @@
     </rect>
    </property>
    <property name="orientation">
-    <enum>Qt::Orientation::Horizontal</enum>
+    <enum>Qt::Horizontal</enum>
    </property>
   </widget>
   <widget class="QLineEdit" name="leUrl">
@@ -175,7 +175,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>URL камеры 2</string>
+     <string>URL камеры 3</string>
     </property>
    </widget>
   </widget>
@@ -275,9 +275,9 @@
    <property name="geometry">
     <rect>
      <x>23</x>
-     <y>280</y>
+     <y>282</y>
      <width>241</width>
-     <height>26</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
@@ -305,9 +305,6 @@
    </property>
    <property name="text">
     <string>Высота плашки</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
    </property>
   </widget>
   <widget class="QLabel" name="label_2">
@@ -396,13 +393,10 @@
    <property name="geometry">
     <rect>
      <x>660</x>
-     <y>280</y>
+     <y>282</y>
      <width>141</width>
      <height>22</height>
     </rect>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
    </property>
    <property name="minimum">
     <number>80</number>
@@ -451,9 +445,6 @@
    </property>
    <property name="text">
     <string>Настройка Web камер</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignmentFlag::AlignCenter</set>
    </property>
   </widget>
  </widget>

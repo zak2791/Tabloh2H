@@ -53,39 +53,33 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
 
     timerCam1 = new QTimer(this);
     connect(timerCam1, &QTimer::timeout, this, [this](){
-        if(countCam1 < 41)
+        if(countCam1 < 61)
             countCam1 += 1;
-        if(countCam1 == 10)
+        if(countCam1 == 5)
             ui->lblCam1->clear();
-        if(countCam1 == 40){
-            //if(ui->cbCam1->isChecked())
-            //    ui->cbCam1->click();
+        if(countCam1 == 60){
             ui->cbCam1->setChecked(false);
         }
     });
 
     timerCam2 = new QTimer(this);
     connect(timerCam2, &QTimer::timeout, this, [this](){
-        if(countCam2 < 41)
+        if(countCam2 < 61)
             countCam2 += 1;
-        if(countCam2 == 10)
+        if(countCam2 == 5)
             ui->lblCam2->clear();
-        if(countCam2 == 40){
-            //if(ui->cbCam2->isChecked())
-            //    ui->cbCam2->click();
+        if(countCam2 == 60){
             ui->cbCam2->setChecked(false);
         }
     });
 
     timerCam3 = new QTimer(this);
     connect(timerCam3, &QTimer::timeout, this, [this](){
-        if(countCam3 < 41)
+        if(countCam3 < 61)
             countCam3++;
-        if(countCam3 == 10)
+        if(countCam3 == 5)
             ui->lblCam3->clear();
-        if(countCam3 == 40){
-            //if(ui->cbCam3->isChecked())
-            //    ui->cbCam3->click();
+        if(countCam3 == 60){
             ui->cbCam3->setChecked(false);
         }
     });
@@ -97,10 +91,6 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
     connect(procRead, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this,
             [=](int exitCode, QProcess::ExitStatus exitStatus){
                 qDebug()<<"exitCodeRead = "<<exitCode<<"exitStatusRead = "<<exitStatus;
-                //checkInputs();
-                //QTimer::singleShot(5000, this, &VideoReplayControl::startReadCams);
-                //stopRecord();
-                //offStreamVk();
                 countCam1 = 0;
                 countCam2 = 0;
                 countCam3 = 0;
@@ -120,21 +110,6 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
         QByteArray ba = procRead->readAllStandardError();
         qDebug()<<"err read = "<<ba;
 
-
-        // if(QString(ba).contains(urlCam1)){
-        //     ui->cbCam1->setChecked(false);
-        //     ui->lblCam1->clear();
-        // }
-
-        // if(QString(ba).contains(urlCam2)){
-        //     ui->cbCam2->setChecked(false);
-        //     ui->lblCam2->clear();
-        // }
-
-        // if(QString(ba).contains(urlCam3)){
-        //     ui->cbCam3->setChecked(false);
-        //     ui->lblCam3->clear();
-        // }
         if(ba.contains("I/O error") || ba.contains("Unknown error")){
             QFile file("read_error.txt");
             if (!file.open(QIODevice::Append | QIODevice::Text))
@@ -169,38 +144,6 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
                 return;
             }
         }
-
-        // ui->cbCam1->setChecked(false);
-        // ui->cbCam2->setChecked(false);
-        // ui->cbCam3->setChecked(false);
-        // ui->lblCam1->clear();
-        // ui->lblCam2->clear();
-        // ui->lblCam3->clear();
-        // stopRecord();
-        // stopReadCams();
-        // QString url(ba);
-        // int index = url.lastIndexOf(":");
-
-        // url = url.remove(index, 20);
-        // // box.setText(url);
-        // // box.exec();
-
-        // QString url1;
-        // url1 = url.split(":").at(0);
-        // url1 = url1.remove(0, 6);
-
-        // if(url1 == urlCam1){
-        //     ui->cbCam1->setChecked(false);
-        //     ui->lblCam1->clear();
-        // }
-        // if(url == urlCam2){
-        //     ui->cbCam2->setChecked(false);
-        //     ui->lblCam2->clear();
-        // }
-        // if(url == urlCam3){
-        //     ui->cbCam3->setChecked(false);
-        //     ui->lblCam3->clear();
-        // }
     });
 
     procReadCam1 = new QProcess(this);
@@ -210,20 +153,10 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
     connect(procReadCam1, &QProcess::readyReadStandardOutput, this, [this](){
         QByteArray ba = procReadCam1->readAllStandardOutput();
         QImage image(100, 50, QImage:: Format_RGB666);
-        if (!image.loadFromData(ba, "PNG"))
-            qDebug()<<"Not loaded";
-        ui->lblCam1->setPixmap(QPixmap::fromImage(image));
+        if (image.loadFromData(ba, "PNG"))
+            ui->lblCam1->setPixmap(QPixmap::fromImage(image));
         countCam1 = 0;
     });
-
-    // connect(procReadCam1, &QProcess::readyReadStandardError, this, [this](){
-    //     QByteArray ba = procReadCam1->readAllStandardError();
-    //     QFile file("camera1.txt");
-    //     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
-    //         return;
-    //     file.write(ba, ba.length());
-    //     file.close();
-    // });
 
     procReadCam2 = new QProcess(this);
     procReadCam2->setProgram("ffmpeg");
@@ -233,20 +166,10 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
     connect(procReadCam2, &QProcess::readyReadStandardOutput, this, [this](){
         QByteArray ba = procReadCam2->readAllStandardOutput();
         QImage image(100, 50, QImage:: Format_RGB666);
-        if (!image.loadFromData(ba, "PNG"))
-            qDebug()<<"Not loaded";
-        ui->lblCam2->setPixmap(QPixmap::fromImage(image));
+        if (image.loadFromData(ba, "PNG"))
+            ui->lblCam2->setPixmap(QPixmap::fromImage(image));
         countCam2 = 0;
     });
-
-    // connect(procReadCam2, &QProcess::readyReadStandardError, this, [this](){
-    //     QByteArray ba = procReadCam2->readAllStandardError();
-    //     QFile file("camera2.txt");
-    //     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
-    //         return;
-    //     file.write(ba, ba.length());
-    //     file.close();
-    // });
 
     procReadCam3 = new QProcess(this);
     procReadCam3->setProgram("ffmpeg");
@@ -256,38 +179,16 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
     connect(procReadCam3, &QProcess::readyReadStandardOutput, this, [this](){
         QByteArray ba = procReadCam3->readAllStandardOutput();
         QImage image(100, 50, QImage:: Format_RGB666);
-        if (!image.loadFromData(ba, "PNG"))
-            qDebug()<<"Not loaded";
-        ui->lblCam3->setPixmap(QPixmap::fromImage(image));
+        if (image.loadFromData(ba, "PNG"))
+            ui->lblCam3->setPixmap(QPixmap::fromImage(image));
         countCam3 = 0;
     });
-
-    // connect(procReadCam3, &QProcess::readyReadStandardError, this, [this](){
-    //     QByteArray ba = procReadCam3->readAllStandardError();
-    //     //qDebug()<<"countCam3_2"<<countCam3_2;
-    //     // QFile file("camera3.txt");
-    //     // if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
-    //     //     return;
-    //     // file.write(ba, ba.length());
-    //     // file.close();
-    // });
 
     procRecord = new QProcess(this);
     procRecord->setProgram("ffmpeg");
     connect(procRecord, &QProcess::readyReadStandardError, this, [this](){
         QByteArray ba = procRecord->readAllStandardError();
         qDebug()<<"err rec ="<<ba;
-
-
-        // if(QString(ba).contains(urlCam2)){
-        //     ui->cbCam2->setChecked(false);
-        //     ui->lblCam2->clear();
-        // }
-
-        // if(QString(ba).contains(urlCam3)){
-        //     ui->cbCam3->setChecked(false);
-        //     ui->lblCam3->clear();
-        // }
 
         if(!ba.contains("I/O error"))
             return;
@@ -296,24 +197,6 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
             return;
         file.write(ba, ba.length());
         file.close();
-        // QMessageBox box;
-        // QString url(ba);
-        // int index = url.lastIndexOf(":");
-
-        // url = url.remove(index, 20);
-        // box.setText(url);
-        // box.exec();
-
-        // QString url1;
-        // url1 = url.split(":").at(0);
-        // url1 = url1.remove(0, 6);
-
-        // if(url1 == urlCam1)
-        //     ui->cbCam1->setChecked(false);
-        // if(url == urlCam2)
-        //     ui->cbCam2->setChecked(false);
-        // if(url == urlCam3)
-        //     ui->cbCam3->setChecked(false);
 
     });
 
@@ -345,17 +228,6 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
             file.close();
             procVk->write("q");
         }
-        // QString sFrame = QString(s);
-        // if(sFrame.startsWith("frame= ")){
-        //     int countFrame = sFrame.split(" ").at(1).toInt();
-        //     if(countFrame != 0){
-        //         if(countFrame > lastCountFrame){
-        //             lastCountFrame = countFrame;
-        //             countVk = 0;
-        //             qDebug()<<"countFrame = "<<countFrame;
-        //         }
-        //     }
-        // }
     });
     connect(procVk, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this,
             [=](int exitCode, QProcess::ExitStatus exitStatus){
@@ -367,9 +239,6 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
         lastCountFrame = 0;
         ui->labelvk->setStatusVk(true);
     });
-    // connect(procVk, &QProcess::bytesWritten, this, [=](int bytes){
-    //     qDebug()<<"bytes written = "<<bytes;
-    // });
 
     connect(btnPlay, &QPushButton::clicked, this, [this](){
         stopRecord();
@@ -393,7 +262,6 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
         QStringList dirList = dir.entryList(QDir::Files, QDir::Time);
         if(dirList.count() == 0)
             return;
-        //QThread::sleep(1);
 
         player->showFullScreen();
         player->setMediaUrl("videos/" + dirList.at(0));
@@ -430,7 +298,7 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
     procProbeAudio = new QProcess(this);
     procProbeAudio->setProgram("ffprobe");
     procProbeAudio->setReadChannel(QProcess::StandardError);
-    //procProbeAudio->setArguments({"-hide_banner", "-i", "udp://127.0.0.1:5004"});
+
     connect(procProbeAudio,  QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, [this](){
         isAudio = false;
         qDebug()<<"procProbeAudio";
@@ -445,10 +313,8 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
                 isAudio = true;
 
         }
-        //onStreamVk();
     });
-    //ui->cbCam2->click();
-    //ui->cbCam3->click();
+
     //////////////////////////////////////////////
     /// %1 - отступ плашки, %2 - высота плашки ///
     ////////////////////////////////////////////// 
@@ -499,7 +365,6 @@ void VideoReplayControl::killFfmpegProcess()
 
 void VideoReplayControl::offStreamVk()
 {
-    qDebug()<<"finVk"<<camToVk;
     if(procVk->state() == QProcess::Running){
         procVk->write("q");
         procVk->waitForBytesWritten();
@@ -544,9 +409,6 @@ void VideoReplayControl::getHWcodec()
 
 void VideoReplayControl::startReadCams()
 {
-    //if(procRead->state() == QProcess::Running)
-    //    stopReadCams();
-    qDebug()<<"start read";
     procReadCam1->start();
     procReadCam2->start();
     procReadCam3->start();
@@ -579,10 +441,10 @@ void VideoReplayControl::startReadCams()
         QString url = "video=" + urlWebCam1;
         if(urlSound != "")
            url += ":audio=" + urlSound;
-        argsInput1<<"-f"<<"dshow"<<"-rtbufsize"<<"100M"<<"-framerate"<<fps1<<"-video_size"<<resolution1<<"-i"<<url;//<<"-pix_fmt"<<"yuv420p";
+        argsInput1<<"-f"<<"dshow"<<"-rtbufsize"<<"10M"<<"-framerate"<<fps1<<"-video_size"<<resolution1<<"-i"<<url;
     }
     else{
-        argsInput1<<"-rtbufsize"<<"2000M";
+        argsInput1<<"-rtbufsize"<<"10M";
         if(urlCam1.startsWith("rtsp"))
             argsInput1<<"-rtsp_transport"<<"tcp"<<"-stimeout"<<"1000000";
         argsInput1<<"-i"<<urlCam1;
@@ -594,16 +456,16 @@ void VideoReplayControl::startReadCams()
         QString url = "video=" + urlWebCam2;
         if(urlSound != "")
             url += ":audio=" + urlSound;
-        argsInput2<<"-f"<<"dshow"<<"-rtbufsize"<<"100M"<<"-framerate"<<fps2<<"-video_size"<<resolution2<<"-i"<<url;//<<"-pix_fmt"<<"yuv420p";
+        argsInput2<<"-f"<<"dshow"<<"-rtbufsize"<<"10M"<<"-framerate"<<fps2<<"-video_size"<<resolution2<<"-i"<<url;//<<"-pix_fmt"<<"yuv420p";
     }
     else{
-        argsInput2<<"-rtbufsize"<<"2000M";
+        argsInput2<<"-rtbufsize"<<"10M";
         if(urlCam2.startsWith("rtsp"))
             argsInput2<<"-rtsp_transport"<<"tcp"<<"-stimeout"<<"1000000";
         argsInput2<<"-i"<<urlCam2;
     }
 
-    argsInput3<<"-rtbufsize"<<"2000M";
+    argsInput3<<"-rtbufsize"<<"10M";
     if(urlCam3.startsWith("rtsp"))
         argsInput3<<"-rtsp_transport"<<"tcp"<<"-stimeout"<<"1000000";
     argsInput3<<"-i"<<urlCam3;
@@ -849,64 +711,6 @@ void VideoReplayControl::stopReadCams()
     procRead->write("q");
     procRead->closeWriteChannel();
 }
-
-// void VideoReplayControl::checkInputs()
-// {
-//     QProcess procProbe;
-//     procProbe.setProgram("ffprobe");
-//     procProbe.setReadChannel(QProcess::StandardError);
-//     QStringList args;
-//     args<<"-hide_banner";
-//     if(urlWebCam1 != ""){
-//         QString url = "video=" + urlWebCam1;
-//         args<<"-f"<<"dshow"<<"-i"<<url;;
-//     }
-//     else{
-//         if(urlCam1.startsWith("rtsp"))
-//             args<<"-rtsp_transport"<<"tcp"<<"-stimeout"<<"1000000";
-//         args<<"-i"<<urlCam1;
-//     }
-//     procProbe.setArguments(args);
-//     procProbe.start();
-//     procProbe.waitForFinished();
-//     QByteArray ba = procProbe.readAllStandardError();
-//     if(ba.contains("error"))
-//         ui->cbCam1->setChecked(false);
-//     qDebug()<<ba;
-
-//     args.clear();
-//     args<<"-hide_banner";
-//     if(urlWebCam2 != ""){
-//         QString url = "video=" + urlWebCam2;
-//         args<<"-f"<<"dshow"<<"-i"<<url;;
-//     }
-//     else{
-//         if(urlCam2.startsWith("rtsp"))
-//             args<<"-rtsp_transport"<<"tcp"<<"-stimeout"<<"1000000";
-//         args<<"-i"<<urlCam2;
-//     }
-//     procProbe.setArguments(args);
-//     procProbe.start();
-//     procProbe.waitForFinished();
-//     ba = procProbe.readAllStandardError();
-//     if(ba.contains("error"))
-//         ui->cbCam2->setChecked(false);
-//     qDebug()<<ba;
-
-//     args.clear();
-//     args<<"-hide_banner";
-//     if(urlCam2.startsWith("rtsp"))
-//         args<<"-rtsp_transport"<<"tcp"<<"-stimeout"<<"1000000";
-//     args<<"-i"<<urlCam3;
-//     procProbe.setArguments(args);
-//     procProbe.start();
-//     procProbe.waitForFinished();
-//     ba = procProbe.readAllStandardError();
-//     if(ba.contains("error"))
-//         ui->cbCam3->setChecked(false);
-//     qDebug()<<ba;
-//     procProbe.close();
-// }
 
 void VideoReplayControl::onStreamVk()
 {

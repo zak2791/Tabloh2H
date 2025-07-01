@@ -399,7 +399,9 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     connect(fam_blue,      SIGNAL(sigText(QString)), tvScreen->fam_blue,      SLOT(Text(QString)));
 
     connect(reg_red,       SIGNAL(sigText(QString)), tvScreen->reg_red,       SLOT(Text(QString)));
-    connect(reg_red,    &Fam::sigText, this, [this](QString text){
+    connect(reg_red,    &Fam::sigText, this, [this, &mw](QString text){
+        if(!mw->getStatusRegistration())
+            return;
         QFile file("name_red.txt");
         file.open(QIODevice::WriteOnly);
         file.resize(0);
@@ -409,7 +411,9 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     });
 
     connect(reg_blue,      SIGNAL(sigText(QString)), tvScreen->reg_blue,      SLOT(Text(QString)));
-    connect(reg_blue,    &Fam::sigText, this, [this](QString text){
+    connect(reg_blue,    &Fam::sigText, this, [this, &mw](QString text){
+        if(!mw->getStatusRegistration())
+            return;
         QFile file("name_blue.txt");
         file.open(QIODevice::WriteOnly);
         file.resize(0);

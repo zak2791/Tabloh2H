@@ -263,7 +263,6 @@ QStringList SettingsVideoReplay::getListSoundDevices()
     for (const QAudioDevice &audioDevices : audio)
         if(audio.count() != 0)
             listSoundDevices<<audioDevices.description();
-    //qDebug()<<listSoundDevices;
     return listSoundDevices;
 }
 
@@ -396,7 +395,7 @@ void SettingsVideoReplay::refreshWebCam()
         if(index > 0)
             ui->cbParamWebCam2->setCurrentIndex(index);
         static_cast<VideoReplayControl*>(control)->setParamWebCam2(ui->cbParamWebCam2->currentData().value<QList<int>>());
-        ui->leCam2->setText(webCam2);
+        ui->leCam2->setText(ui->cbWebCam2->currentText());
         ui->leCam2->setEnabled(false);
         ui->cbAutoCam2->setEnabled(false);
     }

@@ -21,22 +21,6 @@ PlayerPc::PlayerPc(QWidget *parent)
     btnFrameBack = new SvgButton(":/images/frame_backward.svg", ":/images/frame_backward.svg");
     videoOutput = new QVideoWidget;
 
-    // rbCam1 = new QRadioButton("1");
-    // rbCam1->setChecked(true);
-    // rbCam2 = new QRadioButton("2");
-    // rbCam3 = new QRadioButton("3");
-
-    // QButtonGroup* groupVideo = new QButtonGroup(this);
-    // groupVideo->setExclusive(true);
-    // groupVideo->addButton(rbCam1);
-    // groupVideo->addButton(rbCam2);
-    // groupVideo->addButton(rbCam3);
-
-    // rbSound1 = new QRadioButton("1");
-    // rbSound1->setChecked(true);
-    // rbSound2 = new QRadioButton("2");
-    // rbSound3 = new QRadioButton("3");
-
     selectVideo = new QComboBox;
     selectVideo->setSizeAdjustPolicy(QComboBox::AdjustToContents);
     connect(selectVideo, &QComboBox::activated, this, &PlayerPc::selectVideoStream);
@@ -93,15 +77,9 @@ PlayerPc::PlayerPc(QWidget *parent)
     hLayout->addWidget(btnFrameForward, 1);
     hLayout->addWidget(vLine1);
     hLayout->addWidget(new QLabel("Камера"));
-    // hLayout->addWidget(rbCam1);
-    // hLayout->addWidget(rbCam2);
-    // hLayout->addWidget(rbCam3);
     hLayout->addWidget(selectVideo);
     hLayout->addWidget(vLine2);
     hLayout->addWidget(new QLabel("Звуковая дорожка"));
-    // hLayout->addWidget(rbSound1);
-    // hLayout->addWidget(rbSound2);
-    // hLayout->addWidget(rbSound3);
     hLayout->addWidget(selectAudio);
     hLayout->addWidget(vLine3);
     hLayout->addWidget(new QLabel("Громкость"));
@@ -182,13 +160,6 @@ PlayerPc::PlayerPc(QWidget *parent)
         player->setPosition(player->position() + 33);
     });
 
-    // connect(rbCam1, &QRadioButton::clicked, this, &PlayerPc::selectVideoTrack);
-    // connect(rbCam2, &QRadioButton::clicked, this, &PlayerPc::selectVideoTrack);
-    // connect(rbCam3, &QRadioButton::clicked, this, &PlayerPc::selectVideoTrack);
-
-    // connect(rbSound1, &QRadioButton::clicked, this, &PlayerPc::selectAudioTrack);
-    // connect(rbSound2, &QRadioButton::clicked, this, &PlayerPc::selectAudioTrack);
-    // connect(rbSound3, &QRadioButton::clicked, this, &PlayerPc::selectAudioTrack);
 
     connect(sliderVolume, &QSlider::valueChanged, audioOutput, &QAudioOutput::setVolume);
     connect(playbackRate, &QDoubleSpinBox::valueChanged, player, &QMediaPlayer::setPlaybackRate);
@@ -209,7 +180,6 @@ void PlayerPc::setMediaUrl(QString url)
 {
     player->setSource(QUrl::fromLocalFile(url));
     player->pause();
-    //playerTv->pause();
     audioOutput->setVolume(sliderVolume->value());
     player->setPlaybackRate(playbackRate->value());
 }
@@ -224,7 +194,6 @@ void PlayerPc::setTvPlayer(PlayerTv *p)
 void PlayerPc::closeEvent(QCloseEvent*)
 {
     player->stop();
-    //player->setSource(QUrl(NULL));
     emit sigClose();
 }
 
@@ -280,98 +249,13 @@ void PlayerPc::selectAudioStream()
     player->setActiveAudioTrack(stream);
 }
 
-// void PlayerPc::selectVideoTrack(bool checked)
-// {
-//     if(!checked)
-//         return;
-//     if(rbCam1->isChecked())
-//         player->setActiveVideoTrack(0);
-//     else if(rbCam2->isChecked())
-//         player->setActiveVideoTrack(1);
-//     else
-//         player->setActiveVideoTrack(2);
-//     player->setPosition(player->position());
-// }
-
-// void PlayerPc::selectAudioTrack(bool checked)
-// {
-//     if(!checked)
-//         return;
-//     if(rbSound1->isChecked())
-//         player->setActiveAudioTrack(0);
-//     else if(rbSound2->isChecked())
-//         player->setActiveAudioTrack(1);
-//     else
-//         player->setActiveAudioTrack(2);
-// }
 
 void PlayerPc::metaDataChanged()
 {
     QMediaMetaData data = player->metaData();
     duration = data.value(QMediaMetaData::Duration).toInt();
     sliderPosition->setRange(0, duration);
-    // int countVideos = player->videoTracks().size();
-    // int countSounds = player->audioTracks().size();
-    // if(countVideos == 1){
-    //     rbCam2->setEnabled(false);
-    //     rbCam3->setEnabled(false);
-    // }
-    // else if(countVideos == 2){
-    //     rbCam2->setEnabled(true);
-    //     rbCam3->setEnabled(false);
-    // }
-    // else{
-    //     rbCam2->setEnabled(true);
-    //     rbCam3->setEnabled(true);
-    // }
-    // rbCam1->setChecked(true);
-
-    // if(countSounds == 1){
-    //     rbSound1->setEnabled(true);
-    //     rbSound2->setEnabled(false);
-    //     rbSound3->setEnabled(false);
-    // }
-    // else if(countSounds == 2){
-    //     rbSound1->setEnabled(true);
-    //     rbSound2->setEnabled(true);
-    //     rbSound3->setEnabled(false);
-    // }
-    // else if(countSounds == 3){
-    //     rbSound1->setEnabled(true);
-    //     rbSound2->setEnabled(true);
-    //     rbSound3->setEnabled(true);
-    // }
-    // else{
-    //     rbSound1->setEnabled(false);
-    //     rbSound2->setEnabled(false);
-    //     rbSound3->setEnabled(false);
-    // }
-
-    // player->play();
-    // player->pause();
-
 
 }
 
-// void PlayerPc::statusChanged(QMediaPlayer::MediaStatus status)
-// {
-//     switch (status) {
-//     case QMediaPlayer::NoMedia:
-//         break;
-//     case QMediaPlayer::LoadedMedia:
-//         //showFullScreen();
-//         break;
-//     case QMediaPlayer::LoadingMedia:
-//         break;
-//     case QMediaPlayer::BufferingMedia:
-//         break;
-//     case QMediaPlayer::BufferedMedia:
-//         break;
-//     case QMediaPlayer::StalledMedia:
-//         break;
-//     case QMediaPlayer::EndOfMedia:
-//         break;
-//     case QMediaPlayer::InvalidMedia:
-//         break;
-//     }
-// }
+

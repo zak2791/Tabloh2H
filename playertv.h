@@ -9,7 +9,6 @@ class PlayerTv : public QWidget
 {
 public:
     PlayerTv(QWidget *parent = nullptr);
-    //QMediaPlayer* player;
 
 private:
     QVideoFrameInput* videoInput;

@@ -3,11 +3,13 @@
 #include "qboxlayout.h"
 #include "qcheckbox.h"
 #include "qframe.h"
+#include "qgraphicsview.h"
 #include "qlabel.h"
 #include "qpushbutton.h"
 #include <QVideoSink>
 #include <QAudioOutput>
 #include <QMediaMetaData>
+#include <QGraphicsSceneWheelEvent>
 
 PlayerPc::PlayerPc(QWidget *parent)
     : QWidget{parent}
@@ -19,7 +21,15 @@ PlayerPc::PlayerPc(QWidget *parent)
     btnClose = new SvgButton(":/images/off.svg", ":/images/off.svg");
     btnFrameForward = new SvgButton(":/images/frame_forward.svg", ":/images/frame_forward.svg");
     btnFrameBack = new SvgButton(":/images/frame_backward.svg", ":/images/frame_backward.svg");
-    videoOutput = new QVideoWidget;
+
+    view = new QGraphicsView;
+    view->setBackgroundBrush(QBrush("gray"));
+    view->setScene(new QGraphicsScene);
+    view->scene()->addItem(&videoOutput);
+    view->scene()->installEventFilter( this );
+    view->setMouseTracking(true);
+    view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     selectVideo = new QComboBox;
     selectVideo->setSizeAdjustPolicy(QComboBox::AdjustToContents);
@@ -95,7 +105,7 @@ PlayerPc::PlayerPc(QWidget *parent)
     hLayout->addStretch(8);
     hLayout->addWidget(btnClose, 1);
 
-    vLayout->addWidget(videoOutput);
+    vLayout->addWidget(view);
     vLayout->addWidget(sliderPosition);
     vLayout->addLayout(hLayout);
     setLayout(vLayout);
@@ -103,13 +113,12 @@ PlayerPc::PlayerPc(QWidget *parent)
     setWindowModality(Qt::ApplicationModal);
 
     player = new QMediaPlayer(this);
-    player->setVideoOutput(videoOutput);
+    player->setVideoOutput(&videoOutput);
     audioOutput = new QAudioOutput(this);
     player->setAudioOutput(audioOutput);
 
     connect(player, &QMediaPlayer::tracksChanged, this, &PlayerPc::tracksChanged);
     connect(player, &QMediaPlayer::positionChanged, sliderPosition, &QSlider::setSliderPosition);
-    //connect(player, &QMediaPlayer::mediaStatusChanged, this, &PlayerPc::statusChanged);
     connect(sliderPosition, &QSlider::valueChanged, player, &QMediaPlayer::setPosition);
     connect(player, &QMediaPlayer::positionChanged, this, [this](int position){
         if(repeat){
@@ -174,7 +183,7 @@ PlayerPc::PlayerPc(QWidget *parent)
         each->setFocusPolicy(Qt::NoFocus);
     }
 
-    sinc = videoOutput->videoSink();
+    sinc = videoOutput.videoSink();
 
 }
 
@@ -190,6 +199,7 @@ void PlayerPc::setTvPlayer(PlayerTv *p)
 {
     playerTv = p;
     connect(sinc, &QVideoSink::videoFrameChanged, playerTv, &PlayerTv::playVideoFrame);
+    connect(this, &PlayerPc::sigZoom, playerTv, &PlayerTv::setZoom);
 
 }
 
@@ -260,4 +270,47 @@ void PlayerPc::metaDataChanged()
 
 }
 
+void PlayerPc::resizeEvent(QResizeEvent*)
+{
+    videoOutput.setSize(view->size());
+    view->scene()->setSceneRect(view->rect());
+}
 
+bool PlayerPc::eventFilter(QObject *o, QEvent *e)
+{
+    if ( o == view->scene() && e->type() == QEvent::GraphicsSceneWheel )
+    {
+        view->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+        QPointF anchor;
+        anchor.setX(0.5 - ((qreal)zoomAnchor.x() / view->width()));
+        anchor.setY(0.5 - ((qreal)zoomAnchor.y() / view->height()));
+
+        if(static_cast<QGraphicsSceneWheelEvent *>(e)->delta() > 0){
+            if(zoomCount < 4){
+                view->scale(scaleFactor, scaleFactor);
+                zoomCount++;
+                emit sigZoom(view->transform(), anchor);
+            }
+        }
+        else{
+            if(zoomCount > 1){
+                view->scale(1 / scaleFactor, 1 / scaleFactor);
+                zoomCount--;
+                emit sigZoom(view->transform(), anchor);
+            }else if(zoomCount == 1){
+                view->setTransform(QTransform());
+                zoomCount--;
+                emit sigZoom(QTransform(), anchor);
+            }
+        }
+        e->accept();
+        return true;
+    }
+    else if(o == view->scene() && e->type() == QEvent::GraphicsSceneMouseMove){
+        if (auto *mouseEvent = dynamic_cast<QGraphicsSceneMouseEvent *>(e)) {                                                        ", "  + QString::number( mouseEvent->pos().y());
+            zoomAnchor = mouseEvent->scenePos().toPoint();
+        }
+        return true;
+    }
+    return false;
+}

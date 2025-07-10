@@ -4,16 +4,18 @@
 #include "playertv.h"
 #include "qcheckbox.h"
 #include "qcombobox.h"
+#include "qgraphicsview.h"
 #include "qmediacapturesession.h"
 #include "qmediaplayer.h"
 #include "qslider.h"
 #include "qspinbox.h"
 #include "qvideoframe.h"
-#include "qvideowidget.h"
+//#include "qvideowidget.h"
 #include "svgbutton.h"
 #include <QWidget>
 #include <QKeyEvent>
 #include <QVideoSink>
+#include <QGraphicsVideoItem>
 
 class PlayerPc : public QWidget
 {
@@ -37,7 +39,10 @@ private:
     SvgButton* btnClose;
     SvgButton* btnFrameForward;
     SvgButton* btnFrameBack;
-    QVideoWidget* videoOutput;
+    //QVideoWidget* videoOutput;
+    QGraphicsView* view;
+    QGraphicsVideoItem videoOutput;
+
     QCheckBox* cbRepeat;
     QSpinBox* sbRepeat;
     int repeatPos;
@@ -50,7 +55,14 @@ private:
     QComboBox* selectAudio;
     QVideoSink* sinc;
 
+    float scaleFactor = 1.5;
+    int zoomCount = 0;
+    QPoint zoomAnchor;
+
     void playState(QMediaPlayer::PlaybackState);
+    void resizeEvent(QResizeEvent*) override;
+    bool eventFilter(QObject *o, QEvent *e) override;
+
 
 private slots:
     void selectVideoStream(void);
@@ -63,6 +75,7 @@ private slots:
 signals:
     void sigClose(void);
     void sigFrame(QVideoFrame);
+    void sigZoom(QTransform, QPointF);
 
 };
 

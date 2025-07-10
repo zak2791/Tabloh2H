@@ -278,7 +278,7 @@ QList<QList<int>> SettingsVideoReplay::getListParamWebCam(QString text)
                 par.append(each.resolution().rwidth());
                 par.append(each.resolution().rheight());
                 if(each.pixelFormat() ==  QVideoFrameFormat::Format_Jpeg &&
-                    each.resolution().rwidth() <= 1920 &&
+                    //each.resolution().rwidth() <= 1920 &&
                     each.resolution().rwidth() >= 800 &&
                     each.maxFrameRate() >= 15)
                     lParam.append(par);

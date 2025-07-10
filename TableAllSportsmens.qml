@@ -64,7 +64,7 @@ Rectangle {
             Text {
                 id: txt
                 padding: 5
-                text: name + "\n" + region + "\n" + index + "\n" + age + weight
+                text: name + "\n" + region + "\n" + (index + 1) + "\n" + age + " " + weight
                 font.pixelSize: sizeFont
             }
             MouseArea{

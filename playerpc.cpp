@@ -161,7 +161,9 @@ PlayerPc::PlayerPc(QWidget *parent)
     });
 
 
-    connect(sliderVolume, &QSlider::valueChanged, audioOutput, &QAudioOutput::setVolume);
+    connect(sliderVolume, &QSlider::valueChanged, audioOutput, [this](int volume){
+        audioOutput->setVolume(volume / 100.0);
+    });
     connect(playbackRate, &QDoubleSpinBox::valueChanged, player, &QMediaPlayer::setPlaybackRate);
     connect(player, &QMediaPlayer::playbackStateChanged, this, &PlayerPc::playState);
 

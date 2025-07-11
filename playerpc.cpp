@@ -307,7 +307,7 @@ bool PlayerPc::eventFilter(QObject *o, QEvent *e)
         return true;
     }
     else if(o == view->scene() && e->type() == QEvent::GraphicsSceneMouseMove){
-        if (auto *mouseEvent = dynamic_cast<QGraphicsSceneMouseEvent *>(e)) {                                                        ", "  + QString::number( mouseEvent->pos().y());
+        if (auto *mouseEvent = dynamic_cast<QGraphicsSceneMouseEvent *>(e)) {
             zoomAnchor = mouseEvent->scenePos().toPoint();
         }
         return true;

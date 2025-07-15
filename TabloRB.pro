@@ -14,7 +14,8 @@ QT += core \
        quickwidgets \
        network \
        multimediawidgets \
-       svgwidgets
+       svgwidgets \
+       httpserver
 
 HEADERS += \
     JSTools.h \

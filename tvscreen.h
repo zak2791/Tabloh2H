@@ -7,16 +7,12 @@
 #include "narusheniya_pravil.h"
 #include "playertv.h"
 #include "rate.h"
-#include "ui_FormView.h"
 #include "fam_reg.h"
 #include "plus.h"
-#include "category.h"
 #include "lcdstopwatch.h"
 #include "firstlastname.h"
 #include "endtime.h"
 #include "logofrb.h"
-
-//#include "playerviewertv.h"
 
 #include <QSvgRenderer>
 #include <QPainter>
@@ -91,17 +87,11 @@ public:
 
     logofrb* logo;
 
-	int View;									//вид табло: 0-красно-синий фон, 
-												//			 1-чёрный фон с рамками,
-												//			 2-чёрный фон без рамок
-
     void showPlayer(void);
-    void showPlayer2(void);
     PlayerTv* getPlayer(void){return player;}
 
 public slots:
     void hidePlayer(void);
-    void hidePlayer2(void);
     void setPlayerEnabled(bool);
 
 private:

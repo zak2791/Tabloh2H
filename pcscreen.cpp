@@ -19,6 +19,9 @@
 #include <fileapi.h>
 #include <math.h>
 
+#include <QHttpServer>
+#include <QHttpServerResponse>
+
 #include <QNetworkInterface>
 
 #include <QRadioButton>
@@ -735,6 +738,28 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     connect(mainTimer, SIGNAL(sigClicked()), btnTime, SLOT(click()));
 
     f_Lib = new QLibrary;
+
+    QHttpServer httpServer;
+    httpServer.route("/", []() {
+        QHttpServerResponse resp = QHttpServerResponse::fromFile(QString("index.html"));
+        QHttpHeaders headers;
+        headers.append(QHttpHeaders::WellKnownHeader::Refresh, "1");
+        resp.setHeaders(headers);
+        qDebug()<<"resp";
+        return resp;
+    });
+
+
+    auto tcpserver = std::make_unique<QTcpServer>();
+    tcpserver->listen(QHostAddress::Any, 6001);
+    if (!httpServer.bind(tcpserver.get())) {
+        qWarning() << QCoreApplication::translate("QHttpServerExample",
+                                                  "Server failed to listen on a port.");
+        //return -1;
+    }
+
+    qDebug()<<tcpserver->serverPort();
+    tcpserver.release();
 
 }
 

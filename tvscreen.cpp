@@ -11,8 +11,7 @@
 #include <QPalette>
 
 #include "tvscreen.h"
-#include "list_family.h"
-#include "category.h"
+
 #include "lcdstopwatch.h"
 #include <QScreen>
 #include <QPicture>
@@ -29,8 +28,6 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
 
 	col_red = "white";
 	col_blue = "white";
-
-	View = 0;			//красно-синий фон
 
     ball_red = new Rate(this);
 	ball_red->setFrameShape(QFrame::Box);
@@ -171,13 +168,6 @@ void TVScreen::showPlayer(){
     }
 }
 
-void TVScreen::showPlayer2(){
-    if(flagReplayOnTV){
-        //grid->addWidget(vWidget,    0, 0, 45, 68);
-        //vWidget->show();
-    }
-}
-
 void TVScreen::setPlayerEnabled(bool b){
     flagReplayOnTV = b;
 }
@@ -185,18 +175,9 @@ void TVScreen::setPlayerEnabled(bool b){
 void TVScreen::hidePlayer(){
     grid->removeWidget(player);
     player->hide();
-    //grid->removeWidget(vWidget);
-    //vWidget->hide();
 }
 
-void TVScreen::hidePlayer2(){
-    qDebug()<<"hhhhhhhhhhhh";
-    //grid->removeWidget(vWidget);
-    //vWidget->hide();
-    //vWidget->setVisible(false);
-    //qDebug()<<vWidget->isVisible();
-    //repaint();
-}
+
 
 void TVScreen::paintEvent(QPaintEvent * ) {
     QPainter pn;

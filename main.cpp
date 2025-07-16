@@ -5,6 +5,7 @@
 
 
 #include "mainwindow.h"
+#include "qhttpserver.h"
 #include <QApplication>
 
 int main(int argc, char** argv){
@@ -93,6 +94,33 @@ int main(int argc, char** argv){
                               " Can not open the script file",
                               QMessageBox::Yes);
     }
+
+    QString html = "no data";
+
+    QObject::connect(pwgt, &PCScreen::sigDataToServer, [&html](QString data){html = data;});
+
+    QHttpServer httpServer;
+    httpServer.route("/", [&html]() {
+        // QHttpServerResponse resp(html);
+        // QHttpHeaders headers;
+        // headers.append(QHttpHeaders::WellKnownHeader::Refresh, "1");
+        // resp.setHeaders(headers);
+        // qDebug()<<resp.data()<<resp.headers();
+        return html;
+    });
+
+    // auto tcpserver = new QTcpServer();
+    // if (!tcpserver->listen(QHostAddress::Any, 6001) || !httpServer.bind(tcpserver)) {
+    //     delete tcpserver;
+
+    // }
+
+    auto tcpserver = std::make_unique<QTcpServer>();
+    if (!tcpserver->listen(QHostAddress::Any, 6001) || !httpServer.bind(tcpserver.get())) {
+        qDebug() << QCoreApplication::translate("QHttpServerExample",
+                                                "Server failed to listen on a port.");
+    }
+    tcpserver.release();
 
 	return app.exec();
 }

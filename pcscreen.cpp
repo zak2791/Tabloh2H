@@ -433,6 +433,12 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     connect(mainTimer, SIGNAL(sigTime(QString, QString)), tvScreen->sec, SLOT(showTime(QString, QString)));
     connect(mainTimer, SIGNAL(sigIntTime(int)), this, SLOT(saveTime(int)));
 
+    connect(mainTimer, SIGNAL(sigTime(QString, QString)), this, SLOT(setDataForServer(void)));
+    connect(rateRed,   SIGNAL(sigRate(int)), this, SLOT(setDataForServer(void)));
+    connect(rateBlue,  SIGNAL(sigRate(int)), this, SLOT(setDataForServer(void)));
+    connect(plus_red,  SIGNAL(textChange(QString)), this, SLOT(setDataForServer(void)));
+    connect(plus_blue, SIGNAL(textChange(QString)), this, SLOT(setDataForServer(void)));
+    connect(fam_blue,   SIGNAL(sigText(QString)), this, SLOT(setDataForServer(void)));
 
     connect(mainTimer, SIGNAL(sigStarted(bool)), tvScreen->logo, SLOT(off_logo()));
 
@@ -738,28 +744,6 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     connect(mainTimer, SIGNAL(sigClicked()), btnTime, SLOT(click()));
 
     f_Lib = new QLibrary;
-
-    QHttpServer httpServer;
-    httpServer.route("/", []() {
-        QHttpServerResponse resp = QHttpServerResponse::fromFile(QString("index.html"));
-        QHttpHeaders headers;
-        headers.append(QHttpHeaders::WellKnownHeader::Refresh, "1");
-        resp.setHeaders(headers);
-        qDebug()<<"resp";
-        return resp;
-    });
-
-
-    auto tcpserver = std::make_unique<QTcpServer>();
-    tcpserver->listen(QHostAddress::Any, 6001);
-    if (!httpServer.bind(tcpserver.get())) {
-        qWarning() << QCoreApplication::translate("QHttpServerExample",
-                                                  "Server failed to listen on a port.");
-        //return -1;
-    }
-
-    qDebug()<<tcpserver->serverPort();
-    tcpserver.release();
 
 }
 
@@ -1446,6 +1430,58 @@ void PCScreen::setTvScreenGeometry(){
     }
 
 
+}
+
+void PCScreen::setDataForServer()
+{
+    QString time = mainTimer->getTime();
+    QString redRate = plus_red->getText() + rateRed->getRate();
+    QString blueRate = plus_blue->getText() + rateBlue->getRate();
+    QString data = "<html>"
+                   "<head>"
+                   "<meta charset='utf-8'; http-equiv='refresh' content='1'>"
+                   "</head>"
+                   "<body>"
+                   "<canvas height='100' width='1920' id='example'>Обновите браузер</canvas>"
+                   "<script>"
+                       "var example = document.getElementById('example');"
+                        "ctx = example.getContext('2d');"
+                        "ctx.fillStyle = 'blue';"
+                        "ctx.fillRect(0, 0, 800, example.height);"
+                        "ctx.fillStyle = 'black';"
+                        "ctx.fillRect(800, 0, 320, example.height);"
+                        "ctx.fillStyle = 'red';"
+                        "ctx.fillRect(1120, 0, 800, example.height);"
+                        "ctx.fillStyle = 'lightgreen';"
+                        "ctx.textBaseline = 'middle';"
+                        "ctx.textAlign = 'center';"
+                        "ctx.font = 'bold 70px serif';"
+                        "ctx.fillText('" + time + "', 960, 50);"
+                        "ctx.fillStyle = 'black';"
+                        "ctx.fillRect(610, 10, 180, 80);"
+                        "ctx.fillRect(1130, 10, 180, 80);"
+
+                        "ctx.fillRect(10, 10, 580, 80);"
+                        "ctx.fillRect(1330, 10, 580, 80);"
+
+                        "ctx.fillStyle = 'white';"
+                        "ctx.fillText('" + blueRate + "', 700, 50);"
+                        "ctx.fillText('" + redRate+ "', 1220, 50);"
+
+                        "ctx.font = '35px serif';"
+                        "ctx.textAlign = 'left';"
+
+                        "ctx.fillText('" + fam_blue->getText() + "', 20, 32, 580);"
+                        "ctx.fillText('" + reg_blue->getText() + "', 20, 68, 580);"
+
+                        "ctx.fillText('" + fam_red->getText() + "', 1340, 32, 580);"
+                        "ctx.fillText('" + reg_red->getText() + "', 1340, 68, 580)"
+
+                    "</script>"
+                    "</body>"
+                    "</html>";
+
+    emit sigDataToServer(data);
 }
 
 // void PCScreen::setCameras()

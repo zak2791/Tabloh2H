@@ -189,6 +189,7 @@ private slots:
 
     //void setCameras(void);
     //void setParamWebCam(int index);
+    void setDataForServer(void);
 
 private:
     QSettings* settings;
@@ -286,7 +287,9 @@ private:
 
     VideoReplayControl* videoControl;
 
+
 signals:
     void operate(QString, int, QString);
+    void sigDataToServer(QString);
 
 };

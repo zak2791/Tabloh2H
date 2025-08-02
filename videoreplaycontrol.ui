@@ -20,11 +20,8 @@
       <layout class="QHBoxLayout" name="hLayoutButtons">
        <item>
         <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Orientation::Horizontal</enum>
-         </property>
          <property name="sizeType">
-          <enum>QSizePolicy::Policy::Maximum</enum>
+          <enum>QSizePolicy::Fixed</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -53,9 +50,9 @@
      <item row="1" column="0">
       <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
-        <widget class="QLabel" name="lblCam1">
+        <widget class="ViewingCamera" name="lblCam1">
          <property name="frameShape">
-          <enum>QFrame::Shape::NoFrame</enum>
+          <enum>QFrame::NoFrame</enum>
          </property>
          <property name="text">
           <string/>
@@ -66,9 +63,9 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="lblCam2">
+        <widget class="ViewingCamera" name="lblCam2">
          <property name="frameShape">
-          <enum>QFrame::Shape::NoFrame</enum>
+          <enum>QFrame::NoFrame</enum>
          </property>
          <property name="text">
           <string/>
@@ -81,7 +78,7 @@
        <item>
         <widget class="QLabel" name="lblCam3">
          <property name="frameShape">
-          <enum>QFrame::Shape::NoFrame</enum>
+          <enum>QFrame::NoFrame</enum>
          </property>
          <property name="text">
           <string/>
@@ -156,6 +153,11 @@ QCheckBox{font-size: 20px}</string>
    <class>VkLabel</class>
    <extends>QLabel</extends>
    <header>vklabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ViewingCamera</class>
+   <extends>QLabel</extends>
+   <header>viewingcamera.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

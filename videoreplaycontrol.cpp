@@ -106,9 +106,24 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
                 onStreamVk();
         }
     });
+
+    connect(&timerControlFrameDrop, &QTimer::timeout, this, [this](){
+        ui->lblCam1->setDroppedFrames(droppedFrames1);
+        ui->lblCam2->setDroppedFrames(droppedFrames2);
+        droppedFrames1 = 0;
+        droppedFrames2 = 0;
+    });
     connect(procRead, &QProcess::readyReadStandardError, this, [this](){
         QByteArray ba = procRead->readAllStandardError();
         qDebug()<<"err read = "<<ba;
+        if(ba.contains("frame dropped!")){
+            if(ba.contains(urlWebCam1.toUtf8())){
+                droppedFrames1++;
+            }
+            if(ba.contains(urlWebCam2.toUtf8())){
+                droppedFrames2++;
+            }
+        }
 
         if(ba.contains("I/O error") || ba.contains("Unknown error")){
             QFile file("read_error.txt");
@@ -145,6 +160,7 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
             }
         }
     });
+    timerControlFrameDrop.start(1000);
 
     procReadCam1 = new QProcess(this);
     procReadCam1->setProgram("ffmpeg");
@@ -493,7 +509,7 @@ void VideoReplayControl::startReadCams()
         if(camToVk > 0)
             args += argsAudio;
         if(urlWebCam1 != ""){
-            args<<"-map"<<"0"<<"-g"<<"10"<<"-c:v"<<codec<<"-b:v"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5000";
+            args<<"-map"<<"0"<<"-g"<<"10"<<"-c:v"<<codec<<"-b:v"<<"6M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5000";
             args<<"-map"<<"0:v"<<"-c:v"<<codec<<"-r"<<"5"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
         }
         else{
@@ -516,7 +532,7 @@ void VideoReplayControl::startReadCams()
         if(camToVk > 0)
             args += argsAudio;
         if(urlWebCam2 != ""){
-            args<<"-map"<<"0"<<"-g"<<"10"<<"-c:v"<<codec<<"-b:v"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5000";
+            args<<"-map"<<"0"<<"-g"<<"10"<<"-c:v"<<codec<<"-b:v"<<"6M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5000";
             args<<"-map"<<"0:v"<<"-c:v"<<codec<<"-r"<<"5"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5002";
         }
         else{
@@ -555,12 +571,12 @@ void VideoReplayControl::startReadCams()
         args<<"-map"<<"0";
         args<<"-map"<<"1";
         args<<"-g"<<"10"<<"-c:v:0";
-        if(urlWebCam1 != "") args<<codec;
+        if(urlWebCam1 != "") args<<codec;//<<"-b:v:0"<<"6M";
         else args<<"copy";
         args<<"-c:v:1";
-        if(urlWebCam2 != "") args<<codec;
+        if(urlWebCam2 != "") args<<codec;//<<"-b:v:1"<<"6M";
         else args<<"copy";
-        args<<"-b:v"<<"3M"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5000";
+        args<<"-f"<<"mpegts"<<"udp://127.0.0.1:5000";
         args<<"-map"<<"0:v"<<"-c:v";
         if(urlWebCam1 != "") args<<codec;
         else args<<"copy";
@@ -738,12 +754,14 @@ void VideoReplayControl::setWebCam2(QString cam)
 void VideoReplayControl::setParamWebCam1(QList<int> param)
 {
     fps1 = QString::number(param.at(0));
+    ui->lblCam1->setFps(param.at(0));
     resolution1 = QString::number(param.at(1)) + "x" + QString::number(param.at(2));
 }
 
 void VideoReplayControl::setParamWebCam2(QList<int> param)
 {
     fps2 = QString::number(param.at(0));
+    ui->lblCam2->setFps(param.at(0));
     resolution2 = QString::number(param.at(1)) + "x" + QString::number(param.at(2));
 }
 

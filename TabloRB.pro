@@ -50,6 +50,7 @@ HEADERS += \
     svgbutton.h \
     tvscreen.h \
     videoreplaycontrol.h \
+    viewingcamera.h \
     vklabel.h
 
   SOURCES += \
@@ -84,6 +85,7 @@ HEADERS += \
     sportsman.cpp \
     tvscreen.cpp \
     videoreplaycontrol.cpp \
+    viewingcamera.cpp \
     vklabel.cpp
 
 FORMS += \

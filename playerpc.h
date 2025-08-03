@@ -9,6 +9,7 @@
 #include "qmediaplayer.h"
 #include "qslider.h"
 #include "qspinbox.h"
+#include "qtimer.h"
 #include "qvideoframe.h"
 //#include "qvideowidget.h"
 #include "svgbutton.h"
@@ -62,7 +63,8 @@ private:
     void playState(QMediaPlayer::PlaybackState);
     void resizeEvent(QResizeEvent*) override;
     bool eventFilter(QObject *o, QEvent *e) override;
-
+    bool timeoutSliderPosition;
+    QTimer timer;
 
 private slots:
     void selectVideoStream(void);

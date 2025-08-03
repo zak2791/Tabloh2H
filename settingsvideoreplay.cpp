@@ -209,7 +209,7 @@ void SettingsVideoReplay::setCamera(QString ip){
     if(ui->cbAutoCam3->isChecked()){
         cam3Url = "srt://" + ip + ":3333";
         settings->beginGroup("URL");
-        settings->setValue("cam3", cam2Url);
+        settings->setValue("cam3", cam3Url);
         settings->endGroup();
         ui->cbAutoCam3->setChecked(false);
         static_cast<VideoReplayControl*>(control)->setCam3(cam3Url);

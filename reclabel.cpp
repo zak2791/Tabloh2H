@@ -1,5 +1,4 @@
 #include "reclabel.h"
-#include "qdebug.h"
 #include "qpainter.h"
 #include "qtimer.h"
 #include <QResizeEvent>

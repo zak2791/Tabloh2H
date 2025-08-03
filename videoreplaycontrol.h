@@ -93,13 +93,9 @@ private:
     QString filterStreamVk;
 
     SettingsVideoReplay* videoSettings;
-    //void checkInputs(void);
 
-    //RecLabel* reclabel;
     QTimer timerControlFrameDrop;
-    //bool controlFrameDrop;
-    int droppedFrames1 = 0;
-    int droppedFrames2 = 0;
+    int droppedFrames = 0;
 
 private slots:
     void onStreamVk(void);

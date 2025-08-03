@@ -108,20 +108,16 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
     });
 
     connect(&timerControlFrameDrop, &QTimer::timeout, this, [this](){
-        ui->lblCam1->setDroppedFrames(droppedFrames1);
-        ui->lblCam2->setDroppedFrames(droppedFrames2);
-        droppedFrames1 = 0;
-        droppedFrames2 = 0;
+        ui->lblLost->setLostFrames(droppedFrames);
+
+        droppedFrames = 0;
     });
     connect(procRead, &QProcess::readyReadStandardError, this, [this](){
         QByteArray ba = procRead->readAllStandardError();
         qDebug()<<"err read = "<<ba;
         if(ba.contains("frame dropped!")){
-            if(ba.contains(urlWebCam1.toUtf8())){
-                droppedFrames1++;
-            }
-            if(ba.contains(urlWebCam2.toUtf8())){
-                droppedFrames2++;
+            if(ba.contains(urlWebCam1.toUtf8()) || ba.contains(urlWebCam2.toUtf8())){
+                droppedFrames++;
             }
         }
 
@@ -754,14 +750,12 @@ void VideoReplayControl::setWebCam2(QString cam)
 void VideoReplayControl::setParamWebCam1(QList<int> param)
 {
     fps1 = QString::number(param.at(0));
-    ui->lblCam1->setFps(param.at(0));
     resolution1 = QString::number(param.at(1)) + "x" + QString::number(param.at(2));
 }
 
 void VideoReplayControl::setParamWebCam2(QList<int> param)
 {
     fps2 = QString::number(param.at(0));
-    ui->lblCam2->setFps(param.at(0));
     resolution2 = QString::number(param.at(1)) + "x" + QString::number(param.at(2));
 }
 

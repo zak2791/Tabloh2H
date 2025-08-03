@@ -32,6 +32,7 @@ HEADERS += \
     list_family.h \
     listview.h \
     logofrb.h \
+    lostlabel.h \
     mainlistmodel.h \
     mainwindow.h \
     narusheniya_pravil.h \
@@ -50,7 +51,6 @@ HEADERS += \
     svgbutton.h \
     tvscreen.h \
     videoreplaycontrol.h \
-    viewingcamera.h \
     vklabel.h
 
   SOURCES += \
@@ -67,6 +67,7 @@ HEADERS += \
     lcdtimer.cpp \
     list_family.cpp \
     logofrb.cpp \
+    lostlabel.cpp \
     main.cpp \
     mainlistmodel.cpp \
     mainwindow.cpp \
@@ -85,7 +86,6 @@ HEADERS += \
     sportsman.cpp \
     tvscreen.cpp \
     videoreplaycontrol.cpp \
-    viewingcamera.cpp \
     vklabel.cpp
 
 FORMS += \

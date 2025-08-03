@@ -64,5 +64,7 @@
         <file>images/frame_forward.svg</file>
         <file>images/CheckBoxVideoCheckedDisabled.png</file>
         <file>images/CheckBoxVideoUncheckedDisabled.png</file>
+        <file>images/lost_active.svg</file>
+        <file>images/lost_no_active.svg</file>
     </qresource>
 </RCC>

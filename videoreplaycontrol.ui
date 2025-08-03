@@ -20,6 +20,9 @@
       <layout class="QHBoxLayout" name="hLayoutButtons">
        <item>
         <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
          <property name="sizeType">
           <enum>QSizePolicy::Fixed</enum>
          </property>
@@ -30,6 +33,13 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item>
+        <widget class="LostLabel" name="lblLost">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="VkLabel" name="labelvk">
@@ -50,7 +60,7 @@
      <item row="1" column="0">
       <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
-        <widget class="ViewingCamera" name="lblCam1">
+        <widget class="QLabel" name="lblCam1">
          <property name="frameShape">
           <enum>QFrame::NoFrame</enum>
          </property>
@@ -63,7 +73,7 @@
         </widget>
        </item>
        <item>
-        <widget class="ViewingCamera" name="lblCam2">
+        <widget class="QLabel" name="lblCam2">
          <property name="frameShape">
           <enum>QFrame::NoFrame</enum>
          </property>
@@ -155,9 +165,9 @@ QCheckBox{font-size: 20px}</string>
    <header>vklabel.h</header>
   </customwidget>
   <customwidget>
-   <class>ViewingCamera</class>
+   <class>LostLabel</class>
    <extends>QLabel</extends>
-   <header>viewingcamera.h</header>
+   <header>lostlabel.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

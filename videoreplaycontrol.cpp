@@ -351,6 +351,7 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
 VideoReplayControl::~VideoReplayControl()
 {
     killFfmpegProcess();
+    qDebug()<<"dest";
     delete player;
     delete ui;
 }
@@ -373,6 +374,8 @@ void VideoReplayControl::killFfmpegProcess()
     findProc.start();
     findProc.waitForFinished();
     findProc.close();
+
+
 }
 
 void VideoReplayControl::offStreamVk()
@@ -713,7 +716,7 @@ void VideoReplayControl::startReadCams()
 
     procRead->setArguments(args);
     procRead->start();
-    qDebug()<<"start procRead"<<args;
+    qDebug()<<"start procRead"<<args<<procRead->processId();
 
 }
 

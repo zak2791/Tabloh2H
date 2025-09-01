@@ -109,7 +109,6 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
 
     connect(&timerControlFrameDrop, &QTimer::timeout, this, [this](){
         ui->lblLost->setLostFrames(droppedFrames);
-
         droppedFrames = 0;
     });
     connect(procRead, &QProcess::readyReadStandardError, this, [this](){
@@ -160,7 +159,7 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
 
     procReadCam1 = new QProcess(this);
     procReadCam1->setProgram("ffmpeg");
-    args<<"-i"<<"udp://127.0.0.1:5001"<<"-filter_complex"<<"[0:v]scale=100:50, fps=1"<<"-vcodec"<<"png"<<"-f"<<"image2pipe"<<"-";
+    args<<"-i"<<"udp://127.0.0.1:5001"<<"-filter_complex"<<"[0:v]scale=100:50, fps=2"<<"-vcodec"<<"png"<<"-f"<<"image2pipe"<<"-";
     procReadCam1->setArguments(args);
     connect(procReadCam1, &QProcess::readyReadStandardOutput, this, [this](){
         QByteArray ba = procReadCam1->readAllStandardOutput();

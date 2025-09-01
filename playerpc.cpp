@@ -49,7 +49,7 @@ PlayerPc::PlayerPc(QWidget *parent)
     sliderVolume->setValue(100);
 
     playbackRate = new QDoubleSpinBox(this);
-    playbackRate->setMaximum(10.0);
+    playbackRate->setMaximum(2.0);
     playbackRate->setMinimum(0.2);
     playbackRate->setDecimals(1);
     playbackRate->setSingleStep(0.2);
@@ -119,7 +119,14 @@ PlayerPc::PlayerPc(QWidget *parent)
 
     connect(player, &QMediaPlayer::tracksChanged, this, &PlayerPc::tracksChanged);
     connect(player, &QMediaPlayer::positionChanged, sliderPosition, &QSlider::setSliderPosition);
-    connect(sliderPosition, &QSlider::valueChanged, player, &QMediaPlayer::setPosition);
+    connect(&timer, &QTimer::timeout, this, [this](){timeoutSliderPosition = true;});
+    connect(sliderPosition, &QSlider::valueChanged, this, [this](int pos){
+        if(timeoutSliderPosition){
+            timeoutSliderPosition = false;
+            player->setPosition(pos);
+        }
+    });
+    timer.start(100);
     connect(player, &QMediaPlayer::positionChanged, this, [this](int position){
         if(repeat){
             if(position >= duration - 100){

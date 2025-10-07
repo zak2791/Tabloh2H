@@ -230,7 +230,7 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
     procVk->setProgram("ffmpeg");
     connect(procVk, &QProcess::readyReadStandardError, this, [this](){
         QByteArray s = procVk->readAllStandardError();
-        qDebug()<<s;
+        qDebug()<<"vk err"<<s;
         if(s.contains("I/O error")){
             QFile file("vk.txt");
             if (!file.open(QIODevice::Append | QIODevice::Text))
@@ -515,7 +515,7 @@ void VideoReplayControl::startReadCams()
             args<<"-map"<<"0:v"<<"-c:v"<<"copy"<<"-r"<<"5"<<"-f"<<"mpegts"<<"udp://127.0.0.1:5001";
         }
         if(camToVk == 1){
-            args<<"-map"<<"0:v"<<"-map"<<"1:a"<<"-vf"<<filter<<"-b:v"<<"3M";
+            args<<"-map"<<"0:v"<<"-map"<<"1:a";//<<"-vf"<<filter<<"-b:v"<<"3M";
             if(urlWebCam1 != "")
                 args<<"-c:v"<<codec<<"-f"<<"mpegts"<<"udp://127.0.0.1:5004";
             else{
@@ -732,7 +732,7 @@ void VideoReplayControl::onStreamVk()
     args<<"-hide_banner"<<"-timeout"<<"20000000";
     args<<"-thread_queue_size"<<"1024";
     args<<"-i"<<"udp://127.0.0.1:5004"; //0
-    args<<"-c:v"<<"copy"<<"-f"<<"flv"<<urlVk + keyVk;
+    args<<"-f"<<"flv"<<urlVk + keyVk;
     qDebug()<<"vk = "<<args;
     procVk->setArguments(args);
     procVk->start();

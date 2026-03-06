@@ -66,7 +66,7 @@ void ListFamily::readFileSportsmens(){
         lWeight.append(doc.read(i, 4).toString());
     }
 
-    qDebug()<<"sportsmens = "<<sportsmens;
+    //qDebug()<<"sportsmens = "<<sportsmens;
 
     lAge.append("");
     lWeight.append("");

@@ -7,15 +7,11 @@ Rectangle {
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.verticalCenter: parent.verticalCenter
     clip: true
-
     property int sizeFont: 10       //размер шрифта
-
     Component  {
         id: _highlight
-
         Rectangle {
             id: rec
-
             width: grid.cellWidth; height: grid.cellHeight
             opacity: 1
             color: "lightsteelblue"; radius: 5
@@ -35,36 +31,29 @@ Rectangle {
             Behavior on y { SpringAnimation { spring: 5; damping: 0.3; mass: 0.8 } }
         }
     }
-
     GridView {
         id: grid
         objectName: "grid"
         anchors.fill: parent
         model: myModel
         cellWidth: parent.width / 6
-
         signal moveItem(int i)
-
         highlight: _highlight
         delegate: Item {
             id: rectDel
             width: grid.cellWidth
             height: grid .cellHeight
-
-            GridView.onRemove: SequentialAnimation {
-                PropertyAction {
-                    target: rectDel
-                    property: "GridView.delayRemove"
-                    value: true
-                }
+            GridView.onRemove: removeAnimation.start()
+            SequentialAnimation {
+                id: removeAnimation
+                PropertyAction {target: rectDel; property: "GridView.delayRemove"; value: true;}
                 NumberAnimation { target: rectDel; property: "scale"; to: 0; duration: 250; easing.type: Easing.InOutQuad }
                 PropertyAction { target: rectDel; property: "GridView.delayRemove"; value: false }
             }
-
             Text {
                 id: txt
                 padding: 5
-                text: name + "\n" + region + "\n" + (index + 1) + "\n" + age + " " + weight
+                text: name.replace(" ", "\n") + "\n" + region + "\n" + age + " " + weight
                 font.pixelSize: sizeFont
             }
             MouseArea{
@@ -74,10 +63,12 @@ Rectangle {
                     grid.currentIndex = index;
                 }
                 anchors.fill: parent
-                onPressed: {
+                onClicked: {
                     if(index != -1){
                         txt.text = txt.text
                         grid.moveItem(index)
+                        ti.text = ""
+                        ti.filterName(ti.text)
                     }
                 }
             }
@@ -86,8 +77,12 @@ Rectangle {
             id: gridarea
             anchors.fill: parent
             propagateComposedEvents: true
-            onPressed: {mouse.accepted = false}
-            onReleased: {mouse.accepted = false}
+            onPressed: (mouse) => {
+                mouse.accepted = false
+            }
+            onReleased: (mouse) => {
+                mouse.accepted = false
+            }
         }
     }
 }

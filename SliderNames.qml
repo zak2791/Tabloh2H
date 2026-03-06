@@ -3,28 +3,20 @@ import QtQuick.Layouts 1.12
 
 Item {
     id: dragItem
-
     property string textRed: ""
     property string textBlue: ""
     property real txtYpos
     property real heightRow
-
     property string ageRed: ""
     property string ageBlue: ""
-
     property string weightRed: ""
     property string weightBlue: ""
-
     property real maxY: 0
-
-    //property real textHeight: 14
-    property real textOffset // heightRow - 42
+    property real textOffset
     property int szFont
-
     function setTextOffset(){
         textOffset = heightRow / 2 - txtRed.contentHeight / 2 - 5
     }
-
     width: parent.width
     height: heightRow + 1
     x: 0
@@ -32,7 +24,6 @@ Item {
     Drag.active: dragArea.drag.active
     Drag.hotSpot.y: 0
     property point beginDrag
-
     Rectangle {
         width: parent.width
         height: parent.height
@@ -54,7 +45,6 @@ Item {
                 height: parent.height
                 color: "lightgreen"
             }
-
             Rectangle{
                 x: 0
                 y: 0
@@ -69,9 +59,7 @@ Item {
                     text: textRed
                     font.pixelSize: szFont
                     horizontalAlignment: Text.AlignHCenter
-
                     y: txtYpos + textOffset
-
                 }
             }
             Rectangle{
@@ -86,7 +74,6 @@ Item {
                     //x: 15
                     width: parent.width
                     color: "blue"
-
                     text: textBlue
                     font.pixelSize: szFont
                     horizontalAlignment: Text.AlignHCenter
@@ -98,7 +85,7 @@ Item {
                 onPaint: {
                     const context = getContext("2d");
                     context.beginPath();
-                    context.moveTo(parent.width / 2 ,0);
+                    context.moveTo(parent.width / 2, 0);
                     context.lineTo(parent.width / 2, parent.height);
                     context.closePath();
                     context.stroke();
@@ -117,7 +104,6 @@ Item {
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         onPressed: {
             sliderPressed(pressedButtons)
-            //console.log("pressedButtons&Qt.RightButton = " + pressedButtons)
             beginDrag = Qt.point(dragItem.x, dragItem.y)
         }
         propagateComposedEvents: true

@@ -1,5 +1,4 @@
 import QtQuick 2.12
-//import QtGraphicalEffects 1.12
 import QtQuick.Layouts 1.12
 
 Item {
@@ -8,16 +7,12 @@ Item {
     property string textBlue: ""
     property real txtYpos
     property real heightRow
-
     property real maxY: 0
-
     property real textOffset // heightRow - 42
     property int szFont
-
     function setTextOffset(){
         textOffset = heightRow / 2 - txtRed.contentHeight / 2 - 5
     }
-
     width: parent.width
     height: heightRow + 1
     x: 0
@@ -25,7 +20,6 @@ Item {
     Drag.active: dragArea.drag.active
     Drag.hotSpot.y: 0
     property point beginDrag
-
     Rectangle {
         width: parent.width
         height: parent.height
@@ -86,7 +80,7 @@ Item {
                 onPaint: {
                     const context = getContext("2d");
                     context.beginPath();
-                    context.moveTo(parent.width / 2 ,0);
+                    context.moveTo(parent.width / 2, 0);
                     context.lineTo(parent.width / 2, parent.height);
                     context.closePath();
                     context.stroke();

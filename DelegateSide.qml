@@ -5,19 +5,14 @@ Item {
     id: itemDelegateSide
     width: grid.cellWidth
     height: grid.cellHeight
-
     property int sizeFont: 10       //размер шрифта
-
-    GridView.onRemove: SequentialAnimation {
-        PropertyAction {
-            target: itemDelegateSide
-            property: "GridView.delayRemove"
-            value: true
-        }
-        NumberAnimation { target: itemDelegateSide; property: "scale"; to: 0; duration: 250; easing.type: Easing.InOutQuad }
-        PropertyAction { target: itemDelegateSide; property: "GridView.delayRemove"; value: false }
+    GridView.onRemove: removeAnimation.start()
+    SequentialAnimation {
+        id: removeAnimation
+        PropertyAction {target: itemDelegateSide; property: "GridView.delayRemove"; value: true}
+        NumberAnimation {target: itemDelegateSide; property: "scale"; to: 0; duration: 250; easing.type: Easing.InOutQuad}
+        PropertyAction {target: itemDelegateSide; property: "GridView.delayRemove"; value: false}
     }
-
     Rectangle {
         id: dragItem
         radius: 10
@@ -25,7 +20,6 @@ Item {
         height: grid.cellHeight
         color: (index % 4 > 0 && (index - 1) % 4 > 0) ? "lightgray" : "transparent"
         Drag.active:  dragArea.drag.active
-
         Text {
             id: txt
             anchors.centerIn: parent
@@ -49,13 +43,16 @@ Item {
                     grid.swapItems(itemPress, itemRelease)
             }
             acceptedButtons: Qt.LeftButton | Qt.RightButton
-            onPressed: {
-                if (mouse.button === Qt.RightButton) { // 'mouse' is a MouseEvent argument passed into the onClicked signal handler
-                    if(sideModel.rowCount() > 1)
+            onPressed: (mouse) => {
+                itemPress = index
+            }
+            onClicked:  (mouse) => {
+                if(mouse.button === Qt.RightButton){
+                    // При двойном щелчке мышкой (duble click) происходит два вызова этого метода для одной и тойже ячейки, причем второй вызов происходит с index == -1, в результате чего падает удаление элемента с этим индексом из контейнера
+                    if(index >= 0 && sideModel.rowCount() > 0)
                         grid.moveItem(index)
                     mouse.accepted = false
                 }
-                itemPress = index
             }
             drag.target: dragItem
             drag.axis: Drag.XAndYAxis
@@ -89,5 +86,5 @@ Item {
             ]
         }
     }
-} //Component
+}
 

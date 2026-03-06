@@ -318,7 +318,7 @@ QString SettingsVideoReplay::getIdWebCam(QString cam)
         }
     }
     procNameCamera.close();
-    qDebug()<<"camera = "<<camera;
+    //qDebug()<<"camera = "<<camera;
     return camera;
 
 }

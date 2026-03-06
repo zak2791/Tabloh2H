@@ -453,8 +453,8 @@ void VideoReplayControl::startReadCams()
         if(hwDecoder != "")
             argsInput1<<"-c:v"<<hwDecoder;
         QString url = "video=" + urlWebCam1;
-        if(urlSound != "")
-           url += ":audio=" + urlSound;
+        // if(urlSound != "")
+        //    url += ":audio=" + urlSound;
         argsInput1<<"-f"<<"dshow"<<"-rtbufsize"<<"10M"<<"-framerate"<<fps1<<"-video_size"<<resolution1<<"-i"<<url;
     }
     else{
@@ -468,8 +468,8 @@ void VideoReplayControl::startReadCams()
         if(hwDecoder != "")
             argsInput2<<"-c:v"<<hwDecoder;
         QString url = "video=" + urlWebCam2;
-        if(urlSound != "")
-            url += ":audio=" + urlSound;
+        // if(urlSound != "")
+        //     url += ":audio=" + urlSound;
         argsInput2<<"-f"<<"dshow"<<"-rtbufsize"<<"10M"<<"-framerate"<<fps2<<"-video_size"<<resolution2<<"-i"<<url;//<<"-pix_fmt"<<"yuv420p";
     }
     else{
@@ -732,7 +732,7 @@ void VideoReplayControl::onStreamVk()
     args<<"-hide_banner"<<"-timeout"<<"20000000";
     args<<"-thread_queue_size"<<"1024";
     args<<"-i"<<"udp://127.0.0.1:5004"; //0
-    args<<"-c:v"<<"copy"<<"-f"<<"flv"<<urlVk + keyVk;
+    args<<"-f"<<"flv"<<urlVk + keyVk;
     qDebug()<<"vk = "<<args;
     procVk->setArguments(args);
     procVk->start();

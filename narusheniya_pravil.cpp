@@ -115,7 +115,7 @@ void NP::minus(){
 }
 
 void NP::setValue(QString b){
-    qDebug()<<"setValue"<<b;
+    //qDebug()<<"setValue"<<b;
 	bl = b;
     if (QString::compare(bl, u8"П3") == 0) {
             setText(bl);

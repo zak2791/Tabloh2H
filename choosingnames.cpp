@@ -86,7 +86,7 @@ void ChoosingNames::setNames(QStringList list){
     model->clearModel();
     model->setList(list);
     slmodel->clearModel();
-    qDebug()<<"list = "<<list;
+    //qDebug()<<"list = "<<list;
     QMetaObject::invokeMethod(objGridSide, "updateSlider");
     proxyAge->setFilterRegularExpression("");
     proxyWeight->setFilterRegularExpression("");
@@ -162,7 +162,7 @@ void ChoosingNames::choiceWeight(QString weight){
 void ChoosingNames::filterName(QString name){
     QRegularExpression  regExp("(^" + name + ")|(?=\\b" + name + "\\b)", QRegularExpression::CaseInsensitiveOption );
     proxyName->setFilterRegularExpression(regExp);
-    qDebug()<<"(^" + name + ")|((?=\\d)(?=" + name + "{" + QString::number(name.size()) + "}))";
+    //qDebug()<<"(^" + name + ")|((?=\\d)(?=" + name + "{" + QString::number(name.size()) + "}))";
 }
 
 void ChoosingNames::fromAllToSide(int item){

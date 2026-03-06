@@ -30,7 +30,7 @@ public:
     }
 
     void setPlayState(bool state){
-        qDebug()<<"setState"<<state;
+        //qDebug()<<"setState"<<state;
         if(state){
             w->load(svgPathPlay);
             w->renderer()->setAspectRatioMode(Qt::KeepAspectRatio);

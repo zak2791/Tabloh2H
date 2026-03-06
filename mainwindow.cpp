@@ -259,7 +259,7 @@ QString MainWindow::calculateCode(QString serial)
 
 void MainWindow::slotRegistration()
 {
-    qDebug()<<"slotReg";
+    //qDebug()<<"slotReg";
 
     QString code;// = calculateCode(serialNumber);
     while(1){
@@ -337,11 +337,11 @@ void MainWindow::selectLogo(bool checked)
         emit sigLogo(false);
     }
 
-    qDebug()<<sender()->objectName();
+    //qDebug()<<sender()->objectName();
 }
 
 void MainWindow::closeEvent(QCloseEvent* e){
-    qDebug()<<"closeMain";
+    //qDebug()<<"closeMain";
     int ret = QMessageBox::question(this, tr("Выход"),
                                     tr("Вы уверены?"),
                                     QMessageBox::Yes | QMessageBox::No

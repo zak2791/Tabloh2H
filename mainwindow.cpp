@@ -28,6 +28,8 @@ MainWindow::MainWindow(QWidget *parent) :
     no_video = ui->no_video;
     winHelp = ui->winHelp;
 
+    mSettings = ui->settings;
+
     fileSettings = "settings.ini";
 
 

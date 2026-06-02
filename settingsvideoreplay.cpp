@@ -24,6 +24,10 @@ SettingsVideoReplay::SettingsVideoReplay(QWidget *parent)
     connect(ui->leCam3, &QLineEdit::textEdited, this, &SettingsVideoReplay::setCam);
     connect(ui->btnRefresh, &QPushButton::clicked, this, &SettingsVideoReplay::refreshWebCam);
 
+    connect(ui->cbUseUsb, &QCheckBox::checkStateChanged, this, &SettingsVideoReplay::sigShowControlUsb);
+
+    //connect(ui->cbUseUsb, &QCheckBox::clicked, this, &)
+
     connect(ui->cbSound, &QComboBox::currentTextChanged, static_cast<VideoReplayControl*>(control), &VideoReplayControl::setSound);
 
     settings->beginGroup("vk");
@@ -318,7 +322,7 @@ QString SettingsVideoReplay::getIdWebCam(QString cam)
         }
     }
     procNameCamera.close();
-    //qDebug()<<"camera = "<<camera;
+    qDebug()<<"camera = "<<camera;
     return camera;
 
 }
@@ -348,6 +352,7 @@ void SettingsVideoReplay::refreshWebCam()
     foreach(auto each, cams)
         ui->cbWebCam2->addItem(each.at(0), each.at(1));
 
+    ui->cbSound->addItem("no audio");
     ui->cbSound->addItems(getListSoundDevices());
 
     int index = ui->cbWebCam1->findData(webCam1);

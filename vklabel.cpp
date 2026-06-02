@@ -44,5 +44,5 @@ void VkLabel::paintEvent(QPaintEvent *ev)
 void VkLabel::resizeEvent(QResizeEvent *ev)
 {
     int h = ev->size().height();
-    setMaximumWidth(h);
+    setMinimumWidth(h);
 }

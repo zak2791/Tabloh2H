@@ -1,4 +1,4 @@
-#include "videoreplaycontrol.h"
+ #include "videoreplaycontrol.h"
 #include "playertv.h"
 #include "qdatetime.h"
 #include "qdebug.h"
@@ -28,6 +28,25 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
     ui->hLayoutButtons->insertWidget(1, btnPlayLast);
 
     player = new PlayerPc;
+
+    // ledCamera1 = new LEDWidget(0);
+    // ledCamera2 = new LEDWidget(0);
+    // ledCamera3 = new LEDWidget(0);
+
+    // ui->hUSBCamLayout->addWidget(ledCamera1);
+    // ui->hUSBCamLayout->addWidget(new QLabel("Камера 1"));
+    // ui->hUSBCamLayout->addWidget(ledCamera2);
+    // ui->hUSBCamLayout->addWidget(new QLabel("Камера 2"));
+    // ui->hUSBCamLayout->addWidget(ledCamera3);
+    // ui->hUSBCamLayout->addWidget(new QLabel("Камера 3"));
+    // ui->hUSBCamLayout->setAlignment(ledCamera1, Qt::AlignVCenter);
+    // ui->hUSBCamLayout->setAlignment(ledCamera2, Qt::AlignVCenter);
+    // ui->hUSBCamLayout->setAlignment(ledCamera3, Qt::AlignVCenter);
+    // ui->hUSBCamLayout->addStretch();
+
+    connect(ui->cbCam1, &QCheckBox::checkStateChanged, this, &VideoReplayControl::statesCameras);
+    connect(ui->cbCam2, &QCheckBox::checkStateChanged, this, &VideoReplayControl::statesCameras);
+    connect(ui->cbCam3, &QCheckBox::checkStateChanged, this, &VideoReplayControl::statesCameras);
 
     connect(ui->cbCam1, &QCheckBox::clicked, this, [this](){
         if(procRead->state() == QProcess::Running)
@@ -109,6 +128,7 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
 
     connect(&timerControlFrameDrop, &QTimer::timeout, this, [this](){
         ui->lblLost->setLostFrames(droppedFrames);
+
         droppedFrames = 0;
     });
     connect(procRead, &QProcess::readyReadStandardError, this, [this](){
@@ -159,7 +179,7 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
 
     procReadCam1 = new QProcess(this);
     procReadCam1->setProgram("ffmpeg");
-    args<<"-i"<<"udp://127.0.0.1:5001"<<"-filter_complex"<<"[0:v]scale=100:50, fps=2"<<"-vcodec"<<"png"<<"-f"<<"image2pipe"<<"-";
+    args<<"-i"<<"udp://127.0.0.1:5001"<<"-filter_complex"<<"[0:v]scale=100:50, fps=1"<<"-vcodec"<<"png"<<"-f"<<"image2pipe"<<"-";
     procReadCam1->setArguments(args);
     connect(procReadCam1, &QProcess::readyReadStandardOutput, this, [this](){
         QByteArray ba = procReadCam1->readAllStandardOutput();
@@ -344,6 +364,7 @@ VideoReplayControl::VideoReplayControl(QWidget *parent)
 
     videoSettings = new SettingsVideoReplay(this);
     connect(videoSettings, &SettingsVideoReplay::sigShowReplayOnTv, this, &VideoReplayControl::sigShowReplayOnTv);
+    connect(videoSettings, &SettingsVideoReplay::sigShowControlUsb, this, &VideoReplayControl::sigShowControlUsb);
 
 }
 
@@ -453,8 +474,8 @@ void VideoReplayControl::startReadCams()
         if(hwDecoder != "")
             argsInput1<<"-c:v"<<hwDecoder;
         QString url = "video=" + urlWebCam1;
-        // if(urlSound != "")
-        //    url += ":audio=" + urlSound;
+        if(urlSound != "")
+           url += ":audio=" + urlSound;
         argsInput1<<"-f"<<"dshow"<<"-rtbufsize"<<"10M"<<"-framerate"<<fps1<<"-video_size"<<resolution1<<"-i"<<url;
     }
     else{
@@ -468,8 +489,8 @@ void VideoReplayControl::startReadCams()
         if(hwDecoder != "")
             argsInput2<<"-c:v"<<hwDecoder;
         QString url = "video=" + urlWebCam2;
-        // if(urlSound != "")
-        //     url += ":audio=" + urlSound;
+        if(urlSound != "")
+            url += ":audio=" + urlSound;
         argsInput2<<"-f"<<"dshow"<<"-rtbufsize"<<"10M"<<"-framerate"<<fps2<<"-video_size"<<resolution2<<"-i"<<url;//<<"-pix_fmt"<<"yuv420p";
     }
     else{
@@ -732,7 +753,7 @@ void VideoReplayControl::onStreamVk()
     args<<"-hide_banner"<<"-timeout"<<"20000000";
     args<<"-thread_queue_size"<<"1024";
     args<<"-i"<<"udp://127.0.0.1:5004"; //0
-    args<<"-f"<<"flv"<<urlVk + keyVk;
+    args<<"-c:v"<<"copy"<<"-f"<<"flv"<<urlVk + keyVk;
     qDebug()<<"vk = "<<args;
     procVk->setArguments(args);
     procVk->start();
@@ -816,4 +837,11 @@ void VideoReplayControl::stopRecord(bool b)
         if(b)
             procRecord->waitForFinished();
     }
+}
+
+void VideoReplayControl::statesCameras(int state){
+    if(ui->cbCam1->checkState() > 0 || ui->cbCam2->checkState() > 0 || ui->cbCam3->checkState() > 0)
+        emit sigStateCameras(true);
+    else
+        emit sigStateCameras(false);
 }

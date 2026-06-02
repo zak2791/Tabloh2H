@@ -49,6 +49,7 @@ private:
     void SetComboBoxItemEnabled(QComboBox *comboBox, int index, bool enabled);
 signals:
     void sigShowReplayOnTv(bool);
+    void sigShowControlUsb(bool);
 
 private slots:
     void autoCamera(bool state);

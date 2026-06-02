@@ -43,8 +43,7 @@ private:
     int strTimeToInt(QString);
     bool getVisible(void);
     QString pathToSound;
-    QString styleStopped;
-    QString styleWorks;
+
 
 protected:
     int status;     //0 - stopped
@@ -52,11 +51,13 @@ protected:
                     //2 - final state
     QTimer *timer;
     QString intTimeToStr(int);
-    QPalette palStopped;
-    QPalette palWorks;
+    //QPalette palStopped;
+    //QPalette palWorks;
     int time;
     int intInitTime;
     bool _sound;
+    QString styleStopped;
+    QString styleWorks;
 
 
 public slots:

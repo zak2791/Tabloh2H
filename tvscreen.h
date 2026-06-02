@@ -65,7 +65,7 @@ public:
 	Plus * plus_red;
 	Plus * plus_blue;
     LCDTimer * sec;
-    LCDStopwatch * sec_red;
+    LCDStopwatch sec_red;
     LCDStopwatch * sec_blue;
     LCDStopwatch * sec_red_t;
     LCDStopwatch * sec_blue_t;

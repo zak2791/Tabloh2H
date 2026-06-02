@@ -18,6 +18,9 @@ LCDStopwatch::LCDStopwatch(QWidget* parent,
         tmrHide = new QTimer(this);
         connect(tmrHide, &QTimer::timeout, this, &LCDStopwatch::slotTimer);
     }
+
+    //setAutoFillBackground(true);
+
     Reset();
 
 
@@ -27,7 +30,8 @@ void LCDStopwatch::StartStop(){
     if(timer->isActive()) {
         timer->stop();
         status = 0;
-        setPalette(palStopped);
+        //setPalette(palStopped);
+        setStyleSheet(styleStopped);
         emit sigStarted(false);
         if(auto_hide)
             tmrHide->start(3000);
@@ -39,7 +43,8 @@ void LCDStopwatch::StartStop(){
         if (status != 2) {
             timer->start(1000);
             status = 1;
-            setPalette(palWorks);
+            //setPalette(palWorks);
+            setStyleSheet(styleWorks);
             emit sigStarted(true);
         }
     }
@@ -50,7 +55,8 @@ void LCDStopwatch::showTime(){
     if(++time == intInitTime){
         status = 2;
         timer->stop();
-        setPalette(palStopped);
+        //setPalette(palStopped);
+        setStyleSheet(styleStopped);
         emit sigStarted(false);
         if(_sound)
             QApplication::beep();

@@ -35,7 +35,7 @@
     </rect>
    </property>
    <property name="orientation">
-    <enum>Qt::Horizontal</enum>
+    <enum>Qt::Orientation::Horizontal</enum>
    </property>
   </widget>
   <widget class="QLabel" name="label">
@@ -61,7 +61,7 @@
     </rect>
    </property>
    <property name="orientation">
-    <enum>Qt::Horizontal</enum>
+    <enum>Qt::Orientation::Horizontal</enum>
    </property>
   </widget>
   <widget class="QLineEdit" name="leUrl">
@@ -259,9 +259,9 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>-4</y>
+     <y>4</y>
      <width>361</width>
-     <height>41</height>
+     <height>20</height>
     </rect>
    </property>
    <property name="text">
@@ -445,6 +445,19 @@
    </property>
    <property name="text">
     <string>Настройка Web камер</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="cbUseUsb">
+   <property name="geometry">
+    <rect>
+     <x>360</x>
+     <y>4</y>
+     <width>451</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Использовать смартфоны через USB</string>
    </property>
   </widget>
  </widget>

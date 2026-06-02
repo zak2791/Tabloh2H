@@ -55,15 +55,16 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
 
     sec = new LCDTimer(this);
 
-    sec_doctor = new LCDStopwatch(this, "2:01", QColor(255, 255, 0), QColor(255, 255, 0), false, true);
+    qDebug()<<"tv0";
+    sec_doctor = new LCDStopwatch(this, "2:01", QColor(255, 255, 0, 210), QColor(255, 255, 0, 210), false, true);
 
     sec_doctor->hide();
 
-    sec_red = new LCDStopwatch(this, "0:20", QColor(255, 0, 0), QColor(255, 102, 102), false, true);
+    //sec_red = new LCDStopwatch(this, "0:20", QColor(255, 0, 0), QColor(255, 102, 102), false, true);
 
-	sec_red->hide();
-
-    sec_blue = new LCDStopwatch(this, "0:20", QColor(0, 0, 255), QColor(102, 102, 255), false, true);
+    sec_red.hide();
+     qDebug()<<"tv1";
+    sec_blue = new LCDStopwatch(this, "0:20", QColor(0, 0, 255), QColor(102, 102, 255), true, true);
 
 	sec_blue->hide();
 
@@ -131,7 +132,7 @@ TVScreen::TVScreen(QWidget * parent) : QWidget(parent) {
     grid->addWidget(sec,        18, 25, 14, 18);
     grid->addWidget(sec_doctor, 18, 25, 14, 18);
     grid->addWidget(sec_blue,   20,  3, 10, 18);
-    grid->addWidget(sec_red,    20, 47, 10, 18);
+    grid->addWidget(&sec_red,    20, 47, 10, 18);
     grid->addWidget(sec_blue_t, 20,  3, 10, 18);
     grid->addWidget(sec_red_t,  20, 47, 10, 18);
 

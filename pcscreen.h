@@ -1,6 +1,7 @@
  #pragma once
 #include <QWidget>
 #include <QPushButton>
+#include "CameraController.h"
 #include "lcdtimer.h"
 #include <QGridLayout>
 #include <QLabel>
@@ -31,6 +32,7 @@
 #include <QTcpSocket>
 #include <QLibrary>
 #include "videoreplaycontrol.h"
+#include "videoreplaycontrolusb.h"
 #include <QSvgWidget>
 
 class SVGPushButton : public QPushButton
@@ -38,15 +40,12 @@ class SVGPushButton : public QPushButton
 public:
     SVGPushButton(QString svgPath) : QPushButton()
 {
-
-
     setSizePolicy( QSizePolicy::Ignored, QSizePolicy::Ignored );
-    QSvgWidget *w = new QSvgWidget(svgPath,this);
-
+    QSvgWidget *w = new QSvgWidget(svgPath);
     QHBoxLayout* box = new QHBoxLayout(this);
     box->setContentsMargins(0,0,0,0);
-    setLayout( new QHBoxLayout(this) );
     layout()->addWidget( w );
+    setLayout(box);
 }
 
 };
@@ -286,6 +285,7 @@ private:
 
 
     VideoReplayControl* videoControl;
+    CameraController* cameraController;
 
 
 signals:

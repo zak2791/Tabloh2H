@@ -30,6 +30,7 @@ public:
     QAction* video;
     QAction* no_video;
     QAction* winVideoSettings;
+    QMenu* mSettings;
     //QAction* tvSettings;
     QString getFileSportsmens(void);
     //Ui::dlgObs uiObs;

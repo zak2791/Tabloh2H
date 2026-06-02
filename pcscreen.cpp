@@ -67,6 +67,8 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     udpTimer = new QTimer(this);
     connect(udpTimer, SIGNAL(timeout()), this, SLOT(udpSend()));
 
+
+
     col_red = "white";
     col_blue = "white";
 
@@ -84,7 +86,7 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     minimum_height = 0;
     percent_height = 0;
 
-    rateRed = new Rate(this);
+    rateRed = new Rate;
     rateRed->setFrameShape(QFrame::Box);
     rateRed->setObjectName("ball_red");
 
@@ -143,7 +145,7 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     SVGPushButton * btnTehTime_blue = new SVGPushButton(":/images/ttech_blue.svg");
     btnTehTime_blue->setObjectName("btnTehTime_blue");
     //btnTehTime_blue->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-
+    qDebug()<<"start1";
     SVGPushButton * btnPlus_red = new SVGPushButton(":/images/plus_red.svg");
     btnPlus_red->setObjectName("btnPlus_red");
     //btnPlus_red->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
@@ -154,6 +156,8 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     //btnPlus_blue->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     //btnPlus_blue->setStyleSheet("color: blue; font: bold " + QString::number(btnPlus_blue->height()) + "px;");
 
+
+
     plus_red = new Plus(col_red, this);
     plus_red->setObjectName("plus_red");
     plus_red->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
@@ -161,13 +165,16 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     plus_blue->setObjectName("plus_blue");
     plus_blue->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
+
     mainTimer = new LCDTimer(this);
     mainTimer->setObjectName("mainTimer");
+
+
 
     sec_doctor = new LCDStopwatch(this, "2:01", QColor(255, 255, 0), QColor(255, 255, 0), true, true);
     sec_doctor->hide();
 
-    sec_red = new LCDStopwatch(this, "0:20", QColor(255, 0, 0), QColor(255, 102, 102), true, true, true);
+    sec_red = new LCDStopwatch(this, "0:20", QColor(255, 0, 0, 210), QColor(255, 102, 102, 210), true, true, true);
     sec_red->setObjectName("sec_red");
     sec_red->hide();
 
@@ -182,7 +189,6 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     sec_blue_t = new LCDStopwatch(this, "2:01", QColor(0, 0, 255), QColor(102, 102, 255), true, true);
     sec_blue_t->setObjectName("sec_blue_t");
     sec_blue_t->hide();
-
 
     np_red = new NP();
     np_red->setObjectName("np_red");
@@ -202,11 +208,13 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 
     initListNames();
 
+
+
     formView = new QWidget;
     ui.setupUi(formView);
     WidgetFilter* wf = new WidgetFilter(formView);
     formView->installEventFilter(wf);
-    connect(wf, SIGNAL(sigClose()), this, SLOT(closeView()));
+    //connect(wf, SIGNAL(sigClose()), this, SLOT(closeView()));
 
     formVideoSettings = new QWidget;
     uiVideoSettings.setupUi(formVideoSettings);
@@ -231,7 +239,7 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     uiTime.setupUi(frmTime);
 
     connect(mainwin->winSettings, SIGNAL(triggered()), this, SLOT(showView()));
-    connect(mainwin->winVideoSettings, SIGNAL(triggered()), this, SLOT(showVideoSettings()));
+    //connect(mainwin->winVideoSettings, SIGNAL(triggered()), this, SLOT(showVideoSettings()));
 
     connect(ui.sbSec, SIGNAL(valueChanged(int)), this, SLOT(setSec(int)));
 
@@ -259,7 +267,11 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 
 
     videoControl = new VideoReplayControl(this);
+    cameraController = new CameraController(this);
 
+    connect(videoControl, &VideoReplayControl::sigStreamUrl, cameraController, &CameraController::setStreamUrl);
+    connect(videoControl, &VideoReplayControl::sigStreamKey, cameraController, &CameraController::setStreamKey);
+    connect(videoControl, &VideoReplayControl::sigStreamCam, cameraController, &CameraController::setStreamCam);
 
     grid = new QGridLayout(this);
     grid->setObjectName("grid");
@@ -278,6 +290,7 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     grid->addWidget(np_blue,                32, 53, 6,  7);
 
     grid->addWidget(btnTehTime_red,         8,  24, 2,  6);
+    qDebug()<<"addButton";
     grid->addWidget(btnSettings,            8,  30, 2,  8);
     grid->addWidget(btnTehTime_blue,        8,  38, 2,  6);
 
@@ -291,7 +304,8 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     grid->addWidget(age,                    10, 26, 2,  7);
     grid->addWidget(cat,                    10, 35, 2,  7);
 
-    grid->addWidget(videoControl,          13, 24, 12,  20);
+    grid->addWidget(videoControl,           13, 24, 12,  20);
+    grid->addWidget(cameraController,       13, 24, 12,  20);
 
 
     grid->addWidget(btnParter_red,          26, 24, 2,  6);
@@ -316,6 +330,8 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
 
     //btnTime->setStyleSheet("color: green; font: bold " + QString::number(round(btnTime->height() / 2)) + "px;");
 
+    cameraController->setVisible(false);
+
     lblEndTimer = new EndTime(this);
     lblEndTimer->setObjectName("lblEndTimer");
 
@@ -333,7 +349,31 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     connect(mainwin->winVideoSettings, &QAction::triggered, videoControl, &VideoReplayControl::showVideoSettings);
     //connect(mainwin->winVideoSettings, SIGNAL(triggered()), videoControl, SLOT(showVideoSettings()));
     //connect(videoControl, &VideoReplayControl::sigImage, tvScreen->player, &PlayerViewerTV::draw_image);
+
+    cameraController->setPlayerTv(tvScreen->getPlayer());
+    connect(cameraController, &CameraController::sigShowPlayer, tvScreen, &TVScreen::showPlayer);
+    connect(cameraController, &CameraController::sigHidePlayer, tvScreen, &TVScreen::hidePlayer);
+
     connect(videoControl, &VideoReplayControl::sigShowReplayOnTv, tvScreen, &TVScreen::setPlayerEnabled);
+
+    connect(videoControl, &VideoReplayControl::sigStateCameras, this, [this](bool state){
+        if(state)
+            mainwin->mSettings->setEnabled(false);
+        else
+            mainwin->mSettings->setEnabled(true);
+    });
+    connect(videoControl, &VideoReplayControl::sigShowControlUsb, this, [this](bool state){
+        if(state)
+            cameraController->setVisible(true);
+        else
+            cameraController->setVisible(false);
+    });
+
+    // connect(videoControlUsb, &VideoreplayControlUsb::sigShowPlayer, tvScreen, &TVScreen::showPlayer);
+    // connect(videoControlUsb, &VideoreplayControlUsb::sigHidePlayer, tvScreen, &TVScreen::hidePlayer);
+    // //connect(mainwin->winVideoSettings, &QAction::triggered, videoControl, &VideoReplayControl::showVideoSettings);
+    // connect(videoControlUsb, &VideoreplayControlUsb::sigShowReplayOnTv, tvScreen, &TVScreen::setPlayerEnabled);
+
 
     setTvScreenGeometry();
 
@@ -446,8 +486,8 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     connect(uiTime.dSec, SIGNAL(valueChanged(int)), this, SLOT(setTime()));
     connect(uiTime.dSec2, SIGNAL(valueChanged(int)), this, SLOT(setTime()));
 
-    connect(sec_red, SIGNAL(sigVisible(bool)), tvScreen->sec_red, SLOT(setVisible(bool)));
-    connect(sec_red,  SIGNAL(sigTime(QString, QString)), tvScreen->sec_red, SLOT(showTime(QString, QString)));
+    connect(sec_red, SIGNAL(sigVisible(bool)), &tvScreen->sec_red, SLOT(setVisible(bool)));
+    connect(sec_red,  SIGNAL(sigTime(QString, QString)), &tvScreen->sec_red, SLOT(showTime(QString, QString)));
 
     connect(sec_blue, SIGNAL(sigVisible(bool)), tvScreen->sec_blue, SLOT(setVisible(bool)));
     connect(sec_blue,  SIGNAL(sigTime(QString, QString)), tvScreen->sec_blue, SLOT(showTime(QString, QString)));
@@ -884,13 +924,21 @@ void PCScreen::closeVideoSettings()
 }
 
 void PCScreen::StartRecord(bool b){
+    qDebug()<<"startRecord";
     QString redFam = fam_red->getText().split(" ").count() > 1 ? fam_red->getText().split(" ").at(0) : fam_red->getText();
     QString blueFam = fam_blue->getText().split(" ").count() > 1 ? fam_blue->getText().split(" ").at(0) : fam_blue->getText();
-    videoControl->startRecord(b, redFam + "-" + blueFam);
+    if(!cameraController->isVisible())
+        videoControl->startRecord(b, redFam + "-" + blueFam);
+    else
+        cameraController->startRecord(b, redFam + "-" + blueFam);
 }
 
 void PCScreen::StopRecord(){
-    videoControl->stopRecord();
+    qDebug()<<"stopRecord";
+    if(!cameraController->isVisible())
+        videoControl->stopRecord();
+    else
+        cameraController->stopRecord();
 }
 
 

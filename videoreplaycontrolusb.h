@@ -1,9 +1,10 @@
-#ifndef VIDEOREPLAYCONTROL_H
-#define VIDEOREPLAYCONTROL_H
+#ifndef VIDEOREPLAYCONTROLUSB_H
+#define VIDEOREPLAYCONTROLUSB_H
 
 #include "playerpc.h"
 #include "playertv.h"
 #include "qprocess.h"
+#include "qtcpsocket.h"
 #include "settingsvideoreplay.h"
 #include <QWidget>
 #include <QPointer>
@@ -12,26 +13,34 @@
 #include <ledwidget.h>
 
 namespace Ui {
-class VideoReplayControl;
+class VideoreplayControlUsb;
 }
 
-class VideoReplayControl : public QWidget
+class VideoreplayControlUsb : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit VideoReplayControl(QWidget *parent = nullptr);
-    ~VideoReplayControl();
+    explicit VideoreplayControlUsb(QWidget *parent = nullptr);
+    ~VideoreplayControlUsb();
     void setPlayerTv(PlayerTv*);
 
 private:
-    Ui::VideoReplayControl *ui;
+    Ui::VideoreplayControlUsb *ui;
 
     QProcess* procReadCam1;
     QProcess* procReadCam2;
     QProcess* procReadCam3;
     QProcess* procVk;
     QProcess* procProbeAudio;
+    QProcess* procAdbFind;
+    QProcess* procAdbConnCam;
+    QProcess* procAdbConnCams;
+    //QStringList argsDevices;
+
+    QMap<int,QString> connectedCameras;
+    QTimer* connectionTimer;
+    QTcpSocket* connectionSocket;
 
     QProcess* procRead;
     QProcess* procRecord;
@@ -98,14 +107,20 @@ private:
     QTimer timerControlFrameDrop;
     int droppedFrames = 0;
 
-    // LEDWidget* ledCamera1;
-    // LEDWidget* ledCamera2;
-    // LEDWidget* ledCamera3;
+    LEDWidget* ledCamera1;
+    LEDWidget* ledCamera2;
+    LEDWidget* ledCamera3;
 
     void statesCameras(int state);
 
+    QStringList argsCam1;
+    QStringList argsCam2;
+    QStringList argsCam3;
+
 private slots:
     void onStreamVk(void);
+    void adbFind(void);
+    void turnCameras(bool);
     //bool isSound(QString);
 
 public slots:
@@ -121,18 +136,9 @@ public slots:
     void startRecord(bool, QString s = "");
     void stopRecord(bool b = true);
     //void turnStreamToVk(bool b){streamToVk = b;}
-    void setUrlVk(QString url){
-        urlVk = url;
-        emit sigStreamUrl(url);
-    }
-    void setKeyVk(QString key){
-        keyVk = key;
-        emit sigStreamKey(key);
-    }
-    void setCamToVk(int cam){
-        camToVk = cam;
-        emit sigStreamCam(cam);
-    }
+    void setUrlVk(QString url){urlVk = url;}
+    void setKeyVk(QString key){keyVk = key;}
+    void setCamToVk(int cam){camToVk = cam;}
     //void setWidthPipVk(QString width){widthPipVk = width;}
     void setHeightPipVk(QString height){heightPipVk = height;}
     void setTransparentPipVk(QString transparent){transparentPipVk = transparent;}
@@ -146,11 +152,7 @@ signals:
     void sigImage(QImage);
     void sigShowReplayOnTv(bool);
     void sigStateCameras(bool);
-    void sigShowControlUsb(bool);
-    void sigStreamCam(int);
-    void sigStreamUrl(QString);
-    void sigStreamKey(QString);
 
 };
 
-#endif // VIDEOREPLAYCONTROL_H
+#endif // VIDEOREPLAYCONTROLUSB_H

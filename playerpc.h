@@ -27,8 +27,8 @@ public:
     void setTvPlayer(PlayerTv*);
 
 private:
-    virtual void closeEvent(QCloseEvent*);
-    virtual void keyPressEvent(QKeyEvent*);
+    virtual void closeEvent(QCloseEvent*) override;
+    virtual void keyPressEvent(QKeyEvent*) override;
     QMediaPlayer* player;
     PlayerTv* playerTv;
     QSlider* sliderPosition;

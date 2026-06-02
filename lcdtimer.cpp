@@ -23,19 +23,19 @@ LCDTimer::LCDTimer(QWidget *parent,
     intInitTime = strTimeToInt(strInitTime);
     time = intInitTime;
 
-    palStopped = QPalette();
-    palStopped.setColor(QPalette::Window, QColor("black"));
-    palStopped.setColor(QPalette::WindowText, color_stopped);
+    // palStopped = QPalette();
+    // palStopped.setColor(QPalette::Window, QColor(0, 0, 0, 210));
+    // palStopped.setColor(QPalette::WindowText, color_stopped);
 
-    palWorks = QPalette();
-    palWorks.setColor(QPalette::Window, QColor("black"));
-    palWorks.setColor(QPalette::WindowText, color_works);
+    // palWorks = QPalette();
+    // palWorks.setColor(QPalette::Window, QColor(0, 0, 0, 210));
+    // palWorks.setColor(QPalette::WindowText, color_works);
 
     if(transparency){
-        styleStopped = "QLCDNumber{background-color: rgb(0, 0, 0, 210); "
+        styleStopped = "QLCDNumber{background-color: rgba(0, 0, 0, 210); "
                                   "color: " + color_stopped.name() + ";}";
-        styleWorks = "QLCDNumber{background-color: rgb(0, 0, 0, 210); "
-                                "color: " + color_works.name() + ";";
+        styleWorks = "QLCDNumber{background-color: rgba(0, 0, 0, 210); "
+                                "color: " + color_works.name() + ";}";
     }
     else{
         styleStopped = "QLCDNumber{background-color: rgb(0, 0, 0); "
@@ -58,6 +58,7 @@ LCDTimer::LCDTimer(QWidget *parent,
     // styleWorks = styleWorks.arg(color_works.name());
 
     setStyleSheet(styleStopped);
+    //qDebug()<<"style = "<<styleSheet();
 
     //setContentsMargins(10, 10, 10, 10);
 

@@ -24,7 +24,7 @@ RecordWorker::~RecordWorker(){
 
 void RecordWorker::start(){
     qDebug()<<url;
-    QByteArray ba = url.toLatin1();
+    QByteArray ba = url.toUtf8();//toLatin1();
     const char* file = ba.constData();
     avformat_alloc_output_context2(&outputContext, NULL, "mp4", file);
     if (!outputContext) {

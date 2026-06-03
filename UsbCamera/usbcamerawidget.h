@@ -33,6 +33,7 @@ private:
     QTimer tmr;
     CameraWorker* worker;
     QTcpServer* serverVideo;
+    QString hwDecoder;
 
 
     bool isUpdate;
@@ -46,6 +47,7 @@ protected:
 
 public slots:
     void drawFrame(QImage);
+    void setHwDecoder(QString s){hwDecoder = s;}
 
 signals:
     void sigVideoPacket(packet);

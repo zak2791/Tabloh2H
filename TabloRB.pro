@@ -31,148 +31,292 @@ HEADERS += \
     endtime.h \
     fam_reg.h \
     ffmpeg/include/libavcodec/ac3_parser.h \
+    ffmpeg/include/libavcodec/ac3_parser.h \
+    ffmpeg/include/libavcodec/adts_parser.h \
     ffmpeg/include/libavcodec/adts_parser.h \
     ffmpeg/include/libavcodec/avcodec.h \
+    ffmpeg/include/libavcodec/avcodec.h \
+    ffmpeg/include/libavcodec/avdct.h \
     ffmpeg/include/libavcodec/avdct.h \
     ffmpeg/include/libavcodec/bsf.h \
+    ffmpeg/include/libavcodec/bsf.h \
+    ffmpeg/include/libavcodec/codec.h \
     ffmpeg/include/libavcodec/codec.h \
     ffmpeg/include/libavcodec/codec_desc.h \
+    ffmpeg/include/libavcodec/codec_desc.h \
+    ffmpeg/include/libavcodec/codec_id.h \
     ffmpeg/include/libavcodec/codec_id.h \
     ffmpeg/include/libavcodec/codec_par.h \
+    ffmpeg/include/libavcodec/codec_par.h \
+    ffmpeg/include/libavcodec/d3d11va.h \
     ffmpeg/include/libavcodec/d3d11va.h \
     ffmpeg/include/libavcodec/defs.h \
+    ffmpeg/include/libavcodec/defs.h \
+    ffmpeg/include/libavcodec/dirac.h \
     ffmpeg/include/libavcodec/dirac.h \
     ffmpeg/include/libavcodec/dv_profile.h \
+    ffmpeg/include/libavcodec/dv_profile.h \
+    ffmpeg/include/libavcodec/dxva2.h \
     ffmpeg/include/libavcodec/dxva2.h \
     ffmpeg/include/libavcodec/exif.h \
+    ffmpeg/include/libavcodec/exif.h \
+    ffmpeg/include/libavcodec/jni.h \
     ffmpeg/include/libavcodec/jni.h \
     ffmpeg/include/libavcodec/mediacodec.h \
+    ffmpeg/include/libavcodec/mediacodec.h \
+    ffmpeg/include/libavcodec/packet.h \
     ffmpeg/include/libavcodec/packet.h \
     ffmpeg/include/libavcodec/qsv.h \
+    ffmpeg/include/libavcodec/qsv.h \
+    ffmpeg/include/libavcodec/smpte_436m.h \
     ffmpeg/include/libavcodec/smpte_436m.h \
     ffmpeg/include/libavcodec/vdpau.h \
+    ffmpeg/include/libavcodec/vdpau.h \
+    ffmpeg/include/libavcodec/version.h \
     ffmpeg/include/libavcodec/version.h \
     ffmpeg/include/libavcodec/version_major.h \
+    ffmpeg/include/libavcodec/version_major.h \
+    ffmpeg/include/libavcodec/videotoolbox.h \
     ffmpeg/include/libavcodec/videotoolbox.h \
     ffmpeg/include/libavcodec/vorbis_parser.h \
+    ffmpeg/include/libavcodec/vorbis_parser.h \
+    ffmpeg/include/libavdevice/avdevice.h \
     ffmpeg/include/libavdevice/avdevice.h \
     ffmpeg/include/libavdevice/version.h \
+    ffmpeg/include/libavdevice/version.h \
+    ffmpeg/include/libavdevice/version_major.h \
     ffmpeg/include/libavdevice/version_major.h \
     ffmpeg/include/libavfilter/avfilter.h \
+    ffmpeg/include/libavfilter/avfilter.h \
+    ffmpeg/include/libavfilter/buffersink.h \
     ffmpeg/include/libavfilter/buffersink.h \
     ffmpeg/include/libavfilter/buffersrc.h \
+    ffmpeg/include/libavfilter/buffersrc.h \
+    ffmpeg/include/libavfilter/version.h \
     ffmpeg/include/libavfilter/version.h \
     ffmpeg/include/libavfilter/version_major.h \
+    ffmpeg/include/libavfilter/version_major.h \
+    ffmpeg/include/libavformat/avformat.h \
     ffmpeg/include/libavformat/avformat.h \
     ffmpeg/include/libavformat/avio.h \
+    ffmpeg/include/libavformat/avio.h \
+    ffmpeg/include/libavformat/version.h \
     ffmpeg/include/libavformat/version.h \
     ffmpeg/include/libavformat/version_major.h \
+    ffmpeg/include/libavformat/version_major.h \
+    ffmpeg/include/libavutil/adler32.h \
     ffmpeg/include/libavutil/adler32.h \
     ffmpeg/include/libavutil/aes.h \
+    ffmpeg/include/libavutil/aes.h \
+    ffmpeg/include/libavutil/aes_ctr.h \
     ffmpeg/include/libavutil/aes_ctr.h \
     ffmpeg/include/libavutil/ambient_viewing_environment.h \
+    ffmpeg/include/libavutil/ambient_viewing_environment.h \
+    ffmpeg/include/libavutil/attributes.h \
     ffmpeg/include/libavutil/attributes.h \
     ffmpeg/include/libavutil/audio_fifo.h \
+    ffmpeg/include/libavutil/audio_fifo.h \
+    ffmpeg/include/libavutil/avassert.h \
     ffmpeg/include/libavutil/avassert.h \
     ffmpeg/include/libavutil/avconfig.h \
+    ffmpeg/include/libavutil/avconfig.h \
+    ffmpeg/include/libavutil/avstring.h \
     ffmpeg/include/libavutil/avstring.h \
     ffmpeg/include/libavutil/avutil.h \
+    ffmpeg/include/libavutil/avutil.h \
+    ffmpeg/include/libavutil/base64.h \
     ffmpeg/include/libavutil/base64.h \
     ffmpeg/include/libavutil/blowfish.h \
+    ffmpeg/include/libavutil/blowfish.h \
+    ffmpeg/include/libavutil/bprint.h \
     ffmpeg/include/libavutil/bprint.h \
     ffmpeg/include/libavutil/bswap.h \
+    ffmpeg/include/libavutil/bswap.h \
+    ffmpeg/include/libavutil/buffer.h \
     ffmpeg/include/libavutil/buffer.h \
     ffmpeg/include/libavutil/camellia.h \
+    ffmpeg/include/libavutil/camellia.h \
+    ffmpeg/include/libavutil/cast5.h \
     ffmpeg/include/libavutil/cast5.h \
     ffmpeg/include/libavutil/channel_layout.h \
+    ffmpeg/include/libavutil/channel_layout.h \
+    ffmpeg/include/libavutil/common.h \
     ffmpeg/include/libavutil/common.h \
     ffmpeg/include/libavutil/container_fifo.h \
+    ffmpeg/include/libavutil/container_fifo.h \
+    ffmpeg/include/libavutil/cpu.h \
     ffmpeg/include/libavutil/cpu.h \
     ffmpeg/include/libavutil/crc.h \
+    ffmpeg/include/libavutil/crc.h \
+    ffmpeg/include/libavutil/csp.h \
     ffmpeg/include/libavutil/csp.h \
     ffmpeg/include/libavutil/des.h \
+    ffmpeg/include/libavutil/des.h \
+    ffmpeg/include/libavutil/detection_bbox.h \
     ffmpeg/include/libavutil/detection_bbox.h \
     ffmpeg/include/libavutil/dict.h \
+    ffmpeg/include/libavutil/dict.h \
+    ffmpeg/include/libavutil/display.h \
     ffmpeg/include/libavutil/display.h \
     ffmpeg/include/libavutil/dovi_meta.h \
+    ffmpeg/include/libavutil/dovi_meta.h \
+    ffmpeg/include/libavutil/downmix_info.h \
     ffmpeg/include/libavutil/downmix_info.h \
     ffmpeg/include/libavutil/encryption_info.h \
+    ffmpeg/include/libavutil/encryption_info.h \
+    ffmpeg/include/libavutil/error.h \
     ffmpeg/include/libavutil/error.h \
     ffmpeg/include/libavutil/eval.h \
+    ffmpeg/include/libavutil/eval.h \
+    ffmpeg/include/libavutil/executor.h \
     ffmpeg/include/libavutil/executor.h \
     ffmpeg/include/libavutil/ffversion.h \
+    ffmpeg/include/libavutil/ffversion.h \
+    ffmpeg/include/libavutil/fifo.h \
     ffmpeg/include/libavutil/fifo.h \
     ffmpeg/include/libavutil/file.h \
+    ffmpeg/include/libavutil/file.h \
+    ffmpeg/include/libavutil/film_grain_params.h \
     ffmpeg/include/libavutil/film_grain_params.h \
     ffmpeg/include/libavutil/frame.h \
+    ffmpeg/include/libavutil/frame.h \
+    ffmpeg/include/libavutil/hash.h \
     ffmpeg/include/libavutil/hash.h \
     ffmpeg/include/libavutil/hdr_dynamic_metadata.h \
+    ffmpeg/include/libavutil/hdr_dynamic_metadata.h \
+    ffmpeg/include/libavutil/hdr_dynamic_vivid_metadata.h \
     ffmpeg/include/libavutil/hdr_dynamic_vivid_metadata.h \
     ffmpeg/include/libavutil/hmac.h \
+    ffmpeg/include/libavutil/hmac.h \
+    ffmpeg/include/libavutil/hwcontext.h \
     ffmpeg/include/libavutil/hwcontext.h \
     ffmpeg/include/libavutil/hwcontext_amf.h \
+    ffmpeg/include/libavutil/hwcontext_amf.h \
+    ffmpeg/include/libavutil/hwcontext_cuda.h \
     ffmpeg/include/libavutil/hwcontext_cuda.h \
     ffmpeg/include/libavutil/hwcontext_d3d11va.h \
+    ffmpeg/include/libavutil/hwcontext_d3d11va.h \
+    ffmpeg/include/libavutil/hwcontext_d3d12va.h \
     ffmpeg/include/libavutil/hwcontext_d3d12va.h \
     ffmpeg/include/libavutil/hwcontext_drm.h \
+    ffmpeg/include/libavutil/hwcontext_drm.h \
+    ffmpeg/include/libavutil/hwcontext_dxva2.h \
     ffmpeg/include/libavutil/hwcontext_dxva2.h \
     ffmpeg/include/libavutil/hwcontext_mediacodec.h \
+    ffmpeg/include/libavutil/hwcontext_mediacodec.h \
+    ffmpeg/include/libavutil/hwcontext_oh.h \
     ffmpeg/include/libavutil/hwcontext_oh.h \
     ffmpeg/include/libavutil/hwcontext_opencl.h \
+    ffmpeg/include/libavutil/hwcontext_opencl.h \
+    ffmpeg/include/libavutil/hwcontext_qsv.h \
     ffmpeg/include/libavutil/hwcontext_qsv.h \
     ffmpeg/include/libavutil/hwcontext_vaapi.h \
+    ffmpeg/include/libavutil/hwcontext_vaapi.h \
+    ffmpeg/include/libavutil/hwcontext_vdpau.h \
     ffmpeg/include/libavutil/hwcontext_vdpau.h \
     ffmpeg/include/libavutil/hwcontext_videotoolbox.h \
+    ffmpeg/include/libavutil/hwcontext_videotoolbox.h \
+    ffmpeg/include/libavutil/hwcontext_vulkan.h \
     ffmpeg/include/libavutil/hwcontext_vulkan.h \
     ffmpeg/include/libavutil/iamf.h \
+    ffmpeg/include/libavutil/iamf.h \
+    ffmpeg/include/libavutil/imgutils.h \
     ffmpeg/include/libavutil/imgutils.h \
     ffmpeg/include/libavutil/intfloat.h \
+    ffmpeg/include/libavutil/intfloat.h \
+    ffmpeg/include/libavutil/intreadwrite.h \
     ffmpeg/include/libavutil/intreadwrite.h \
     ffmpeg/include/libavutil/lfg.h \
+    ffmpeg/include/libavutil/lfg.h \
+    ffmpeg/include/libavutil/log.h \
     ffmpeg/include/libavutil/log.h \
     ffmpeg/include/libavutil/lzo.h \
+    ffmpeg/include/libavutil/lzo.h \
+    ffmpeg/include/libavutil/macros.h \
     ffmpeg/include/libavutil/macros.h \
     ffmpeg/include/libavutil/mastering_display_metadata.h \
+    ffmpeg/include/libavutil/mastering_display_metadata.h \
+    ffmpeg/include/libavutil/mathematics.h \
     ffmpeg/include/libavutil/mathematics.h \
     ffmpeg/include/libavutil/md5.h \
+    ffmpeg/include/libavutil/md5.h \
+    ffmpeg/include/libavutil/mem.h \
     ffmpeg/include/libavutil/mem.h \
     ffmpeg/include/libavutil/motion_vector.h \
+    ffmpeg/include/libavutil/motion_vector.h \
+    ffmpeg/include/libavutil/murmur3.h \
     ffmpeg/include/libavutil/murmur3.h \
     ffmpeg/include/libavutil/opt.h \
+    ffmpeg/include/libavutil/opt.h \
+    ffmpeg/include/libavutil/parseutils.h \
     ffmpeg/include/libavutil/parseutils.h \
     ffmpeg/include/libavutil/pixdesc.h \
+    ffmpeg/include/libavutil/pixdesc.h \
+    ffmpeg/include/libavutil/pixelutils.h \
     ffmpeg/include/libavutil/pixelutils.h \
     ffmpeg/include/libavutil/pixfmt.h \
+    ffmpeg/include/libavutil/pixfmt.h \
+    ffmpeg/include/libavutil/random_seed.h \
     ffmpeg/include/libavutil/random_seed.h \
     ffmpeg/include/libavutil/rational.h \
+    ffmpeg/include/libavutil/rational.h \
+    ffmpeg/include/libavutil/rc4.h \
     ffmpeg/include/libavutil/rc4.h \
     ffmpeg/include/libavutil/refstruct.h \
+    ffmpeg/include/libavutil/refstruct.h \
+    ffmpeg/include/libavutil/replaygain.h \
     ffmpeg/include/libavutil/replaygain.h \
     ffmpeg/include/libavutil/ripemd.h \
+    ffmpeg/include/libavutil/ripemd.h \
+    ffmpeg/include/libavutil/samplefmt.h \
     ffmpeg/include/libavutil/samplefmt.h \
     ffmpeg/include/libavutil/sha.h \
+    ffmpeg/include/libavutil/sha.h \
+    ffmpeg/include/libavutil/sha512.h \
     ffmpeg/include/libavutil/sha512.h \
     ffmpeg/include/libavutil/spherical.h \
+    ffmpeg/include/libavutil/spherical.h \
+    ffmpeg/include/libavutil/stereo3d.h \
     ffmpeg/include/libavutil/stereo3d.h \
     ffmpeg/include/libavutil/tdrdi.h \
+    ffmpeg/include/libavutil/tdrdi.h \
+    ffmpeg/include/libavutil/tea.h \
     ffmpeg/include/libavutil/tea.h \
     ffmpeg/include/libavutil/threadmessage.h \
+    ffmpeg/include/libavutil/threadmessage.h \
+    ffmpeg/include/libavutil/time.h \
     ffmpeg/include/libavutil/time.h \
     ffmpeg/include/libavutil/timecode.h \
+    ffmpeg/include/libavutil/timecode.h \
+    ffmpeg/include/libavutil/timestamp.h \
     ffmpeg/include/libavutil/timestamp.h \
     ffmpeg/include/libavutil/tree.h \
+    ffmpeg/include/libavutil/tree.h \
+    ffmpeg/include/libavutil/twofish.h \
     ffmpeg/include/libavutil/twofish.h \
     ffmpeg/include/libavutil/tx.h \
+    ffmpeg/include/libavutil/tx.h \
+    ffmpeg/include/libavutil/uuid.h \
     ffmpeg/include/libavutil/uuid.h \
     ffmpeg/include/libavutil/version.h \
+    ffmpeg/include/libavutil/version.h \
+    ffmpeg/include/libavutil/video_enc_params.h \
     ffmpeg/include/libavutil/video_enc_params.h \
     ffmpeg/include/libavutil/video_hint.h \
+    ffmpeg/include/libavutil/video_hint.h \
+    ffmpeg/include/libavutil/xtea.h \
     ffmpeg/include/libavutil/xtea.h \
     ffmpeg/include/libswresample/swresample.h \
+    ffmpeg/include/libswresample/swresample.h \
+    ffmpeg/include/libswresample/version.h \
     ffmpeg/include/libswresample/version.h \
     ffmpeg/include/libswresample/version_major.h \
+    ffmpeg/include/libswresample/version_major.h \
+    ffmpeg/include/libswscale/swscale.h \
     ffmpeg/include/libswscale/swscale.h \
     ffmpeg/include/libswscale/version.h \
+    ffmpeg/include/libswscale/version.h \
+    ffmpeg/include/libswscale/version_major.h \
     ffmpeg/include/libswscale/version_major.h \
     firstlastname.h \
     helpform.h \
@@ -410,41 +554,78 @@ FORMS += \
 
 DISTFILES += \
     ffmpeg/lib/avcodec-62.def \
+    ffmpeg/lib/avcodec-62.def \
+    ffmpeg/lib/avcodec-62.dll \
     ffmpeg/lib/avcodec-62.dll \
     ffmpeg/lib/avcodec.lib \
+    ffmpeg/lib/avcodec.lib \
+    ffmpeg/lib/avdevice-62.def \
     ffmpeg/lib/avdevice-62.def \
     ffmpeg/lib/avdevice-62.dll \
+    ffmpeg/lib/avdevice-62.dll \
+    ffmpeg/lib/avdevice.lib \
     ffmpeg/lib/avdevice.lib \
     ffmpeg/lib/avfilter-11.def \
+    ffmpeg/lib/avfilter-11.def \
+    ffmpeg/lib/avfilter-11.dll \
     ffmpeg/lib/avfilter-11.dll \
     ffmpeg/lib/avfilter.lib \
+    ffmpeg/lib/avfilter.lib \
+    ffmpeg/lib/avformat-62.def \
     ffmpeg/lib/avformat-62.def \
     ffmpeg/lib/avformat-62.dll \
+    ffmpeg/lib/avformat-62.dll \
+    ffmpeg/lib/avformat.lib \
     ffmpeg/lib/avformat.lib \
     ffmpeg/lib/avutil-60.def \
+    ffmpeg/lib/avutil-60.def \
+    ffmpeg/lib/avutil-60.dll \
     ffmpeg/lib/avutil-60.dll \
     ffmpeg/lib/avutil.lib \
+    ffmpeg/lib/avutil.lib \
+    ffmpeg/lib/dwarfstack32.dll \
     ffmpeg/lib/dwarfstack32.dll \
     ffmpeg/lib/dwarfstack64.dll \
+    ffmpeg/lib/dwarfstack64.dll \
+    ffmpeg/lib/libavcodec.dll.a \
     ffmpeg/lib/libavcodec.dll.a \
     ffmpeg/lib/libavdevice.dll.a \
+    ffmpeg/lib/libavdevice.dll.a \
+    ffmpeg/lib/libavfilter.dll.a \
     ffmpeg/lib/libavfilter.dll.a \
     ffmpeg/lib/libavformat.dll.a \
+    ffmpeg/lib/libavformat.dll.a \
+    ffmpeg/lib/libavutil.dll.a \
     ffmpeg/lib/libavutil.dll.a \
     ffmpeg/lib/libswresample.dll.a \
+    ffmpeg/lib/libswresample.dll.a \
+    ffmpeg/lib/libswscale.dll.a \
     ffmpeg/lib/libswscale.dll.a \
     ffmpeg/lib/pkgconfig/libavcodec.pc \
+    ffmpeg/lib/pkgconfig/libavcodec.pc \
+    ffmpeg/lib/pkgconfig/libavdevice.pc \
     ffmpeg/lib/pkgconfig/libavdevice.pc \
     ffmpeg/lib/pkgconfig/libavfilter.pc \
+    ffmpeg/lib/pkgconfig/libavfilter.pc \
+    ffmpeg/lib/pkgconfig/libavformat.pc \
     ffmpeg/lib/pkgconfig/libavformat.pc \
     ffmpeg/lib/pkgconfig/libavutil.pc \
+    ffmpeg/lib/pkgconfig/libavutil.pc \
+    ffmpeg/lib/pkgconfig/libswresample.pc \
     ffmpeg/lib/pkgconfig/libswresample.pc \
     ffmpeg/lib/pkgconfig/libswscale.pc \
+    ffmpeg/lib/pkgconfig/libswscale.pc \
+    ffmpeg/lib/swresample-6.def \
     ffmpeg/lib/swresample-6.def \
     ffmpeg/lib/swresample-6.dll \
+    ffmpeg/lib/swresample-6.dll \
+    ffmpeg/lib/swresample.lib \
     ffmpeg/lib/swresample.lib \
     ffmpeg/lib/swscale-9.def \
+    ffmpeg/lib/swscale-9.def \
     ffmpeg/lib/swscale-9.dll \
+    ffmpeg/lib/swscale-9.dll \
+    ffmpeg/lib/swscale.lib \
     ffmpeg/lib/swscale.lib \
     script.js \
     sound/gong.wav

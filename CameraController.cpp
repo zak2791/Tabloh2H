@@ -27,6 +27,8 @@ CameraController::CameraController(QWidget *parent)
     cam2->setCameraNumber(2);
     cam3->setCameraNumber(3);
 
+    cam3->setStream("rtmp://ovsu.okcdn.ru/input/14549276306204_16031179803164_j4pwhty6vu");
+
     btnPlay = new SvgButton(":/images/play_choice_enable.svg", ":/images/play_choice_disable.svg", this);
     btnPlay->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     ui->layoutButtons->insertWidget(0, btnPlay);
@@ -76,12 +78,29 @@ CameraController::CameraController(QWidget *parent)
 
     QString fileSettings = "settings.ini";
 
-    QSettings* settings = new QSettings(fileSettings, QSettings::IniFormat);
+    settings = new QSettings(fileSettings, QSettings::IniFormat, this);
+    //settings.setPath(QSettings::IniFormat, QSettings::UserScope, fileSettings);
     settings->beginGroup("vk");
     urlStream = settings->value("url", "").toString();
     keyStream = settings->value("key", "").toString();
     streamCam = settings->value("cam", 0).toInt();
     settings->endGroup();
+
+    settings->beginGroup("hwDecoder");
+    QString hwDecoder = settings->value("decoder", "нет").toString();
+    settings->endGroup();
+
+    cam1->setHwDecoder(hwDecoder);
+    cam2->setHwDecoder(hwDecoder);
+    cam3->setHwDecoder(hwDecoder);
+
+    ui->cmbHwDecoder->insertItems(0, {"нет", "cuda", "dxva2", "d3d11va", "d3d12va", "vulkan"});
+    ui->cmbHwDecoder->setCurrentText(hwDecoder);
+    connect(ui->cmbHwDecoder, &QComboBox::currentTextChanged, this, [this](const QString s){
+        settings->beginGroup("hwDecoder");
+        settings->setValue("decoder", s);
+        settings->endGroup();
+    });
 
     cameras[1] = "";
     cameras[2] = "";

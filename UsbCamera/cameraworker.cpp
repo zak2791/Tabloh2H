@@ -64,7 +64,20 @@ static int set_hwframe_ctx(AVCodecContext *ctx, AVBufferRef *hw_device_ctx)
     return err;
 }
 
-CameraWorker::CameraWorker(int cameraNumber, int w, int h, int fps, bool sound, QString url, QObject* parent) :  QObject(parent) {
+CameraWorker::CameraWorker(int cameraNumber, int w, int h, int fps, QString hwDec, bool sound, QString url, QObject* parent) :  QObject(parent) {
+
+    if(hwDec == "нет")
+        hwType = AV_HWDEVICE_TYPE_NONE;
+    else if(hwDec == "cuda")
+        hwType = AV_HWDEVICE_TYPE_CUDA;
+    else if(hwDec == "dxva2")
+        hwType = AV_HWDEVICE_TYPE_DXVA2;
+    else if(hwDec == "d3d11va")
+        hwType = AV_HWDEVICE_TYPE_D3D11VA;
+    else if(hwDec == "d3d12va")
+        hwType = AV_HWDEVICE_TYPE_D3D12VA;
+    else if(hwDec == "vulkan")
+        hwType = AV_HWDEVICE_TYPE_VULKAN;
 
     std::string s;
     if(cameraNumber == 1){
@@ -87,7 +100,7 @@ CameraWorker::CameraWorker(int cameraNumber, int w, int h, int fps, bool sound, 
         s = url.toStdString();
         urlVk = s.c_str();
     }
-    //qDebug()<<"urlVk = "<<urlVk<<url<<isSound<<isStream<<s;
+    qDebug()<<"urlVk = "<<urlVk<<url<<isSound<<isStream<<s;
     configureError =configure(w, h, fps, isStream);
     if(configureError < 0){
         qDebug()<<"err = "<<configureError;
@@ -176,7 +189,8 @@ AVCodecContext* CameraWorker::createDecoderContext(int width, int height, int fp
     //     //goto close;
     // }
 
-    qDebug()<<"hw = "<<av_hwdevice_ctx_create(&context->hw_device_ctx, AV_HWDEVICE_TYPE_D3D12VA,
+    if(hwType != AV_HWDEVICE_TYPE_NONE)
+    qDebug()<<"hw = "<<av_hwdevice_ctx_create(&context->hw_device_ctx, hwType,
                                                   NULL, NULL, 0);
 
     // context->hw_frames_ctx = av_hwframe_ctx_alloc(context->hw_device_ctx);;
@@ -431,21 +445,34 @@ void CameraWorker::packetVideoAudioHandler(){
                         //qDebug() << "avcodec_receive_frame: " << ret;
                     }
                     else{
+                        //qDebug()<<pFrame->format<<decoderContext->pix_fmt;
                         if(decoderContext->pix_fmt == -1)
                             decoderContext->pix_fmt = (AVPixelFormat)pFrame->format;
+                        if(hwType != AV_HWDEVICE_TYPE_NONE){
                         ret = av_hwframe_transfer_data(sw_frame, pFrame, 0);
                         sw_frame->pts = pFrame->pts;
+                        }
                         if (ret < 0) {
                             qDebug()<<"Error transferring the data to system memory";
                         }
-                        if(keyFrame)
-                            emit sigFrame(avFrame2QImage(sw_frame));
+                        if(keyFrame){
+                            if(hwType != AV_HWDEVICE_TYPE_NONE)
+                                emit sigFrame(avFrame2QImage(sw_frame));
+                            else
+                                emit sigFrame(avFrame2QImage(pFrame));
+                        }
                         if(isStream){
                             if(!enabledFilter){
-                                qDebug()<<"initFilter = "<<initFilter(decoderContext, encoderContext, (AVPixelFormat)sw_frame->format);
+                                if(hwType != AV_HWDEVICE_TYPE_NONE)
+                                    qDebug()<<"initFilter = "<<initFilter(decoderContext, encoderContext, (AVPixelFormat)sw_frame->format);
+                                else
+                                    qDebug()<<"initFilter = "<<initFilter(decoderContext, encoderContext, (AVPixelFormat)pFrame->format);
                             }
                             else{
-                                ret = filter_encode_write_frame(sw_frame);
+                                if(hwType != AV_HWDEVICE_TYPE_NONE)
+                                    ret = filter_encode_write_frame(sw_frame);
+                                else
+                                    ret = filter_encode_write_frame(pFrame);
                                 if (ret < 0)
                                     qDebug()<<"error filter_encode_write_frame ";
                                 else{

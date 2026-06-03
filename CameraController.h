@@ -2,6 +2,7 @@
 #define CAMERACONTROLLER_H
 
 #include "playerpc.h"
+#include "qsettings.h"
 #include "recordworker.h"
 #include "svgbutton.h"
 #include "usbcamerawidget.h"
@@ -55,6 +56,7 @@ private:
     packet firstVideoPacket3;
 
     PlayerPc* player;
+    QSettings* settings;
 
 private slots:
     void slotVideo1(packet);

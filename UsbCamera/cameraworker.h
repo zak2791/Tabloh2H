@@ -47,12 +47,14 @@ public:
                  int,
                  int,
                  int,
+                 QString,
                  bool sound = false,
                  QString url = "",
                  QObject* parent = nullptr);
     ~CameraWorker();
 
 private:
+    AVHWDeviceType hwType;
     int configureError = 0;
     const char* urlVk;
     AVCodecContext* encoderContext = NULL;

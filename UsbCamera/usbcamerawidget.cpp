@@ -24,6 +24,7 @@ UsbCameraWidget::UsbCameraWidget(QWidget *parent)
                                       list.at(0).toInt(),
                                       list.at(1).toInt(),
                                       list.at(2).toInt(),
+                                      hwDecoder,
                                       isSound,
                                       urlVk
                                       );
@@ -105,6 +106,7 @@ void UsbCameraWidget::stopCamera(){
 
 void UsbCameraWidget::drawFrame(QImage img){
     image = img;
+    qDebug()<<"drawFrame"<<img.width()<<img.height();
     update();
 }
 

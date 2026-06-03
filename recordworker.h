@@ -30,7 +30,7 @@ class RecordWorker : public QObject
 public:
     RecordWorker(QString,   //file
                  QMap<int, QList<int>>,      //number of video tracks
-                 packet* p,
+                 QList<packet*> p,
                  QObject *parent = nullptr);
 
     ~RecordWorker();
@@ -45,11 +45,13 @@ public slots:
 private:
     AVFormatContext* outputContext;
     QMap<int, QList<int>> params;
-    int addNewVideoStream(AVFormatContext *context, QList<int>);
+    QMap<int, int> tracks;
+    int addNewVideoStream(AVFormatContext *context, QList<int>, int);
     int addNewAudioStream(AVFormatContext *context);
     qlonglong startPtsVideo1 = -1;
     qlonglong startPtsAudio = -1;
-    packet* firstVideo3packet;
+    //packet* firstVideo3packet;
+    QList<packet*> firstPackets;
 };
 
 #endif // RECORDWORKER_H

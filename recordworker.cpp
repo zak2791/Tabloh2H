@@ -7,11 +7,12 @@ static const char* av_make_error(int errnum){
     return av_make_error_string(str, AV_ERROR_MAX_STRING_SIZE, errnum);
 }
 
-RecordWorker::RecordWorker(QString u, QMap<int, QList<int>> cams, packet* p, QObject* parent) : QObject(parent) {
+RecordWorker::RecordWorker(QString u, QMap<int, QList<int>> cams, QList<packet *> p, QObject* parent) : QObject(parent) {
     url = u;
     qDebug()<<"RecordWorker"<<u<<cams;
     params = cams;
-    firstVideo3packet = p;
+    //firstVideo3packet = p;
+    firstPackets = p;
 }
 
 RecordWorker::~RecordWorker(){
@@ -36,18 +37,20 @@ void RecordWorker::start(){
     QList<int> list = params.value(1);
     int numTracks = 0;
     if(!list.isEmpty()){
-        list.append(++numTracks);
-        addNewVideoStream(outputContext, list);
+        addNewVideoStream(outputContext, list, ++numTracks);
+        tracks.insert(1, numTracks);
     }
     list = params.value(2);
     if(!list.isEmpty()){
         list.append(++numTracks);
-        addNewVideoStream(outputContext, list);
+        addNewVideoStream(outputContext, list, ++numTracks);
+        tracks.insert(2, numTracks);
     }
     list = params.value(3);
     if(!list.isEmpty()){
         list.append(++numTracks);
-        addNewVideoStream(outputContext, list);
+        addNewVideoStream(outputContext, list, ++numTracks);
+        tracks.insert(3, numTracks);
     }
     if (!(outputContext->oformat->flags & AVFMT_NOFILE)) {
         int ret = avio_open(&outputContext->pb, file, AVIO_FLAG_WRITE);
@@ -67,12 +70,18 @@ void RecordWorker::setAvailableCams(){
 }
 
 void RecordWorker::packetHandler(packet p, int track){
-    //qDebug()<<p.data.size()<<track<<p.pts<<(p.pts - startPtsVideo1) * 9 / 100;
+    qDebug()<<p.data.size()<<track<<firstPackets.at(0)<<firstPackets.length()<<tracks.value(track);
     QByteArray ba;
-    if(firstVideo3packet != NULL && track > 0){
-        (*firstVideo3packet).pts = p.pts;
-        ba = (*firstVideo3packet).data;
-        firstVideo3packet = NULL;
+
+    if(track > 0){
+        if(firstPackets.at(tracks.value(track)) != NULL){
+            qDebug()<<"firstPackets"<<(*firstPackets.at(tracks.value(track))).pts;
+            (*firstPackets.at(tracks.value(track))).pts = p.pts;
+            ba = (*firstPackets.at(tracks.value(track))).data;
+            firstPackets[tracks.value(track)] = NULL;
+        }
+        else
+            ba = p.data;
     }
     else
         ba = p.data;
@@ -96,7 +105,7 @@ void RecordWorker::packetHandler(packet p, int track){
         pPacket->stream_index = 1;//track;
         qDebug()<<"pts = "<<pPacket->pts;
 
-        qDebug()<<av_write_frame(outputContext, pPacket);
+        qDebug()<<av_interleaved_write_frame(outputContext, pPacket);
         av_packet_unref(pPacket);
         delete[] data;
     }
@@ -118,7 +127,7 @@ void RecordWorker::packetHandler(packet p, int track){
 
         qDebug()<<"pts audio = "<<pPacket->pts;
 
-        qDebug()<<"av_write_frame audio = "<<av_write_frame(outputContext, pPacket);
+        qDebug()<<"av_write_frame audio = "<<av_interleaved_write_frame(outputContext, pPacket);
 
         av_packet_free(&pPacket);
         delete[] data;
@@ -126,7 +135,7 @@ void RecordWorker::packetHandler(packet p, int track){
 
 }
 
-int RecordWorker::addNewVideoStream(AVFormatContext * context, QList<int> parameters)
+int RecordWorker::addNewVideoStream(AVFormatContext * context, QList<int> parameters, int track)
 {
     AVStream* stream = avformat_new_stream(context, NULL);
     if (!stream) {
@@ -146,7 +155,7 @@ int RecordWorker::addNewVideoStream(AVFormatContext * context, QList<int> parame
     //codecpar->format = 12;
 
 
-    stream->id = 1;//parameters.at(3);
+    stream->id = track;//parameters.at(3);
     stream->time_base = AVRational{1, 90000};//
     stream->avg_frame_rate = AVRational{parameters.at(2), 1};
 

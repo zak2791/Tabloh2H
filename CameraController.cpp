@@ -27,7 +27,7 @@ CameraController::CameraController(QWidget *parent)
     cam2->setCameraNumber(2);
     cam3->setCameraNumber(3);
 
-    cam3->setStream("rtmp://ovsu.okcdn.ru/input/14549276306204_16031179803164_j4pwhty6vu");
+    //cam3->setStream("rtmp://ovsu.okcdn.ru/input/14549276306204_16031179803164_j4pwhty6vu");
 
     btnPlay = new SvgButton(":/images/play_choice_enable.svg", ":/images/play_choice_disable.svg", this);
     btnPlay->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -100,6 +100,9 @@ CameraController::CameraController(QWidget *parent)
         settings->beginGroup("hwDecoder");
         settings->setValue("decoder", s);
         settings->endGroup();
+        cam1->setHwDecoder(s);
+        cam2->setHwDecoder(s);
+        cam3->setHwDecoder(s);
     });
 
     cameras[1] = "";
@@ -377,7 +380,7 @@ void CameraController::startRecord(bool b, QString s){
         if(isCam1) countCams++;
         if(isCam2) countCams++;
         if(isCam3) countCams++;
-        recorder = new RecordWorker(file, params, &firstVideoPacket3);
+        recorder = new RecordWorker(file, params, {NULL, NULL, &firstVideoPacket3});
         connect(threadRecorder, &QThread::started, recorder, &RecordWorker::start);
         connect(threadRecorder, &QThread::finished, recorder, &RecordWorker::deleteLater);
         connect(this, &CameraController::sigPacket, recorder, &RecordWorker::packetHandler);

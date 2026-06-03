@@ -289,6 +289,8 @@ CameraController::CameraController(QWidget *parent)
             //     av_packet_free(&firstVideo3Packet);
         }
         procFindConnectedPhones.start();
+        firstVideoPacket1.data = QByteArray();
+        firstVideoPacket2.data = QByteArray();
         firstVideoPacket3.data = QByteArray();
         qDebug()<<"procFindConnectedPhones.start()";
     });
@@ -332,10 +334,14 @@ QStringList CameraController::getCamParameters(QString device)
 }
 
 void CameraController::slotVideo1(packet p){
+    if(firstVideoPacket1.data.size() == 0)
+        firstVideoPacket1 = p;
     emit sigPacket(p, 1);
 }
 
 void CameraController::slotVideo2(packet p){
+    if(firstVideoPacket2.data.size() == 0)
+        firstVideoPacket2 = p;
     emit sigPacket(p, 2);
 }
 
@@ -380,7 +386,10 @@ void CameraController::startRecord(bool b, QString s){
         if(isCam1) countCams++;
         if(isCam2) countCams++;
         if(isCam3) countCams++;
-        recorder = new RecordWorker(file, params, {NULL, NULL, &firstVideoPacket3});
+
+        recorder = new RecordWorker(file, params, {isCam1 == true ? &firstVideoPacket1 : NULL,
+                                                   isCam2 == true ? &firstVideoPacket2 : NULL,
+                                                   isCam3 == true ? &firstVideoPacket3 : NULL});
         connect(threadRecorder, &QThread::started, recorder, &RecordWorker::start);
         connect(threadRecorder, &QThread::finished, recorder, &RecordWorker::deleteLater);
         connect(this, &CameraController::sigPacket, recorder, &RecordWorker::packetHandler);

@@ -106,7 +106,7 @@ void UsbCameraWidget::stopCamera(){
 
 void UsbCameraWidget::drawFrame(QImage img){
     image = img;
-    qDebug()<<"drawFrame"<<img.width()<<img.height();
+    qDebug()<<"drawFrame"<<cameraNumber<<img.width()<<img.height();
     update();
 }
 

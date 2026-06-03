@@ -190,8 +190,8 @@ AVCodecContext* CameraWorker::createDecoderContext(int width, int height, int fp
     // }
 
     if(hwType != AV_HWDEVICE_TYPE_NONE)
-    qDebug()<<"hw = "<<av_hwdevice_ctx_create(&context->hw_device_ctx, hwType,
-                                                  NULL, NULL, 0);
+        qDebug()<<"hw = "<<av_hwdevice_ctx_create(&context->hw_device_ctx, hwType,
+                                                      NULL, NULL, 0);
 
     // context->hw_frames_ctx = av_hwframe_ctx_alloc(context->hw_device_ctx);;
     // qDebug()<<"context->hw_frames_ctx = "<<context->hw_frames_ctx;
@@ -326,17 +326,26 @@ void CameraWorker::packetVideoHandler(){
                 qDebug()<<pFrame->format<<decoderContext->pix_fmt;
                 if(decoderContext->pix_fmt == -1)
                     decoderContext->pix_fmt = (AVPixelFormat)pFrame->format;
-                ret = av_hwframe_transfer_data(sw_frame, pFrame, 0);
-                sw_frame->pts = pFrame->pts;
+
+                if(hwType != AV_HWDEVICE_TYPE_NONE){
+                    sw_frame->pts = pFrame->pts;
+                    ret = av_hwframe_transfer_data(sw_frame, pFrame, 0);
+                }
                 if (ret < 0) {
                     qDebug()<<"Error transferring the data to system memory";
                 }
                 if(isStream){
                     if(!enabledFilter){
-                        qDebug()<<"initFilter = "<<initFilter(decoderContext, encoderContext, (AVPixelFormat)sw_frame->format);
+                        if(hwType != AV_HWDEVICE_TYPE_NONE)
+                            qDebug()<<"initFilter = "<<initFilter(decoderContext, encoderContext, (AVPixelFormat)sw_frame->format);
+                        else
+                            qDebug()<<"initFilter = "<<initFilter(decoderContext, encoderContext, (AVPixelFormat)pFrame->format);
                     }
                     else{
-                        ret = filter_encode_write_frame(sw_frame);
+                        if(hwType != AV_HWDEVICE_TYPE_NONE)
+                            ret = filter_encode_write_frame(sw_frame);
+                        else
+                            ret = filter_encode_write_frame(pFrame);
                         if (ret < 0)
                             qDebug()<<"error filter_encode_write_frame ";
                         else{
@@ -449,8 +458,8 @@ void CameraWorker::packetVideoAudioHandler(){
                         if(decoderContext->pix_fmt == -1)
                             decoderContext->pix_fmt = (AVPixelFormat)pFrame->format;
                         if(hwType != AV_HWDEVICE_TYPE_NONE){
-                        ret = av_hwframe_transfer_data(sw_frame, pFrame, 0);
-                        sw_frame->pts = pFrame->pts;
+                            ret = av_hwframe_transfer_data(sw_frame, pFrame, 0);
+                            sw_frame->pts = pFrame->pts;
                         }
                         if (ret < 0) {
                             qDebug()<<"Error transferring the data to system memory";
@@ -1016,7 +1025,7 @@ int CameraWorker::filter_encode_write_frame(AVFrame *frame)
             if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
                 ret = 0;
             else
-               qDebug()<<QString::fromUtf8(_av_err2str(ret))<<ret;
+                qDebug()<<QString::fromUtf8(_av_err2str(ret))<<ret;
             break;
         }
         filter->filtered_frame->time_base = av_buffersink_get_time_base(filter->buffersink_ctx);;

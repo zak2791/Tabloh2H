@@ -53,6 +53,8 @@ private:
     bool isCam1 = false;
     bool isCam2 = false;
     bool isCam3 = false;
+    packet firstVideoPacket1;
+    packet firstVideoPacket2;
     packet firstVideoPacket3;
 
     PlayerPc* player;

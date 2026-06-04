@@ -68,9 +68,9 @@ private slots:
     void slotParams(int, int, int, int);
 
 public slots:
-    void setStreamUrl(QString s){urlStream = s;qDebug()<<urlStream<<keyStream<<streamCam;}
-    void setStreamKey(QString s){keyStream = s;qDebug()<<urlStream<<keyStream<<streamCam;}
-    void setStreamCam(int cam){streamCam = cam;qDebug()<<urlStream<<keyStream<<streamCam;}
+    void setStreamUrl(QString s);
+    void setStreamKey(QString s);
+    void setStreamCam(int cam);
 
 signals:
     void sigShowPlayer(void);

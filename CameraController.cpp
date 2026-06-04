@@ -27,8 +27,6 @@ CameraController::CameraController(QWidget *parent)
     cam2->setCameraNumber(2);
     cam3->setCameraNumber(3);
 
-    //cam3->setStream("rtmp://ovsu.okcdn.ru/input/14549276306204_16031179803164_j4pwhty6vu");
-
     btnPlay = new SvgButton(":/images/play_choice_enable.svg", ":/images/play_choice_disable.svg", this);
     btnPlay->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     ui->layoutButtons->insertWidget(0, btnPlay);
@@ -82,13 +80,25 @@ CameraController::CameraController(QWidget *parent)
     //settings.setPath(QSettings::IniFormat, QSettings::UserScope, fileSettings);
     settings->beginGroup("vk");
     urlStream = settings->value("url", "").toString();
-    keyStream = settings->value("key", "").toString();
+    //keyStream = settings->value("key", "").toString();
     streamCam = settings->value("cam", 0).toInt();
     settings->endGroup();
 
     settings->beginGroup("hwDecoder");
     QString hwDecoder = settings->value("decoder", "нет").toString();
     settings->endGroup();
+
+    settings->beginGroup("vk");
+    urlStream = settings->value("url", "").toString();
+    keyStream = settings->value("key", "").toString();
+    streamCam = settings->value("cam", 0).toInt();
+    //settings->endGroup();
+    if(streamCam == 1)
+        cam1->setStream(urlStream + keyStream);
+    if(streamCam == 2)
+        cam2->setStream(urlStream + keyStream);
+    if(streamCam == 3)
+        cam3->setStream(urlStream + keyStream);
 
     cam1->setHwDecoder(hwDecoder);
     cam2->setHwDecoder(hwDecoder);
@@ -373,6 +383,63 @@ void CameraController::slotSound(packet p){
 
 void CameraController::slotParams(int c, int w, int h, int f){
     params.insert(c, QList({w, h, f}));
+}
+
+void CameraController::setStreamUrl(QString s){
+    urlStream = s;
+    if(streamCam == 1){
+        cam1->setStream(urlStream + keyStream);
+        cam2->setStream("");
+        cam3->setStream("");
+    }
+    if(streamCam == 2){
+        cam1->setStream("");
+        cam2->setStream(urlStream + keyStream);
+        cam3->setStream("");
+    }
+    if(streamCam == 3){
+        cam1->setStream("");
+        cam2->setStream("");
+        cam3->setStream(urlStream + keyStream);
+    }
+}
+
+void CameraController::setStreamKey(QString s){
+    keyStream = s;
+    if(streamCam == 1){
+        cam1->setStream(urlStream + keyStream);
+        cam2->setStream("");
+        cam3->setStream("");
+    }
+    if(streamCam == 2){
+        cam1->setStream("");
+        cam2->setStream(urlStream + keyStream);
+        cam3->setStream("");
+    }
+    if(streamCam == 3){
+        cam1->setStream("");
+        cam2->setStream("");
+        cam3->setStream(urlStream + keyStream);
+    }
+}
+
+void CameraController::setStreamCam(int cam){
+    streamCam = cam;
+    if(streamCam == 1){
+        cam1->setStream(urlStream + keyStream);
+        cam2->setStream("");
+        cam3->setStream("");
+    }
+    if(streamCam == 2){
+        cam1->setStream("");
+        cam2->setStream(urlStream + keyStream);
+        cam3->setStream("");
+    }
+    if(streamCam == 3){
+        cam1->setStream("");
+        cam2->setStream("");
+        cam3->setStream(urlStream + keyStream);
+    }
 }
 
 void CameraController::startRecord(bool b, QString s){

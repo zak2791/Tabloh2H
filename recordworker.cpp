@@ -16,9 +16,11 @@ RecordWorker::RecordWorker(QString u, QMap<int, QList<int>> cams, QList<packet *
 }
 
 RecordWorker::~RecordWorker(){
+    emit stopped();
     qDebug()<<"~stop record";
     qDebug()<<"av_write_trailer = "<<av_write_trailer(outputContext);
     avformat_free_context(outputContext);
+
 }
 
 
@@ -42,13 +44,11 @@ void RecordWorker::start(){
     }
     list = params.value(2);
     if(!list.isEmpty()){
-        list.append(++numTracks);
         addNewVideoStream(outputContext, list, ++numTracks);
         tracks.insert(2, numTracks);
     }
     list = params.value(3);
     if(!list.isEmpty()){
-        list.append(++numTracks);
         addNewVideoStream(outputContext, list, ++numTracks);
         tracks.insert(3, numTracks);
     }
@@ -63,6 +63,7 @@ void RecordWorker::start(){
     if (ret < 0) {
         qDebug()<<"Error avformat_write_header\n"<<av_make_error(ret);
     }
+    emit started();
 }
 
 void RecordWorker::setAvailableCams(){
@@ -70,15 +71,21 @@ void RecordWorker::setAvailableCams(){
 }
 
 void RecordWorker::packetHandler(packet p, int track){
-    qDebug()<<p.data.size()<<track<<firstPackets.at(0)<<firstPackets.length()<<tracks.value(track);
+    qDebug()<<p.data.size()<<track<<firstPackets<<firstPackets.length()<<tracks.value(track)<<tracks;
     QByteArray ba;
 
     if(track > 0){
-        if(firstPackets.at(tracks.value(track)) != NULL){
-            qDebug()<<"firstPackets"<<(*firstPackets.at(tracks.value(track))).pts;
-            (*firstPackets.at(tracks.value(track))).pts = p.pts;
-            ba = (*firstPackets.at(tracks.value(track))).data;
-            firstPackets[tracks.value(track)] = NULL;
+        // if(firstPackets.at(tracks.value(track)) != NULL){
+        //     qDebug()<<"firstPackets"<<(*firstPackets.at(tracks.value(track))).pts;
+        //     (*firstPackets.at(tracks.value(track))).pts = p.pts;
+        //     ba = (*firstPackets.at(tracks.value(track))).data;
+        //     firstPackets[tracks.value(track)] = NULL;
+        // }
+        if(firstPackets.at(track - 1) != NULL){
+            //qDebug()<<"firstPackets"<<(*firstPackets.at(tracks.value(track))).pts;
+            (*firstPackets.at(track - 1)).pts = p.pts;
+            ba = (*firstPackets.at(track - 1)).data;
+            firstPackets[track - 1] = NULL;
         }
         else
             ba = p.data;
@@ -94,16 +101,33 @@ void RecordWorker::packetHandler(packet p, int track){
         pPacket->data = data;
         pPacket->size = sizePacket;
         pPacket->flags = p.flags;
-        if(startPtsVideo1 == -1){
-            startPtsVideo1 = p.pts;
-            qDebug()<<"startPtsVideo1";
+
+        if(track == 1){
+            if(startPtsVideo1 == -1){
+                startPtsVideo1 = p.pts;
+                qDebug()<<"startPtsVideo1";
+            }
+            pPacket->pts = (p.pts - startPtsVideo1) * 9 / 100;
+        }
+        else if(track == 2){
+            if(startPtsVideo2 == -1){
+                startPtsVideo2 = p.pts;
+                qDebug()<<"startPtsVideo2";
+            }
+            pPacket->pts = (p.pts - startPtsVideo2) * 9 / 100;
+        }
+        else if(track == 3){
+            if(startPtsVideo3 == -1){
+                startPtsVideo3 = p.pts;
+                qDebug()<<"startPtsVideo3";
+            }
+            pPacket->pts = (p.pts - startPtsVideo3) * 9 / 100;
         }
 
-        pPacket->pts = (p.pts - startPtsVideo1) * 9 / 100;
         pPacket->dts = pPacket->pts;
 
-        pPacket->stream_index = 1;//track;
-        qDebug()<<"pts = "<<pPacket->pts;
+        pPacket->stream_index = tracks.value(track);
+        qDebug()<<"pPacket->stream_index = "<<tracks.value(track);
 
         qDebug()<<av_interleaved_write_frame(outputContext, pPacket);
         av_packet_unref(pPacket);

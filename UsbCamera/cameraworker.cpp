@@ -297,6 +297,7 @@ void CameraWorker::readAudioPacket(){
 void CameraWorker::packetVideoHandler(){
     packet p;
     p = videoPackets.dequeue();
+    emit sigVideoPacket(p);
     int sizePacket = p.data.size();
     AVPacket *pPacket = av_packet_alloc();
     AVFrame *pFrame = av_frame_alloc();
@@ -323,7 +324,7 @@ void CameraWorker::packetVideoHandler(){
                 //qDebug() << "avcodec_receive_frame: " << ret;
             }
             else{
-                qDebug()<<pFrame->format<<decoderContext->pix_fmt;
+                //qDebug()<<pFrame->format<<decoderContext->pix_fmt;
                 if(decoderContext->pix_fmt == -1)
                     decoderContext->pix_fmt = (AVPixelFormat)pFrame->format;
 
@@ -333,6 +334,12 @@ void CameraWorker::packetVideoHandler(){
                 }
                 if (ret < 0) {
                     qDebug()<<"Error transferring the data to system memory";
+                }
+                if(keyFrame){
+                    if(hwType != AV_HWDEVICE_TYPE_NONE)
+                        emit sigFrame(avFrame2QImage(sw_frame));
+                    else
+                        emit sigFrame(avFrame2QImage(pFrame));
                 }
                 if(isStream){
                     if(!enabledFilter){

@@ -49,9 +49,16 @@ private:
     int addNewVideoStream(AVFormatContext *context, QList<int>, int);
     int addNewAudioStream(AVFormatContext *context);
     qlonglong startPtsVideo1 = -1;
+    qlonglong startPtsVideo2 = -1;
+    qlonglong startPtsVideo3 = -1;
     qlonglong startPtsAudio = -1;
     //packet* firstVideo3packet;
     QList<packet*> firstPackets;
+
+signals:
+    void started(void);
+    void stopped(void);
+
 };
 
 #endif // RECORDWORKER_H

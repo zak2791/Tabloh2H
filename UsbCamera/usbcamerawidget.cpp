@@ -33,8 +33,11 @@ UsbCameraWidget::UsbCameraWidget(QWidget *parent)
             worker->moveToThread(thread);
             connect(thread, &QThread::started, worker, &CameraWorker::start);
             //connect(thread, &QThread::destroyed, this, [this](){worker->deleteLater();});
-            connect(thread, &QThread::destroyed, this, [this](){qDebug()<<"&QThread::destroyed"<<thread;});
-            connect(thread, &QThread::finished, this, [this](){qDebug()<<"&QThread::finished"<<thread;});
+            //connect(thread, &QThread::destroyed, this, [this](){qDebug()<<"&QThread::destroyed"<<thread;});
+            connect(thread, &QThread::finished, this, [this](){
+                //qDebug()<<"&QThread::finished"<<thread;
+                emit sigCamOff();
+            });
             connect(worker, &CameraWorker::sigExit, thread, &QThread::quit);
             connect(worker, &CameraWorker::destroyed, thread, &QThread::quit);
             connect(worker, &CameraWorker::sigVideoPacket, this, &UsbCameraWidget::sigVideoPacket);
@@ -102,6 +105,7 @@ void UsbCameraWidget::stopCamera(){
         worker->deleteLater();
     }
     drawFrame(redImage);
+    emit sigCamOff();
 }
 
 void UsbCameraWidget::drawFrame(QImage img){

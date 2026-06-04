@@ -176,6 +176,22 @@ CameraController::CameraController(QWidget *parent)
         }
         qDebug()<<cameras<<list;
 
+        connect(cam1, &UsbCameraWidget::sigCamOff, this, [this](){
+            isCam1 = false;
+            if(!(isCam1 || isCam2 || isCam3) && threadRecorder->isRunning())
+                threadRecorder->quit();
+        });
+        connect(cam2, &UsbCameraWidget::sigCamOff, this, [this](){
+            isCam2 = false;
+            if(!(isCam1 || isCam2 || isCam3) && threadRecorder->isRunning())
+                threadRecorder->quit();
+        });
+        connect(cam3, &UsbCameraWidget::sigCamOff, this, [this](){
+            isCam3 = false;
+            if(!(isCam1 || isCam2 || isCam3) && threadRecorder->isRunning())
+                threadRecorder->quit();
+        });
+
         // configure();
         //startRecord();
     });
@@ -393,6 +409,12 @@ void CameraController::startRecord(bool b, QString s){
         connect(threadRecorder, &QThread::started, recorder, &RecordWorker::start);
         connect(threadRecorder, &QThread::finished, recorder, &RecordWorker::deleteLater);
         connect(this, &CameraController::sigPacket, recorder, &RecordWorker::packetHandler);
+        connect(recorder, &RecordWorker::started, this, [this](){
+            ui->lblRec->setStatusRec(true);
+        });
+        connect(recorder, &RecordWorker::stopped, this, [this](){
+            ui->lblRec->setStatusRec(false);
+        });
         recorder->moveToThread(threadRecorder);
         threadRecorder->start();
     }

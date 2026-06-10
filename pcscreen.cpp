@@ -86,7 +86,7 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     minimum_height = 0;
     percent_height = 0;
 
-    rateRed = new Rate;
+    rateRed = new Rate(this);
     rateRed->setFrameShape(QFrame::Box);
     rateRed->setObjectName("ball_red");
 

@@ -554,78 +554,41 @@ FORMS += \
 
 DISTFILES += \
     ffmpeg/lib/avcodec-62.def \
-    ffmpeg/lib/avcodec-62.def \
-    ffmpeg/lib/avcodec-62.dll \
     ffmpeg/lib/avcodec-62.dll \
     ffmpeg/lib/avcodec.lib \
-    ffmpeg/lib/avcodec.lib \
-    ffmpeg/lib/avdevice-62.def \
     ffmpeg/lib/avdevice-62.def \
     ffmpeg/lib/avdevice-62.dll \
-    ffmpeg/lib/avdevice-62.dll \
-    ffmpeg/lib/avdevice.lib \
     ffmpeg/lib/avdevice.lib \
     ffmpeg/lib/avfilter-11.def \
-    ffmpeg/lib/avfilter-11.def \
-    ffmpeg/lib/avfilter-11.dll \
     ffmpeg/lib/avfilter-11.dll \
     ffmpeg/lib/avfilter.lib \
-    ffmpeg/lib/avfilter.lib \
-    ffmpeg/lib/avformat-62.def \
     ffmpeg/lib/avformat-62.def \
     ffmpeg/lib/avformat-62.dll \
-    ffmpeg/lib/avformat-62.dll \
-    ffmpeg/lib/avformat.lib \
     ffmpeg/lib/avformat.lib \
     ffmpeg/lib/avutil-60.def \
-    ffmpeg/lib/avutil-60.def \
-    ffmpeg/lib/avutil-60.dll \
     ffmpeg/lib/avutil-60.dll \
     ffmpeg/lib/avutil.lib \
-    ffmpeg/lib/avutil.lib \
-    ffmpeg/lib/dwarfstack32.dll \
     ffmpeg/lib/dwarfstack32.dll \
     ffmpeg/lib/dwarfstack64.dll \
-    ffmpeg/lib/dwarfstack64.dll \
-    ffmpeg/lib/libavcodec.dll.a \
     ffmpeg/lib/libavcodec.dll.a \
     ffmpeg/lib/libavdevice.dll.a \
-    ffmpeg/lib/libavdevice.dll.a \
-    ffmpeg/lib/libavfilter.dll.a \
     ffmpeg/lib/libavfilter.dll.a \
     ffmpeg/lib/libavformat.dll.a \
-    ffmpeg/lib/libavformat.dll.a \
-    ffmpeg/lib/libavutil.dll.a \
     ffmpeg/lib/libavutil.dll.a \
     ffmpeg/lib/libswresample.dll.a \
-    ffmpeg/lib/libswresample.dll.a \
-    ffmpeg/lib/libswscale.dll.a \
     ffmpeg/lib/libswscale.dll.a \
     ffmpeg/lib/pkgconfig/libavcodec.pc \
-    ffmpeg/lib/pkgconfig/libavcodec.pc \
-    ffmpeg/lib/pkgconfig/libavdevice.pc \
     ffmpeg/lib/pkgconfig/libavdevice.pc \
     ffmpeg/lib/pkgconfig/libavfilter.pc \
-    ffmpeg/lib/pkgconfig/libavfilter.pc \
-    ffmpeg/lib/pkgconfig/libavformat.pc \
     ffmpeg/lib/pkgconfig/libavformat.pc \
     ffmpeg/lib/pkgconfig/libavutil.pc \
-    ffmpeg/lib/pkgconfig/libavutil.pc \
-    ffmpeg/lib/pkgconfig/libswresample.pc \
     ffmpeg/lib/pkgconfig/libswresample.pc \
     ffmpeg/lib/pkgconfig/libswscale.pc \
-    ffmpeg/lib/pkgconfig/libswscale.pc \
-    ffmpeg/lib/swresample-6.def \
     ffmpeg/lib/swresample-6.def \
     ffmpeg/lib/swresample-6.dll \
-    ffmpeg/lib/swresample-6.dll \
-    ffmpeg/lib/swresample.lib \
     ffmpeg/lib/swresample.lib \
     ffmpeg/lib/swscale-9.def \
-    ffmpeg/lib/swscale-9.def \
     ffmpeg/lib/swscale-9.dll \
-    ffmpeg/lib/swscale-9.dll \
-    ffmpeg/lib/swscale.lib \
     ffmpeg/lib/swscale.lib \
     script.js \
     sound/gong.wav

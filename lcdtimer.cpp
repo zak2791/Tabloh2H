@@ -168,7 +168,7 @@ void LCDTimer::showTime(){
         emit sigStarted(false);
         if(_sound){
             QSoundEffect* effect = new QSoundEffect(this);
-            effect->setSource(QUrl::fromLocalFile("gong.wav"));
+            effect->setSource(QUrl("qrc:/sound/gong.wav"));//QUrl::fromLocalFile("gong.wav"));
             emit sigEndTime();
             effect->play();
         }

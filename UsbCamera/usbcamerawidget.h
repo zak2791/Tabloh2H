@@ -40,6 +40,8 @@ private:
     bool isSound;
     QString urlVk;
     QImage redImage;
+    bool isWorking = false;
+    int port;
 
 
 protected:
@@ -48,6 +50,9 @@ protected:
 public slots:
     void drawFrame(QImage);
     void setHwDecoder(QString s){hwDecoder = s;}
+
+private slots:
+    void getParameters(void);
 
 signals:
     void sigVideoPacket(packet);

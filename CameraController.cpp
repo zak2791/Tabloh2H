@@ -36,6 +36,8 @@ CameraController::CameraController(QWidget *parent)
     btnPlayLast->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     ui->layoutButtons->insertWidget(1, btnPlayLast);
 
+    connect(&tmpSetupPorts, &QTimer::timeout, this, &CameraController::setupPorts);
+
     connect(btnPlay, &QPushButton::clicked, this, [this](){
         stopRecord();
         QString file = QFileDialog::getOpenFileName(nullptr, "Выбор видео", "videos");
@@ -134,14 +136,17 @@ CameraController::CameraController(QWidget *parent)
 
     procFindConnectedPhones.setProgram("platform-tools/adb");
     procSetupPorts.setProgram("platform-tools/adb");
+    procSetupPorts1.setProgram("platform-tools/adb");
+    procSetupPorts2.setProgram("platform-tools/adb");
+    procSetupPorts3.setProgram("platform-tools/adb");
+    procCheckDevices.setProgram("platform-tools/adb");
+    procCheckDevices.setArguments({"devices"});
 
-    connect(&procSetupPorts, &QProcess::readyReadStandardOutput, this, [this](){
-        qDebug()<<"procSetupPorts readyReadStandardOutput";
-        QString output = procSetupPorts.readAllStandardOutput();
-        qDebug()<<output;
-    });
+    connect(&procCheckDevices, &QProcess::finished, this, &CameraController::slotCheckDevices);
 
-
+    /////////////////////////////////////////////////////////////////////////////////////
+    ///                        Поиск подключенных смартфонов                          ///
+    /////////////////////////////////////////////////////////////////////////////////////
     connect(&procFindConnectedPhones, &QProcess::readyReadStandardOutput, this, [this](){
         qDebug()<<"procFindConnectedPhones readyReadStandardOutput";
         QString output = procFindConnectedPhones.readAllStandardOutput();
@@ -160,27 +165,12 @@ CameraController::CameraController(QWidget *parent)
             if(list.isEmpty()) continue;
             qDebug()<<list;
             if(list.at(0) == "1"){
-                // cam1Parameters.isConnect = true;
-                // cam1Parameters.width = list.at(1).toInt();
-                // cam1Parameters.height = list.at(2).toInt();
-                // cam1Parameters.fps = list.at(3).toInt();
-                // cam1Parameters.device = each;
                 cameras.insert(1, each);
             }
             else if(list.at(0) == "2"){
-                // cam2Parameters.isConnect = true;
-                // cam2Parameters.width = list.at(1).toInt();
-                // cam2Parameters.height = list.at(2).toInt();
-                // cam2Parameters.fps = list.at(3).toInt();
-                // cam2Parameters.device = each;
                 cameras.insert(2, each);
             }
             else {
-                // cam3Parameters.isConnect = true;
-                // cam3Parameters.width = list.at(1).toInt();
-                // cam3Parameters.height = list.at(2).toInt();
-                // cam3Parameters.fps = list.at(3).toInt();
-                // cam3Parameters.device = each;
                 cameras.insert(3, each);
             }
         }
@@ -205,54 +195,28 @@ CameraController::CameraController(QWidget *parent)
         // configure();
         //startRecord();
     });
+
+    //////////////////////////////////////////////////////////////////////
+    ///             Подключение найденных смартфонов                   ///
+    //////////////////////////////////////////////////////////////////////
     connect(&procFindConnectedPhones, &QProcess::finished, this, [this](){
         qDebug()<<"err"<<procFindConnectedPhones.readAllStandardError();
         if(ui->cbTurnCams->isChecked()){
             qDebug()<<"setup ports 0";
+            setupPorts();
             if(cameras[1] != ""){
-                procSetupPorts.setArguments({"-s", cameras[1], "reverse", "tcp:5551", "tcp:5551"});
-                procSetupPorts.start();
-                procSetupPorts.waitForFinished();
-                procSetupPorts.setArguments({"-s", cameras[1], "reverse", "tcp:5552", "tcp:5552"});
-                procSetupPorts.start();
-                procSetupPorts.waitForFinished();
-                procSetupPorts.setArguments({"-s", cameras[1], "forward", "tcp:5553", "tcp:5553"});
-                procSetupPorts.start();
-                procSetupPorts.waitForFinished();
-                //led1->checkConnection();
-                qDebug()<<"setup ports 1";
                 cam1->setSound(true);
                 cam1->startCamera();
                 qDebug()<<"setup ports 2";
                 isCam1 = true;
             }
             if(cameras[2] != ""){
-                procSetupPorts.setArguments({"-s", cameras[2], "reverse", "tcp:5561", "tcp:5561"});
-                procSetupPorts.start();
-                procSetupPorts.waitForFinished();
-                procSetupPorts.setArguments({"-s", cameras[2], "reverse", "tcp:5562", "tcp:5562"});
-                procSetupPorts.start();
-                procSetupPorts.waitForFinished();
-                procSetupPorts.setArguments({"-s", cameras[2], "forward", "tcp:5563", "tcp:5563"});
-                procSetupPorts.start();
-                procSetupPorts.waitForFinished();
-                //led2->checkConnection();
                 if(!isCam1)
                     cam2->setSound(true);
                 cam2->startCamera();
                 isCam2 = true;
             }
             if(cameras[3] != ""){
-                procSetupPorts.setArguments({"-s", cameras[3], "reverse", "tcp:5571", "tcp:5571"});
-                procSetupPorts.start();
-                procSetupPorts.waitForFinished();
-                procSetupPorts.setArguments({"-s", cameras[3], "reverse", "tcp:5572", "tcp:5572"});
-                procSetupPorts.start();
-                procSetupPorts.waitForFinished();
-                procSetupPorts.setArguments({"-s", cameras[3], "forward", "tcp:5573", "tcp:5573"});
-                procSetupPorts.start();
-                procSetupPorts.waitForFinished();
-                //led3->checkConnection();
                 qDebug()<<"setup ports 1";
                 if(!(isCam1 || isCam2))
                     cam3->setSound(true);
@@ -260,8 +224,11 @@ CameraController::CameraController(QWidget *parent)
                 qDebug()<<"setup ports 2";
                 isCam3 = true;
             }
+            //procCheckDevices.start();
+            tmpSetupPorts.start(1000);
         }
         else{
+            tmpSetupPorts.stop();
             cameras[1] = "";
             cam1->stopCamera();
             cameras[2] = "";
@@ -272,29 +239,6 @@ CameraController::CameraController(QWidget *parent)
             isCam1= false;
             isCam2 = false;
             isCam3 = false;
-            // startIdStream1 = -1;
-            // startIdStream2 = -1;
-            // startIdStream3 = -1;
-            // if(decoderContext1){
-            //     avcodec_free_context(&decoderContext1);
-            //     decoderContext1 = NULL;
-            // }
-            // if(decoderContext2){
-            //     avcodec_free_context(&decoderContext2);
-            //     decoderContext2 = NULL;
-            // }
-            // if(decoderContext3){
-            //     avcodec_free_context(&decoderContext3);
-            //     decoderContext3 = NULL;
-            // }
-            // if(oc){
-            //     avformat_free_context(oc);
-            //     oc = NULL;
-            // }
-            // if(contextVk){
-            //     avformat_free_context(contextVk);
-            //     contextVk = NULL;
-            // }
         }
     });
 
@@ -305,23 +249,18 @@ CameraController::CameraController(QWidget *parent)
         QTimer::singleShot(5000, this, [this](){ui->cbTurnCams->setEnabled(true);});
         if(state){
             procFindConnectedPhones.setArguments({"devices"});
-        }else{
-            procFindConnectedPhones.setArguments({"kill-server"});
-            // if(firstVideo1Packet != NULL)
-            //     av_packet_free(&firstVideo1Packet);
-            // if(firstVideo2Packet != NULL)
-            //     av_packet_free(&firstVideo2Packet);
-            // if(firstVideo3Packet != NULL)
-            //     av_packet_free(&firstVideo3Packet);
+            //checkDevicesTimer.start(1000);
         }
+        else
+            procFindConnectedPhones.setArguments({"kill-server"});
         procFindConnectedPhones.start();
         firstVideoPacket1.data = QByteArray();
         firstVideoPacket2.data = QByteArray();
         firstVideoPacket3.data = QByteArray();
         qDebug()<<"procFindConnectedPhones.start()";
     });
-    procFindConnectedPhones.setArguments({"kill-server"});
-    procFindConnectedPhones.start();
+    // procFindConnectedPhones.setArguments({"kill-server"});
+    // procFindConnectedPhones.start();
 }
 
 CameraController::~CameraController()
@@ -359,6 +298,45 @@ QStringList CameraController::getCamParameters(QString device)
         return QStringList();
 }
 
+void CameraController::setupPorts(){
+    QElapsedTimer timer;
+    timer.start(); // Запускаем секундомер
+    if(cameras[1] != ""){
+        procSetupPorts1.setArguments({"-s", cameras[1], "forward", "tcp:5551", "tcp:5551"});
+        procSetupPorts1.start();
+        procSetupPorts2.setArguments({"-s", cameras[1], "forward", "tcp:5552", "tcp:5552"});
+        procSetupPorts2.start();
+        procSetupPorts3.setArguments({"-s", cameras[1], "forward", "tcp:5553", "tcp:5553"});
+        procSetupPorts3.start();
+        procSetupPorts1.waitForFinished();
+        procSetupPorts2.waitForFinished();
+        procSetupPorts3.waitForFinished();
+    }
+    if(cameras[2] != ""){
+        procSetupPorts1.setArguments({"-s", cameras[2], "forward", "tcp:5561", "tcp:5561"});
+        procSetupPorts1.start();
+        procSetupPorts2.setArguments({"-s", cameras[2], "forward", "tcp:5562", "tcp:5562"});
+        procSetupPorts2.start();
+        procSetupPorts.setArguments({"-s", cameras[2], "forward", "tcp:5563", "tcp:5563"});
+        procSetupPorts.start();
+        procSetupPorts1.waitForFinished();
+        procSetupPorts2.waitForFinished();
+        procSetupPorts3.waitForFinished();
+    }
+    if(cameras[3] != ""){
+        procSetupPorts1.setArguments({"-s", cameras[3], "forward", "tcp:5571", "tcp:5571"});
+        procSetupPorts1.start();
+        procSetupPorts2.setArguments({"-s", cameras[3], "forward", "tcp:5572", "tcp:5572"});
+        procSetupPorts2.start();
+        procSetupPorts3.setArguments({"-s", cameras[3], "forward", "tcp:5573", "tcp:5573"});
+        procSetupPorts3.start();
+        procSetupPorts1.waitForFinished();
+        procSetupPorts2.waitForFinished();
+        procSetupPorts3.waitForFinished();
+    }
+    qDebug() << "Задача выполнена за:" << timer.elapsed() << "мс"; // Получаем результат в миллисекундах
+}
+
 void CameraController::slotVideo1(packet p){
     if(firstVideoPacket1.data.size() == 0)
         firstVideoPacket1 = p;
@@ -383,6 +361,25 @@ void CameraController::slotSound(packet p){
 
 void CameraController::slotParams(int c, int w, int h, int f){
     params.insert(c, QList({w, h, f}));
+}
+
+void CameraController::slotCheckDevices(){
+    qDebug()<<"procCheckDevices finished";
+    QString output = procCheckDevices.readAllStandardOutput();
+    qDebug()<<output;
+    QStringList list = output.split("\n");
+    QStringList dev;
+    if(list.at(0).contains("List of devices attached") && list.count() > 1){
+        for(int i = 1; i < list.count(); i++){
+            if(list.at(i).contains("device")){
+                dev.append(list.at(i).split("\t").at(0));
+            }
+        }
+    }
+    qDebug()<<dev<<devices<<cameras;
+    if(ui->cbTurnCams->isChecked())
+        QTimer::singleShot(1000, this, [this](){procCheckDevices.start();});
+    //QTimer::singleShot(1000, &procCheckDevices, SLOT(start()));
 }
 
 void CameraController::setStreamUrl(QString s){
@@ -446,23 +443,9 @@ void CameraController::startRecord(bool b, QString s){
     btnPlay->setEnabled(!b);
     btnPlayLast->setEnabled(!b);
 
-    // if(procRead->state() == QProcess::NotRunning)
-    //     return;
-
-    // if(procRecord->state() == QProcess::Starting || procRecord->state() == QProcess::Running || !b)
-    //     return;
     if(threadRecorder->isRunning()) return;
-    qDebug()<<"startRecord";
     QString file = "videos/" + s + "_" + QTime::currentTime().toString("hh:mm:ss") + ".mp4";
     file.replace(":", "_");
-
-    // QStringList args;
-    // args<<"-hide_banner"<<"-loglevel"<<"error"<<"-i"<<"udp://127.0.0.1:5000"<<"-map"<<"0"<<"-c:v"<<"copy"<<"-c:a"<<"aac"<<file + ".mp4";
-    // qDebug()<<args;
-    // procRecord->setArguments(args);
-    // procRecord->start();
-
-
 
     if(isCam1 || isCam2 || isCam3){
         int countCams = 0;
@@ -485,11 +468,9 @@ void CameraController::startRecord(bool b, QString s){
         recorder->moveToThread(threadRecorder);
         threadRecorder->start();
     }
-
 }
 
 void CameraController::stopRecord(){
-    qDebug()<<"stopRecord";
     threadRecorder->quit();
 }
 

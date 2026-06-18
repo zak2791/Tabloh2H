@@ -67,6 +67,8 @@ private:
     QTcpServer* serverAudio;
     AVCodecContext* decoderContext = NULL;
     QTcpSocket* socket;
+    QTcpSocket* videoSocket;
+    QTcpSocket* audioSocket;
     int videoPort;
     int audioPort;
     bool isStream = true;
@@ -82,7 +84,7 @@ private:
     qlonglong startPtsAudio = -1;
     QQueue<packet> soundPackets;
     QQueue<packet> videoPackets;
-
+    QTimer tmrCheckConnection;
 
     AVCodecContext *createDecoderContext(int width, int height, int fps);
 

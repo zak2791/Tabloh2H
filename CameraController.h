@@ -37,6 +37,10 @@ private:
     QProcess procFindConnectedPhones;
     QProcess procGetCamParameters;
     QProcess procSetupPorts;
+    QProcess procSetupPorts1;
+    QProcess procSetupPorts2;
+    QProcess procSetupPorts3;
+    QProcess procCheckDevices;
     QStringList devices;
     QMap<int, QString> cameras;
     QMap<int, QList<int>> params;
@@ -60,12 +64,16 @@ private:
     PlayerPc* player;
     QSettings* settings;
 
+    QTimer tmpSetupPorts;
+
 private slots:
     void slotVideo1(packet);
     void slotVideo2(packet);
     void slotVideo3(packet);
     void slotSound(packet);
     void slotParams(int, int, int, int);
+    void slotCheckDevices(void);
+    void setupPorts(void);
 
 public slots:
     void setStreamUrl(QString s);

@@ -5,8 +5,6 @@
 
 #include <QFile>
 
-static enum AVPixelFormat hw_pix_fmt;
-
 char* _av_err2str(int errnum){
     char buf[AV_ERROR_MAX_STRING_SIZE];
     return av_make_error_string(buf, AV_ERROR_MAX_STRING_SIZE, errnum);
@@ -18,54 +16,9 @@ static const char* av_make_error(int errnum){
     return av_make_error_string(str, AV_ERROR_MAX_STRING_SIZE, errnum);
 }
 
-static enum AVPixelFormat get_hw_format(AVCodecContext *ctx,
-                                        const enum AVPixelFormat *pix_fmts)
-{
-    const enum AVPixelFormat *p;
-
-    for (p = pix_fmts; *p != -1; p++) {
-        if (*p == hw_pix_fmt){
-            qDebug()<<"p"<<p<<*p<<hw_pix_fmt;
-            return *p;
-        }
-    }
-
-    fprintf(stderr, "Failed to get HW surface format.\n");
-    return AV_PIX_FMT_NONE;
-}
-
-static int set_hwframe_ctx(AVCodecContext *ctx, AVBufferRef *hw_device_ctx)
-{
-    AVBufferRef *hw_frames_ref;
-    AVHWFramesContext *frames_ctx = NULL;
-    int err = 0;
-
-    if (!(hw_frames_ref = av_hwframe_ctx_alloc(hw_device_ctx))) {
-        fprintf(stderr, "Failed to create VAAPI frame context.\n");
-        return -1;
-    }
-    frames_ctx = (AVHWFramesContext *)(hw_frames_ref->data);
-    frames_ctx->format    = AV_PIX_FMT_D3D12;
-    frames_ctx->sw_format = AV_PIX_FMT_NV12;
-    frames_ctx->width     = 1920;
-    frames_ctx->height    = 1080;
-    frames_ctx->initial_pool_size = 20;
-    if ((err = av_hwframe_ctx_init(hw_frames_ref)) < 0) {
-        fprintf(stderr, "Failed to initialize VAAPI frame context."
-                        "Error code: %s\n",_av_err2str(err));
-        av_buffer_unref(&hw_frames_ref);
-        return err;
-    }
-    ctx->hw_frames_ctx = av_buffer_ref(hw_frames_ref);
-    if (!ctx->hw_frames_ctx)
-        err = AVERROR(ENOMEM);
-
-    av_buffer_unref(&hw_frames_ref);
-    return err;
-}
-
 CameraWorker::CameraWorker(int cameraNumber, int w, int h, int fps, QString hwDec, bool sound, QString url, QObject* parent) :  QObject(parent) {
 
+    qDebug()<<"CameraWorker 0";
     if(hwDec == "нет")
         hwType = AV_HWDEVICE_TYPE_NONE;
     else if(hwDec == "cuda")
@@ -78,6 +31,7 @@ CameraWorker::CameraWorker(int cameraNumber, int w, int h, int fps, QString hwDe
         hwType = AV_HWDEVICE_TYPE_D3D12VA;
     else if(hwDec == "vulkan")
         hwType = AV_HWDEVICE_TYPE_VULKAN;
+
 
     std::string s;
     if(cameraNumber == 1){
@@ -100,12 +54,30 @@ CameraWorker::CameraWorker(int cameraNumber, int w, int h, int fps, QString hwDe
         s = url.toStdString();
         urlVk = s.c_str();
     }
-    qDebug()<<"urlVk = "<<urlVk<<url<<isSound<<isStream<<s;
+    qDebug()<<"CameraWorker 1";
+    //qDebug()<<"urlVk = "<<urlVk<<url<<isSound<<isStream<<s;
+    qDebug()<<"CameraWorker 2";
     configureError =configure(w, h, fps, isStream);
     if(configureError < 0){
         qDebug()<<"err = "<<configureError;
         isStream = false;
     }
+
+    videoSocket = new QTcpSocket(this);
+    audioSocket = new QTcpSocket(this);
+
+    connect(videoSocket, &QTcpSocket::readyRead, this, &CameraWorker::readVideoPacket);
+    connect(audioSocket, &QTcpSocket::readyRead, this, &CameraWorker::readAudioPacket);
+
+    connect(videoSocket, &QTcpSocket::connected, this, [](){qDebug()<<"connected video";});
+    connect(videoSocket, &QTcpSocket::disconnected, this, [](){qDebug()<<"disconnected video";});
+
+    connect(&tmrCheckConnection, &QTimer::timeout, this, [this](){
+        qDebug()<<"state = "<<videoSocket->state();
+        if(videoSocket->state() == QAbstractSocket::UnconnectedState)
+            start();
+    });
+    tmrCheckConnection.start(1000);
 
     //connect(this, &CameraWorker::sigPacket, this, &CameraWorker::packetVideoHandler);
 }
@@ -121,29 +93,13 @@ CameraWorker::~CameraWorker()
 }
 
 void CameraWorker::start(){
-    qDebug()<<"start";
-    serverVideo = new QTcpServer(this);
-    connect(serverVideo, &QTcpServer::newConnection, this, [this](){
-        QTcpSocket* socket = serverVideo->nextPendingConnection();
-        connect(socket, &QTcpSocket::readyRead, this, &CameraWorker::readVideoPacket);
-        connect(socket,  &QTcpSocket::disconnected, this, [this](){
-            qDebug()<<"discc";
-            sender()->deleteLater();
-            deleteLater();
-        });
-    });
-    serverVideo->listen(QHostAddress::LocalHost, videoPort);
-    if(isStream || isSound){
-        serverAudio = new QTcpServer(this);
-        connect(serverAudio, &QTcpServer::newConnection, this, [this](){
-            QTcpSocket* socket = serverAudio->nextPendingConnection();
-            connect(socket, &QTcpSocket::readyRead, this, &CameraWorker::readAudioPacket);
-            connect(socket,  &QTcpSocket::disconnected, this, [this](){
-                sender()->deleteLater();
-            });
-        });
-        serverAudio->listen(QHostAddress::LocalHost, audioPort);
-    }
+
+    qDebug()<<"start()";
+    videoSocket->connectToHost(QHostAddress::LocalHost, videoPort);
+
+    if(isStream || isSound)
+        audioSocket->connectToHost(QHostAddress::LocalHost, audioPort);
+
     if(configureError == -1)
         emit sigExit();
 }
@@ -171,42 +127,9 @@ AVCodecContext* CameraWorker::createDecoderContext(int width, int height, int fp
     context->codec_id = AV_CODEC_ID_H264;
     context->codec_tag = 0;
 
-    //AVBufferRef *device_ref = NULL;
-    // qDebug()<<"hw = "<<av_hwdevice_ctx_create(&device_ref, AV_HWDEVICE_TYPE_DXVA2,
-    //                              "auto", NULL, 0);
-
-    // context->hw_device_ctx = av_buffer_ref(device_ref);
-
-    //context->hw_device_ctx  = get_hw_format;
-    // qDebug()<<"get_hw_format = "<<get_hw_format;
-
-    // static AVBufferRef *hw_device_ctx = NULL;
-    // int err = av_hwdevice_ctx_create(&hw_device_ctx, AV_HWDEVICE_TYPE_D3D12VA,
-    //                              NULL, NULL, 0);
-
-    // if ((err = set_hwframe_ctx(context, hw_device_ctx)) < 0) {
-    //     qDebug()<<"Failed to set hwframe context";
-    //     //goto close;
-    // }
-
     if(hwType != AV_HWDEVICE_TYPE_NONE)
         qDebug()<<"hw = "<<av_hwdevice_ctx_create(&context->hw_device_ctx, hwType,
                                                       NULL, NULL, 0);
-
-    // context->hw_frames_ctx = av_hwframe_ctx_alloc(context->hw_device_ctx);;
-    // qDebug()<<"context->hw_frames_ctx = "<<context->hw_frames_ctx;
-
-    //context->get_format  = get_hw_format;
-    // context->get_format = [](AVCodecContext*, const enum AVPixelFormat* pix_fmts) -> enum AVPixelFormat {
-    //     for(int i = 0; pix_fmts[i] != AV_PIX_FMT_NONE; i++){
-    //         if(pix_fmts[i] == AV_PIX_FMT_DXVA2_VLD){
-    //             return AV_PIX_FMT_DXVA2_VLD;
-    //         }
-    //         return pix_fmts[0];
-    //     }
-    // };
-    //context->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
-
     if (avcodec_open2(context, codec, NULL) < 0) {
         fprintf(stderr, "Could not open codec\n");
         avcodec_free_context(&context);
@@ -959,23 +882,6 @@ int CameraWorker::initFilter(AVCodecContext *dec_ctx, AVCodecContext *enc_ctx, A
     std::string str = f.toStdString();
     filter_spec = str.c_str();
 
-    // QFile file("name_red.txt");
-    // if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-    //     QTextStream stream(&file);
-    //     stream.setEncoding(QStringConverter::Utf8);
-    //     QString line;
-    //     stream<<"Иванов\rБрянск";
-    // }
-    // file.close();
-    // QFile file2("name_blue.txt");
-    // if (file2.open(QIODevice::WriteOnly | QIODevice::Text)) {
-    //     QTextStream stream(&file2);
-    //     stream.setEncoding(QStringConverter::Utf8);
-    //     QString line;
-    //     stream<<"Иванов\rБрянск";
-    // }
-    // file2.close();
-
     filter_ctx = (FilteringContext*)av_malloc(sizeof(*filter_ctx));
     filter_ctx->buffersrc_ctx  = NULL;
     filter_ctx->buffersink_ctx = NULL;
@@ -1020,8 +926,6 @@ int CameraWorker::filter_encode_write_frame(AVFrame *frame)
         //av_log(NULL, AV_LOG_INFO, "Pulling filtered frame from filters\n");
         ret = av_buffersink_get_frame(filter->buffersink_ctx,
                                       filter->filtered_frame);
-        //qDebug()<<"ret1 = "<<ret<<" "<<filter->filtered_frame->width<<" "<<frame->width;
-
         //av_log(NULL, AV_LOG_INFO, _av_err2str(ret));
         if (ret < 0) {
             /* if no more frames for output - returns AVERROR(EAGAIN)

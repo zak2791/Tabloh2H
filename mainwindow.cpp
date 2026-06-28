@@ -320,7 +320,7 @@ void MainWindow::Variant(){
 
 }
 
-void MainWindow::selectLogo(bool checked)
+void MainWindow::selectLogo(bool)
 {
     if(sender()->objectName() == "logoRus"){
         if(ui->logoEng->isChecked() == false){

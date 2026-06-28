@@ -37,6 +37,7 @@ void RecordWorker::start(){
     addNewAudioStream(outputContext);
 
     QList<int> list = params.value(1);
+    qDebug()<<"list = "<<list;
     int numTracks = 0;
     if(!list.isEmpty()){
         addNewVideoStream(outputContext, list, ++numTracks);
@@ -71,7 +72,7 @@ void RecordWorker::setAvailableCams(){
 }
 
 void RecordWorker::packetHandler(packet p, int track){
-    qDebug()<<p.data.size()<<track<<firstPackets<<firstPackets.length()<<tracks.value(track)<<tracks;
+    qDebug()<<"packetHandler "<<p.data.size()<<track<<tracks.value(track)<<tracks;
     QByteArray ba;
 
     if(track > 0){

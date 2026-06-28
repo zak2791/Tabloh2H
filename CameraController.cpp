@@ -23,9 +23,9 @@ CameraController::CameraController(QWidget *parent)
     ui->layoutCams->addWidget(cam1);
     ui->layoutCams->addWidget(cam2);
     ui->layoutCams->addWidget(cam3);
-    cam1->setCameraNumber(1);
-    cam2->setCameraNumber(2);
-    cam3->setCameraNumber(3);
+    // cam1->setCameraNumber(1);
+    // cam2->setCameraNumber(2);
+    // cam3->setCameraNumber(3);
 
     btnPlay = new SvgButton(":/images/play_choice_enable.svg", ":/images/play_choice_disable.svg", this);
     btnPlay->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -166,12 +166,15 @@ CameraController::CameraController(QWidget *parent)
             qDebug()<<list;
             if(list.at(0) == "1"){
                 cameras.insert(1, each);
+                cam1->setCameraParameters(1, list.at(1).toInt(), list.at(2).toInt(), list.at(3).toInt());
             }
             else if(list.at(0) == "2"){
                 cameras.insert(2, each);
+                cam2->setCameraParameters(2, list.at(1).toInt(), list.at(2).toInt(), list.at(3).toInt());
             }
             else {
                 cameras.insert(3, each);
+                cam3->setCameraParameters(3, list.at(1).toInt(), list.at(2).toInt(), list.at(3).toInt());
             }
         }
         qDebug()<<cameras<<list;

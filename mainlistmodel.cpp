@@ -32,6 +32,7 @@ QVariant MainListModel::data(const QModelIndex& index, int nRole) const {
         return m_list.at(index.row()).split("\n")[3];
 
     }
+    return QVariant();
 }
 
 int MainListModel::rowCount(const QModelIndex& parent/*=QModelindex()*/ ) const {

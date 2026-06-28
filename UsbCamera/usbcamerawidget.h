@@ -20,13 +20,17 @@ public:
     void stopCamera(void);
     void setSound(bool b){isSound = b;}
     void setStream(QString s){urlVk = s;}
-    void setCameraNumber(int num){cameraNumber = num;}
+    void setCameraParameters(int, int, int, int);
 
 private:
 
     QThread* thread = NULL;
     QImage image;
     int cameraNumber;
+    int _width;
+    int _height;
+    int fps;
+
     QTcpSocket socket;
     QTcpSocket* socketVideo;
     QTimer timer;

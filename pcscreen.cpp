@@ -1476,8 +1476,6 @@ void PCScreen::setTvScreenGeometry(){
                               QApplication::primaryScreen()->availableGeometry().height() / 2);
         tvScreen->show();
     }
-
-
 }
 
 void PCScreen::setDataForServer()

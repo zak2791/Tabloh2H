@@ -13,6 +13,7 @@ Item {
         NumberAnimation {target: itemDelegateSide; property: "scale"; to: 0; duration: 250; easing.type: Easing.InOutQuad}
         PropertyAction {target: itemDelegateSide; property: "GridView.delayRemove"; value: false}
     }
+
     Rectangle {
         id: dragItem
         radius: 10

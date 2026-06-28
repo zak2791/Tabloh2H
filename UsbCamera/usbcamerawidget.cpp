@@ -15,43 +15,43 @@ UsbCameraWidget::UsbCameraWidget(QWidget *parent)
 
     connect(&socket, &QAbstractSocket::connected, this, &UsbCameraWidget::getParameters);
 
-    connect(&socket, &QAbstractSocket::readyRead, this, [this](){
-        QByteArray ba = socket.readAll();
-        QString str = QString::fromUtf8(ba);
-        QStringList list = str.split('=');
-        qDebug()<<"list = "<<list;
-        if(list.count() == 3){
-            worker = new CameraWorker(cameraNumber,
-                                      list.at(0).toInt(),
-                                      list.at(1).toInt(),
-                                      list.at(2).toInt(),
-                                      hwDecoder,
-                                      isSound,
-                                      urlVk
-                                      );
-            qDebug()<<"list 1";
-            emit sigParams(cameraNumber, list.at(0).toInt(), list.at(1).toInt(), list.at(2).toInt());
-            connect(worker, &CameraWorker::sigFrame, this, &UsbCameraWidget::drawFrame);
-            worker->moveToThread(thread);
-            connect(thread, &QThread::started, worker, &CameraWorker::start);
-            connect(thread, &QThread::started, worker, [](){qDebug()<<"&QThread::started";});
+    // connect(&socket, &QAbstractSocket::readyRead, this, [this](){
+    //     QByteArray ba = socket.readAll();
+    //     QString str = QString::fromUtf8(ba);
+    //     QStringList list = str.split('=');
+    //     qDebug()<<"list = "<<list;
+    //     if(list.count() == 3){
+    //         worker = new CameraWorker(cameraNumber,
+    //                                   list.at(0).toInt(),
+    //                                   list.at(1).toInt(),
+    //                                   list.at(2).toInt(),
+    //                                   hwDecoder,
+    //                                   isSound,
+    //                                   urlVk
+    //                                   );
+    //         qDebug()<<"list 1";
+    //         emit sigParams(cameraNumber, list.at(0).toInt(), list.at(1).toInt(), list.at(2).toInt());
+    //         connect(worker, &CameraWorker::sigFrame, this, &UsbCameraWidget::drawFrame);
+    //         worker->moveToThread(thread);
+    //         connect(thread, &QThread::started, worker, &CameraWorker::start);
+    //         connect(thread, &QThread::started, worker, [](){qDebug()<<"&QThread::started";});
 
-            connect(thread, &QThread::finished, this, [this](){
-                qDebug()<<"&QThread::finished"<<thread;
-                emit sigCamOff();
-            });
-            connect(worker, &CameraWorker::sigExit, thread, &QThread::quit);
-            connect(worker, &CameraWorker::destroyed, thread, &QThread::quit);
-            connect(worker, &CameraWorker::sigVideoPacket, this, &UsbCameraWidget::sigVideoPacket);
-            if(isSound || urlVk != "")
-                connect(worker, &CameraWorker::sigSoundPacket, this, &UsbCameraWidget::sigSoundPacket);
+    //         connect(thread, &QThread::finished, this, [this](){
+    //             qDebug()<<"&QThread::finished"<<thread;
+    //             emit sigCamOff();
+    //         });
+    //         connect(worker, &CameraWorker::sigExit, thread, &QThread::quit);
+    //         connect(worker, &CameraWorker::destroyed, thread, &QThread::quit);
+    //         connect(worker, &CameraWorker::sigVideoPacket, this, &UsbCameraWidget::sigVideoPacket);
+    //         if(isSound || urlVk != "")
+    //             connect(worker, &CameraWorker::sigSoundPacket, this, &UsbCameraWidget::sigSoundPacket);
 
 
-            thread->start();
-            timer.start(500);
-            qDebug()<<"list 2";
-        }
-    });
+    //         thread->start();
+    //         timer.start(500);
+    //         qDebug()<<"list 2";
+    //     }
+    // });
 
     connect(&socket, &QAbstractSocket::disconnected, this, [this](){
         qDebug()<<"&QAbstractSocket::disconnected";
@@ -108,6 +108,37 @@ void UsbCameraWidget::startCamera(){
         port = 5563;
     else
         port = 5573;
+
+    worker = new CameraWorker(cameraNumber,
+                              _width,
+                              _height,
+                              fps,
+                              hwDecoder,
+                              isSound,
+                              urlVk
+                              );
+
+    //emit sigParams(cameraNumber, list.at(0).toInt(), list.at(1).toInt(), list.at(2).toInt());
+    connect(worker, &CameraWorker::sigFrame, this, &UsbCameraWidget::drawFrame);
+    worker->moveToThread(thread);
+    connect(thread, &QThread::started, worker, &CameraWorker::start);
+    connect(thread, &QThread::started, worker, [](){qDebug()<<"&QThread::started";});
+
+    connect(thread, &QThread::finished, this, [this](){
+        qDebug()<<"&QThread::finished"<<thread;
+        emit sigCamOff();
+    });
+    connect(worker, &CameraWorker::sigExit, thread, &QThread::quit);
+    connect(worker, &CameraWorker::destroyed, thread, &QThread::quit);
+    connect(worker, &CameraWorker::sigVideoPacket, this, &UsbCameraWidget::sigVideoPacket);
+    if(isSound || urlVk != "")
+        connect(worker, &CameraWorker::sigSoundPacket, this, &UsbCameraWidget::sigSoundPacket);
+
+
+    thread->start();
+    timer.start(500);
+    qDebug()<<"list 2";
+
     socket.connectToHost(QHostAddress::LocalHost, port);
     isWorking = true;
 }
@@ -121,6 +152,13 @@ void UsbCameraWidget::stopCamera(){
     drawFrame(redImage);
     emit sigCamOff();
     isWorking = false;
+}
+
+void UsbCameraWidget::setCameraParameters(int cam, int w, int h, int f){
+    cameraNumber = cam;
+    _width = w;
+    _height = h;
+    fps = f;
 }
 
 void UsbCameraWidget::drawFrame(QImage img){

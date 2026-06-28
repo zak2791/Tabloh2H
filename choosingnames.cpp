@@ -1,9 +1,6 @@
-
 #include "choosingnames.h"
 #include "qnamespace.h"
 #include <QQuickItem>
-//#include <QJsonObject>
-//#include <QJsonDocument>
 #include <QQmlContext>
 #include <QStringListModel>
 
@@ -111,7 +108,6 @@ void ChoosingNames::resizeEvent(QResizeEvent* e){
 }
 
 void ChoosingNames::closeEvent(QCloseEvent *){
-    //QCursor cur(cursor());
     setCursor(Qt::WaitCursor);
     auto slider = objGridSide->findChild<QObject*>("sld");
     QStringList strRed = slider->property("textRed").toString().split(";");
@@ -125,7 +121,6 @@ void ChoosingNames::closeEvent(QCloseEvent *){
         NameBlue = strBlue[0].toUpper();
         RegionBlue = strBlue[1].toUpper();
     }
-
     auto sliderNext = objGridSide->findChild<QObject*>("sldNext");
     QStringList strRedNext = sliderNext->property("textRed").toString().split(";");
     QString NameRedNext(""), NameBlueNext("");
@@ -136,18 +131,14 @@ void ChoosingNames::closeEvent(QCloseEvent *){
     if(strBlueNext.length() == 2){
         NameBlueNext = strBlueNext[0].toUpper();
     }
-
     QString age = slider->property("ageRed").toString();
     if(age == "")
         age = slider->property("ageBlue").toString();
-
     QString weight = slider->property("weightRed").toString();
     if(weight == "")
         weight = slider->property("weightBlue").toString();
     emit close(NameRed.replace(QRegularExpression("-?\\d+"), ""), RegionRed, NameBlue.replace(QRegularExpression("-?\\d+"), ""), RegionBlue,
                NameRedNext.replace(QRegularExpression("-?\\d+"), ""), NameBlueNext.replace(QRegularExpression("-?\\d+"), ""), age, weight);
-    //emit startRecordObs();
-    //setCursor(cur);
 }
 
 void ChoosingNames::choiceAge(QString age){
@@ -162,7 +153,6 @@ void ChoosingNames::choiceWeight(QString weight){
 void ChoosingNames::filterName(QString name){
     QRegularExpression  regExp("(^" + name + ")|(?=\\b" + name + "\\b)", QRegularExpression::CaseInsensitiveOption );
     proxyName->setFilterRegularExpression(regExp);
-    //qDebug()<<"(^" + name + ")|((?=\\d)(?=" + name + "{" + QString::number(name.size()) + "}))";
 }
 
 void ChoosingNames::fromAllToSide(int item){

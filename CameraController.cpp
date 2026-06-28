@@ -159,25 +159,29 @@ CameraController::CameraController(QWidget *parent)
                 devices.append(list.at(i).split("\t").at(0));
             }
         }
-        qDebug()<<devices<<list;
+        qDebug()<<"devices = "<<devices<<list;
         foreach(auto each, devices){
             QStringList list = getCamParameters(each);
             if(list.isEmpty()) continue;
-            qDebug()<<list;
+            qDebug()<<"list = "<<list;
+            params.clear();
             if(list.at(0) == "1"){
                 cameras.insert(1, each);
                 cam1->setCameraParameters(1, list.at(1).toInt(), list.at(2).toInt(), list.at(3).toInt());
+                params.insert(1, QList({list.at(1).toInt(), list.at(2).toInt(), list.at(3).toInt()}));
             }
             else if(list.at(0) == "2"){
                 cameras.insert(2, each);
                 cam2->setCameraParameters(2, list.at(1).toInt(), list.at(2).toInt(), list.at(3).toInt());
+                params.insert(2, QList({list.at(1).toInt(), list.at(2).toInt(), list.at(3).toInt()}));
             }
             else {
                 cameras.insert(3, each);
                 cam3->setCameraParameters(3, list.at(1).toInt(), list.at(2).toInt(), list.at(3).toInt());
+                params.insert(3, QList({list.at(1).toInt(), list.at(2).toInt(), list.at(3).toInt()}));
             }
         }
-        qDebug()<<cameras<<list;
+        qDebug()<<"cameras = "<<cameras<<list;
 
         connect(cam1, &UsbCameraWidget::sigCamOff, this, [this](){
             isCam1 = false;
@@ -364,6 +368,7 @@ void CameraController::slotSound(packet p){
 
 void CameraController::slotParams(int c, int w, int h, int f){
     params.insert(c, QList({w, h, f}));
+    qDebug()<<"slotParams = "<<c<<w<<h<<f<<params;
 }
 
 void CameraController::slotCheckDevices(){
@@ -379,7 +384,7 @@ void CameraController::slotCheckDevices(){
             }
         }
     }
-    qDebug()<<dev<<devices<<cameras;
+    qDebug()<<"dev = "<<dev<<devices<<cameras;
     if(ui->cbTurnCams->isChecked())
         QTimer::singleShot(1000, this, [this](){procCheckDevices.start();});
     //QTimer::singleShot(1000, &procCheckDevices, SLOT(start()));
@@ -451,10 +456,10 @@ void CameraController::startRecord(bool b, QString s){
     file.replace(":", "_");
 
     if(isCam1 || isCam2 || isCam3){
-        int countCams = 0;
-        if(isCam1) countCams++;
-        if(isCam2) countCams++;
-        if(isCam3) countCams++;
+        // int countCams = 0;
+        // if(isCam1) countCams++;
+        // if(isCam2) countCams++;
+        // if(isCam3) countCams++;
 
         recorder = new RecordWorker(file, params, {isCam1 == true ? &firstVideoPacket1 : NULL,
                                                    isCam2 == true ? &firstVideoPacket2 : NULL,

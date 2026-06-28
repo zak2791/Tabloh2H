@@ -1354,7 +1354,7 @@ void PCScreen::addDisplay(int i){
     baDatagram.append("hello display!");
     QHostAddress addr;
     addr.setAddress("192.168.0.255");
-    int count = s_udp->writeDatagram(baDatagram, addr, 2424);
+    //int count = s_udp->writeDatagram(baDatagram, addr, 2424);
     QWidget* w = new QWidget;
     w->setWindowTitle("Выбор IP адреса");
     w->setWindowFlag(Qt::WindowStaysOnTopHint);

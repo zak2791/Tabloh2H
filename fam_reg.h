@@ -3,7 +3,7 @@
 
 class Fam : public QLabel {
 	Q_OBJECT
-    Q_PROPERTY(QString text WRITE Text)
+    //Q_PROPERTY(QString text WRITE Text)
 
 public:
 	explicit Fam(QString _cl = "yellow",

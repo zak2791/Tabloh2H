@@ -839,7 +839,7 @@ void VideoReplayControl::stopRecord(bool b)
     }
 }
 
-void VideoReplayControl::statesCameras(int state){
+void VideoReplayControl::statesCameras(int){
     if(ui->cbCam1->checkState() > 0 || ui->cbCam2->checkState() > 0 || ui->cbCam3->checkState() > 0)
         emit sigStateCameras(true);
     else

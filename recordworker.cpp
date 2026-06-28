@@ -37,7 +37,7 @@ void RecordWorker::start(){
     addNewAudioStream(outputContext);
 
     QList<int> list = params.value(1);
-    qDebug()<<"list = "<<list;
+    qDebug()<<"list = "<<list<<"params "<<params;
     int numTracks = 0;
     if(!list.isEmpty()){
         addNewVideoStream(outputContext, list, ++numTracks);

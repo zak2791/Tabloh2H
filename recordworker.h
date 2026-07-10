@@ -52,8 +52,12 @@ private:
     qlonglong startPtsVideo2 = -1;
     qlonglong startPtsVideo3 = -1;
     qlonglong startPtsAudio = -1;
-    //packet* firstVideo3packet;
     QList<packet*> firstPackets;
+    QMap<int,                   //track
+         int                    //0 - первый кадр,
+                                //1 - не ключевые кадры после первого,
+                                //2 - первый ключевой и последующие
+         > firstKeyFrames;
 
 signals:
     void started(void);

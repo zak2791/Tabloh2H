@@ -9,9 +9,7 @@ static const char* av_make_error(int errnum){
 
 RecordWorker::RecordWorker(QString u, QMap<int, QList<int>> cams, QList<packet *> p, QObject* parent) : QObject(parent) {
     url = u;
-    qDebug()<<"RecordWorker"<<u<<cams<<p.count();
     params = cams;
-    //firstVideo3packet = p;
     firstPackets = p;
 }
 
@@ -27,7 +25,7 @@ RecordWorker::~RecordWorker(){
 
 void RecordWorker::start(){
     qDebug()<<url;
-    QByteArray ba = url.toUtf8();//toLatin1();
+    QByteArray ba = url.toUtf8();
     const char* file = ba.constData();
     avformat_alloc_output_context2(&outputContext, NULL, "mp4", file);
     if (!outputContext) {
@@ -38,20 +36,24 @@ void RecordWorker::start(){
 
     QList<int> list = params.value(1);
     qDebug()<<"list = "<<list<<"params "<<params;
+    firstKeyFrames.clear();
     int numTracks = 0;
     if(!list.isEmpty()){
         addNewVideoStream(outputContext, list, ++numTracks);
         tracks.insert(1, numTracks);
+        firstKeyFrames.insert(numTracks, 0);
     }
     list = params.value(2);
     if(!list.isEmpty()){
         addNewVideoStream(outputContext, list, ++numTracks);
         tracks.insert(2, numTracks);
+        firstKeyFrames.insert(numTracks, 0);
     }
     list = params.value(3);
     if(!list.isEmpty()){
         addNewVideoStream(outputContext, list, ++numTracks);
         tracks.insert(3, numTracks);
+        firstKeyFrames.insert(numTracks, 0);
     }
     if (!(outputContext->oformat->flags & AVFMT_NOFILE)) {
         int ret = avio_open(&outputContext->pb, file, AVIO_FLAG_WRITE);
@@ -59,6 +61,7 @@ void RecordWorker::start(){
             qDebug()<<"Could not open output file '%s'"<<file;
         }
     }
+    qDebug()<<"firstKeyFrames "<<firstKeyFrames;
     av_dump_format(outputContext, 0, file, 1);
     int ret = avformat_write_header(outputContext, NULL);
     if (ret < 0) {
@@ -72,21 +75,18 @@ void RecordWorker::setAvailableCams(){
 }
 
 void RecordWorker::packetHandler(packet p, int track){
-    qDebug()<<"packetHandler "<<p.data.size()<<track<<tracks.value(track)<<tracks;
+
     QByteArray ba;
 
+    int firstVideoSize = 0;
     if(track > 0){
-        // if(firstPackets.at(tracks.value(track)) != NULL){
-        //     qDebug()<<"firstPackets"<<(*firstPackets.at(tracks.value(track))).pts;
-        //     (*firstPackets.at(tracks.value(track))).pts = p.pts;
-        //     ba = (*firstPackets.at(tracks.value(track))).data;
-        //     firstPackets[tracks.value(track)] = NULL;
-        // }
         if(firstPackets.at(track - 1) != NULL){
-            //qDebug()<<"firstPackets"<<(*firstPackets.at(tracks.value(track))).pts;
+            p.flags = 2;
             (*firstPackets.at(track - 1)).pts = p.pts;
             ba = (*firstPackets.at(track - 1)).data;
+            firstVideoSize = firstPackets[track - 1]->data.size();
             firstPackets[track - 1] = NULL;
+
         }
         else
             ba = p.data;
@@ -94,33 +94,43 @@ void RecordWorker::packetHandler(packet p, int track){
     else
         ba = p.data;
     if(track > 0){
-        int sizePacket = p.data.size();
+        if(firstKeyFrames[track] == 0){
+            firstKeyFrames[track] = 1;
+        }else if(firstKeyFrames[track] == 1){
+            if(p.flags == 1)
+                firstKeyFrames[track] = 2;
+            else
+                return;
+        }
+        int sizePacket;
+        if(p.flags == 2)
+            sizePacket = firstVideoSize;
+        else
+            sizePacket = p.data.size();
         AVPacket *pPacket = av_packet_alloc();
 
         uint8_t* data = new uint8_t[sizePacket];
         memcpy(data, ba, sizePacket);
         pPacket->data = data;
         pPacket->size = sizePacket;
+        if(p.flags == 2)p.flags = 1;
         pPacket->flags = p.flags;
 
         if(track == 1){
             if(startPtsVideo1 == -1){
                 startPtsVideo1 = p.pts;
-                qDebug()<<"startPtsVideo1";
             }
             pPacket->pts = (p.pts - startPtsVideo1) * 9 / 100;
         }
         else if(track == 2){
             if(startPtsVideo2 == -1){
                 startPtsVideo2 = p.pts;
-                qDebug()<<"startPtsVideo2";
             }
             pPacket->pts = (p.pts - startPtsVideo2) * 9 / 100;
         }
         else if(track == 3){
             if(startPtsVideo3 == -1){
                 startPtsVideo3 = p.pts;
-                qDebug()<<"startPtsVideo3";
             }
             pPacket->pts = (p.pts - startPtsVideo3) * 9 / 100;
         }
@@ -128,9 +138,10 @@ void RecordWorker::packetHandler(packet p, int track){
         pPacket->dts = pPacket->pts;
 
         pPacket->stream_index = tracks.value(track);
-        qDebug()<<"pPacket->stream_index = "<<tracks.value(track);
 
-        qDebug()<<av_interleaved_write_frame(outputContext, pPacket);
+        if(int ret = av_interleaved_write_frame(outputContext, pPacket) != 0)
+            qDebug()<<"av_interleaved_write_frame error"<<ret;
+
         av_packet_unref(pPacket);
         delete[] data;
     }
@@ -145,12 +156,10 @@ void RecordWorker::packetHandler(packet p, int track){
         pPacket->time_base = AVRational{0, 1};
         if(startPtsAudio == -1){
             startPtsAudio = p.pts;
-            qDebug()<<"startPtsAudio";
         }
         pPacket->pts = (p.pts - startPtsAudio) / 10000 * 441;
         pPacket->dts = pPacket->pts;
 
-        qDebug()<<"pts audio = "<<pPacket->pts;
 
         qDebug()<<"av_write_frame audio = "<<av_interleaved_write_frame(outputContext, pPacket);
 
@@ -177,18 +186,15 @@ int RecordWorker::addNewVideoStream(AVFormatContext * context, QList<int> parame
     codecpar->codec_id = AV_CODEC_ID_H264;
     codecpar->framerate = AVRational{parameters.at(2), 1};
     codecpar->bit_rate = (parameters.at(0) * parameters.at(1) * parameters.at(2)) / 10;
-    //codecpar->format = 12;
 
-
-    stream->id = track;//parameters.at(3);
-    stream->time_base = AVRational{1, 90000};//
+    stream->id = track;
+    stream->time_base = AVRational{1, 90000};
     stream->avg_frame_rate = AVRational{parameters.at(2), 1};
 
     int ret = avcodec_parameters_copy(stream->codecpar, codecpar);
     if (ret < 0) {
         qDebug()<<"Failed to copy codec parameters\n"<<ret;
         qDebug()<<av_make_error(ret);
-        //goto end;
         return -1;
     }
     return 0;
@@ -198,7 +204,7 @@ int RecordWorker::addNewAudioStream(AVFormatContext * context)
 {
     AVStream* stream = avformat_new_stream(context, NULL);
     if (!stream) {
-        fprintf(stderr, "Failed allocating output stream\n");
+        qDebug()<<"Failed allocating output stream\n";
         return -1;
     }
 

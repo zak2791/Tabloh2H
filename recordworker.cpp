@@ -9,7 +9,7 @@ static const char* av_make_error(int errnum){
 
 RecordWorker::RecordWorker(QString u, QMap<int, QList<int>> cams, QList<packet *> p, QObject* parent) : QObject(parent) {
     url = u;
-    qDebug()<<"RecordWorker"<<u<<cams;
+    qDebug()<<"RecordWorker"<<u<<cams<<p.count();
     params = cams;
     //firstVideo3packet = p;
     firstPackets = p;

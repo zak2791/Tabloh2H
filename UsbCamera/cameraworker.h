@@ -61,10 +61,10 @@ private:
     AVFormatContext* contextVk = NULL;
     QImage avFrame2QImage(AVFrame *frame);
     int cameraNumber;
-    QTimer timer;
-    QTimer tmr;
-    QTcpServer* serverVideo;
-    QTcpServer* serverAudio;
+    // QTimer* timer;
+    // QTimer* tmr;
+    // QTcpServer* serverVideo;
+    // QTcpServer* serverAudio;
     AVCodecContext* decoderContext = NULL;
     QTcpSocket* socket;
     QTcpSocket* videoSocket;
@@ -84,7 +84,9 @@ private:
     qlonglong startPtsAudio = -1;
     QQueue<packet> soundPackets;
     QQueue<packet> videoPackets;
-    QTimer tmrCheckConnection;
+    QTimer* tmrCheckConnection;
+
+    bool isConnect;
 
     AVCodecContext *createDecoderContext(int width, int height, int fps);
 

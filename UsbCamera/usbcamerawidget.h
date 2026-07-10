@@ -3,6 +3,7 @@
 
 #include <QOpenGLWidget>
 #include "CameraWorker.h"
+#include "qprocess.h"
 #include "qtcpserver.h"
 #include "qtcpsocket.h"
 #include <QTimer>
@@ -16,7 +17,7 @@ class UsbCameraWidget : public QOpenGLWidget
 public:
     UsbCameraWidget(QWidget *parent = nullptr);
     ~UsbCameraWidget();
-    void startCamera(void);
+    void startCamera(QString);
     void stopCamera(void);
     void setSound(bool b){isSound = b;}
     void setStream(QString s){urlVk = s;}
@@ -33,12 +34,22 @@ private:
 
     QTcpSocket socket;
     QTcpSocket* socketVideo;
-    QTimer timer;
+    QTimer* timer;
     QTimer tmr;
     CameraWorker* worker;
     QTcpServer* serverVideo;
     QString hwDecoder;
 
+    int portConnect;
+    int portVideo;
+    int portAudio;
+    QString device;
+    QProcess procSetupPorts1;
+    QProcess procSetupPorts2;
+    QProcess procSetupPorts3;
+    QProcess procFindDevice;
+
+    void setupPorts(void);
 
     bool isUpdate;
     bool isSound;
@@ -55,8 +66,8 @@ public slots:
     void drawFrame(QImage);
     void setHwDecoder(QString s){hwDecoder = s;}
 
-private slots:
-    void getParameters(void);
+// private slots:
+//     void getParameters(void);
 
 signals:
     void sigVideoPacket(packet);

@@ -17,8 +17,6 @@ static const char* av_make_error(int errnum){
 }
 
 CameraWorker::CameraWorker(int cameraNumber, int w, int h, int fps, QString hwDec, bool sound, QString url, QObject* parent) :  QObject(parent) {
-
-    qDebug()<<"CameraWorker 0";
     if(hwDec == "нет")
         hwType = AV_HWDEVICE_TYPE_NONE;
     else if(hwDec == "cuda")
@@ -32,6 +30,7 @@ CameraWorker::CameraWorker(int cameraNumber, int w, int h, int fps, QString hwDe
     else if(hwDec == "vulkan")
         hwType = AV_HWDEVICE_TYPE_VULKAN;
 
+    tmrCheckConnection = new QTimer(this);
 
     std::string s;
     if(cameraNumber == 1){
@@ -54,12 +53,8 @@ CameraWorker::CameraWorker(int cameraNumber, int w, int h, int fps, QString hwDe
         s = url.toStdString();
         urlVk = s.c_str();
     }
-    qDebug()<<"CameraWorker 1";
-    //qDebug()<<"urlVk = "<<urlVk<<url<<isSound<<isStream<<s;
-    qDebug()<<"CameraWorker 2";
     configureError =configure(w, h, fps, isStream);
     if(configureError < 0){
-        qDebug()<<"err = "<<configureError;
         isStream = false;
     }
 
@@ -69,32 +64,31 @@ CameraWorker::CameraWorker(int cameraNumber, int w, int h, int fps, QString hwDe
     connect(videoSocket, &QTcpSocket::readyRead, this, &CameraWorker::readVideoPacket);
     connect(audioSocket, &QTcpSocket::readyRead, this, &CameraWorker::readAudioPacket);
 
-    connect(videoSocket, &QTcpSocket::connected, this, [](){qDebug()<<"connected video";});
-    connect(videoSocket, &QTcpSocket::disconnected, this, [](){qDebug()<<"disconnected video";});
+    connect(videoSocket, &QTcpSocket::connected, this, [this](){
+        isConnect = true;
 
-    connect(&tmrCheckConnection, &QTimer::timeout, this, [this](){
-        qDebug()<<"state = "<<videoSocket->state();
-        if(videoSocket->state() == QAbstractSocket::UnconnectedState)
+    });
+    connect(videoSocket, &QTcpSocket::disconnected, this, [this](){
+        isConnect = false;
+    });
+
+    connect(tmrCheckConnection, &QTimer::timeout, this, [this](){
+        if(!isConnect)
             start();
     });
-    tmrCheckConnection.start(1000);
 
-    //connect(this, &CameraWorker::sigPacket, this, &CameraWorker::packetVideoHandler);
+    tmrCheckConnection->start(1000);
 }
 
 CameraWorker::~CameraWorker()
 {
-    qDebug()<<"~CameraWorker()";
-
-    serverVideo->close();
-
+    tmrCheckConnection->stop();
+    videoSocket->close();
     if(isStream || isSound)
-        serverAudio->close();
+        audioSocket->close();
 }
 
 void CameraWorker::start(){
-
-    qDebug()<<"start()";
     videoSocket->connectToHost(QHostAddress::LocalHost, videoPort);
 
     if(isStream || isSound)
@@ -111,13 +105,13 @@ AVCodecContext* CameraWorker::createDecoderContext(int width, int height, int fp
     AVCodecContext* context = avcodec_alloc_context3(codec);
 
     if (!context) {
-        fprintf(stderr, "Could not allocate video codec context\n");
+        qDebug()<<"Could not allocate video codec context\n";
         return NULL;
     }
 
     context->coded_width = width;
     context->coded_height = height;
-    context->pix_fmt = AVPixelFormat(-1);//AV_PIX_FMT_YUV420P;
+    context->pix_fmt = AVPixelFormat(-1);
     context->pkt_timebase = AVRational{1, 90000};
     context->codec_type = AVMEDIA_TYPE_VIDEO;
     context->sample_aspect_ratio = AVRational{0, 1};
@@ -131,7 +125,7 @@ AVCodecContext* CameraWorker::createDecoderContext(int width, int height, int fp
         qDebug()<<"hw = "<<av_hwdevice_ctx_create(&context->hw_device_ctx, hwType,
                                                       NULL, NULL, 0);
     if (avcodec_open2(context, codec, NULL) < 0) {
-        fprintf(stderr, "Could not open codec\n");
+        qDebug()<<"Could not open codec\n";
         avcodec_free_context(&context);
         return NULL;
     }
@@ -247,7 +241,6 @@ void CameraWorker::packetVideoHandler(){
                 //qDebug() << "avcodec_receive_frame: " << ret;
             }
             else{
-                //qDebug()<<pFrame->format<<decoderContext->pix_fmt;
                 if(decoderContext->pix_fmt == -1)
                     decoderContext->pix_fmt = (AVPixelFormat)pFrame->format;
 
@@ -384,7 +377,6 @@ void CameraWorker::packetVideoAudioHandler(){
                         //qDebug() << "avcodec_receive_frame: " << ret;
                     }
                     else{
-                        //qDebug()<<pFrame->format<<decoderContext->pix_fmt;
                         if(decoderContext->pix_fmt == -1)
                             decoderContext->pix_fmt = (AVPixelFormat)pFrame->format;
                         if(hwType != AV_HWDEVICE_TYPE_NONE){
@@ -648,8 +640,6 @@ int CameraWorker::addNewVideoStream(AVFormatContext * context, AVCodecContext* f
     int ret = avcodec_parameters_copy(stream->codecpar, codecpar);
     if (ret < 0) {
         qDebug()<<"Failed to copy codec parameters\n"<<ret;
-        //qDebug()<<av_make_error(ret);
-        //goto end;
         return -1;
     }
     return 0;
@@ -659,7 +649,7 @@ int CameraWorker::addNewAudioStream(AVFormatContext * context, int id)
 {
     AVStream* stream = avformat_new_stream(context, NULL);
     if (!stream) {
-        fprintf(stderr, "Failed allocating output stream\n");
+        qDebug()<<"Failed allocating output stream\n";
         return -1;
     }
 
@@ -689,8 +679,6 @@ int CameraWorker::addNewAudioStream(AVFormatContext * context, int id)
     int ret = avcodec_parameters_copy(stream->codecpar, codecpar);
     if (ret < 0) {
         qDebug()<<"Failed to copy codec parameters\n"<<ret;
-        //qDebug()<<av_make_error(ret);
-        //goto end;
         return -1;
     }
     return 0;
@@ -912,7 +900,6 @@ int CameraWorker::filter_encode_write_frame(AVFrame *frame)
 {
     FilteringContext *filter = filter_ctx;
     int ret;
-    //av_log(NULL, AV_LOG_INFO, "Pushing decoded frame to filters\n");
     /* push the decoded frame into the filtergraph */
     ret = av_buffersrc_add_frame_flags(filter->buffersrc_ctx,
                                        frame, 0);
@@ -923,16 +910,13 @@ int CameraWorker::filter_encode_write_frame(AVFrame *frame)
 
     /* pull filtered frames from the filtergraph */
     while (1) {
-        //av_log(NULL, AV_LOG_INFO, "Pulling filtered frame from filters\n");
         ret = av_buffersink_get_frame(filter->buffersink_ctx,
                                       filter->filtered_frame);
-        //av_log(NULL, AV_LOG_INFO, _av_err2str(ret));
         if (ret < 0) {
             /* if no more frames for output - returns AVERROR(EAGAIN)
              * if flushed and no more frames for output - returns AVERROR_EOF
              * rewrite retcode to 0 to show it as normal procedure completion
              */
-            //qDebug()<<QString::fromUtf8(_av_err2str(ret))<<ret;
             if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
                 ret = 0;
             else

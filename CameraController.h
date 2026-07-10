@@ -73,7 +73,7 @@ private slots:
     void slotSound(packet);
     void slotParams(int, int, int, int);
     void slotCheckDevices(void);
-    void setupPorts(void);
+    //void setupPorts(void);
 
 public slots:
     void setStreamUrl(QString s);

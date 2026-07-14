@@ -52,11 +52,16 @@ CameraWorker::CameraWorker(int cameraNumber, int w, int h, int fps, QString hwDe
         isStream = true;
         s = url.toStdString();
         urlVk = s.c_str();
+        //tmrCheckStream = new QTimer(this);
     }
     configureError =configure(w, h, fps, isStream);
     if(configureError < 0){
         isStream = false;
     }
+    // if(isStream){
+    //     connect(tmrCheckStream, &QTimer::timeout, this, &CameraWorker::checkStream);
+    //     tmrCheckStream->start(10000);
+    // }
 
     videoSocket = new QTcpSocket(this);
     audioSocket = new QTcpSocket(this);
@@ -86,6 +91,8 @@ CameraWorker::~CameraWorker()
     videoSocket->close();
     if(isStream || isSound)
         audioSocket->close();
+    // if(isStream)
+    //     tmrCheckStream->stop();
 }
 
 void CameraWorker::start(){
@@ -171,6 +178,17 @@ void CameraWorker::readVideoPacket()
             packetVideoAudioHandler();
     }
 }
+
+// void CameraWorker::checkStream()
+// {
+//     qDebug()<<vkUrl<<urlVk;
+//     procCheckStream = new QProcess(this);
+//     procCheckStream->setProgram("ffprobe.exe");
+//     procCheckStream->setArguments({vkUrl});
+//     connect(procCheckStream, &QProcess::readyRead, this, [this](){
+//         qDebug()<<procCheckStream->readAllStandardOutput();
+//     });
+// }
 
 void CameraWorker::readAudioPacket(){
     QTcpSocket* socketAudio = static_cast<QTcpSocket*>(sender());
@@ -432,8 +450,12 @@ void CameraWorker::packetVideoAudioHandler(){
                                             pkt->pts = p.pts / 1000;
                                             pkt->dts = pkt->pts;
                                             pkt->stream_index = 1;
-                                            if(!firstAvvc)
-                                                av_write_frame(contextVk, pkt );
+
+                                            qDebug()<<"avio_tell = "<<avio_tell(contextVk->pb);
+                                            if(!firstAvvc){
+                                                qDebug()<<"av_write_frame = "<<av_write_frame(contextVk, pkt );
+                                                avio_flush(contextVk->pb);
+                                            }
                                             else
                                                 firstAvvc = false;
                                             av_packet_unref(pkt);

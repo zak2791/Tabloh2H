@@ -15,7 +15,6 @@ RecordWorker::RecordWorker(QString u, QMap<int, QList<int>> cams, QList<packet *
 
 RecordWorker::~RecordWorker(){
     emit stopped();
-    qDebug()<<"~stop record";
     qDebug()<<"av_write_trailer = "<<av_write_trailer(outputContext);
     avformat_free_context(outputContext);
 
@@ -35,7 +34,6 @@ void RecordWorker::start(){
     addNewAudioStream(outputContext);
 
     QList<int> list = params.value(1);
-    qDebug()<<"list = "<<list<<"params "<<params;
     firstKeyFrames.clear();
     int numTracks = 0;
     if(!list.isEmpty()){
@@ -61,7 +59,6 @@ void RecordWorker::start(){
             qDebug()<<"Could not open output file '%s'"<<file;
         }
     }
-    qDebug()<<"firstKeyFrames "<<firstKeyFrames;
     av_dump_format(outputContext, 0, file, 1);
     int ret = avformat_write_header(outputContext, NULL);
     if (ret < 0) {
@@ -86,7 +83,6 @@ void RecordWorker::packetHandler(packet p, int track){
             ba = (*firstPackets.at(track - 1)).data;
             firstVideoSize = firstPackets[track - 1]->data.size();
             firstPackets[track - 1] = NULL;
-
         }
         else
             ba = p.data;

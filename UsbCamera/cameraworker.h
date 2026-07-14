@@ -5,6 +5,7 @@
 #include "qimage.h"
 #include "qobject.h"
 
+#include "qprocess.h"
 #include "qtcpserver.h"
 #include "qtcpsocket.h"
 #include <QTimer>
@@ -85,6 +86,8 @@ private:
     QQueue<packet> soundPackets;
     QQueue<packet> videoPackets;
     QTimer* tmrCheckConnection;
+    // QTimer* tmrCheckStream;
+    // QProcess* procCheckStream;
 
     bool isConnect;
 
@@ -113,6 +116,7 @@ public slots:
 
 private slots:
     void readVideoPacket();
+    //void checkStream(void);
 
 signals:
     void sigFrame(QImage);

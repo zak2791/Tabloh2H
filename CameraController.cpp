@@ -94,6 +94,7 @@ CameraController::CameraController(QWidget *parent)
     urlStream = settings->value("url", "").toString();
     keyStream = settings->value("key", "").toString();
     streamCam = settings->value("cam", 0).toInt();
+    qDebug()<<urlStream<<keyStream<<streamCam;
     //settings->endGroup();
     if(streamCam == 1)
         cam1->setStream(urlStream + keyStream);
@@ -383,15 +384,20 @@ void CameraController::setStreamUrl(QString s){
         cam2->setStream("");
         cam3->setStream("");
     }
-    if(streamCam == 2){
+    else if(streamCam == 2){
         cam1->setStream("");
         cam2->setStream(urlStream + keyStream);
         cam3->setStream("");
     }
-    if(streamCam == 3){
+    else if(streamCam == 3){
         cam1->setStream("");
         cam2->setStream("");
         cam3->setStream(urlStream + keyStream);
+    }
+    else{
+        cam1->setStream("");
+        cam2->setStream("");
+        cam3->setStream("");
     }
 }
 
@@ -402,15 +408,20 @@ void CameraController::setStreamKey(QString s){
         cam2->setStream("");
         cam3->setStream("");
     }
-    if(streamCam == 2){
+    else if(streamCam == 2){
         cam1->setStream("");
         cam2->setStream(urlStream + keyStream);
         cam3->setStream("");
     }
-    if(streamCam == 3){
+    else if(streamCam == 3){
         cam1->setStream("");
         cam2->setStream("");
         cam3->setStream(urlStream + keyStream);
+    }
+    else{
+        cam1->setStream("");
+        cam2->setStream("");
+        cam3->setStream("");
     }
 }
 
@@ -421,15 +432,20 @@ void CameraController::setStreamCam(int cam){
         cam2->setStream("");
         cam3->setStream("");
     }
-    if(streamCam == 2){
+    else if(streamCam == 2){
         cam1->setStream("");
         cam2->setStream(urlStream + keyStream);
         cam3->setStream("");
     }
-    if(streamCam == 3){
+    else if(streamCam == 3){
         cam1->setStream("");
         cam2->setStream("");
         cam3->setStream(urlStream + keyStream);
+    }
+    else{
+        cam1->setStream("");
+        cam2->setStream("");
+        cam3->setStream("");
     }
 }
 

@@ -62,10 +62,7 @@ private:
     AVFormatContext* contextVk = NULL;
     QImage avFrame2QImage(AVFrame *frame);
     int cameraNumber;
-    // QTimer* timer;
-    // QTimer* tmr;
-    // QTcpServer* serverVideo;
-    // QTcpServer* serverAudio;
+
     AVCodecContext* decoderContext = NULL;
     QTcpSocket* socket;
     QTcpSocket* videoSocket;
@@ -81,10 +78,7 @@ private:
     bool firstAvvc = true;
     FilteringContext *filter_ctx;
     bool enabledFilter = false;
-    qlonglong startPtsVideo = -1;
-    qlonglong startPtsAudio = -1;
-    QQueue<packet> soundPackets;
-    QQueue<packet> videoPackets;
+
     QTimer* tmrCheckConnection;
     // QTimer* tmrCheckStream;
     // QProcess* procCheckStream;
@@ -107,8 +101,8 @@ private:
 
     int filter_encode_write_frame(AVFrame *frame);
     void readAudioPacket(void);
-    void packetVideoHandler(void);
-    void packetVideoAudioHandler(void);
+    void videoHandler(packet);
+    void audioHandler(packet);
 
 public slots:
     void start(void);

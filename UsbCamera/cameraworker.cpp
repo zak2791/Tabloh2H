@@ -153,6 +153,7 @@ void CameraWorker::readVideoPacket()
             std::reverse(bTimestamp.begin(), bTimestamp.end());
             char* bDur = bTimestamp.data();
             memcpy(&timestamp, bDur, sizeof(qlonglong));
+            //qDebug()<<"timestamp video = "<<timestamp;
             QByteArray baSize = socket->read(4);
             std::reverse(baSize.begin(), baSize.end());
             char* bytes = baSize.data();
@@ -167,15 +168,8 @@ void CameraWorker::readVideoPacket()
         packet p;
         p.data = ba;
         p.flags = keyFrame;
-        if(startPtsVideo == -1){
-            startPtsVideo = timestamp;
-        };
-        p.pts = timestamp - startPtsVideo;
-        videoPackets.enqueue(p);
-        if(!(isStream || isSound))
-            packetVideoHandler();
-        else
-            packetVideoAudioHandler();
+        p.pts = timestamp;
+        videoHandler(p);
     }
 }
 
@@ -219,19 +213,14 @@ void CameraWorker::readAudioPacket(){
             return;
         }
         packet p;
-        if(startPtsAudio == -1){
-            startPtsAudio = timestamp;
-        }
-        p.pts = timestamp - startPtsAudio;
+        p.pts = timestamp;
         p.data = ba;
-        soundPackets.enqueue(p);
+        audioHandler(p);
     }
-    packetVideoAudioHandler();
 }
 
-void CameraWorker::packetVideoHandler(){
-    packet p;
-    p = videoPackets.dequeue();
+void CameraWorker::videoHandler(packet p)
+{
     emit sigVideoPacket(p);
     int sizePacket = p.data.size();
     AVPacket *pPacket = av_packet_alloc();
@@ -261,10 +250,9 @@ void CameraWorker::packetVideoHandler(){
             else{
                 if(decoderContext->pix_fmt == -1)
                     decoderContext->pix_fmt = (AVPixelFormat)pFrame->format;
-
                 if(hwType != AV_HWDEVICE_TYPE_NONE){
-                    sw_frame->pts = pFrame->pts;
                     ret = av_hwframe_transfer_data(sw_frame, pFrame, 0);
+                    sw_frame->pts = pFrame->pts;
                 }
                 if (ret < 0) {
                     qDebug()<<"Error transferring the data to system memory";
@@ -290,8 +278,6 @@ void CameraWorker::packetVideoHandler(){
                         if (ret < 0)
                             qDebug()<<"error filter_encode_write_frame ";
                         else{
-                            if(keyFrame)
-                                emit sigFrame(avFrame2QImage(filter_ctx->filtered_frame));
                             AVPacket *pkt;
                             pkt = av_packet_alloc();
                             ret = avcodec_send_frame(encoderContext, filter_ctx->filtered_frame);
@@ -305,12 +291,34 @@ void CameraWorker::packetVideoHandler(){
                                     else if (ret < 0) {
                                         break;
                                     }
+
+                                    int size = pkt->size - 4;
+
+                                    QByteArray bSize = QByteArray::fromRawData(reinterpret_cast<const char *>(&size), sizeof(size));
+
+                                    pkt->data[0] = bSize.at(3);
+                                    pkt->data[1] = bSize.at(2);
+                                    pkt->data[2] = bSize.at(1);
+                                    pkt->data[3] = bSize.at(0);
+                                    pkt->pts = p.pts / 1000;
+                                    pkt->dts = pkt->pts;
+                                    pkt->stream_index = 1;
+
+                                    if(!firstAvvc){
+                                        av_interleaved_write_frame(contextVk, pkt);
+                                        avio_flush(contextVk->pb);
+                                    }
+                                    else
+                                        firstAvvc = false;
                                     av_packet_unref(pkt);
                                 }
                             }
                             av_frame_unref(filter_ctx->filtered_frame);
                         }
                     }
+                }
+                else{
+
                 }
             }
         }
@@ -319,164 +327,50 @@ void CameraWorker::packetVideoHandler(){
     av_frame_free(&pFrame);
     av_frame_free(&sw_frame);
     av_packet_unref(pPacket);
+
+
 }
 
-void CameraWorker::packetVideoAudioHandler(){
-    while(!(soundPackets.isEmpty() || videoPackets.isEmpty())){
-        packet p;
-        if(soundPackets.head().pts < videoPackets.head().pts){
-            p = soundPackets.dequeue();
-
-            emit sigSoundPacket(p);
-
-            if(isStream){
-                if(!firstAac){
-                    int sizePacket = p.data.size();
-
-                    AVPacket *pPacket = av_packet_alloc();
-
-                    uint8_t* data = new uint8_t[sizePacket];
-                    memcpy(data, p.data, sizePacket);
-                    pPacket->data = data;
-                    pPacket->size = sizePacket;
-                    pPacket->pts = p.pts / 1000;;
-                    pPacket->dts = pPacket->pts;
-                    pPacket->stream_index = 0;
-                    int ret = av_write_frame(contextVk, pPacket);
-                    if(ret == 0){
-                        if(errStream){
-                            errStream = false;
-                            emit sigIsStream(true);
-                        }
-                    }
-                    else{
-                        if(!errStream){
-                            errStream = true;
-                            emit sigIsStream(false);
-                        }
-                    }
-
-                    delete[] data;
-                    av_packet_unref(pPacket);
-                }
-                else
-                    firstAac = false;
-            }
-        }
-        else{
-            p = videoPackets.dequeue();
-
-            emit sigVideoPacket(p);
-
+void CameraWorker::audioHandler(packet p)
+{
+    emit sigSoundPacket(p);
+    if(isStream){
+        if(!firstAac){
             int sizePacket = p.data.size();
 
             AVPacket *pPacket = av_packet_alloc();
-            AVFrame *pFrame = av_frame_alloc();
-            AVFrame* sw_frame = av_frame_alloc();
 
             uint8_t* data = new uint8_t[sizePacket];
             memcpy(data, p.data, sizePacket);
             pPacket->data = data;
             pPacket->size = sizePacket;
-            pPacket->flags = p.flags;
-            pPacket->pts = p.pts * 9 / 100;
+            pPacket->pts = p.pts / 1000;;
             pPacket->dts = pPacket->pts;
-            int keyFrame = p.flags;
-
-            int ret = avcodec_send_packet(decoderContext, pPacket);
-            if(ret < 0 || ret == AVERROR(EAGAIN) || ret == AVERROR_EOF){
-                qDebug()<< "avcodec_send_packet: " << ret;
-            }
-            else{
-                while(ret >= 0){
-
-                    ret = avcodec_receive_frame(decoderContext, pFrame);
-                    if(ret == AVERROR(EAGAIN) || ret == AVERROR_EOF){
-                        //qDebug() << "avcodec_receive_frame: " << ret;
-                    }
-                    else{
-                        if(decoderContext->pix_fmt == -1)
-                            decoderContext->pix_fmt = (AVPixelFormat)pFrame->format;
-                        if(hwType != AV_HWDEVICE_TYPE_NONE){
-                            ret = av_hwframe_transfer_data(sw_frame, pFrame, 0);
-                            sw_frame->pts = pFrame->pts;
-                        }
-                        if (ret < 0) {
-                            qDebug()<<"Error transferring the data to system memory";
-                        }
-                        if(keyFrame){
-                            if(hwType != AV_HWDEVICE_TYPE_NONE)
-                                emit sigFrame(avFrame2QImage(sw_frame));
-                            else
-                                emit sigFrame(avFrame2QImage(pFrame));
-                        }
-                        if(isStream){
-                            if(!enabledFilter){
-                                if(hwType != AV_HWDEVICE_TYPE_NONE)
-                                    qDebug()<<"initFilter = "<<initFilter(decoderContext, encoderContext, (AVPixelFormat)sw_frame->format);
-                                else
-                                    qDebug()<<"initFilter = "<<initFilter(decoderContext, encoderContext, (AVPixelFormat)pFrame->format);
-                            }
-                            else{
-                                if(hwType != AV_HWDEVICE_TYPE_NONE)
-                                    ret = filter_encode_write_frame(sw_frame);
-                                else
-                                    ret = filter_encode_write_frame(pFrame);
-                                if (ret < 0)
-                                    qDebug()<<"error filter_encode_write_frame ";
-                                else{
-                                    AVPacket *pkt;
-                                    pkt = av_packet_alloc();
-                                    ret = avcodec_send_frame(encoderContext, filter_ctx->filtered_frame);
-                                    if (ret < 0) {
-                                        qDebug()<<"Error sending a frame for encoding\n";
-                                    }else{
-                                        while (ret >= 0) {
-                                            ret = avcodec_receive_packet(encoderContext, pkt);
-                                            if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
-                                                break;
-                                            else if (ret < 0) {
-                                                break;
-                                            }
-
-                                            int size = pkt->size - 4;
-
-                                            QByteArray bSize = QByteArray::fromRawData(reinterpret_cast<const char *>(&size), sizeof(size));
-
-                                            pkt->data[0] = bSize.at(3);
-                                            pkt->data[1] = bSize.at(2);
-                                            pkt->data[2] = bSize.at(1);
-                                            pkt->data[3] = bSize.at(0);
-                                            pkt->pts = p.pts / 1000;
-                                            pkt->dts = pkt->pts;
-                                            pkt->stream_index = 1;
-
-                                            qDebug()<<"avio_tell = "<<avio_tell(contextVk->pb);
-                                            if(!firstAvvc){
-                                                qDebug()<<"av_write_frame = "<<av_write_frame(contextVk, pkt );
-                                                avio_flush(contextVk->pb);
-                                            }
-                                            else
-                                                firstAvvc = false;
-                                            av_packet_unref(pkt);
-                                        }
-                                    }
-                                    av_frame_unref(filter_ctx->filtered_frame);
-                                }
-                            }
-                        }
-                        else{
-
-                        }
-                    }
+            pPacket->stream_index = 0;
+            int ret = av_interleaved_write_frame(contextVk, pPacket);
+            avio_flush(contextVk->pb);
+            if(ret == 0){
+                if(errStream){
+                    errStream = false;
+                    emit sigIsStream(true);
                 }
             }
+            else{
+                if(!errStream){
+                    errStream = true;
+                    emit sigIsStream(false);
+                }
+            }
+
             delete[] data;
-            av_frame_free(&pFrame);
-            av_frame_free(&sw_frame);
             av_packet_unref(pPacket);
         }
+        else
+            firstAac = false;
     }
+
+
+
 }
 
 int CameraWorker::configure(int w, int h, int f, bool vk){

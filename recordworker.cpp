@@ -153,11 +153,13 @@ void RecordWorker::packetHandler(packet p, int track){
         if(startPtsAudio == -1){
             startPtsAudio = p.pts;
         }
+        //qDebug()<<"pPacket->pts = "<<pPacket->pts<<p.pts ;
         pPacket->pts = (p.pts - startPtsAudio) / 10000 * 441;
         pPacket->dts = pPacket->pts;
 
 
-        qDebug()<<"av_write_frame audio = "<<av_interleaved_write_frame(outputContext, pPacket);
+        //qDebug()<<"av_write_frame audio = "<<
+        av_interleaved_write_frame(outputContext, pPacket);
 
         av_packet_free(&pPacket);
         delete[] data;

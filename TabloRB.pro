@@ -39,8 +39,7 @@ FORMS += \
     settingsvideoreplay.ui \
     settingswebcamera.ui \
     version.ui \
-    videoreplaycontrol.ui \
-    videoreplaycontrolusb.ui
+    videoreplaycontrol.ui
 
 DISTFILES += $$files(ffmpeg/lib/*.def) \
              $$files(ffmpeg/lib/*.dll) \

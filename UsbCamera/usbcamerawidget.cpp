@@ -125,6 +125,7 @@ void UsbCameraWidget::startCamera(QString dev){
     //thread = new QThread(this);
     connect(worker, &CameraWorker::sigFrame, this, &UsbCameraWidget::drawFrame);
     worker->moveToThread(thread);
+    connect(worker, &CameraWorker::sigIsStream, this, &UsbCameraWidget::sigIsStream);
     connect(thread, &QThread::started, worker, &CameraWorker::start);
     connect(thread, &QThread::started, worker, [this](){qDebug()<<"&QThread::started"<<thread;});
     connect(thread, &QThread::finished, worker, &CameraWorker::deleteLater);

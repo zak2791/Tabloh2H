@@ -52,7 +52,20 @@ CameraWorker::CameraWorker(int cameraNumber, int w, int h, int fps, QString hwDe
         isStream = true;
         s = url.toStdString();
         urlVk = s.c_str();
-        //tmrCheckStream = new QTimer(this);
+        tmrCheckStream = new QTimer(this);
+        connect(tmrCheckStream, &QTimer::timeout, this, &CameraWorker::checkStream);
+        procCheckStream = new QProcess(this);
+        procCheckStream->setProgram("ffprobe");
+        procCheckStream->setArguments({"show_streams", url});
+        procCheckStream->setReadChannel(QProcess::StandardError);
+
+        connect(procCheckStream, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, [this](){
+            if(procCheckStream->readAll().contains("error"))
+                emit sigIsStream(false);
+            else
+                emit sigIsStream(true);
+        });
+        tmrCheckStream->start(10000);
     }
     configureError =configure(w, h, fps, isStream);
     if(configureError < 0){
@@ -173,16 +186,18 @@ void CameraWorker::readVideoPacket()
     }
 }
 
-// void CameraWorker::checkStream()
-// {
-//     qDebug()<<vkUrl<<urlVk;
-//     procCheckStream = new QProcess(this);
-//     procCheckStream->setProgram("ffprobe.exe");
-//     procCheckStream->setArguments({vkUrl});
-//     connect(procCheckStream, &QProcess::readyRead, this, [this](){
-//         qDebug()<<procCheckStream->readAllStandardOutput();
-//     });
-// }
+void CameraWorker::checkStream()
+{
+    // qDebug()<<vkUrl<<urlVk;
+    // procCheckStream = new QProcess(this);
+    // procCheckStream->setProgram("ffprobe.exe");
+    // procCheckStream->setArguments({vkUrl});
+    // connect(procCheckStream, &QProcess::readyRead, this, [this](){
+    //     qDebug()<<procCheckStream->readAllStandardOutput();
+    // });
+    qDebug()<<procCheckStream->arguments();
+    procCheckStream->start();
+}
 
 void CameraWorker::readAudioPacket(){
     QTcpSocket* socketAudio = static_cast<QTcpSocket*>(sender());

@@ -74,6 +74,7 @@ signals:
     void sigSoundPacket(packet);
     void sigParams(int, int, int, int);
     void sigCamOff(void);
+    void sigIsStream(bool);
 
 };
 #endif // USBCAMERAWIDGET_H

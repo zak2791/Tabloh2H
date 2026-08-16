@@ -38,6 +38,17 @@ CameraController::CameraController(QWidget *parent)
 
     //connect(&tmpSetupPorts, &QTimer::timeout, this, &CameraController::setupPorts);
 
+    connect(cam1, &UsbCameraWidget::sigIsStream, this, [this](bool status){
+        qDebug()<<"isStream = "<<status;
+        ui->lblVk->setStatusVk(status);
+    });
+    connect(cam2, &UsbCameraWidget::sigIsStream, this, [this](bool status){
+        ui->lblVk->setStatusVk(status);
+    });
+    connect(cam3, &UsbCameraWidget::sigIsStream, this, [this](bool status){
+        ui->lblVk->setStatusVk(status);
+    });
+
     connect(btnPlay, &QPushButton::clicked, this, [this](){
         stopRecord();
         QString file = QFileDialog::getOpenFileName(nullptr, "Выбор видео", "videos");

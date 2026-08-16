@@ -80,8 +80,8 @@ private:
     bool enabledFilter = false;
 
     QTimer* tmrCheckConnection;
-    // QTimer* tmrCheckStream;
-    // QProcess* procCheckStream;
+    QTimer* tmrCheckStream;
+    QProcess* procCheckStream;
 
     bool isConnect;
 
@@ -110,7 +110,7 @@ public slots:
 
 private slots:
     void readVideoPacket();
-    //void checkStream(void);
+    void checkStream(void);
 
 signals:
     void sigFrame(QImage);

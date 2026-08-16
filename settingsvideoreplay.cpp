@@ -333,6 +333,7 @@ QString SettingsVideoReplay::getIdWebCam(QString cam)
 void SettingsVideoReplay::refreshWebCam()
 {
     QList<QStringList> cams = getListWebCams();
+    qDebug()<<"cams = "<<cams;
     ui->cbWebCam1->disconnect();
     ui->cbWebCam2->disconnect();
     ui->cbParamWebCam1->disconnect();

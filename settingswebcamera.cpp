@@ -55,6 +55,8 @@ void SettingsWebCamera::setWebCamera(QString cam)
             procNameCamera.close();
             if(camera == "")
                 return;
+            qDebug()<<"cameras = "<<cameras;
+            //qDebug()<<"cameraDevice = "<<cameraDevice;
             procSettingsCamera->setArguments({"-f", "dshow", "-show_video_device_dialog", "true", "-i", "video=" + camera});
             setCamera(cameraDevice);
         }

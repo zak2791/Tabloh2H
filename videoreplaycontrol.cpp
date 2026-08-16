@@ -474,6 +474,7 @@ void VideoReplayControl::startReadCams()
         if(hwDecoder != "")
             argsInput1<<"-c:v"<<hwDecoder;
         QString url = "video=" + urlWebCam1;
+        //qDebug()<<"urlWebCam1 = "<<urlWebCam1;
         if(urlSound != "")
            url += ":audio=" + urlSound;
         argsInput1<<"-f"<<"dshow"<<"-rtbufsize"<<"10M"<<"-framerate"<<fps1<<"-video_size"<<resolution1<<"-i"<<url;

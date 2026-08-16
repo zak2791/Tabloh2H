@@ -24,9 +24,12 @@ SettingsVideoReplay::SettingsVideoReplay(QWidget *parent)
     connect(ui->leCam3, &QLineEdit::textEdited, this, &SettingsVideoReplay::setCam);
     connect(ui->btnRefresh, &QPushButton::clicked, this, &SettingsVideoReplay::refreshWebCam);
 
-    connect(ui->cbUseUsb, &QCheckBox::checkStateChanged, this, &SettingsVideoReplay::sigShowControlUsb);
+    connect(ui->cbUseUsb, &QCheckBox::clicked, this, &SettingsVideoReplay::sigShowControlUsb);
 
-    //connect(ui->cbUseUsb, &QCheckBox::clicked, this, &)
+    settings->beginGroup("usb");
+    if(settings->value("usbCamera", false).toBool())
+        ui->cbUseUsb->setChecked(true);
+    settings->endGroup();
 
     connect(ui->cbSound, &QComboBox::currentTextChanged, static_cast<VideoReplayControl*>(control), &VideoReplayControl::setSound);
 

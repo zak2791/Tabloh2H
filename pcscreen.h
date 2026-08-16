@@ -32,7 +32,6 @@
 #include <QTcpSocket>
 #include <QLibrary>
 #include "videoreplaycontrol.h"
-#include "videoreplaycontrolusb.h"
 #include <QSvgWidget>
 
 class SVGPushButton : public QPushButton

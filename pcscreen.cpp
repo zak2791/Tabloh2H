@@ -362,22 +362,25 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
         else
             mainwin->mSettings->setEnabled(true);
     });
+
     connect(videoControl, &VideoReplayControl::sigShowControlUsb, this, [this](bool state){
-        if(state)
+        settings->beginGroup("usb");
+        if(state){
             cameraController->setVisible(true);
-        else
+            settings->setValue("usbCamera", true);
+        }else{
             cameraController->setVisible(false);
+            settings->setValue("usbCamera", false);
+        }
+        settings->endGroup();
     });
 
-    // connect(videoControlUsb, &VideoreplayControlUsb::sigShowPlayer, tvScreen, &TVScreen::showPlayer);
-    // connect(videoControlUsb, &VideoreplayControlUsb::sigHidePlayer, tvScreen, &TVScreen::hidePlayer);
-    // //connect(mainwin->winVideoSettings, &QAction::triggered, videoControl, &VideoReplayControl::showVideoSettings);
-    // connect(videoControlUsb, &VideoreplayControlUsb::sigShowReplayOnTv, tvScreen, &TVScreen::setPlayerEnabled);
-
+    settings->beginGroup("usb");
+    if(settings->value("usbCamera", false).toBool())
+        cameraController->setVisible(true);
+    settings->endGroup();
 
     setTvScreenGeometry();
-
-    //tvScreen->show();
 
     connect(rateRed,	SIGNAL(sigRate(int)),		 tvScreen->ball_red,	  SLOT(setRate(int)));
     connect(rateRed,    &Rate::sigRate, this, [this](int rate){

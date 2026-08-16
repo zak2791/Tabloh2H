@@ -23,9 +23,6 @@ CameraController::CameraController(QWidget *parent)
     ui->layoutCams->addWidget(cam1);
     ui->layoutCams->addWidget(cam2);
     ui->layoutCams->addWidget(cam3);
-    // cam1->setCameraNumber(1);
-    // cam2->setCameraNumber(2);
-    // cam3->setCameraNumber(3);
 
     btnPlay = new SvgButton(":/images/play_choice_enable.svg", ":/images/play_choice_disable.svg", this);
     btnPlay->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -90,10 +87,8 @@ CameraController::CameraController(QWidget *parent)
     QString fileSettings = "settings.ini";
 
     settings = new QSettings(fileSettings, QSettings::IniFormat, this);
-    //settings.setPath(QSettings::IniFormat, QSettings::UserScope, fileSettings);
     settings->beginGroup("vk");
     urlStream = settings->value("url", "").toString();
-    //keyStream = settings->value("key", "").toString();
     streamCam = settings->value("cam", 0).toInt();
     settings->endGroup();
 
@@ -105,8 +100,7 @@ CameraController::CameraController(QWidget *parent)
     urlStream = settings->value("url", "").toString();
     keyStream = settings->value("key", "").toString();
     streamCam = settings->value("cam", 0).toInt();
-    qDebug()<<urlStream<<keyStream<<streamCam;
-    //settings->endGroup();
+
     if(streamCam == 1)
         cam1->setStream(urlStream + keyStream);
     if(streamCam == 2)
@@ -127,6 +121,7 @@ CameraController::CameraController(QWidget *parent)
         cam1->setHwDecoder(s);
         cam2->setHwDecoder(s);
         cam3->setHwDecoder(s);
+        settings->endGroup();
     });
 
     cameras[1] = "";
@@ -160,7 +155,6 @@ CameraController::CameraController(QWidget *parent)
     ///                        Поиск подключенных смартфонов                          ///
     /////////////////////////////////////////////////////////////////////////////////////
     connect(&procFindConnectedPhones, &QProcess::readyReadStandardOutput, this, [this](){
-        qDebug()<<"procFindConnectedPhones readyReadStandardOutput";
         QString output = procFindConnectedPhones.readAllStandardOutput();
         QStringList list = output.split("\n");
         devices.clear();
@@ -171,12 +165,10 @@ CameraController::CameraController(QWidget *parent)
                 devices.append(list.at(i).split("\t").at(0));
             }
         }
-        qDebug()<<"devices = "<<devices<<list;
         params.clear();
         foreach(auto each, devices){
             QStringList list = getCamParameters(each);
             if(list.isEmpty()) continue;
-            qDebug()<<"list = "<<list;
             if(list.at(0) == "1"){
                 cameras.insert(1, each);
                 cam1->setCameraParameters(1, list.at(1).toInt(), list.at(2).toInt(), list.at(3).toInt());
@@ -193,7 +185,6 @@ CameraController::CameraController(QWidget *parent)
                 params.insert(3, QList({list.at(1).toInt(), list.at(2).toInt(), list.at(3).toInt()}));
             }
         }
-        qDebug()<<"cameras = "<<cameras<<list<<"params ="<<params;
 
         connect(cam1, &UsbCameraWidget::sigCamOff, this, [this](){
             isCam1 = false;
@@ -210,23 +201,17 @@ CameraController::CameraController(QWidget *parent)
             if(!(isCam1 || isCam2 || isCam3) && threadRecorder->isRunning())
                 threadRecorder->quit();
         });
-
-        // configure();
-        //startRecord();
     });
 
     //////////////////////////////////////////////////////////////////////
     ///             Подключение найденных смартфонов                   ///
     //////////////////////////////////////////////////////////////////////
     connect(&procFindConnectedPhones, &QProcess::finished, this, [this](){
-        qDebug()<<"err procFindConnectedPhones "<<procFindConnectedPhones.readAllStandardError();
+        //qDebug()<<"err procFindConnectedPhones "<<procFindConnectedPhones.readAllStandardError();
         if(ui->cbTurnCams->isChecked()){
-            qDebug()<<"setup ports 0";
-            //setupPorts();
             if(cameras[1] != ""){
                 cam1->setSound(true);
                 cam1->startCamera(cameras[1]);
-                qDebug()<<"setup ports 2";
                 isCam1 = true;
             }
             if(cameras[2] != ""){
@@ -236,87 +221,45 @@ CameraController::CameraController(QWidget *parent)
                 isCam2 = true;
             }
             if(cameras[3] != ""){
-                qDebug()<<"setup ports 1";
                 if(!(isCam1 || isCam2))
                     cam3->setSound(true);
                 cam3->startCamera(cameras[3]);
-                qDebug()<<"setup ports 2";
                 isCam3 = true;
             }
-            //procCheckDevices.start();
-            //tmpSetupPorts.start(1000);
         }
-        qDebug()<<"err procFindConnectedPhones 2";
-        // else{
-        //     //tmpSetupPorts.stop();
-        //     cameras[1] = "";
-        //     qDebug()<<"cam1->stopCamera()";
-        //     cam1->stopCamera();
-        //     cameras[2] = "";
-        //     qDebug()<<"cam2->stopCamera()";
-        //     cam2->stopCamera();
-        //     cameras[3] = "";
-        //     qDebug()<<"cam3->stopCamera()";
-        //     cam3->stopCamera();
-        //     isSound = false;
-        //     isCam1= false;
-        //     isCam2 = false;
-        //     isCam3 = false;
-        // }
     });
-
-    //procFindConnectedPhones.setProgram("platform-tools/adb");
 
     connect(ui->cbTurnCams, &QCheckBox::clicked, this, [this](bool state){
         ui->cbTurnCams->setEnabled(false);
         QTimer::singleShot(5000, this, [this](){ui->cbTurnCams->setEnabled(true);});
         if(state){
             procFindConnectedPhones.setArguments({"devices"});
-            //checkDevicesTimer.start(1000);
             firstVideoPacket1.data = QByteArray();
             firstVideoPacket2.data = QByteArray();
             firstVideoPacket3.data = QByteArray();
             procFindConnectedPhones.start();
         }
         else{
-            // cam1->stopCamera();
-            // cam2->stopCamera();
-            // cam3->stopCamera();
             cameras[1] = "";
-            qDebug()<<"cam1->stopCamera()";
             cam1->stopCamera();
             cameras[2] = "";
-            qDebug()<<"cam2->stopCamera()";
             cam2->stopCamera();
             cameras[3] = "";
-            qDebug()<<"cam3->stopCamera()";
             cam3->stopCamera();
             isSound = false;
             isCam1= false;
             isCam2 = false;
             isCam3 = false;
-            //procFindConnectedPhones.setArguments({"kill-server"});
         }
-        //procFindConnectedPhones.start();
-        // firstVideoPacket1.data = QByteArray();
-        // firstVideoPacket2.data = QByteArray();
-        // firstVideoPacket3.data = QByteArray();
-        qDebug()<<"procFindConnectedPhones.start()";
     });
-    // procFindConnectedPhones.setArguments({"kill-server"});
-    // procFindConnectedPhones.start();
 }
 
 CameraController::~CameraController()
 {
-    qDebug()<<"~Widget()";
     delete player;
     cam1->stopCamera();
     cam2->stopCamera();
     cam3->stopCamera();
-    // cam1->deleteLater();
-    // cam2->deleteLater();
-    // cam3->deleteLater();
     delete ui;
 }
 
@@ -366,13 +309,10 @@ void CameraController::slotSound(packet p){
 
 void CameraController::slotParams(int c, int w, int h, int f){
     params.insert(c, QList({w, h, f}));
-    qDebug()<<"slotParams = "<<c<<w<<h<<f<<params;
 }
 
 void CameraController::slotCheckDevices(){
-    qDebug()<<"procCheckDevices finished";
     QString output = procCheckDevices.readAllStandardOutput();
-    qDebug()<<output;
     QStringList list = output.split("\n");
     QStringList dev;
     if(list.at(0).contains("List of devices attached") && list.count() > 1){
@@ -382,10 +322,8 @@ void CameraController::slotCheckDevices(){
             }
         }
     }
-    qDebug()<<"dev = "<<dev<<devices<<cameras;
     if(ui->cbTurnCams->isChecked())
         QTimer::singleShot(1000, this, [this](){procCheckDevices.start();});
-    //QTimer::singleShot(1000, &procCheckDevices, SLOT(start()));
 }
 
 void CameraController::setStreamUrl(QString s){
@@ -469,10 +407,6 @@ void CameraController::startRecord(bool b, QString s){
     file.replace(":", "_");
 
     if(isCam1 || isCam2 || isCam3){
-        // int countCams = 0;
-        // if(isCam1) countCams++;
-        // if(isCam2) countCams++;
-        // if(isCam3) countCams++;
 
         recorder = new RecordWorker(file, params, {isCam1 == true ? &firstVideoPacket1 : NULL,
                                                    isCam2 == true ? &firstVideoPacket2 : NULL,

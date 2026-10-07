@@ -86,7 +86,7 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     minimum_height = 0;
     percent_height = 0;
 
-    rateRed = new Rate;
+    rateRed = new Rate(this);
     rateRed->setFrameShape(QFrame::Box);
     rateRed->setObjectName("ball_red");
 
@@ -174,7 +174,8 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     sec_doctor = new LCDStopwatch(this, "2:01", QColor(255, 255, 0), QColor(255, 255, 0), true, true);
     sec_doctor->hide();
 
-    sec_red = new LCDStopwatch(this, "0:20", QColor(255, 0, 0, 210), QColor(255, 102, 102, 210), true, true, true);
+    //sec_red = new LCDStopwatch(this, "0:20", QColor(255, 0, 0, 210), QColor(255, 102, 102, 210), true, true, true);
+    sec_red = new LCDStopwatch(this, "0:20", QColor(255, 0, 0), QColor(255, 102, 102), true, true, true);
     sec_red->setObjectName("sec_red");
     sec_red->hide();
 
@@ -316,6 +317,7 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     grid->addWidget(sec_doctor,             28, 24, 14, 20);
 
     grid->addWidget(sec_red,                11,  0,  12, 24);
+    //grid->addWidget(sec_red,                0,  0,  12, 24);
     grid->addWidget(sec_blue,               11,  44, 12, 24);
 
     grid->addWidget(sec_red_t,              11,  0,  12, 24);
@@ -489,8 +491,8 @@ PCScreen::PCScreen(MainWindow* mw, QWidget * parent) : QWidget(parent){
     connect(uiTime.dSec, SIGNAL(valueChanged(int)), this, SLOT(setTime()));
     connect(uiTime.dSec2, SIGNAL(valueChanged(int)), this, SLOT(setTime()));
 
-    connect(sec_red, SIGNAL(sigVisible(bool)), &tvScreen->sec_red, SLOT(setVisible(bool)));
-    connect(sec_red,  SIGNAL(sigTime(QString, QString)), &tvScreen->sec_red, SLOT(showTime(QString, QString)));
+    connect(sec_red, SIGNAL(sigVisible(bool)), tvScreen->sec_red, SLOT(setVisible(bool)));
+    connect(sec_red,  SIGNAL(sigTime(QString, QString)), tvScreen->sec_red, SLOT(showTime(QString, QString)));
 
     connect(sec_blue, SIGNAL(sigVisible(bool)), tvScreen->sec_blue, SLOT(setVisible(bool)));
     connect(sec_blue,  SIGNAL(sigTime(QString, QString)), tvScreen->sec_blue, SLOT(showTime(QString, QString)));

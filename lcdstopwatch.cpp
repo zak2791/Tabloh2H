@@ -49,6 +49,7 @@ void LCDStopwatch::StartStop(){
         }
     }
     emit sigTime(intTimeToStr(time), styleSheet());
+    //qDebug()<<"start_stop "<<objectName();
 }
 
 void LCDStopwatch::showTime(){

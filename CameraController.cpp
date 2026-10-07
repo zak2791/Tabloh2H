@@ -100,6 +100,7 @@ CameraController::CameraController(QWidget *parent)
     urlStream = settings->value("url", "").toString();
     keyStream = settings->value("key", "").toString();
     streamCam = settings->value("cam", 0).toInt();
+    settings->endGroup();
 
     if(streamCam == 1)
         cam1->setStream(urlStream + keyStream);
@@ -121,7 +122,6 @@ CameraController::CameraController(QWidget *parent)
         cam1->setHwDecoder(s);
         cam2->setHwDecoder(s);
         cam3->setHwDecoder(s);
-        settings->endGroup();
     });
 
     cameras[1] = "";

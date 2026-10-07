@@ -3,7 +3,7 @@
  <class>dlgVersion</class>
  <widget class="QDialog" name="dlgVersion">
   <property name="windowModality">
-   <enum>Qt::NonModal</enum>
+   <enum>Qt::WindowModality::NonModal</enum>
   </property>
   <property name="geometry">
    <rect>
@@ -36,11 +36,11 @@
    </property>
    <property name="text">
     <string>Версия программы
-3.2
-10.07.2025</string>
+4.0
+18.08.2026</string>
    </property>
    <property name="alignment">
-    <set>Qt::AlignCenter</set>
+    <set>Qt::AlignmentFlag::AlignCenter</set>
    </property>
   </widget>
  </widget>
